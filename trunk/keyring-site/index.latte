@@ -125,15 +125,32 @@ checked against entered values.
     A strong random number generator gathering event entropy is used
     to generate random passwords.
 
-    Categories and key names are not encrypted.
+  {\h3 Known Weaknesses}
+
+    \Product uses ECB so every 8 byte block is encrypted the same way.
+    This way an attacker can see from the encrypted database which
+    blocks have the same contents.  He cannot, however, guess the
+    encryption key from a known plaintext/encrypted pair.
+
+    Categories and key names are not encrypted.  This makes it possible
+    to browse the key database without entering the password.  You should be
+    careful not to put sensible information in the key name.  You can
+    for example leave it empty.
+
+    If it is possible for an attacker to get the encrypted database he
+    can try a brute-force attack to find the correct password.
+    \Product provides 112 bits encryption, but that doesn't help if you
+    have a weak master password.  You should use at least 8 random
+    letters, digits and punctuation characters to get good security.
 
     PalmOS does not have memory protection between applications: a
     hostile application or PC-based conduit could read information
-    from inside the Keyring database.  Keeping records encrypted
-    provides some protection, but it is far from impossible.
+    from inside the \Product database.  Keeping records encrypted
+    provides some protection but a trojan palm application may, for
+    example, record all graffiti strokes to steal your password.
 
     You should only Hotsync to trusted computers.  It would be
-    possible to (for example) put a trojan on the PC that grabbed the
+    possible to (for example) put a program on the PC that grabbed the
     handheld's memory image, or that installed a trojan onto the
     handheld.  To avoid trojan versions, please {\pagelink
     \pageid=download download} from the {\a
