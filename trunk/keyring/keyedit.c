@@ -112,14 +112,15 @@ static FormPtr f_KeyEditForm;
 /* Update the form title to reflect the current record.  If this is a
  * new record, it will be something like "New Record".  If it's an
  * existing record, it will be something like "Record 4 of 42". */
-static void KeyEditForm_SetTitle(FormPtr frm) {
+static void KeyEditForm_UpdateTitle(void)
+{
     Char * titleTemplate;
-    static Char * gKeyFormTitle = 0;
+    static Char * f_KeyFormTitle = 0;
     UInt16 pos, total;
     UInt16 len, reserved;
 
-    if (gKeyFormTitle)
-        MemPtrFree(gKeyFormTitle);
+    if (f_KeyFormTitle)
+        MemPtrFree(f_KeyFormTitle);
 
     if (gKeyPosition != kNoRecord) {
         reserved = Keys_IdxOffsetReserved();
@@ -134,21 +135,21 @@ static void KeyEditForm_SetTitle(FormPtr frm) {
         // 6 characters long.
         len = StrLen(titleTemplate) - 4 + 6 + 6 + 1;
 
-        if (!(gKeyFormTitle = MemPtrNew(len)))
+        if (!(f_KeyFormTitle = MemPtrNew(len)))
             goto failOut;
         
-        StrPrintF(gKeyFormTitle, titleTemplate, pos, total);
+        StrPrintF(f_KeyFormTitle, titleTemplate, pos, total);
         MemPtrUnlock(titleTemplate);
     } else {
         titleTemplate = MemHandleLock(DmGetResource(strRsc, EmptyTitleStr));
-        if (!(gKeyFormTitle = MemPtrNew(StrLen(titleTemplate) + 1)))
+        if (!(f_KeyFormTitle = MemPtrNew(StrLen(titleTemplate) + 1)))
             goto failOut;
         
-        StrCopy(gKeyFormTitle, titleTemplate);
+        StrCopy(f_KeyFormTitle, titleTemplate);
         MemPtrUnlock(titleTemplate);    
     }
 
-    FrmCopyTitle(frm, gKeyFormTitle);
+    FrmCopyTitle(f_KeyEditForm, f_KeyFormTitle);
     return;
 
  failOut:
@@ -220,7 +221,8 @@ static void KeyEditForm_Done(void) {
  * [gKeyRecordIndex].  We have to decrypt and unpack all the data.
  * gRecordKey already contains the decrypted record key.
  */
-static void KeyEditForm_Load(FormPtr frm) {
+static void KeyEditForm_Load(void)
+{
     MemHandle   record = 0;
     Char *      recPtr;
     FormPtr     busyForm;
@@ -240,9 +242,9 @@ static void KeyEditForm_Load(FormPtr frm) {
 
     FrmEraseForm(busyForm);
     FrmDeleteForm(busyForm);
-    FrmSetActiveForm(frm);
+    FrmSetActiveForm(f_KeyEditForm);
 
-    KeyEditForm_FromUnpacked(frm, &gRecord);
+    KeyEditForm_FromUnpacked(f_KeyEditForm, &gRecord);
     KeyEditForm_UpdateScrollbar();
 
     /* NotifyRegister is not present in 3.0.  We need to check for
@@ -295,13 +297,20 @@ static void KeyEditForm_Save(void)
 
     // Reset title because we may have changed position
     // (but this is not necessary because we're about to leave!)
-    KeyEditForm_SetTitle(f_KeyEditForm);
+    KeyEditForm_UpdateTitle();
     FrmSetActiveForm(f_KeyEditForm);
 }
 
 
 static void KeyEditForm_UpdateCategory(void) {
     Category_UpdateName(f_KeyEditForm, gRecord.category);
+}
+
+
+static void KeyEditForm_UpdateAll(void)
+{
+    KeyEditForm_UpdateCategory();
+    KeyEditForm_UpdateTitle();
     FrmDrawForm(f_KeyEditForm);
 }
 
@@ -315,11 +324,10 @@ static void Keys_UndoAll(void) {
     if (gKeyRecordIndex == kNoRecord) {
         KeyEditForm_Clear();
     } else {
-        KeyEditForm_Load(f_KeyEditForm);
+        KeyEditForm_Load();
     }
     /* TODO: Put the category back to what it was when we entered. */
-    KeyEditForm_UpdateCategory();
-    FrmDrawForm(f_KeyEditForm);
+    KeyEditForm_UpdateAll();
 }
 
 
@@ -367,7 +375,7 @@ static void KeyEditForm_OpenRecord(void) {
     FieldAttrType attr;
 
     if (gKeyRecordIndex != kNoRecord) 
-        KeyEditForm_Load(f_KeyEditForm);
+        KeyEditForm_Load();
     else
         KeyEditForm_New();
 
@@ -377,25 +385,27 @@ static void KeyEditForm_OpenRecord(void) {
     
     keyDeleted = false;
 
-    KeyEditForm_SetTitle(f_KeyEditForm);
-    FrmSetFocus(f_KeyEditForm, FrmGetObjectIndex(f_KeyEditForm, ID_KeyNameField));
+    FrmSetFocus(f_KeyEditForm,
+                FrmGetObjectIndex(f_KeyEditForm, ID_KeyNameField));
+    KeyEditForm_UpdateAll();
 }
 
 
-static void KeyEditForm_GetFields(FormPtr frm) {
-    f_KeyEditForm = frm;
-    f_KeyNameFld = UI_GetObjectByID(frm, ID_KeyNameField),
-    f_NotesFld = UI_GetObjectByID(frm, ID_NotesField);
-    f_AcctFld = UI_GetObjectByID(frm, AccountField);
-    f_PasswdFld = UI_GetObjectByID(frm, PasswordField);
-    f_NotesScrollBar = UI_GetObjectByID(frm, NotesScrollbar);
+static void KeyEditForm_GetFields(void)
+{
+    f_KeyEditForm = FrmGetActiveForm();
+    f_KeyNameFld = UI_GetObjectByID(f_KeyEditForm, ID_KeyNameField),
+    f_NotesFld = UI_GetObjectByID(f_KeyEditForm, ID_NotesField);
+    f_AcctFld = UI_GetObjectByID(f_KeyEditForm, AccountField);
+    f_PasswdFld = UI_GetObjectByID(f_KeyEditForm, PasswordField);
+    f_NotesScrollBar = UI_GetObjectByID(f_KeyEditForm, NotesScrollbar);
 }
 
 
 static void KeyEditForm_FormOpen(void) {
-    KeyEditForm_GetFields(FrmGetActiveForm());
+    KeyEditForm_GetFields();
     KeyEditForm_OpenRecord();
-    KeyEditForm_UpdateCategory();
+    KeyEditForm_UpdateAll();
 }
 
 
