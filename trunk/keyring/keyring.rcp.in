@@ -109,7 +109,7 @@ BEGIN
 
   "Not here yet" = "Funzione non ancora implementata"
   "@@NotImplemented" = "Questa caratteristica non è ancora stata implementata."
-  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@NotEnoughFeatures" = "Questa versione di Keyring richiede ^1."
 
   "@@CouldntLaunchMemo" = "Impossibile avviare Memo Pad."
 
@@ -119,7 +119,7 @@ BEGIN
   "@@BetaVersion"
    = "Questa versione di Keyring, è ancora in fase di beta testing. Conservare una copia di backup dei dati."
 
-  "This is free software.  No warranty." = "Questo è ree Software.  Nessuna garanzia." 
+  "This is free software.  No warranty." = "Free Software.  Nessuna garanzia." 
 
   "Released under the GNU GPL v2." = "Rilasciata secondo la GNU GPL v2." 
 
