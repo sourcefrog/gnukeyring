@@ -216,11 +216,9 @@ static Err KeyDB_MarkForBackup(void) {
 }
 
 
-static Err KeyDB_GetVersion(UInt16 *ver) {
-    return DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, 0, 0,
-			  ver, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
+#define KeyDB_GetVersion(ver) \
+    DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, 0, 0, \
+		   ver, 0, 0, 0, 0, 0, 0, 0, 0)
 
 static Err KeyDB_CreateDB(void) {
     Err err;
