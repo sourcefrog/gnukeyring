@@ -26,17 +26,6 @@
 // Unlock form
 
 /*
- * TODO: Show only the most-recently-entered character.  Perhaps
- * we need a custom widget to do this?
- */
-
-
-static FieldPtr    f_entryFld;
-
-
-
-
-/*
  * Set the master password for the database.  This is called after the
  * user has entered a new password and it has been properly checked,
  * so all it has to do is the database updates.  This routine is also
@@ -50,17 +39,6 @@ void KeyDB_SetPasswd(UInt8 *oldKey, Char *newPasswd)
 {
      PwHash_Store(newPasswd);
      KeyDB_Reencrypt(oldKey, newPasswd);
-}
-
-static void UnlockForm_SelAll(void) {
-    /* We'd like to select the entire contents of the form every time
-     * it's shown, but FldSetSelection seems not to work so well if
-     * the form is not displayed.  Is FldSetSelection incompatible
-     * with FrmDoDialog? */
-
-/*      Int16 len = FldGetTextLength(f_entryFld); */
-/*      if (len) */
-/*          FldSetSelection(f_entryFld, 0, len); */
 }
 
 static Boolean UnlockForm_HandleEvent(EventPtr event)
@@ -79,7 +57,6 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(UnlockForm);
     Char * 	entry;
-    UInt16 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
     Boolean	done, correct;
     Boolean	veil = true;
     Int16	size = sizeof(veil);
@@ -90,17 +67,18 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 			  &veil, &size, true);
 
     CtlSetValue(UI_GetObjectByID(frm, VeilPasswordCheck), veil);
+    FldSetFont(UI_GetObjectByID(frm, MasterKeyFld), 
+	       veil ? fntStar : fntPassword);
+
     FrmSetEventHandler(frm, UnlockForm_HandleEvent);
 
     do { 
-        f_entryFld = FrmGetObjectPtr(frm, entryIdx);
-	FldSetFont(f_entryFld, veil ? fntStar : fntPassword);
 
-	FrmSetFocus(frm, entryIdx);
+	FrmSetFocus(frm, FrmGetObjectIndex(frm, MasterKeyFld));
 	result = FrmDoDialog(frm);
 
 	if (result == UnlockBtn) {
-	    entry = FldGetTextPtr(f_entryFld);
+	    entry = FldGetTextPtr(UI_GetObjectByID(frm, MasterKeyFld));
 	    if (!entry)
 		entry = "";
 	    done = correct = PwHash_Check(entry);
@@ -117,7 +95,6 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 		}
 	    } else {
 		FrmAlert(WrongKeyAlert);
-                UnlockForm_SelAll();
 	    }
 	} else {
 	    done = true;
