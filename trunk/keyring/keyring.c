@@ -62,7 +62,7 @@ static void App_LoadPrefs(void) {
 }
 
 
-void App_SavePrefs(void)
+static void App_SavePrefs(void)
 {
     PrefSetAppPreferences(kKeyringCreatorID,
 			  kGeneralPref,
@@ -165,7 +165,7 @@ static void App_EventLoop(void)
 }
 
 
-void App_AboutCmd(void)
+static void App_AboutCmd(void)
 {
     FormPtr prevFrm = FrmGetActiveForm();
     FormPtr frm = FrmInitForm(AboutForm);

@@ -390,7 +390,9 @@ Err KeyDB_Init(void)
 
      /* Remember the r/o state, so one doesn't need to reconfirm. */
      PrefSetAppPreferences(kKeyringCreatorID, prefID_ReadOnlyAccepted,
-                           kAppVersion, &g_ReadOnly, sizeof(g_ReadOnly), true);
+                           kAppVersion, 
+			   g_ReadOnly ? &g_ReadOnly : NULL, 
+			   g_ReadOnly ? sizeof(g_ReadOnly) : 0, true);
      return 0;
 
  failDB:

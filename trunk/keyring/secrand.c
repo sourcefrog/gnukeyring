@@ -320,10 +320,6 @@ static void Secrand_AddTickRandomness()
     Secrand_AddEntropyWords(&ticks, 1);
 }
 
-/*
- * We store the unlocked session key in a temporary database
- * not marked for backup.
- */
 void Secrand_Init(void)
 {
     Int16  version;

@@ -64,14 +64,6 @@ FieldPtr UI_GetFocusObjectPtr(void)
 }
 
 
-void * UI_ObjectFromActiveForm(UInt16 objectID)
-{
-    FormPtr currentForm = FrmGetActiveForm();
-    return FrmGetObjectPtr(currentForm, 
-			   FrmGetObjectIndex(currentForm, objectID));
-}
-
-
 void * UI_GetObjectByID(FormPtr frm, UInt16 objectID)
 {
     return FrmGetObjectPtr(frm,

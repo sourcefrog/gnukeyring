@@ -98,7 +98,15 @@ Char * SetPasswd_Ask(void)
     return (Char *) result;
 }
 
-/* Return true if set, false if cancelled. */
+/*
+ * Set the master password for the database.  This authorizes the user,
+ * asks him user to enter a new password. 
+ *
+ * Aftewards this routine must do two things: re-encrypt the session key 
+ * and store it back, and store a check hash of the new password.
+ *
+ * Returns true if successfull.
+ */
 Boolean SetPasswd_Run(void)
 {
     UInt8       oldKey[k2DESKeySize];
@@ -121,7 +129,8 @@ Boolean SetPasswd_Run(void)
     frm = FrmInitForm(BusyEncryptForm);
     FrmSetActiveForm(frm);
     FrmDrawForm(frm);
-    KeyDB_SetPasswd(oldKey, newPasswd);
+    KeyDB_Reencrypt(oldKey, newPasswd);
+    PwHash_Store(newPasswd);
     FrmEraseForm(frm);
     FrmDeleteForm(frm);
     if (oldFrm)
