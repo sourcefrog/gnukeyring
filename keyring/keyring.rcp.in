@@ -600,6 +600,17 @@ BEGIN
 END
 
 
+ALERT ID ID_SortError
+ERROR
+BEGIN	
+	TITLE "Sort Error"
+
+	MESSAGE "Error sorting database: ^1"
+
+	BUTTONS "OK"
+END
+
+
 ALERT ID TooNewAlert
 ERROR
 BEGIN
