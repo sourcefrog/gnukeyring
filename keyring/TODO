@@ -1,14 +1,10 @@
 -*- outline -*- 
 
-* Page up in list doesn't work
-
 * Scroll to show newly-inserted items
 
 * Export using localized field headings
 
 or perhaps don't export them at all.
-
-* Scroll bar must update when paging
 
 * Don't use SysRandom
 
