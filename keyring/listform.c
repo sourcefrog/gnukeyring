@@ -118,12 +118,12 @@ static Boolean ListForm_Update(int updateCode) {
     visRows = LstGetVisibleItems(list);
     
     // Select most-recently-used record, if any.
-    if (gKeyRecordIndex >= numRows) {
-	gKeyRecordIndex = kNoRecord;
+    if (gKeyPosition >= numRows) {
+	gKeyPosition = gKeyRecordIndex = kNoRecord;
 	top = 0;
     } else {
-	LstSetSelection(list, gKeyRecordIndex);
-	LstMakeItemVisible(list, gKeyRecordIndex);
+	LstSetSelection(list, gKeyPosition);
+	LstMakeItemVisible(list, gKeyPosition);
 	top = list->topItem;
     }
 
@@ -162,6 +162,7 @@ static Boolean ListForm_ListSelect(EventPtr event) {
 	err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
 				     dmSeekForward, gPrefs.category);
 	gKeyRecordIndex = idx;
+	gKeyPosition = listIdx;
 	FrmGotoForm(KeyEditForm);
     }
     return true;
@@ -169,7 +170,7 @@ static Boolean ListForm_ListSelect(EventPtr event) {
 
 
 static void ListForm_NewKey(void) {
-    gKeyRecordIndex = kNoRecord;
+    gKeyRecordIndex = gKeyPosition = kNoRecord;
     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
 	FrmGotoForm(KeyEditForm);
     }

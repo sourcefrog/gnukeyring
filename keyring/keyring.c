@@ -39,7 +39,12 @@
 // Reference to the keys database
 DmOpenRef       gKeyDB;
 
+/* Index of the current record in the database as a whole. */
 UInt16		gKeyRecordIndex = kNoRecord;
+
+/* Index of the current record within the currently-displayed
+ * category. */
+UInt16		gKeyPosition = kNoRecord;
 
 
 KeyringPrefsType gPrefs;
