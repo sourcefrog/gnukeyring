@@ -17,7 +17,7 @@
 
   {\h2 introduction}
 
-  \Product lets you securely store digital secret keys on your PalmOS
+  \Product lets you securely store secret information on your PalmOS
   (PalmPilot, Visor, WorkPad) handheld computer.  Many people use
   \Product to store
 
@@ -38,6 +38,7 @@
     {\li Open Source Software: no back doors, no license fees}
     {\li English, German, Spanish and Swedish localized versions}
     {\li Export records to the Memo Pad}
+    {\li Generate random new passwords}
   }
 
   {\h2 user's guide}
@@ -60,14 +61,11 @@ The keyring is secured by a {\em master password}.  To view or edit
 records, you must enter the master password.  The master password may
 be changed through the "Set Password" command in the list view.
 
-For your convenience, the keyring can stay unlocked for a time
-after you enter your master password.  You can configure this
-behaviour through the "Preferences" command.  
-
-The keyring always locks itself again when you switch to another
-application.  This seems necessary for security, to make sure that the
-encryption key is not kept unencrypted in memory and out of the
-program's control.
+For your convenience, the keyring can stay unlocked for a time after
+you enter your master password.  You can configure this behaviour
+through the "Preferences" command.  From 1.0 onwards, the timeout is
+	independent of whether you switch to other applications or
+	switch the computer off.
 
 When you need to set a password, \Product can generate a random
 password of specified length, optionally including letters, numbers or
