@@ -33,8 +33,9 @@
   <ul><li>Secure triple-DES encryption using a 112-bit key derived from
      the password</li>
     <li>Open Source Software: no back doors, no license fees</li>
-    <li>English, Danish, German, Spanish, French, Italian, Japanese, 
-        Norwegian, Dutch, Portuguese, and Swedish localized versions</li>
+    <li>English, Catalan, Danish, German, Spanish, French, Italian, 
+	Japanese, Norwegian (Bokmål and nynorsk), Dutch, Polish, 
+	Portuguese, and Swedish	localized versions</li>
     <li>Export records to the Memo Pad</li>
     <li>Generate random new passwords</li></ul>
 </section>
