@@ -15,6 +15,10 @@
   the respective author.
 
   <ul>
+   <li>Frank Taylor wrote
+	a <a href="http://www.lieder.dsl.pipex.com/software/JavaKeyring/index.html">portable
+Java Keyring viewer</a>.
+
    <li><a href="http://sourceforge.net/sendmessage.php?touser=160221">Stefan Wundrak</a> wrote a <a href="http://www.wundrak.de/keyring/">viewer for Windows</a>.</li>
 
    <li>Another <a href="http://www.zia.com.br/modules.php?name=Content&amp;pa=showpage&amp;pid=1">Windows
@@ -39,5 +43,10 @@ href="&#109;ai&#108;to&#58;key&#114;ing&#64;zia&#46;com&#46;br">Alexandre
        <dlentry icon="box2.gif" file="keyring-link_0.1.1-1_i386.deb"
                 desc="Debian i386 binary">
      </table></li>
+   <li>The keyring CVS repository also contains a java library to
+   access the keyring library.  Just <a
+    href="http://sourceforge.net/cvs/?group_id=306">checkout</a> the
+    module <code>keyring-site/java</code>.
+  </li>
   </ul>
 </section>
