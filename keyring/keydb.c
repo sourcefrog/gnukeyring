@@ -344,8 +344,6 @@ static Err KeyDB_CreateDB(void) {
 	goto outFindErr;
 
     err = KeyDB_SetDBInfo(gKeyDBCardNo, gKeyDBID);
-    MemWipe(newPasswd, StrLen(newPasswd));
-    MemPtrFree(newPasswd);
     if (err)
 	goto outErr;
 
@@ -356,12 +354,17 @@ static Err KeyDB_CreateDB(void) {
     err = KeyDB_InitDB(newPasswd, cipher, iter);
     if (err)
 	goto outErr;
+    MemWipe(newPasswd, StrLen(newPasswd));
+    MemPtrFree(newPasswd);
     return 0;
 
  outFindErr:
     err = DmGetLastErr();
     
  outErr:
+    MemWipe(newPasswd, StrLen(newPasswd));
+    MemPtrFree(newPasswd);
+
     if (gKeyDB)
 	DmCloseDatabase(gKeyDB);
     if (gKeyDBID)
