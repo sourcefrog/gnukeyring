@@ -7,6 +7,9 @@ pages=index screenshots download thanks plans faq	\
 
 extra=robots.txt Blatant-Plug-Insert-4-Cheap-Dark.jpg snaps/*.png icons/*.gif
 # cvs_logs=$(addsuffix -log.txt, $(pages))
+
+include latte.mk
+
 site_files=$(html_pages) $(extra)
 
 sites=linuxcare.com.au:/var/www/projects/gnukeyring \
@@ -21,5 +24,3 @@ upload: $(site_files)
 
 %-log.txt: %.latte
 	cvs log $< >$@
-
-include latte.mk
