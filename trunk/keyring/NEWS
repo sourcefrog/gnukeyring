@@ -26,6 +26,9 @@ Changes from 1.1:
 
  * Support PalmOS global Find.
 
+ * Support pronounceable passwords conforming to the FIPS 181
+   Automated Password Generator Standard
+
  * Support interactive search for a key name on list form.}
 
  * Keyedit form is left on auto off if the timeout has also expired.
