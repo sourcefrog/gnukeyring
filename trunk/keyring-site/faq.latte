@@ -1,6 +1,6 @@
 {\def {\faqentry \=faqid \name \&rest}
-  {\a \name=\faqid {{\h3 \name {\a \href={\concat # \faqid}
-  {\c-raquo}}} {\ul \rest}}}
+  {\a \name=\faqid}{{\h3 \name {\a \href={\concat # \faqid}
+  {\c-raquo}}} {\ul \rest}}
 }
 
 {\page 
@@ -126,21 +126,24 @@
    
    {\faqentry \faqid=fix_eleven
     
-      {I'm using GNU Keyring 0.11, and I can't seem to restore my data
-       from a backup.  Is there anything I can do to recover it?}
+      {Suddenly GNU Keyring doesn't accept my password any more.  I'm
+       sure that I entered it right.  Is there anything I can do to 
+       recover it?}
 
       {\b Yes.}
 
       Simply {\pagelink \pageid=download download and install} version
-      0.11.2 (or something later).  It should be able to recover all
+      1.1 (or something later).  It should be able to recover all
       of your data.
 
-      This is caused by a bug in PalmOS, which means that the "{\tt
+      This can have several causes:  One is that the "{\tt
       SortInfo}" field of a PalmOS database is not restored from
       backup.  0.11.0 and 0.11.1 are the only versions that uses this
-      field.  Previous and later versions are not affected.  
-      }
-   }  
+      field.  The other is that the password hash record is moved or 
+      erased by the backup or security program.  In any case the
+      data is still there, but keyring is unable to check the
+      password.
+   }
 
    {\faqentry \faqid=editrom
 
@@ -151,7 +154,7 @@
       database.  Make sure that you don't remove that database.
    }
 
- \; TODO: Doc bug #116575
+ \; TODO: Doc bug #216575
 }
 
 

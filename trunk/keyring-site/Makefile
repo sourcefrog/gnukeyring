@@ -21,7 +21,7 @@ all: latte_all
 
 upload: $(site_files)
 	for i in $(sites); do \
-	rsync --relative --links -v --ignore-times -z $(site_files) $$i; done
+	rsync --rsh="ssh" --relative --links -v --ignore-times -z $(site_files) $$i; done
 
 %-log.txt: %.latte
 	cvs log $< >$@
