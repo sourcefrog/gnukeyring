@@ -48,6 +48,9 @@ static UInt16 f_NumListed;
  * of table, etc. */
 UInt16 f_FirstIdx;
 
+/* Should we scroll in the table with the rocker buttons */
+Boolean rockerNavTable;
+
 static UInt16 f_FirstIndex;
 static UInt16 f_SelectedIdx;
 
@@ -250,6 +253,8 @@ static void ListForm_FormOpen(void)
     ListForm_InitTable();
     ListForm_Update();
     FrmSetFocus(f_ListForm, FrmGetObjectIndex(f_ListForm, LookUpFld));
+
+    rockerNavTable = false; 
 }
 
 
@@ -304,6 +309,10 @@ static void ListForm_LookUpItem(Char *item)
     MemHandle rec;
     Char *recPtr;
     Int16 compare;
+    UInt16 oldSelectedIdx;
+
+    oldSelectedIdx = f_SelectedIdx;
+
     if (!item || !(itemLen = StrLen(item))) {
 	f_SelectedIdx = kNoRecord;
 	ListForm_UpdateSelection();
@@ -336,6 +345,14 @@ static void ListForm_LookUpItem(Char *item)
 	}
 	idx++;
     }
+    // remove the last letter (cuz it didn't match)
+    if (f_SelectedIdx == kNoRecord) {
+        SndPlaySystemSound(sndWarning);
+        FldDelete(f_LookUp,FldGetTextLength(f_LookUp)-1,FldGetTextLength(f_LookUp));
+        f_SelectedIdx = oldSelectedIdx;
+        ListForm_Scroll(f_SelectedIdx);
+        ListForm_UpdateSelection();
+    }
 }
     
 static void ListForm_CategoryTrigger(void)
@@ -350,6 +367,9 @@ static void ListForm_CategoryTrigger(void)
 Boolean ListForm_HandleEvent(EventPtr event)
 {
     Boolean result = false;
+    UInt16        tableIndex; 
+    f_ListForm = FrmGetActiveForm();
+    tableIndex = FrmGetObjectIndex (f_ListForm, ID_KeyTable);
     
     switch (event->eType) {
     case ctlSelectEvent:
@@ -360,8 +380,7 @@ Boolean ListForm_HandleEvent(EventPtr event)
 
         case NewKeyBtn:
             ListForm_NewKey();
-            result = true;
-            break;
+            return true;
 
         case CategoryTrigger:
             ListForm_CategoryTrigger();
@@ -404,29 +423,137 @@ Boolean ListForm_HandleEvent(EventPtr event)
 	    ListForm_Update();
 	    ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
 	    return true;
-	} else if (event->data.keyDown.chr == pageUpChr) {
-            ListForm_Scroll(f_FirstIdx > f_ScreenRows ? 
-			    f_FirstIdx - f_ScreenRows : 0);
-            return true;
-        } else if (event->data.keyDown.chr == pageDownChr) {
-            ListForm_Scroll(f_FirstIdx + f_ScreenRows);
-            return true;
-        } else if (event->data.keyDown.chr == chrLineFeed) {
-	    if (f_SelectedIdx != kNoRecord)
-		return ListForm_SelectIndex(f_SelectedIdx);
-	} else if (FldHandleEvent (f_LookUp, event)) {
-	    /* user entered a new char... */
-	    ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
-	    return true;
+	} else {
+	    switch (event->data.keyDown.chr) {
+
+		/* page up/down buttons scroll list */
+
+	    case pageUpChr:
+		ListForm_Scroll(f_FirstIdx > f_ScreenRows ? 
+				f_FirstIdx - f_ScreenRows : 0);
+		return true;
+
+	    case pageDownChr:
+		ListForm_Scroll(f_FirstIdx + f_ScreenRows);
+		return true;
+
+	    case chrLineFeed:
+		if (f_SelectedIdx != kNoRecord)
+		    return ListForm_SelectIndex(f_SelectedIdx);
+		break;
+		
+
+		/* Handle 5-way Nav Rocker Buttons.
+		 * If rockerNavTable is "true" then we are currently
+		 * navigating the lines of the table.
+		 */
+
+                /* If rockerNavTable is set, scroll up and down the
+                 * table with the rocker keys, otherwise, follow the
+                 * focus specified in the fnav resource.
+                 */
+	    case vchrRockerCenter:
+		if (rockerNavTable) {
+		    // view the item that we have highlighted
+		    if (f_SelectedIdx != kNoRecord) {
+			return ListForm_SelectIndex(f_SelectedIdx);
+		    }
+		} else if (FrmGetFocus(f_ListForm) == 
+			   FrmGetObjectIndex(f_ListForm, LookUpFld)) {
+
+		    /* If we are clicking the centerRocker in the
+		     * LookUpFld, then navigate the table.
+		     */
+		    rockerNavTable = true;
+		    if ((f_SelectedIdx == kNoRecord) && (f_NumListed > 0)) {
+			f_SelectedIdx = f_FirstIdx;
+		    }
+		    ListForm_UpdateSelection();                        
+		    return true;
+		}
+		/* Return false here so that other centerRocker events
+		 * can be processed outside of the form event handler.
+		 */
+		return false; 
+		
+	    case vchrRockerUp:
+		if (rockerNavTable) {
+		    // navigating the rows of the table
+		    // move up one if we're not on the first element
+		    if ((f_SelectedIdx != kNoRecord) && (f_SelectedIdx > 0)) {
+			--f_SelectedIdx;
+			// if we are on the first element on the screen, scroll the list up
+			if (f_SelectedIdx == (f_FirstIdx-1)) {
+			    ListForm_Scroll(f_FirstIdx-1);
+			}
+			ListForm_UpdateSelection();
+			// clear the LookUpFld during navigation
+			FldDelete(f_LookUp,0,FldGetTextLength(f_LookUp));
+		    }
+		} else {
+		    // Use rockerUp as a pageUp button
+		    ListForm_Scroll(f_FirstIdx > f_ScreenRows ?
+				    f_FirstIdx - f_ScreenRows : 0);
+		}
+		// return here so no other rockerUp events can be processed.
+		return true; 
+		
+	    case vchrRockerDown:
+		if (rockerNavTable) {
+		    // navigating the rows of the table
+		    // move down one if we aren't on the last element
+		    if ((f_SelectedIdx != kNoRecord) && (f_SelectedIdx < (f_NumListed-1))) {
+			++f_SelectedIdx;
+			// if we are on the last element on the screen, scroll the list down
+			if (f_SelectedIdx == (f_FirstIdx + f_ScreenRows)) {
+			    ListForm_Scroll(f_FirstIdx+1);
+			}
+			ListForm_UpdateSelection();
+			// clear the LookUpFld during navigation
+			FldDelete(f_LookUp,0,FldGetTextLength(f_LookUp));
+		    }
+		} else {
+		    // use rockerdown as a pagedown button
+		    ListForm_Scroll(f_FirstIdx + f_ScreenRows);
+		}
+		// return so no other rockerDown events can be processed.
+		return true;
+		
+	    case vchrRockerLeft:
+		if (rockerNavTable) {
+		    // if navigating the table, turn off table nav on rockerLeft.
+		    rockerNavTable = false;
+		    f_SelectedIdx = kNoRecord;
+		    ListForm_UpdateSelection();
+		} else {
+		    
+		}
+		break;
+		
+	    case vchrRockerRight:
+		if (rockerNavTable) {
+		    // if navigating the table, turn off table nav on rockerRight.
+		    rockerNavTable = false;
+                         f_SelectedIdx = kNoRecord;
+                         ListForm_UpdateSelection();
+		} else {
+		    
+		}
+		break;
+
+
+	    default:
+		if (FldHandleEvent (f_LookUp, event)) {
+		    /* user entered a new char... */
+		    ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
+		    rockerNavTable = true;
+		    return true;
+		}
+		break;
+	    }
 	}
-        break;
-
-    case fldChangedEvent:
-	ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
-	return true;
-
+	break;
     default:
-        ;       
     }
 
     return result;
