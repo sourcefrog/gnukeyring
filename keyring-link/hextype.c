@@ -32,11 +32,11 @@ void hextype(FILE *f, const void *p, size_t len)
 		fputs(": ", f);
 	}
 	for (; j < i+16; j++) {
-	    fprintf(f, "   ");
+	    fputs("   ", f);
 	    if (j == i+7)
 		fputs(": ", f);
 	}
-	printf("  ");
+	fputs("  ", f);
 	for (j = i; j < len && j < (i+16); j++) {
 	    if (d[j] >= 0x20 && d[j] < 0x7f)
 		fputc(d[j], f);
@@ -48,8 +48,6 @@ void hextype(FILE *f, const void *p, size_t len)
 	} 
 
 	i = j;
-	if (i != (len-1))
-	    fprintf(f, "\n");
+	fputs("\n", f);
     }
-    fprintf(f, "\n");
 }
