@@ -194,12 +194,17 @@ void Record_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
 }
 
 
+/*
+ * Frees record and all associated data.  Also overwrites everything
+ * with zeros.
+ */
 void Record_Free(UnpackedKeyPtr u)
 {
     if (u->plainText) {
 	MemWipe(u->plainText, MemPtrSize(u->plainText));
 	MemPtrFree(u->plainText);
     }
+    MemWipe(u, MemPtrSize(u));
     MemPtrFree(u);
 }
 
