@@ -85,6 +85,7 @@ BEGIN
   "Delete current key record?" = "Usun±æ aktualny klucz?"
   "Save archive copy on PC" = "Zapisz kopiê archiwaln± na PC"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion"
    = "Ta wersja Keyring jest bet±. Mo¿e zawieraæ b³êdy. Lepiej miej kopiê nieodzyskiwalnych danych."
 

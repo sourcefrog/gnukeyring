@@ -22,79 +22,137 @@
  */
 
 #include "includes.h"
+#include "AESLib-inline.h"
 
 // ======================================================================
-// DES3 functions
+// Crypto functions
 
+static Err CheckGlib(UInt32 creator, char* libname) {
+    DmOpenRef libdb;
 
-#ifndef DISABLE_DES
+    if ((libdb = DmOpenDatabaseByTypeCreator('GLib', creator, 
+					     dmModeReadOnly))) {
+	DmCloseDatabase(libdb);
+	return 0;
+    }
 
-void CryptoPrepareKey(UInt8 *rawKey, CryptoKey cryptKey)
-{
-    des_set_odd_parity((des_cblock*) rawKey);
-    des_set_key((des_cblock*) rawKey, cryptKey[0]);
-    des_set_odd_parity((des_cblock*) rawKey + 1);
-    des_set_key((des_cblock*) rawKey + 1, cryptKey[1]);
+    FrmCustomAlert(NotEnoughFeaturesAlert, libname, NULL, NULL);
+    return sysErrLibNotFound;
 }
 
-Err CryptoRead(void * from, void * to, UInt32 len, CryptoKey cryptKey)
-{
-    ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
-			 __FUNCTION__ ": not block padded");
-    do {
-	des_ecb2_encrypt(from, to, cryptKey[0], cryptKey[1], false);
-
-	to += kDESBlockSize;
-	from += kDESBlockSize;
-	len -= kDESBlockSize;
-    } while (len > 0);
-
-    return 0;
-}
-
-
-Err CryptoWrite(void *recPtr, UInt32 off, char const *from, UInt32 len,
-		CryptoKey cryptKey)
-{
-    des_cblock third;
-    ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
-			 __FUNCTION__ ": not block padded");
-    do {
-	des_ecb2_encrypt((des_cblock*)from, &third, 
-			 cryptKey[0], cryptKey[1], true);
-
-        DmWrite(recPtr, off, third, kDESBlockSize);
-
-        off += kDESBlockSize;
-	from += kDESBlockSize;
-	len -= kDESBlockSize;
-    } while (len > 0);
-
-    return 0;
-}
-
-#else /* DISABLE_DES */
-
-void CryptoPrepareKey(UInt8 *UNUSED(rawKey), CryptoKey UNUSED(cryptKey))
-{
-}
-
-/*
- * Encrypt (or not!) and write out
+/**
+ * Returns the number of bytes of the key.  Note that the key
+ * is also used to protect opening the database, so it shouldn't
+ * be zero, even for no cipher.
  */
-Err CryptoWrite(void *recPtr, UInt32 off,
-		char const *src, UInt32 len,
-		CryptoKey UNUSED(key))
+UInt16 CryptoKeySize(UInt16 cipher)
 {
-    return DmWrite(recPtr, off, src, len);
+    static const UInt16 keysize[] = {
+	/*NO_CIPHER*/            8,
+	/*DES3_EDE_CBC_CIPHER*/ 24,
+	/*AES_128_CBC_CIPHER*/  16,
+	/*AES_256_CBC_CIPHER*/  32
+    };
+    return keysize[cipher];
 }
 
-
-Err CryptoRead(void * from, void * to, UInt32 len, CryptoKey UNUSED(key))
+void CryptoPrepareSnib(UInt16 cipher, SnibType *rawKey)
 {
-    MemMove(to, from, len);
+    int i;
+    if (cipher == DES3_EDE_CBC_CIPHER) {
+	for (i = 0; i < 3; i++)
+	    des_set_odd_parity(&rawKey->key.des[i]);
+    }
+}
 
+Boolean CryptoPrepareKey(UInt16 cipher, SnibType *rawKey, CryptoKey *cryptKey)
+{
+    int i;
+    cryptKey->cipher = cipher;
+    switch (cipher) {
+    case NO_CIPHER:
+	cryptKey->blockSize = 1;
+	break;
+    case DES3_EDE_CBC_CIPHER:
+	/* Check if the necessary openssl libraries are installed */
+	if (CheckGlib('CrDS', "DESLib.prc"))
+	    return 0;
+
+	cryptKey->blockSize = sizeof(des_cblock);
+	for (i = 0; i < 3; i++) {
+	    des_set_key(&rawKey->key.des[i], cryptKey->key.des[i]);
+	}
+	break;
+    case AES_128_CBC_CIPHER:
+    case AES_256_CBC_CIPHER:
+	cryptKey->blockSize = 16;
+	if (AESLib_OpenLibrary(&cryptKey->key.aes.refNum))
+	    return 0;
+	AESLibEncKey(cryptKey->key.aes.refNum, rawKey->key.aes,
+		     cipher == AES_256_CBC_CIPHER ? 32 : 16,
+		     &cryptKey->key.aes.enc);
+	AESLibDecKey(cryptKey->key.aes.refNum, rawKey->key.aes,
+		     cipher == AES_256_CBC_CIPHER ? 32 : 16,
+		     &cryptKey->key.aes.dec);
+	break;
+    default:
+	return 0;
+    }
+    return 1;
+}
+
+void CryptoDeleteKey(CryptoKey *cryptKey) {
+    switch (cryptKey->cipher) {
+    case AES_128_CBC_CIPHER:
+    case AES_256_CBC_CIPHER:
+	AESLib_CloseLibrary(cryptKey->key.aes.refNum);
+    }
+    MemSet(cryptKey, sizeof(CryptoKey), 0);
+}
+
+Err CryptoRead(void * from, void * to, UInt32 len, 
+	       CryptoKey *cryptKey, UInt8 *ivec)
+{
+    switch (cryptKey->cipher) {
+    case NO_CIPHER:
+	MemMove(to, from, len);
+	break;
+    case DES3_EDE_CBC_CIPHER:
+	des_ede3_cbc_encrypt(from, to, len, 
+			     cryptKey->key.des[0], 
+			     cryptKey->key.des[1], 
+			     cryptKey->key.des[2],
+			     (des_cblock*) ivec, false);
+	break;
+    case AES_128_CBC_CIPHER:
+    case AES_256_CBC_CIPHER:
+	AESLibDecBigBlk(cryptKey->key.aes.refNum, from, to, 
+			&len, true, ivec, &cryptKey->key.aes.dec);
+	break;
+    }
     return 0;
 }
-#endif /* DISABLE_DES */
 
+
+Err CryptoWrite(void *from, void * to, UInt32 len,
+		CryptoKey *cryptKey, UInt8 *ivec)
+{
+    switch (cryptKey->cipher) {
+    case NO_CIPHER:
+	MemMove(to, from, len);
+	break;
+    case DES3_EDE_CBC_CIPHER:
+	des_ede3_cbc_encrypt(from, to, len, 
+			     cryptKey->key.des[0], 
+			     cryptKey->key.des[1], 
+			     cryptKey->key.des[2],
+			     (des_cblock*) ivec, true);
+	break;
+    case AES_128_CBC_CIPHER:
+    case AES_256_CBC_CIPHER:
+	AESLibEncBigBlk(cryptKey->key.aes.refNum, from, to, 
+			&len, true, ivec, &cryptKey->key.aes.enc);
+	break;
+    }
+    return 0;
+}

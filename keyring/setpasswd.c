@@ -24,6 +24,26 @@
 
 #include "includes.h"
 
+#define DEFAULT_ITER 250
+#define DEFAULT_CIPHER AES_256_CBC_CIPHER
+
+static const Int16 iterMap[] = {
+    50,   Iter50Push,
+    100,  Iter100Push,
+    250,  Iter250Push,
+    500,  Iter500Push,
+    1000, Iter1000Push,
+    -1
+};
+
+static const Int16 cipherMap[] = {
+    NO_CIPHER, CipherNoPush,
+    DES3_EDE_CBC_CIPHER, CipherDESPush,
+    AES_128_CBC_CIPHER, CipherAES128Push,
+    AES_256_CBC_CIPHER, CipherAES256Push,
+    -1
+};
+
 
 /* Set Password dialog
  *
@@ -34,16 +54,19 @@
  */
 
 /* Return a locked MemPtr to the entered password or NULL if cancelled. */
-Char * SetPasswd_Ask(void)
+GUI_SECTION 
+Char *SetPasswd_Ask(UInt16 *pCipher, UInt16 *pIter)
 {
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm;
     UInt16 	btn;
+    int         cipher, iter;
     Boolean 	match;
     FieldPtr 	masterFld, confirmFld;
     MemHandle   handle;
     MemPtr      result = NULL;
     UInt32      encoding;
+    KrAppInfoPtr appInfoPtr;
     Char *masterPtr, *confirmPtr;
 
     frm = FrmInitForm(SetPasswdForm);
@@ -61,6 +84,18 @@ Char * SetPasswd_Ask(void)
 	FldSetFont(masterFld, fntPassword);
 	FldSetFont(confirmFld, fntPassword);
     }
+
+    if (gKeyDB) {
+	appInfoPtr = KeyDB_LockAppInfo();
+	iter = appInfoPtr->keyHash.iter;
+	cipher = appInfoPtr->keyHash.cipher;
+	MemPtrUnlock(appInfoPtr);
+    } else {
+	iter = DEFAULT_ITER;
+	cipher = DEFAULT_CIPHER;
+    }
+    UI_ScanAndSet(frm, iterMap, iter);
+    UI_ScanAndSet(frm, cipherMap, cipher);
        
     FrmSetFocus(frm, FrmGetObjectIndex(frm, MasterKeyFld)); 
  doDialog:	
@@ -73,7 +108,7 @@ Char * SetPasswd_Ask(void)
     
     confirmPtr = FldGetTextPtr(confirmFld);
     if (!confirmPtr) confirmPtr = "";
-    
+
     match = !StrCompare(masterPtr, confirmPtr);
     if (!match) {
 	FrmAlert(PasswdMismatchAlert);
@@ -87,6 +122,15 @@ Char * SetPasswd_Ask(void)
     result = MemPtrNew(StrLen(masterPtr) + 1);
     StrCopy(result, masterPtr);
 
+    iter = UI_ScanForFirst(frm, iterMap);
+    if (iter < 0)
+	iter = DEFAULT_ITER;
+    cipher = UI_ScanForFirst(frm, cipherMap);
+    if (cipher < 0)
+	cipher = DEFAULT_CIPHER;
+    *pIter = iter;
+    *pCipher = cipher;
+    
  leave:
 
     /* Eradicate anything that contains clear text passwords or
@@ -116,25 +160,33 @@ Char * SetPasswd_Ask(void)
  * Set the master password for the database.  This authorizes the user,
  * asks him user to enter a new password. 
  *
- * Aftewards this routine must do two things: re-encrypt the session key 
+ * Afterwards this routine must do two things: re-encrypt the session key 
  * and store it back, and store a check hash of the new password.
  *
  * Returns true if successfull.
  */
+REENCRYPT_SECTION 
 Boolean SetPasswd_Run(void)
 {
-    CryptoKey   oldKey;
+    CryptoKey  *oldKey;
     Char *      newPasswd;
     FormPtr	frm, oldFrm;
+    UInt16      cipher, iter;
 
-    if (!Unlock_GetKey(true, oldKey))
-	 return false;
+    oldKey = MemPtrNew(sizeof(CryptoKey));
+    if (!Unlock_GetKey(true, oldKey)) {
+	MemPtrFree(oldKey);
+	return false;
+    }
 
-    newPasswd = SetPasswd_Ask();
+    newPasswd = SetPasswd_Ask(&cipher, &iter);
 
     /* Check whether user cancelled new password dialog */
-    if (newPasswd == NULL)
+    if (newPasswd == NULL) {
+	CryptoDeleteKey(oldKey);
+	MemPtrFree(oldKey);
 	return false;
+    }
 
     /* This stores the checking-hash and also reencrypts and stores
      * the session key.
@@ -143,8 +195,8 @@ Boolean SetPasswd_Run(void)
     frm = FrmInitForm(BusyEncryptForm);
     FrmSetActiveForm(frm);
     FrmDrawForm(frm);
-    KeyDB_Reencrypt(oldKey, newPasswd);
-    PwHash_Store(newPasswd);
+
+    SetPasswd_Reencrypt(oldKey, newPasswd, cipher, iter);
     FrmEraseForm(frm);
     FrmDeleteForm(frm);
     if (oldFrm)
@@ -153,7 +205,8 @@ Boolean SetPasswd_Run(void)
     /* Eradicate the new and old passwords.
      */
     MemSet(newPasswd, StrLen(newPasswd), 0);
-    MemSet(oldKey, sizeof(oldKey), 0);
+    CryptoDeleteKey(oldKey);
+    MemPtrFree(oldKey);
 
     MemPtrFree(newPasswd);
     return true;

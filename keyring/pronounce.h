@@ -23,6 +23,30 @@
 #ifndef _PRONOUNCE_H_
 #define _PRONOUNCE_H_
 
+#define RULE_SIZE             34
+
+#define NOT_BEGIN_SYLLABLE    010
+#define NO_FINAL_SPLIT        04
+#define VOWEL                 02
+#define ALTERNATE_VOWEL       01
+#define NO_SPECIAL_RULE       0
+
+#define BEGIN                 0200  /* digram should begin a new syllable */
+#define NOT_BEGIN             0100  /* digram must not start a syllable */
+#define BREAK                 040   /* digram should be splitted into two syllables */
+#define PREFIX                020   /* digram requires a vocal in front */
+#define ILLEGAL_PAIR          010   /* digram must not occur */
+#define SUFFIX                0     /* Not needed any more. */
+#define END                   02    /* digram should end a syllable */
+#define NOT_END               01    /* digram must not end a syllable */
+#define ANY_COMBINATION       0
+
+struct unit
+{
+  Char unit_code[3];
+  UInt8 flags;
+};
+
 #define MAX_PWLEN             20
 
 typedef struct {
@@ -30,5 +54,6 @@ typedef struct {
   UInt16 saved_units;
   UInt8  units[MAX_PWLEN + 2];
 } PronStateType;
+
 
 #endif /* _PRONOUNCE_H_ */

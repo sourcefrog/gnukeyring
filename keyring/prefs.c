@@ -38,7 +38,7 @@ void PrefsForm_Run(void)
 {
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(ID_PrefsForm);
-    ControlPtr  fontsCtl;
+    ControlPtr  fontsCtl, keepCtl;
     UInt16	btn;
     Int16	chosen;
     
@@ -51,9 +51,11 @@ void PrefsForm_Run(void)
     };
 
     fontsCtl = UI_GetObjectByID(frm, KeyringFontsCheck);
+    keepCtl = UI_GetObjectByID(frm, KeyringKeepCheck);
 
     UI_ScanAndSet(frm, map, gPrefs.timeoutSecs);
     CtlSetValue(fontsCtl, gPrefs.useCustomFonts);
+    CtlSetValue(keepCtl, gPrefs.keepSnibWhileBusy);
 
     btn = FrmDoDialog(frm);
 
@@ -67,6 +69,7 @@ void PrefsForm_Run(void)
     }
 
     gPrefs.useCustomFonts = CtlGetValue(fontsCtl);
+    gPrefs.keepSnibWhileBusy = CtlGetValue(keepCtl);
     if (gPrefs.useCustomFonts)
 	App_LoadFonts();
     

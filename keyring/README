@@ -1,7 +1,6 @@
 Keyring for PalmOS
 
-Copyright 1999-2002 by Martin Pool
-Copyright 2001-2003 by Jochen Hoenicke
+Copyright 1999-2002 The GNU Keyring Sourceforge Team
 
   http://gnukeyring.sourceforge.net/
 
@@ -31,5 +30,9 @@ FIPS 181 Automated Password Generator Standard (see fips181.txt).
 For more details, see
 
   http://gnukeyring.sourceforge.net/
+
+
+This distribution includes files from AESLib for AES encryption. 
+See COPYING.AESLib for license terms.
 
 $Id$

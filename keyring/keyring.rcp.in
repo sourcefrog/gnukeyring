@@ -41,12 +41,13 @@ BEGIN
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
   "@@GenerateHelp" = "help/en/generate.txt"
   "@@KeyEditHelp" = "help/en/keyedit.txt"
 
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   "@@accel_Undo" = "U"
   "@@accel_Cut" = "X"
@@ -117,6 +118,7 @@ BEGIN
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronunciable"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion" = "Aquesta és una versió beta de prova de Keyring.  Pot contenir errors bugs. Si us plau, guarda una altra còpia de qualsevol dada." 
 
   "@@CouldntLaunchMemo" =  "El bloc de notes no es pot executar."
@@ -261,6 +263,7 @@ BEGIN
   "Delete Key" = "Elimina record"
   "Delete current key record?" = "Eliminare il record corrente?"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion"
    = "Questa versione di Keyring, è ancora in fase di beta testing. Conservare una copia di backup dei dati."
 
@@ -297,7 +300,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/it/generate.txt"
   "@@KeyEditHelp" = "help/it/keyedit.txt"
-  "@@SetPasswdHelp" = "La master password protegge tutte le chiavi, e deve essere digitata per accedere al database. In caso venga dimenticata, il database non sarà più accessibile."
+  "@@SetPasswdHelp" = "La master password protegge tutte le chiavi, e deve essere digitata per accedere al database. In caso venga dimenticata, il database non sarà più accessibile.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   "There is no data to export." = "Non ci sono dati da esportare."
 
@@ -325,6 +328,7 @@ BEGIN
   "Account:" = "Konto:"
   "Password:" = "Passwort:"
   "Confirm:"  = "Bestätigen:" 
+  "Iter:"  = "Iter:" 
   "Changed:" = "Geändert:"
   "Done" = "Fertig"
   "Preferences" = "Einstellungen"
@@ -333,10 +337,13 @@ BEGIN
   "15 sec" = "15 Sek."
   "60 sec" = "1 Min."
   "5 min" = "5 Min."
-  "Use keyring fonts" = "Benutze Keyring-Schrift"
+  "Only lock when inactive" = "Sperren nur wenn inaktiv"
+  "Use Keyring fonts" = "Benutze Keyring-Schrift"
   "Veil password" = "Verschleiere Passwort"
 
   "Cancel" = "Abbrechen"
+
+  "Keyring for PalmOS" = "Keyring für PalmOS"
 
   "Set Keyring Password" =  "Passwort festlegen"
 
@@ -376,10 +383,11 @@ BEGIN
   "Delete Key" = "Schlüssel löschen"
   "Delete current key record?" = "Aktuellen Schlüssel löschen?"
 
+  "@@AlphaVersion" = "Dies ist eine alpha Testversion von Keyring und sie enthält Fehler! Sie sollte nicht für reale Daten genutzt werden." 
   "@@BetaVersion"
-   = "Dies ist ein beta Testversion von Keyring.  Es könnten Fehler auftreten.  Bitte bewahren sie eine Kopie ihrer Daten auf."
+   = "Dies ist ein beta Testversion von Keyring.  Es könnten Fehler auftreten.  Bitte bewahren Sie eine Kopie Ihrer Daten auf."
 
-  "This is free software.  No warranty." = "Free Software.  Keine Gewährleistung." 
+  "This is free software.  No warranty." = "Freie Software.  Keine Gewährleistung." 
 
   "Released under the GNU GPL v2." = "Herausgegeben unter GNU GPL v2." 
 
@@ -413,7 +421,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/de/generate.txt"
   "@@KeyEditHelp" = "help/de/keyedit.txt"
-  "@@SetPasswdHelp" = "Dieses Passwort schützt alle Schlüssel in der Datenbank.  Es muss regelmäßig beim Zugriff auf die Datenbank eingegeben werden.  Sollten Sie dieses Passwort vergessen, sind ihre Daten für immer verloren."
+  "@@SetPasswdHelp" = "Dieses Passwort schützt alle Schlüssel in der Datenbank.  Es muss regelmäßig beim Zugriff auf die Datenbank eingegeben werden.Sollten Sie dieses Passwort vergessen, sind ihre Daten für immer verloren.\n\nJe mehr Iterationen Sie wählen, desto sicherer ist das Passwort gegen systematisches Probieren geschützt, aber desto länger dauert auch das Prüfen eines Passwortes."
 
   "There is no data to export." = "Keine Daten zum Exportieren vorhanden."
 
@@ -483,6 +491,7 @@ BEGIN
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
   "@@CouldntLaunchMemo" =  "El block de notas no puede ejecutarse."
@@ -517,7 +526,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
@@ -588,6 +597,7 @@ BEGIN
   "Delete current key record?" = "Ta bort den aktuella nyckeln?"
   "Save archive copy on PC" = "Spara arkivkopia på PC"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion"
    = "Detta är en betaversion av Keyring.  Den kan ha buggar.  Spara kopior av all data du inte kan återhämta."
 
@@ -622,7 +632,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/sv/generate.txt"
   "@@KeyEditHelp" = "help/sv/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   "Unfiled" = "Oarkiverad"
   "Banking" = "Bank"
@@ -699,6 +709,7 @@ BEGIN
   "Delete current key record?" = "Actuele sleutel verwijderen?"
   "Save archive copy on PC" = "Bewaar een kopie op de PC"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion"
    = "Dit is een beta test versie van Keyring. Het is mogelijk dat het bugs bevat. Maak alstublieft een kopie van onmisbare gegevens."
 
@@ -735,7 +746,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/nl/generate.txt"
   "@@KeyEditHelp" = "help/nl/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   "@@accel_Undo" = "U"
   "@@accel_Cut" = "X"
@@ -750,33 +761,38 @@ END
 
 
 // ======================================================================
-// French translation contributed by Rick Moen <rick@linuxmafia.com>
-// Pascal <pascal@jaillon.com> and 
-// Alexandre Aractingi <aaractingi@libertysurf.fr>
+// French translation contributed by Rick Moen <rick@linuxmafia.com>,
+// Pascal <pascal@jaillon.com>,
+// Alexandre Aractingi <aaractingi@libertysurf.fr> and
+// Galen Currah <galencurrah@access4less.net>
 
 TRANSLATION "fr"
 BEGIN
+  "Keyring for PalmOS" = "Keyring pour PalmOS"
+
   "New" = "Nouv."
   "Look Up:" = "Trouver :"
   "Key ______ of ______" = "Clef ______ de ______"
   "Key ^0 of ^1" = "Clef ^0 de ^1"
   "Name:" = "Nom:"
   "Account:" = "Compte:" 
-  "Password" = "Mot de passe"
-  "Password:" = "Mot de passe:"
+  "Password" = "Passe"
+  "Password:" = "Passe:"
   "Confirm:" = "Confirmez:"
   "Changed:" = "Changé:"
   "Done" = "Fini"
   "Preferences" = "Préférences"
   "Stay unlocked for:" = "Restez déverrouillé pendant :"
-  "No time" = "pas de délai"
+  "No time" = "Sans délai"
   "15 sec" = "15 sec."
   "60 sec" = "60 sec."
   "5 min" = "5 min."
+  "Use Keyring fonts" = "Utiliser les fontes Keyring"
+  "Veil password" = "Cacher le mot de passe"
 
   "Cancel" = "Annuler"
   "Set Keyring Password" = "Changer son mot de passe"
-  "@@choosepassword" = "Choisissez un mot de passe, s'il vous plait:"
+  "@@choosepassword" = "Choisissez un mot de passe :"
   "Generate Password" = "Générer un Mot de Passe"
   "@@generate1" = "Un nouveau mot de passe "
   "@@generate2" = "Générer :"
@@ -808,10 +824,11 @@ BEGIN
   "Delete current key record?" = "Effacer enregistrement principal ?"
   "Save archive copy on PC" = "Archiver la copie sur le PC ?"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion"
    = "Ceci est une version pilote d'essai de Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de toutes données importantes."
 
-  "This is free software.  No warranty." = "Ce logiciel est gratuit et libre de droits. Il n'y a aucune garantie."
+  "This is free software.  No warranty." = "Gratuit et libre de droits."
 
   "Released under the GNU GPL v2." = "Disponible sous licence GNU GPL v2." 
 
@@ -838,13 +855,16 @@ BEGIN
 
   "Options" = "Options"
   "Preferences..." =  "Préférences..."
+  "Tips..." = "Astuces..."
   "About..." =  "A propos..."
 
   "New Key" = "Nouvelle clé"
 
+  "Unfiled" = "Non classé"
+
   "@@GenerateHelp" = "help/fr/generate.txt"
   "@@KeyEditHelp" = "help/fr/keyedit.txt"
-  "@@SetPasswdHelp" = "Le mot de passe principal protège toutes vos clés. Il doit être saisi pour accéder à la base de données. Ne l'oubliez pas !"
+  "@@SetPasswdHelp" = "Le mot de passe principal protège toutes vos clés. Il doit être saisi pour accéder à la base de données. Ne l'oubliez pas ! The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   "@@accel_Undo" = "Z"
   "@@accel_Cut" = "X"
@@ -914,6 +934,7 @@ BEGIN
   "Delete current key record?" = "Slett den aktuelle nøkkelen?"
   "Save archive copy on PC" = "Lagre en arkivkopi på PC"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion"
    = "Dette er en beta- versjon av Keyring.  Den kan inneholde feil.  Vennligst sørg for å ha sikkerhetskopi av alle data som kan gå tapt."
 
@@ -946,7 +967,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/nb/generate.txt"
   "@@KeyEditHelp" = "help/nb/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   "Unfiled" = "Ingen kategori"
   "Banking" = "Bank"
@@ -1017,6 +1038,7 @@ BEGIN
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
   "@@CouldntLaunchMemo" =  "Kunne ikkje starte Memo Pad."
@@ -1050,7 +1072,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/nn/generate.txt"
   "@@KeyEditHelp" = "help/nn/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
@@ -1118,6 +1140,7 @@ BEGIN
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
   "@@CouldntLaunchMemo"  =  "Nao pude executar o Memo Pad"
@@ -1152,7 +1175,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
@@ -1223,6 +1246,7 @@ BEGIN
   "Delete current key record?" = "Slet aktuelle nøgle?"
   "Save archive copy on PC" = "Gem arkiv på PC"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion"
    = "Sette er en betaversion af Keyring.  Der kan være bugs.  Husk at tage backup af data du ikke kan gendanne."
 
@@ -1257,7 +1281,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/sv/generate.txt"
   "@@KeyEditHelp" = "help/sv/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
 
   "Unfiled" = "Ikke kategoriseret"
   "Banking" = "Bank"
@@ -1352,7 +1376,7 @@ BEGIN
 END
 
 
-FORM ID ID_PrefsForm AT (2 83 156 75)
+FORM ID ID_PrefsForm AT (2 69 156 89)
 MODAL
 BEGIN
 	TITLE "Preferences"
@@ -1368,6 +1392,8 @@ BEGIN
 	PUSHBUTTON "5 min" ID Expiry300Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
 		GROUP 1
 
+	CHECKBOX "Only lock when inactive" ID KeyringKeepCheck
+		AT (3 PREVBOTTOM+2 AUTO AUTO) FONT 1
 	CHECKBOX "Use Keyring fonts" ID KeyringFontsCheck
 		AT (3 PREVBOTTOM+2 AUTO AUTO) FONT 1
 
@@ -1380,7 +1406,7 @@ BEGIN
 END
 
 
-FORM ID SetPasswdForm AT (2 78 156 80)
+FORM ID SetPasswdForm AT (2 53 156 105)
 HELPID SetPasswdHelp
 MODAL
 BEGIN
@@ -1390,16 +1416,29 @@ BEGIN
 		autoid at (5 15) font 0
 
 	field id MasterKeyFld at (65 prevbottom+2 86 auto)
-		underlined maxchars 40
+		underlined maxchars 63
 
 	label "Password:" autoid at (right@prevleft-2 prevtop) font 1
 
-	field id ConfirmFld at (65 prevbottom+4 86 auto)
-		underlined maxchars 40
+	field id ConfirmFld at (65 prevbottom+2 86 auto)
+		underlined maxchars 63
 
 	label "Confirm:" autoid at (right@prevleft-2 prevtop) font 1
 
-	button "OK" OkBtn at (5 prevbottom+8 auto auto)
+	label "Iter:" autoid at (right@40 prevbottom+2) font 1
+	pushbutton "50" id Iter50Push at (prevright+2 prevtop auto auto) group 1
+	pushbutton "100" id Iter100Push at (prevright+1 prevtop auto auto) group 1 
+	pushbutton "250" id Iter250Push at (prevright+1 prevtop auto auto) group 1
+	pushbutton "500" id Iter500Push at (prevright+1 prevtop auto auto) group 1
+	pushbutton "1000" id Iter1000Push at (prevright+1 prevtop auto auto) group 1
+	
+	label "Cipher:" autoid at (right@40 prevbottom+2) font 1
+	pushbutton "No" id CipherNoPush at (prevright+2 prevtop auto auto) group 2
+	pushbutton "DES" id CipherDESPush at (prevright+1 prevtop auto auto) group 2
+	pushbutton "AES" id CipherAES128Push at (prevright+1 prevtop auto auto) group 2
+	pushbutton "AES-256" id CipherAES256Push at (prevright+1 prevtop auto auto) group 2
+
+	button "OK" OkBtn at (5 prevbottom+7 auto auto)
 	button "Cancel" CancelBtn at (prevright+5 prevtop auto auto)
 
 	graffitistateindicator at (140 prevtop)
@@ -1444,7 +1483,7 @@ BEGIN
 	LABEL "Enter your password:" AUTOID AT (3 15) FONT 1
 
 	FIELD ID MasterKeyFld AT (3 prevbottom+1 150 auto)
-		UNDERLINED MAXCHARS 40
+		UNDERLINED MAXCHARS 63
 
         CHECKBOX "Veil password" ID VeilPasswordCheck
                 AT (3 PREVBOTTOM+1 AUTO AUTO)
@@ -1555,6 +1594,15 @@ BEGIN
 	BUTTONS "OK"
 END
 
+ALERT ID ID_ReencryptAlert
+ERROR
+BEGIN
+	TITLE "Error"
+	
+	MESSAGE "There were ^1 broken records that couldn't be reencrypted."
+
+	BUTTONS "OK"
+END
 
 
 ALERT ID alertID_ReadOnly
@@ -1604,11 +1652,11 @@ END
 ALERT ID BetaAlert
 WARNING
 BEGIN
-  TITLE "Beta Software"
+	TITLE "Alpha Software"
 
-  MESSAGE "@@BetaVersion"
+	MESSAGE "@@AlphaVersion"
 
-  BUTTONS "OK" 
+	BUTTONS "OK" 
 END
 
 
@@ -1819,3 +1867,32 @@ STRING ID KeyEditHelp FILE "@@KeyEditHelp"
 STRING ID SetPasswdHelp "@@SetPasswdHelp"
 
 CATEGORIES ID CategoryRsrc "Unfiled" "Banking" "Computer" "Phone" "Web"
+
+/*
+HEX "TMPL" ID 1000
+
+ * The initially set fields.
+ * Format:  Name 0 FieldType FontID
+ * FieldType is defined in keyring.h
+
+  "Name"     0 0 1
+  "Account"  0 0 0
+  "Password" 0 1 0
+  "Changed"  0 2 0
+  "PIN"      0 1 0
+  "TAN"      0 3 0
+  "OTP"      0 4 0
+  "Phone #"  0 0 0 
+  0
+ */
+
+/* The initally set templates.
+ * Format:  Name 0 NumberOfFields  Field1 ...
+
+  "Password"  0 4 1 2 3 255
+  "Banking"   0 4 1 4 5 255
+  "OTP"       0 4 1 6 2 255
+  "Phone"     0 3 7 4 255
+  0
+ */
+

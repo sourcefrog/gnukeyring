@@ -64,8 +64,7 @@ static void Export_Failure(void)
  * space in a memo record.  Returns the number of bytes written, which
  * will be the new length of the memo record.
  */
-static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
-			       void *memoRecord)
+static UInt16 Export_BuildText(UnpackedKeyType *keyRecord, void *memoRecord)
 {
     UInt32	off;
 
@@ -73,6 +72,7 @@ static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 
     off = 0;
 
+#if 0
     /* NB it's OK to call this with a null handle. */
     DB_WriteStringFromHandle(memoRecord, &off, keyRecord->nameHandle,
                              keyRecord->nameLen);
@@ -91,6 +91,7 @@ static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->notesHandle,
 				 keyRecord->notesLen);
     }
+#endif
 
     DmWrite(memoRecord, off, "", 1); /* write nul */
     off++;

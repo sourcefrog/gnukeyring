@@ -51,7 +51,7 @@ UInt16 f_FirstIdx;
 static UInt16 f_FirstIndex;
 static UInt16 f_SelectedIdx;
 
-static Int16 ListForm_RecordIdx(Int16 row)
+static GUI_SECTION Int16 ListForm_RecordIdx(Int16 row)
 {
     Int16       idx = f_FirstIndex;
     Err         err;
@@ -74,25 +74,22 @@ static Int16 ListForm_RecordIdx(Int16 row)
 }
 
 
-void ListForm_DrawToFit(const Char* name, UInt16 idx, 
+/**
+ * Draws a text at the given coordinate.  If the text is longer than
+ * width it is abbreviated by dots.
+ *
+ * This is also called by Search function.  Therefore it must reside
+ * in the default text section.
+ */
+void ListForm_DrawToFit(const Char* name, UInt16 len,
 			Coord x, Coord y, Coord width)
 {
     Coord textWidth;
-    Int16 nameLen;
-    Char altBuf[maxStrIToALen + 1];
-
-    if (!*name) {
-        /* If there is no name, use the record index instead.  */
-        altBuf[0] = '#';
-        StrIToA(altBuf + 1, idx - kNumHiddenRecs);
-        name = altBuf;
-    }
 
     FntSetFont(stdFont);
-    nameLen = StrLen(name);
-    textWidth = FntCharsWidth(name, nameLen);
+    textWidth = FntCharsWidth(name, len);
 
-    WinDrawChars(name, nameLen, x, y);
+    WinDrawChars(name, len, x, y);
     if (textWidth > width) 
     {
 	Coord dotsLen;
@@ -102,7 +99,7 @@ void ListForm_DrawToFit(const Char* name, UInt16 idx,
 }
 
 
-static void ListForm_DrawCell(TablePtr UNUSED(table),
+static GUI_SECTION void ListForm_DrawCell(TablePtr UNUSED(table),
                               Int16 row, Int16 UNUSED(col), 
                               RectanglePtr bounds)
 {
@@ -110,8 +107,11 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
      * stepped forward to the next.
      */
     MemHandle   rec = 0;
-    Char const *recPtr = 0, *scrStr;
+    FieldHeaderType *recPtr = 0;
+    Char const  *scrStr;
+    UInt16      len;
     Int16       idx;
+    static Char altBuf[maxStrIToALen + 1];
 
     /* Clear current cell content.  This is needed by PalmOS 3.3 and below */
     WinEraseRectangle(bounds, 0);
@@ -124,24 +124,31 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
     rec = DmQueryRecord(gKeyDB, idx);
     if (!rec) {
         scrStr = "<no-record>";
-        goto draw;
+	len = StrLen(scrStr);
+	goto draw;
     }
     
     recPtr = MemHandleLock(rec); 
-    if (!recPtr) {
-        scrStr = "<no-ptr>";
-        goto draw;
+    len    = recPtr->len;
+    scrStr = (Char *) (recPtr + 1);
+
+    if (!len) {
+        /* If there is no name, use the record index instead.  */
+        altBuf[0] = '#';
+        StrIToA(altBuf + 1, idx);
+        scrStr = altBuf;
+	len = StrLen(scrStr);
     }
-    scrStr = recPtr;
  draw:
-    ListForm_DrawToFit(scrStr, idx, bounds->topLeft.x, bounds->topLeft.y, 
+    ListForm_DrawToFit(scrStr, len, 
+		       bounds->topLeft.x, bounds->topLeft.y, 
 		       bounds->extent.x);
     
     if (recPtr)
         MemHandleUnlock(rec);
 }
 
-static void ListForm_DrawLockBitmap(void) {
+static GUI_SECTION void ListForm_DrawLockBitmap(void) {
     MemHandle bmpH;
     BitmapPtr bmpP;
     Boolean locked;
@@ -161,7 +168,7 @@ static void ListForm_DrawLockBitmap(void) {
  * Update the table control, after querying the database to see how
  * many rows can be displayed.
  */
-static void ListForm_UpdateTable(void)
+static GUI_SECTION void ListForm_UpdateTable(void)
 {
     UInt16 row;
     f_NumListed = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
@@ -174,7 +181,7 @@ static void ListForm_UpdateTable(void)
 }
 
 
-static void ListForm_UpdateScrollBar(void)
+static GUI_SECTION void ListForm_UpdateScrollBar(void)
 {
     /*
      * Connect the scrollbar to the list.  The list cannot change
@@ -193,12 +200,12 @@ static void ListForm_UpdateScrollBar(void)
 }
 
 
-static void ListForm_UpdateCategory(void)
+static GUI_SECTION void ListForm_UpdateCategory(void)
 {
     Category_UpdateName(f_ListForm, gPrefs.category);
 }
 
-static void ListForm_UpdateSelection(void)
+static GUI_SECTION void ListForm_UpdateSelection(void)
 {
     if (f_SelectedIdx >= f_FirstIdx
 	&& f_SelectedIdx < f_FirstIdx + f_ScreenRows)
@@ -207,7 +214,7 @@ static void ListForm_UpdateSelection(void)
 	TblUnhighlightSelection(f_Table);
 }
 
-static void ListForm_Update(void)
+static GUI_SECTION void ListForm_Update(void)
 {
     ListForm_UpdateTable();
     ListForm_UpdateCategory();
@@ -218,7 +225,7 @@ static void ListForm_Update(void)
     ListForm_DrawLockBitmap();
 }
 
-static void ListForm_InitTable(void)
+static GUI_SECTION void ListForm_InitTable(void)
 {
     UInt16 row;
 
@@ -239,7 +246,7 @@ static void ListForm_InitTable(void)
 }
 
 
-static void ListForm_FormOpen(void)
+static GUI_SECTION void ListForm_FormOpen(void)
 {
     f_ListForm = FrmGetActiveForm();
     f_Table = UI_GetObjectByID(f_ListForm, ID_KeyTable);
@@ -253,7 +260,7 @@ static void ListForm_FormOpen(void)
 }
 
 
-static Boolean ListForm_SelectIndex(UInt16 listIdx)
+static GUI_SECTION Boolean ListForm_SelectIndex(UInt16 listIdx)
 {
     UInt16      idx;
     Err         err;
@@ -264,14 +271,14 @@ static Boolean ListForm_SelectIndex(UInt16 listIdx)
     err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
 				 dmSeekForward, gPrefs.category);
     ErrFatalDisplayIf(err, __FUNCTION__ ": selected item doesn't exist");
-    KeyEditForm_GotoRecord(idx);
-    return true;
+    KeyEdit_GotoRecord(idx);
+    return false;
 }
 
 
-static void ListForm_NewKey(void)
+static GUI_SECTION void ListForm_NewKey(void)
 {
-     KeyEditForm_GotoRecord(kNoRecord);
+     KeyEdit_GotoRecord(kNoRecord);
 }
 
 
@@ -283,7 +290,7 @@ static void ListForm_NewKey(void)
  * display.  However we leave the display as close as possible to
  * where the user put it last.  
  */
-static void ListForm_Scroll(UInt16 newPos)
+static GUI_SECTION void ListForm_Scroll(UInt16 newPos)
 {
     UInt16 oldPos = f_FirstIdx;
     f_FirstIdx = newPos;
@@ -297,12 +304,12 @@ static void ListForm_Scroll(UInt16 newPos)
 }
 
 
-static void ListForm_LookUpItem(Char *item)
+static GUI_SECTION void ListForm_LookUpItem(Char *item)
 {
     UInt16 idx, itemLen, matchLen;
     UInt16 catpos;
     MemHandle rec;
-    Char *recPtr;
+    FieldHeaderType *fldHeader;
     Int16 compare;
     if (!item || !(itemLen = StrLen(item))) {
 	f_SelectedIdx = kNoRecord;
@@ -318,9 +325,10 @@ static void ListForm_LookUpItem(Char *item)
 	    ListForm_Scroll(f_NumListed);
 	    break;
 	}
-	recPtr = MemHandleLock(rec); 
-	if (recPtr) {
-	    compare = TxtGlueCaselessCompare(recPtr, StrLen(recPtr), NULL,
+	fldHeader = MemHandleLock(rec); 
+	if (fldHeader) {
+	    compare = TxtGlueCaselessCompare((Char *) (fldHeader + 1), 
+					     fldHeader->len, NULL,
 					     item, itemLen, &matchLen);
 	    MemHandleUnlock(rec);
 	    if (compare >= 0) {
@@ -338,7 +346,7 @@ static void ListForm_LookUpItem(Char *item)
     }
 }
     
-static void ListForm_CategoryTrigger(void)
+static GUI_SECTION void ListForm_CategoryTrigger(void)
 {
     if (Category_Selected(&gPrefs.category, true)) {
         ListForm_Update();
@@ -347,7 +355,7 @@ static void ListForm_CategoryTrigger(void)
 }
 
 
-Boolean ListForm_HandleEvent(EventPtr event)
+GUI_SECTION Boolean ListForm_HandleEvent(EventPtr event)
 {
     Boolean result = false;
     
@@ -394,7 +402,9 @@ Boolean ListForm_HandleEvent(EventPtr event)
     case tblSelectEvent:
 	if (event->data.tblSelect.tableID != ID_KeyTable)
 	    break;
-        return ListForm_SelectIndex(f_FirstIdx + event->data.tblSelect.row);
+	f_SelectedIdx = f_FirstIdx + event->data.tblSelect.row;
+	ListForm_UpdateSelection();
+        return ListForm_SelectIndex(f_SelectedIdx);
 
     case keyDownEvent:
 	if (TxtCharIsHardKey(event->data.keyDown.modifiers, 

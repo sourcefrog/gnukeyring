@@ -22,14 +22,116 @@
  */
 
 #include "includes.h"
+extern void *alloca(unsigned long size);
+#define EVEN(x) (((x)+1)&~1)
+
+#define kKeyDBTempName "Keys-GtkR-tmp"
+#define kKeyDBTmpType 'ktmp'
 
 /*
- * TODO: Instead of unpacking and re-packing, just convert each
- * encrypted block in place.  There's a little complication to skip
- * the public name, but it's otherwise probably simpler and certainly
- * quicker.
+ * TODO: Create a shadow database and only if that succeeds remove
+ * old database and rename new one.
  */
 
+static REENCRYPT_SECTION
+Err SetPasswd_ReencryptRecords(CryptoKey *oldRecordKey, 
+			       CryptoKey *newRecordKey, 
+			       DmOpenRef newKeyDB)
+{
+    UInt16 	numRecs = DmNumRecords(gKeyDB);
+    UInt16	attr, idx, newIdx;
+    MemHandle   oldRecH, newRecH;
+    void	*oldRecPtr, *newRecPtr;
+    UInt8       *plainBuf;
+    UInt16      maxBlockSize = 
+	oldRecordKey->blockSize > newRecordKey->blockSize
+	? oldRecordKey->blockSize : newRecordKey->blockSize;
+    UInt8       ivec[maxBlockSize];
+    UInt16      plainBufSize;
+    UInt32      off, size, newsize, i;
+    Err         err;
+
+    plainBufSize = 128;
+    plainBuf = MemPtrNew(plainBufSize);
+    if (!plainBuf) {
+	return memErrNotEnoughSpace;
+    }
+
+    for (idx = kNumHiddenRecs; idx < numRecs; idx++) {
+	/* Skip deleted records.  Handling of archived records is a
+	 * bit of an open question, because we'll still want to be
+	 * able to decrypt them on the PC.  (If we can ever do
+	 * that...)
+	 */
+	err = DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL);
+	if (err)
+	    goto outErr;
+	if ((attr & (dmRecAttrDelete | dmRecAttrSecret)))
+	    continue;
+
+	/* Open record */
+	oldRecH = DmQueryRecord(gKeyDB, idx);
+        if (!oldRecH) {
+	    err = DmGetLastErr();
+	    goto outErr;
+	}
+        oldRecPtr = MemHandleLock(oldRecH);
+
+	/* Get the offset and size of the encrypted block */
+	off = EVEN(* (UInt16 *) oldRecPtr) + sizeof(FieldHeaderType);
+	size = MemPtrSize(oldRecPtr) - off - oldRecordKey->blockSize;
+	if (off + oldRecordKey->blockSize > MemPtrSize(oldRecPtr)
+	    || (size & (oldRecordKey->blockSize-1))) {
+	    err = dmErrCorruptDatabase;
+	    goto outErr;
+	}
+	newsize = (size + newRecordKey->blockSize - 1)
+	    & ~(newRecordKey->blockSize - 1);
+
+	if (newsize > plainBufSize) {
+	    MemSet(plainBuf, plainBufSize, 0);
+	    MemPtrFree(plainBuf);
+	    plainBufSize = newsize;
+	    plainBuf = MemPtrNew(plainBufSize);
+	    if (!plainBuf) {
+		err = memErrNotEnoughSpace;
+		goto outErr;
+	    }
+	}
+
+	MemMove(ivec, oldRecPtr + off, oldRecordKey->blockSize);
+	CryptoRead(oldRecPtr + off + oldRecordKey->blockSize, plainBuf, size, 
+		   oldRecordKey, ivec);
+
+	newIdx = dmMaxRecordIndex;
+	newRecH = DmNewRecord(newKeyDB, &newIdx, 
+			      off + newRecordKey->blockSize + newsize);
+	if (!newRecH) {
+	    err = DmGetLastErr();
+	    goto outErr;
+	}
+	
+        newRecPtr = MemHandleLock(newRecH);
+	for (i = 0; i < newRecordKey->blockSize; i++) 
+	    ivec[i] = Secrand_GetByte();
+	for (i = size; i < newsize; i++)
+	    plainBuf[i] = Secrand_GetByte();
+	DmWrite(newRecPtr, 0, oldRecPtr, off);
+	DmWrite(newRecPtr, off, ivec, newRecordKey->blockSize);
+	CryptoWrite(plainBuf, plainBuf, newsize, newRecordKey, ivec);
+	DmWrite(newRecPtr, off + newRecordKey->blockSize, plainBuf, newsize);
+	MemHandleUnlock(newRecH);
+	MemHandleUnlock(oldRecH);
+	DmReleaseRecord(newKeyDB, newIdx, true);
+    }
+
+    err = 0;
+    outErr:
+    /* Erase and free plainBuf */
+    MemSet(plainBuf, plainBufSize, 0);
+    MemPtrFree(plainBuf);
+    return err;
+}
 
 /*
  * Walk through the database, and for each record decrypt it using the
@@ -44,52 +146,92 @@
  * We do have to also include archived records, as they must be
  * accessible on the PC.
  */
-void KeyDB_Reencrypt(CryptoKey oldRecordKey, Char const *newPasswd)
+REENCRYPT_SECTION 
+void SetPasswd_Reencrypt(CryptoKey *oldRecordKey, 
+			 Char *newPassword, UInt16 cipher, UInt16 iter)
 {
     /* We read each record into memory, decrypt it using the old
      * unlock hash, then encrypt it using the new hash and write it
      * back. */
-    UInt16 	numRecs = DmNumRecords(gKeyDB);
-    UInt16 	idx;
-    MemHandle   recHand;
-    void	*recPtr;
-    UInt16	attr;
-    Err		err;
-    UnpackedKeyType	unpacked;
-    UInt8	keyMD5sum[kMD5HashSize];
-    CryptoKey	newRecordKey;
+    Err		 err;
+    CryptoKey    *newRecordKey;
+    SaltHashType salthash;
+    LocalID      newKeyDBID;
+    DmOpenRef    newKeyDB;
+    LocalID      clearAppInfo, appInfo;
+    UInt16       version;
+    UInt32       type;
 
-    MD5((void *) newPasswd, StrLen(newPasswd), keyMD5sum);
-    CryptoPrepareKey(keyMD5sum, newRecordKey);
-    MemSet(keyMD5sum, sizeof(keyMD5sum), 0);
-
-    for (idx = kNumHiddenRecs; idx < numRecs; idx++) {
-	// Skip deleted records.  Handling of archived records is a
-	// bit of an open question, because we'll still want to be
-	// able to decrypt them on the PC.  (If we can ever do
-	// that...)
-	err = DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL);
-	ErrFatalDisplayIf(err, "DmRecordInfo");
-	if (attr & (dmRecAttrDelete | dmRecAttrSecret))
-	    continue;
-
-	// Open read-only and read in to memory
-	recHand = DmGetRecord(gKeyDB, idx);
-        if (!recHand) {
-             UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),
-                                __FUNCTION__ ": DmGetRecord");
-             continue;
-        }
-        recPtr = MemHandleLock(recHand);
-	Keys_UnpackRecord(recPtr, &unpacked, oldRecordKey);
-        MemHandleUnlock(recHand);
-        Keys_SaveRecord(&unpacked, idx, newRecordKey);
-	err = DmReleaseRecord(gKeyDB, idx, true);
-	ErrFatalDisplayIf(err, "DmReleaseRecord");
-
-	UnpackedKey_Free(&unpacked);
+    newRecordKey = MemPtrNew(sizeof(CryptoKey));
+    if (!newRecordKey) {
+	err = memErrNotEnoughSpace;
+	goto outErr0;
     }
-    MemSet(newRecordKey, sizeof(newRecordKey), 0);
+
+    if ((err = PwHash_Create(newPassword, cipher, iter, 
+			     &salthash, newRecordKey))) {
+	FrmCustomAlert(NotEnoughFeaturesAlert, "crypto library", NULL, NULL);
+	MemPtrFree(newRecordKey);
+	return;
+    }
+
+    newKeyDBID = DmFindDatabase(gKeyDBCardNo, kKeyDBTempName);
+    if (newKeyDBID)
+	DmDeleteDatabase(gKeyDBCardNo, newKeyDBID);
+
+    if ((err = DmCreateDatabase(gKeyDBCardNo, kKeyDBTempName,
+				kKeyringCreatorID, kKeyDBTmpType,
+				false /* not resource */)))
+	goto outErr;
+
+    newKeyDBID = DmFindDatabase(gKeyDBCardNo, kKeyDBTempName);
+    if (!newKeyDBID) {
+	err = DmGetLastErr();
+	goto outErr;
+    }
+
+    newKeyDB = DmOpenDatabase(gKeyDBCardNo, newKeyDBID, dmModeReadWrite);
+    if (!newKeyDB) {
+	err = DmGetLastErr();
+	goto outErr1;
+    }
+
+    err = SetPasswd_ReencryptRecords(oldRecordKey, newRecordKey, newKeyDB);
+
+    if (!err) {
+	appInfo = DmGetAppInfoID(gKeyDB);
+	DmCloseDatabase(gKeyDB);
+	clearAppInfo = 0;
+	DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL,
+			  NULL, NULL, NULL, NULL,
+			  NULL, NULL, &clearAppInfo, NULL,
+			  NULL, NULL);
+	
+	DmDeleteDatabase(gKeyDBCardNo, gKeyDBID);
+    
+	gKeyDBID = newKeyDBID;
+	gKeyDB = newKeyDB;
+	version = kDatabaseVersion;
+	type = kKeyDBType;
+	DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID, kKeyDBName,
+			  NULL, &version, NULL, NULL,
+			  NULL, NULL, &appInfo, NULL,
+			  &type, NULL);
+	PwHash_Store(newPassword, &salthash);
+	MemSet(&salthash, sizeof(salthash), 0);
+	MemSet(&newRecordKey, sizeof(newRecordKey), 0);
+	return;
+    }
+    
+    DmCloseDatabase(newKeyDB);
+    outErr1:
+    DmDeleteDatabase(gKeyDBCardNo, newKeyDBID);
+    outErr:
+    CryptoDeleteKey(newRecordKey);
+    MemPtrFree(newRecordKey);
+    outErr0:
+    MemSet(&salthash, sizeof(salthash), 0);
+
+    /* Complain about errors now. */
+    ErrAlert(err);
 }
-
-

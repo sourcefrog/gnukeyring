@@ -16,6 +16,110 @@ Requirements
  * Should use a well known and researched encryption method.
 
 
+======================================================================
+Database format -- Version 5
+
+APPINFO Block:
+  AppInfoType      categoryInfo  /* needed by PalmOS */
+  SaltHashType     masterHash
+
+#if VERSION > 5
+  /* later versions may add the following information.
+     This is just a suggestion. I will see if it fits, later. */
+  KrCatInfoType    krCatInfo[dmRecNumCategories/*16*/]
+  UInt8            numberOfLables;
+  UInt8            numberOfTemplates;
+  LabelInfoType    labelInfos[numberOfLables];
+  TemplateInfoType templateInfos[numberOfTemplates];
+  ...
+
+KrCatInfoType:
+  UInt8  defaultTemplate
+#endif
+
+SaltHashType:
+  UInt8    salt[8];
+  UInt16   iter;
+  UInt16   cipher;
+  UInt8    hash[8];
+
+#if VERSION > 5
+LabelInfoType:
+  Char   label[16];    /* User defined label text     */
+  UInt8  fieldType;    /* fieldType 0:Text 1:Password 2:Modified-Date 3:OP*/
+  FontID defaultFont;  /* font to use for value field */
+
+TemplateInfoType:
+  strz   name;
+  UInt8  numFields;
+  LabelID label[numFields];
+#endif
+
+Record format:
+
+unencrypted:
+  Field   nameField
+
+  IVec    ivec
+encrypted:
+  Field  field1
+  Field  field2
+  ...
+  random padding to multiple of 8 bytes.
+
+where Field is:
+  UInt16  len    /* length of field including header, 0 for last field */
+  LabelID label  /* 0:name,1:account,2:password,3:lastchanged,255:notes */
+  UInt8   font   /* Only stdfont(0) allowed */
+  data
+  0/1 byte padding for next even address.
+
+#if VERSION > 5
+LabelID is a 8 bit value and index into the label
+table in AppInfo block.
+#endif
+
+Crypto information:
+
+For deriving the encryption key from the password, we use the
+algorithm described in the PKCS #5 (RFC 2898) standard.
+
+Snib          = PBKDF2(Password, Salt, Iter)
+EncryptionKey = Snib
+KeyHash       = first64bits(SHA1(Snib ; Salt))
+InitialVector = random 8 bytes.
+
+Encryption is done with DES-EDE3-CBC  (or AES-CBC)
+
+Reasoning:
+
+The Snib is generated from the password string in standard way. The
+iteration count (Iter) is used to make brute-force attacks difficult.
+It is chosen by the user to compromise between speed and security.
+The Snib is all you need to encrypt database and check for
+correctness.  Because the snib also depends on the salt and because it
+doesn't give away the Masterkey, getting the snib doesn't allow to
+encrypt another database with the same MasterKey.
+
+The KeyHash is stored in the data base.  Therefore it must be a secure
+hash and should use the salt to prevent dictionary attacks.  While the
+key has 168 bits, the KeyHash only has 64 bits.  This makes it
+impossible to reconstruct the key by brute-force reversal of the hash,
+at least if the password is stronger than 64 bits.  On the other hand
+64 bits are enough to detect mistyped passwords.
+
+InitialVector contains 8 random bytes to make it unlikely that the same
+IV will ever be used to encrypt a different record.
+
+=====================================================================
+Database format -- Version 0-4
+
+These  versions differ only in the way they store the masterHash.
+Version 3 and Version 2 were temporary versions and are not supported.
+Version 0:  stored in AppInfo block, didn't support categories.
+Version 1:  stored in SortInfo block (which isn't backed up).
+Version 4:  stored in hidden record at index 0.
+
 Packed format of key records:
 
 strz name of record
@@ -23,112 +127,23 @@ encrypted:
   strz account name
   strz password
   strz notes
+  DateType last change  /* ommitted in keyring 1.0 and later */
+  zero padding to multiple of 8 bytes.
 
-It's OK for any of these fields to be empty.  If they are, we use
-the record's unique ID in the list.
+It's OK for any of these fields to be empty.
 
-New fields may be added at the end.  Note that we must be careful when
-parsing them, in case an error in encryption or elsewhere has broken
-this format.
+Crypto Information:
 
-Key records are stored unpacked in a KeyRecordType, with all
-character pointers to strings allocated elsewhere on the card.
+KeyHash       = MD5(Salt; MasterKey; padding to 64 bytes)
+Snib          = MD5(MasterKey)
+EncryptionKey = OddParity(Snib)
 
-The first record is unencrypted.  After it's trailing NUL comes a
-series of ECB DES3 blocks.
+Encryption is done with DES-EDE2-ECB
 
 Deleted or archived records are always stored at the end of the
 database.
 
-Key records are stored encrypted by a random session key.  The session
-key in turn is stored encrypted by the password in the application
-info block.
-
-
-Future Plans:
-
-In the next release I would like to extend this format to make it more
-flexible and powerful:
-
-UInt16  recordVersion
-FontID  nameFont
-strz    name of record
-encrypted:
-  Field  field1
-  Field  field2
-  ...
-
-where Field is:
-  LabelID label
-  FontID  font
-  strz    value
-
-LabelID is a 8 bit value.  Labels 0..127 are system defined, 128..255
-are user defined.  System defined labels may have a special meaning.
-The user defined labels are in the AppInfo header.
-
-
-Encryption strategies:
-
- * don't check any password
- * don't encrypt; check against system password
- * don't encrypt; check against category password
- * DES encryption with password
- * 3DES EDE encryption with password
-
-We want to follow the Debian policy of not offering weak encryption:
-if people don't use a reasonable strategy they don't get any
-encryption.  For example we don't want to encrypt with a fixed key.
-
-Whenever the master key changes or the strategy changes we may have to
-unencrypt and reencrypt all the records in that category.
-
-Perhaps optionally categories should require a password even to see
-what records are in that category.
-
-I haven't implemented any of this at the moment: it seems enough to
-just use DES encryption and allow people to set an empty password if
-they want that.
-
-
-
-Storage of categories:
- 
-For each category, we want to store:
- 
- - name of category
- - encryption strategy
- - timeout
- - other
- 
-This should go (I think) into the database's appinfo block, or at
-least be referenced from there.
- 
-We want to have a way to check that the user enters the correct
-password: if they make a typo it's much more friendly to just say
-so than to try to decode the records and get garbage.
- 
-I think that's true.  Maybe showing garbage is cooler, but then the
-record format will be damaged and in any case we don't want people
-to be easily able to overwrite record unless they've entered the
-right password.
-
-However, we want to be careful not to compromise our encryption
-scheme by doing this: it must not give away the password or allow a
-known-plaintext attack.
-
-Storing a secure hash of the password should be enough: we can hash
-the entered password to check if it is correct.  If they match
-correctly, we can go ahead and decrypt using that key.  Perhaps the
-hash should contain some salt, so that attackers can't e.g. notice
-that two categories have the same key?
-
-Should we encrypt the records using the key itself?
-
-
-
-
-----------------------------------------------------------------------
+====================================================================
 Password timeout:
 
 The encryption key (AKA snib) is stored in a special memory block.
@@ -153,7 +168,11 @@ code simpler and also probably makes it safe to re-export this code
 from the USA.  This means we can only use DES and have to do a bit of
 work to call it the right way, but that's OK.  
 
-DES-EDE gives 2^112 possible encryption keys.  This is good enough,
+Unfortunately the PalmOS functions are all undocumented and not
+supported for all Palms.  So we use PilotSSLeay to get portable crypto
+functions.
+
+DES-EDE gives 2^168 possible encryption keys.  This is good enough,
 though some algorithms allow larger keys.  However, since the only
 secret here is the user's password it's the real limiting factor.
 
@@ -171,9 +190,8 @@ and scribbled out when it's locked again (see above).  Actually, it
 lasts even when the app exits and restarts, because we stay unlocked
 then even if timeout hasn't expired.
 
-We have to make sure the key and the hashed key are not stored
-anywhere where they could be transferred to a PC.  So they can't go
-into a preference or into the database.  
+We made sure the key and the hashed key are not stored anywhere where
+they could be transferred to a PC.
 
 We leave the first part of the record -- the publicly-visible name --
 unencrypted at the start.  This makes it easy to display and sort the
@@ -185,9 +203,11 @@ This means we have to decrypt and re-encrypt all records when the user
 changes their password.  That's pretty reasonable, for changing the
 password ought to lock out anyone who knew the previous key.
 
-We don't use the password itself as the key, but rather it's MD5 hash.
-This gives 128 bits, so we have two 64-bit keys (though DES will
-ignore the parity bits from each.)
+We don't use the password itself as the key, but rather the product of
+the password a 4 byte salt and a lot of MD5 operations.  This makes
+the password gives
+us enough128 bits, so we have two 64-bit keys (though DES will ignore the
+parity bits from each.)
 
 It's supposed to be infeasible to derive this from the verification
 hash.  I hope this is OK.
