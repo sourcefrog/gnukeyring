@@ -600,7 +600,7 @@ BEGIN
 		MENUITEM "Generate Password..." id GenerateCmd
 		MENUITEM "Export to Memo" id ExportMemoCmd
 		MENUITEM SEPARATOR
-		MENUITEM "Undo All" ID EditUndoAll
+		MENUITEM "Undo All" ID ID_UndoAllCmd
 		MENUITEM "Delete..." id DeleteKeyCmd 
 	END
 

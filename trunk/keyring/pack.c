@@ -55,6 +55,7 @@
 #include "auto.h"
 #include "resource.h"
 #include "memutil.h"
+#include "dbutil.h"
 
 static UInt32 packBodyLen, packRecLen;
 
@@ -99,15 +100,11 @@ static char *Keys_PackBody(UnpackedKeyType const *u)
 
 static void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr)
 {
-    Char       *fldPtr;
-    UInt32     off;
+    UInt32     off = 0;
     void       *bodyBuf;
 
-    fldPtr = MemHandleLock(unpacked->nameHandle);
-    DmStrCopy(recPtr, 0, fldPtr);
-    MemHandleUnlock(unpacked->nameHandle);
-    off = unpacked->nameLen + 1;
-
+    DB_WriteStringFromHandle(recPtr, &off, unpacked->nameHandle,
+                             unpacked->nameLen + 1); /* NUL */
     bodyBuf = Keys_PackBody(unpacked);
     DES3_Write(recPtr, off, bodyBuf, packBodyLen);
     MemPtrFree(bodyBuf);
