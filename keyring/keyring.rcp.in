@@ -1,4 +1,5 @@
-/*
+/* -*-coding:latin-1;-*-
+ *
  * Keyring -- store passwords securely on a handheld
  *
  * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
@@ -36,18 +37,20 @@ BEGIN
   "@@NotImplemented" = "Sorry, that feature is not implemented yet."
   "@@langSpecificChars" =  "ä¥©"
 
+  "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+
   "@@GenerateHelp" = "help/en/generate.txt"
   "@@KeyEditHelp" = "help/en/keyedit.txt"
 
   "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "P"
-  "@accel_SelectAll" = "S" 
-  "@accel_Keyboard" = "K"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "P"
+  "@@accel_SelectAll" = "S" 
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
 END
 
 // ======================================================================
@@ -96,6 +99,7 @@ BEGIN
   "@@OutOfMemory" =  "Out of memory."
   "@@WrongPassword" = "Password errata.  Si prega di riprovare"
   "@@PasswordMismatch" =  "Le password inserite non corrispondono."
+  "@@langSpecificChars" =  "ä¥©"
 
   "Not here yet" = "Non ancora implementato"
   "@@NotImplemented" = "Questa caratteristica non è ancora stata implementata."
@@ -106,7 +110,7 @@ BEGIN
   "Delete Key" = "Elimina record"
   "Delete current key record?" = "Eliminare il record corrente?"
 
-  "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+  "@@BetaVersion"
    = "Questa fighissima versione di Keyring, oltre ad essere beta è anche stata patchata da Paolo. Se perdete tutto affari vostri."
 
   "This is free software.  No warranty." = "Free Software.  Nessuna garanzia." 
@@ -142,6 +146,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/en/generate.txt"
   "@@KeyEditHelp" = "help/en/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "There is no data to export." = "Non ci sono dati da esportare."
 
@@ -149,13 +154,13 @@ BEGIN
   "Phone" = "Telefono"
   "Banking" = "Banca"
 
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "V"
-  "@accel_SelectAll" = "S"
-  "@accel_Keyboard" = "K"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "V"
+  "@@accel_SelectAll" = "S"
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
 END
 
 // ======================================================================
@@ -200,9 +205,9 @@ BEGIN
   "Encrypting..." = "Verschlüsseln..."
   "Decrypting..." = "Entschlüsseln..."
 
-  "@@OutOfMemory" =  "Nicht genügend dynamic memory."
-  "@@WrongPassword" = "Passwort falsch.  Bitte versuchen sie es nocheinmal."
-  "@@PasswordMismatch" =  "Passworte stimmen nicht überein.  Bitte versuchen sie es nocheinmal."
+  "@@OutOfMemory" =  "Nicht genügend dynamischer Speicher."
+  "@@WrongPassword" = "Passwort falsch.  Bitte versuchen sie es noch einmal."
+  "@@PasswordMismatch" =  "Passworte stimmen nicht überein.  Bitte versuchen sie es noch einmal."
 
   "Not here yet" = "Noch nicht implementiert"
   "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
@@ -214,7 +219,7 @@ BEGIN
   "Delete Key" = "Schlüssel löschen"
   "Delete current key record?" = "Aktuellen Schlüssel löschen?"
 
-  "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+  "@@BetaVersion"
    = "Dies ist ein beta Testversion von Keyring.  Es könnten Fehler auftreten.  Bitte bewahren sie eine Kopie ihrer Daten auf."
 
   "This is free software.  No warranty." = "Free Software.  Keine Gewährleistung." 
@@ -250,6 +255,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/de/generate.txt"
   "@@KeyEditHelp" = "help/de/keyedit.txt"
+  "@@SetPasswdHelp" = "Dieses Passwort schützt alle Schlüssel in der Datenbank.  Es muss regelmäßig beim Zugriff auf die Datenbank eingegeben werden.  Sollten Sie dieses Passwort vergessen, sind ihre Daten für immer verloren."
 
   "There is no data to export." = "Keine Daten zum Exportieren vorhanden."
 
@@ -257,13 +263,13 @@ BEGIN
   "Phone" = "Telekommunikation"
   "Banking" = "Banken"
 
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "V"
-  "@accel_SelectAll" = "A"
-  "@accel_Keyboard" = "T"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "V"
+  "@@accel_SelectAll" = "A"
+  "@@accel_Keyboard" = "T"
+  "@@accel_Graffiti" = "G"
 END
 
 // ======================================================================
@@ -315,6 +321,8 @@ BEGIN
   "@@NotImplemented" = "Esta característica no está implementada aun."
   "@@langSpecificChars" =  "ä¥©"
 
+  "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+
   "^1: System error ^2" =  "^1: ¡Error! ^2"
   "Couldn't launch the Memo Pad" =  "El block de notas no puede ejecutarse."
 
@@ -348,16 +356,17 @@ BEGIN
 
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "P"
-  "@accel_SelectAll" = "S" 
-  "@accel_Keyboard" = "K"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "P"
+  "@@accel_SelectAll" = "S" 
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
 END
 
 // ======================================================================
@@ -416,7 +425,7 @@ BEGIN
   "Delete current key record?" = "Ta bort den aktuella nyckeln?"
   "Save archive copy on PC" = "Spara arkivkopia på PC"
 
-  "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+  "@@BetaVersion"
    = "Detta är en betaversion av Keyring.  Den kan ha buggar.  Spara kopior av all data du inte kan återhämta."
 
   "This is free software.  No warranty." = "Detta är fri programvara.  Inga garantier." 
@@ -450,6 +459,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/sv/generate.txt"
   "@@KeyEditHelp" = "help/sv/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "Unfiled" = "Oarkiverad"
   "Banking" = "Bank"
@@ -459,13 +469,13 @@ BEGIN
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "P"
-  "@accel_SelectAll" = "S" 
-  "@accel_Keyboard" = "K"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "P"
+  "@@accel_SelectAll" = "S" 
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
 END
 
 // ======================================================================
@@ -524,7 +534,7 @@ BEGIN
   "Delete current key record?" = "Actuele sleutel verwijderen?"
   "Save archive copy on PC" = "Bewaar een kopie op de PC"
 
-  "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+  "@@BetaVersion"
    = "Dit is een beta test versie van GNU Keyring. Het is mogelijk dat het bugs bevat. Maak alstublieft een kopie van onmisbare gegevens."
 
   "This is free software.  No warranty." = "Gratis software. Geen garantie." 
@@ -560,14 +570,15 @@ BEGIN
 
   "@@GenerateHelp" = "help/nl/generate.txt"
   "@@KeyEditHelp" = "help/nl/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "V"
-  "@accel_SelectAll" = "A"
-  "@accel_Keyboard" = "T"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "V"
+  "@@accel_SelectAll" = "A"
+  "@@accel_Keyboard" = "T"
+  "@@accel_Graffiti" = "G"
 END
 
 
@@ -626,7 +637,7 @@ BEGIN
   "Delete current key record?" = "Effacez principal enregistrement?"
   "Save archive copy on PC" = "Enregistrez la copie d'archives sur le PC?"
 
-  "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+  "@@BetaVersion"
    = "Ceci est une vserion pilote d'essai de GNU Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de n'importe quelles donnÃ©es irrÃ©mÃ©diables."
 
   "This is free software.  No warranty." = "C'est logiciel libre.  Il n'y a aucune garantie."
@@ -662,14 +673,15 @@ BEGIN
 
   "@@GenerateHelp" = "help/fr/generate.txt"
   "@@KeyEditHelp" = "help/fr/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "V"
-  "@accel_SelectAll" = "A"
-  "@accel_Keyboard" = "T"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "V"
+  "@@accel_SelectAll" = "A"
+  "@@accel_Keyboard" = "T"
+  "@@accel_Graffiti" = "G"
 END
 
 // ======================================================================
@@ -729,7 +741,7 @@ BEGIN
   "Delete current key record?" = "Slett den aktuelle nøkkelen?"
   "Save archive copy on PC" = "Lagre en arkivkopi på PC"
 
-  "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data."
+  "@@BetaVersion"
    = "Dette er en beta- versjon av Keyring.  Den kan inneholde feil.  Vennligst sørg for å ha sikkerhetskopi av alle data som kan gå tapt."
 
   "This is free software.  No warranty." = "Gratis programvare.   Ingen garanti."
@@ -761,6 +773,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/no/generate.txt"
   "@@KeyEditHelp" = "help/no/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "Unfiled" = "Ingen kategori"
   "Banking" = "Bank"
@@ -772,19 +785,19 @@ BEGIN
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
-  "@accel_Undo" = "A"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "K"
-  "@accel_Paste" = "L"
-  "@accel_SelectAll" = "M" 
-  "@accel_Keyboard" = "T"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "A"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "K"
+  "@@accel_Paste" = "L"
+  "@@accel_SelectAll" = "M" 
+  "@@accel_Keyboard" = "T"
+  "@@accel_Graffiti" = "G"
 END
 
 // ======================================================================
 // Norwegian (nynorsk) translation by Andreas-Johann Ulvestad <aj@nlc.no>
 
-TRANSLATION "ny"
+TRANSLATION "no_NY"
 BEGIN
   "New" = "Ny"
   "Key ______ of ______" = "Nøkkel ______ av ______" 
@@ -830,6 +843,8 @@ BEGIN
   "@@NotImplemented" = "Denne funksjonen er endå ikkje implementert."
   "@@langSpecificChars" =  "ä¥©"
 
+  "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+
   "^1: System error ^2" =  "^1: Systemfeil ^2"
   "Couldn't launch the Memo Pad" =  "Kunne ikkje starte Memo Pad."
 
@@ -862,16 +877,17 @@ BEGIN
 
   "@@GenerateHelp" = "help/no_NY/generate.txt"
   "@@KeyEditHelp" = "help/no_NY/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "P"
-  "@accel_SelectAll" = "S" 
-  "@accel_Keyboard" = "K"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "P"
+  "@@accel_SelectAll" = "S" 
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
 END
 
 
@@ -926,6 +942,8 @@ BEGIN
   "@@NotImplemented" = "Ainda nao implementado"
   "@@langSpecificChars" =  "ä¥©"
 
+  "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+
   "^1: System error ^2" =  "^1: Error: ^2"
   "Couldn't launch the Memo Pad" =  "Nao pude executar o Memo Pad"
 
@@ -959,16 +977,17 @@ BEGIN
 
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "P"
-  "@accel_SelectAll" = "S"
-  "@accel_Keyboard" = "K"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "P"
+  "@@accel_SelectAll" = "S"
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
 END
 
 
@@ -1305,7 +1324,7 @@ WARNING
 BEGIN
   TITLE "Beta Software"
 
-  MESSAGE "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data."
+  MESSAGE "@@BetaVersion"
 
   BUTTONS "OK" 
 END
@@ -1444,7 +1463,7 @@ BEGIN
 	LABEL "__VERSION__ (__DATE__)" 
 		AUTOID AT (CENTER PREVBOTTOM) FONT 1
 
-  	LABEL "Copyright 1999-2001 by Martin Pool"
+  	LABEL "Copyright 1999-2002 by Martin Pool"
 		AUTOID AT (CENTER PREVBOTTOM+4)
 	LABEL "This is free software.  No warranty." AUTOID AT (CENTER PREVBOTTOM) 
 	LABEL "Released under the GNU GPL v2." AUTOID AT (CENTER PREVBOTTOM) 
@@ -1491,14 +1510,14 @@ BEGIN
 
 	PULLDOWN "Edit"
 	BEGIN
-		MENUITEM "Undo" ID 10000 "@accel_Undo"
-		MENUITEM "Cut" ID 10001 "@accel_Cut"
-		MENUITEM "Copy" ID 10002 "@accel_Copy"
-		MENUITEM "Paste" ID 10003 "@accel_Paste"
-		MENUITEM "Select All" ID 10004 "@accel_SelectAll"
+		MENUITEM "Undo" ID 10000 "@@accel_Undo"
+		MENUITEM "Cut" ID 10001 "@@accel_Cut"
+		MENUITEM "Copy" ID 10002 "@@accel_Copy"
+		MENUITEM "Paste" ID 10003 "@@accel_Paste"
+		MENUITEM "Select All" ID 10004 "@@accel_SelectAll"
 		MENUITEM SEPARATOR
-		MENUITEM "Keyboard" ID 10006 "@accel_Keyboard"
-		MENUITEM "Graffiti Help" ID 10007 "@accel_Graffiti"
+		MENUITEM "Keyboard" ID 10006 "@@accel_Keyboard"
+		MENUITEM "Graffiti Help" ID 10007 "@@accel_Graffiti"
 	END
 
 	PULLDOWN "Options"
