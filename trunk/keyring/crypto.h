@@ -26,6 +26,8 @@
 #define kDES3KeySize            24
 #define kMD5HashSize            16
 
+typedef UInt8 DES3KeyType[kDES3KeySize];
+
 Err DES3_Read(void * from, void * to, UInt32 len);
 Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32);
 
