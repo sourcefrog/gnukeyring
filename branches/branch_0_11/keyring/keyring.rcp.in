@@ -33,7 +33,6 @@ BEGIN
   "@@NotImplemented" = "Sorry, that feature is not implemented yet."
 
   "@@GenerateHelp" = "help/en/generate.txt"
-  "@@PreferencesHelp" = "help/en/preferences.txt"
   "@@KeyEditHelp" = "help/en/keyedit.txt"
 
 END
@@ -118,8 +117,90 @@ BEGIN
   "Delete..." = "Eintrag löschen..."
 
   "@@GenerateHelp" = "help/de/generate.txt"
-  "@@PreferencesHelp" = "help/de/preferences.txt"
   "@@KeyEditHelp" = "help/en/keyedit.txt"
+END
+
+// ======================================================================
+// Spanish translation contributed by Juan Carlos Borrás
+
+TRANSLATION "es"
+BEGIN
+  "New" = "Nueva"
+  "Key ______ of ______" = "Clave ______ de ______" 
+  "Name:" = "Nombre:"
+  "Account:" = "Cuenta:"
+  "Password:" = "Clave:"
+  "Confirm:"  = "Aceptar:" 
+  "Changed:" = "Modificado:"
+  "Done" = "Hecho"
+  "Preferences" = "Preferencias"
+  "Stay unlocked for:" = "Desbloqueado durante:"
+  "No time" = "Nunca"
+  "15 sec" = "15 Seg."
+  "60 sec" = "1 Min."
+  "5 min" = "5 Min."
+
+  "Cancel" = "Cancelar"
+
+  "Set Keyring Password" =  "Cambiar la Clave del Llavero"
+
+  "@@choosepassword" = "Escoje una Clave:"
+
+  "Generate Password" = "Genera una Clave"
+  "@@generate1" = "Generar una clave aleatoria "
+  "@@generate2" = "Clave:"
+
+  "Length:" = "Tamaño:"
+  "Include:" = "Incluye:"
+  "Generate" = "Generar"
+
+  "Unlock" =  "Desbloquear"
+
+  "Enter your password:" = "Introduzca su clave:"
+
+  "Encrypting..." = "Cifrando..."
+  "Decrypting..." = "Descifrando..."
+
+  "@@OutOfMemory" =  "No hay suficiente memoria disponible."
+  "@@WrongPassword" = "Clave incorrecta. Inténtelo de nuevo."
+  "@@PasswordMismatch" =  "Las claves no son iguales. Inténtelo de nuevo."
+
+  "Not here yet" = "Vuelva Vd. mañana"
+  "@@NotImplemented" = "Esta característica no está implementada aun."
+
+  "^1: System error ^2" =  "^1: ¡Error! ^2"
+  "Couldn't launch the Memo Pad" =  "El block de notas no puede ejecutarse."
+
+  "Delete Key" = "Borrar Clave"
+  "Delete current key record?" = "¿Borrar la presente Clave?"
+  "Save archive copy on PC" = "Guardar copia en el PC"
+
+  "Database" = "Base de Datos"
+  "Set Password..." = "Cambiar la clave..."
+  "Options" = "Opciones"
+  "Edit" = "Editar"
+
+  "Preferences..." =  "Preferencias..."
+  "Tips" = "Sugerencias"
+  "About GNU Keyring" =  "Acerca de GNU Keyring"
+
+  "Undo" = "Deshacer"
+  "Graffiti Help" = "Ayuda de Grafitti"
+  "Paste" = "Pegar"
+  "Cut" = "Cortar"
+  "Select All" = "Seleccionar Todo"
+  "Key %d of %d" = "Clave %d de %d"
+  "Copy" = "Copiar"
+  "Keyboard" = "Teclado"
+  "New Key" = "Nueva Clave"
+
+  "Record" =  "Ficha"
+  "Generate Password..." = "Generar Clave..."
+  "Export to Memo" = "Exportar al Block de Notas"
+  "Delete..." = "Borrar..."
+
+  "@@GenerateHelp" = "help/es/generate.txt"
+  "@@KeyEditHelp" = "help/es/keyedit.txt"
 END
 
 
@@ -191,7 +272,6 @@ END
 
 
 FORM ID PrefsForm AT (2 91 156 67)
-helpid PreferencesHelp
 MODAL
 BEGIN
 	TITLE "Preferences"
@@ -513,8 +593,7 @@ STRING ID EmptyTitleStr "New Key"
 
 // Help messages
 string id GenerateHelp file "@@GenerateHelp"
-string id PreferencesHelp file "@@PreferencesHelp"
-string id KeyEditHelp file "@@KeyEditHelp"
+STRING ID KEYEDITHELP file "@@KeyEditHelp"
 
 
 CATEGORIES ID CategoryRsrc "Unfiled" "Banking" "Computer" "Phone" "Web"

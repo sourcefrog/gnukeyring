@@ -6,7 +6,7 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.11.1dev1
+VERSION         = 0.11.1pre1
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
@@ -99,7 +99,7 @@ $(DIST_BALL): $(DISTFILES)
 $(RCP): $(RCP).in Makefile
 	rm -f $@
 	(echo '// ******DYNAMICALLY GENERATED DO NOT EDIT********'; \
-	 sed $(SED_SUBST) $@.in) > $@
+	sed $(SED_SUBST) $@.in) > $@
 	chmod -w $@
 
 $(EXE):       $(SRC:.c=.o) ;
