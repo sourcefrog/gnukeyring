@@ -39,15 +39,29 @@
 
 #include "trace.h"
 #include "hextype.h"
+#include "keyring.h"
 
 
 /* #include <popt.h> */
 
 
+/*
+ * TODO: Construct records given a text form.  They're a bit hard to
+ * parse, though.
+ *
+ * TODO: Choose a record to edit in $EDITOR.
+ *
+ * TODO: Use getpass() or an environment variable, not an insecure
+ * command-line argument.
+ *
+ * TODO: Optionally turn off trace.
+ */
+
+
 static void keyring_dumpfile(struct pi_file *pif, const char *);
 
-#define kKeyDBType		0x476b7972  /* 'Gkyr' as network-endian int */
-#define kKeyringCreatorID	0x47746b72  /* 'Gtkr' as network-endian int */
+#define kKeyDBType		0x476b7972  /* 'Gkyr' as 68k-endian int */
+#define kKeyringCreatorID	0x47746b72  /* 'Gtkr' as 68k-endian int */
 
 #define kDatabaseVersion	4
 
@@ -58,6 +72,8 @@ static void keyring_dumpfile(struct pi_file *pif, const char *);
 #define kDESBlockSize           8
 
 des_key_schedule key1, key2;
+
+int verbose = 0;
 
 
 int main(int argc, char **argv) 
@@ -92,9 +108,11 @@ static int keyring_verify(const unsigned char *rec0, size_t rec_len,
     strncpy(msg + kSaltSize, pass, MD5_CBLOCK - 1 - kSaltSize);
 
     MD5(msg, sizeof msg, digest);
-    
-    fprintf(stdout, "calculated digest is:\n");
-    hextype(stdout, digest, sizeof digest);
+
+    if (verbose) {
+	fprintf(stdout, "calculated digest is:\n");
+	hextype(stderr, digest, sizeof digest);
+    }
 
     return !memcmp(digest, rec0+kSaltSize, MD5_DIGEST_LENGTH);
 }
@@ -130,7 +148,7 @@ static void keyring_dumpheader(struct pi_file *pif)
 }
 
 
-static void des_read(char const *from, char *to, size_t len, char const *snib)
+static void des_read(char const *from, char *to, size_t len)
 {
     while (len >= kDESBlockSize) {
 	des_ecb2_encrypt((const_des_cblock *) from,
@@ -152,8 +170,10 @@ static void des_setup(unsigned char const *snib)
     des_set_odd_parity((des_cblock *) snib);
     des_set_odd_parity(((des_cblock *) snib) + 1);
 
-    printf("Adjusted snib:\n");
-    hextype(stdout, snib, 2 * DES_KEY_SZ);
+    if (verbose) {
+	printf("Adjusted snib:\n");
+	hextype(stdout, snib, 2 * DES_KEY_SZ);
+    }
    
     des_set_key((const_des_cblock *) snib,                key1);
     des_set_key((const_des_cblock *) (snib + DES_KEY_SZ), key2);
@@ -163,22 +183,91 @@ static void des_setup(unsigned char const *snib)
 static void calc_snib(char const *pass, unsigned char *snib)
 {
     MD5((unsigned char *) pass, strlen(pass), snib);
-    printf("Snib:\n");
-    hextype(stdout, snib, 2 * DES_KEY_SZ);
+    if (verbose) {
+	printf("Snib:\n");
+	hextype(stdout, snib, 2 * DES_KEY_SZ);
+    }
+}
+
+
+void keyring_print_record(FILE *f, const keyring_record_t *rec)
+{
+    fprintf(f, "#%d%s\n", rec->idx,
+	   (rec->attr & dlpRecAttrDeleted ? " DELETED" : ""));
+    fprintf(f, "Name: %s\n", rec->name);
+    fprintf(f, "Account: %s\n", rec->acct);
+    fprintf(f, "Password: %s\n", rec->passwd);
+    fprintf(f, "Notes: %s\n", rec->notes);
+}
+
+
+void keyring_free_record(keyring_record_t *rec)
+{
+    if (rec->name)
+	free(rec->name);
+    if (rec->acct)
+	free(rec->acct);
+    if (rec->passwd)
+	free(rec->passwd);
+    if (rec->notes)
+	free(rec->notes);
+    free(rec);
+}
+
+
+void keyring_unpack(struct pi_file *pif, int idx, keyring_record_t **prec)
+{
+    unsigned char      *plain;
+    char const         *readp;
+    void               *recp;
+    size_t             rec_len;
+    size_t             len;
+    keyring_record_t   *rec;
+
+    rec = malloc(sizeof(*rec));
+    *prec = rec;
+
+    rec->idx = idx;
+	
+    if (pi_file_read_record(pif, idx, &recp, &rec_len,
+			    &rec->attr, &rec->category, NULL) == -1) {
+	rs_fatal("error reading record");
+    }
+
+    readp = (char const *) recp;
+    len = strlen(readp);
+
+    rec->name = strdup(readp);
+    
+    rec_len -= len + 1;
+    recp += len + 1;
+    
+    if (!(plain = malloc(rec_len))) 
+	rs_fatal("allocation failed");
+    
+    des_read(recp, plain, rec_len);
+    
+    readp = plain;
+    len = strlen(readp) + 1;
+    rec->acct = strdup(readp);
+    
+    readp += len; 
+    len = strlen(readp) + 1;
+    rec->passwd = strdup(readp);
+    
+    readp += len; 
+    len = strlen(readp) + 1;
+    rec->notes = strdup(readp);
+    
+    free(plain);
 }
 
 
 static void keyring_dumprecords(struct pi_file *pif, char const *pass)
 {
     int                nrecords;
-    int                i;
+    int                idx;
     unsigned char      snib[MD5_DIGEST_LENGTH];
-    unsigned char      *plain;
-    char const         *readp;
-    void               *recp;
-    size_t             rec_len;
-    int                attr, category;
-    char const         *record_name, *acct;
 
     if (pi_file_get_entries(pif, &nrecords) == -1) {
 	rs_fatal("error getting number of records");
@@ -187,44 +276,12 @@ static void keyring_dumprecords(struct pi_file *pif, char const *pass)
     calc_snib(pass, snib);
     des_setup(snib);
 
-    for (i = kNumReservedRecords; i < nrecords; i++) {
-	size_t len;
+    for (idx = kNumReservedRecords; idx < nrecords; idx++) {
+	keyring_record_t       *keyp;
 	
-	printf("Record %d:\n", i);
-	if (pi_file_read_record(pif, i, &recp, &rec_len,
-				&attr, &category, NULL) == -1) {
-	    rs_fatal("error reading record");
-	}
-
-	record_name = (char const *) recp;
-	printf("Record: %s\n", record_name);
-
-	len = strlen(record_name);
-	rec_len -= len + 1;
-	recp += len + 1;
-
- 	if (!(plain = malloc(rec_len))) 
- 	    rs_fatal("allocation failed");
-
- 	des_read(recp, plain, rec_len, snib);
-	
-	readp = acct = plain;
-	len = strlen(readp) + 1;
-	printf("Account: \n");
-	hextype(stdout, readp, len);
-
-	readp += len; 
-	len = strlen(readp) + 1;
-	printf("Password: \n");
-	hextype(stdout, readp, len);
-	
-	readp += len; 
-	len = strlen(readp) + 1;
-	printf("Body: \n");
-	hextype(stdout, readp, len);
-	
-	printf("\n");
-	free(plain);
+	keyring_unpack(pif, idx, &keyp);
+	keyring_print_record(stdout, keyp);
+	keyring_free_record(keyp);
     }
 }
 
