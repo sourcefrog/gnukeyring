@@ -1,0 +1,268 @@
+-*- indented-text -*-
+$Id$
+
+Critical: ------------------------------------------------------------
+
+(1) Lock the database when the timeout expires, even if it's currently
+    showing a record.  Also, make sure changes to the system clock
+    cannot cause the keyring to unlock again.  Also, make sure that
+    the Snib database is overwritten and unlinked when we lock.
+
+Important ------------------------------------------------------------
+
+(2) Don't use private records, because they're deleted when the system
+    password is reset.
+
+    This possibly requires an upgrade to the database format, because
+    older versions of the application will miscount if the record is
+    not secret.
+
+(2) Make sure that the snib really is destroyed when the time runs
+    out, even if the clock has been reset.
+
+    One approach is to use the Notification manager, but that's an
+    optional features so it would be better to use something else.  We
+    might also be able to use launch codes: we can watch for 
+
+      sysAppLaunchCmdSystemReset
+      sysAppLaunchCmdSyncNotify
+
+    but there is no power off.  Or, we could look for events:
+
+      appStopEvent
+
+    err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &value);
+
+    If the notification manager is part of the system, the value
+    parameter will be non-zero and the returned error should also be
+    zero (for no error).
+
+    We should perhaps also listen for sysAppLaunchCmdTimeChange, and
+    use it to destroy the snib, and sysAppLaunchCmdSyncNotify, and
+    sysAppLaunchCmdSystemLock.
+
+Good -----------------------------------------------------------------
+
+(3) Optionally lock on power off or switching applications.
+
+(3) Draw the edit form using a table so that the fields can resize,
+    like in the address book.
+
+(3) Show the last-modified date for the record.  Perhaps prompt to
+    update it so that small modifications don't break anything.
+
+Nice -----------------------------------------------------------------
+
+(4) Choose fonts
+
+(4) Database info dialog.
+
+Possible -------------------------------------------------------------
+
+(5) Nag people to make a backup if they haven't done so for some
+    time.  
+
+    This is only good if the pilot-xfer program resets the backup
+    time when it makes a backup.  I'm not sure if it does.
+
+* Advise use of accented characters as they're much harder to guess.
+
+* Prevent people from choosing no options in the Generate dialog.
+
+* Scroll to show newly-inserted items
+
+* Export using localized field headings
+
+or perhaps don't export them at all.
+
+* Advice on secure passwords
+
+  minimum length; use of accented/extended characters
+
+* Update pos when changing categories
+
+* Move to right record on empty record & page down
+
+* Newline in single-line fields should move down one field
+
+* Choose fonts
+
+* Text entry slow?
+
+* Generate button when setting master password?
+
+* Generate pronounceable passwords?
+
+* Beaming
+
+* Distinguish I from l
+
+* Change back to encrypting using the hash of the password
+
+* Safe way to change password and re-encrypt
+
+* Perhaps use the SSLeay-Palm port?
+
+http://www.isaac.cs.berkeley.edu/pilot/ 
+
+* Markov chain generation
+
+Generating a state table from a large amount of English text shows
+about 4900 three-character states occurred from the 19000 possible,
+which sounds about right.  We saw 252000 total transitions, so it
+should be quite balanced.
+
+To store this we'd need roughly 4900 elements in a list, each of which
+will have a pointer to the next state (hopefully just one byte) and a
+probability measure (also probably one byte).  There's also a little
+overhead for each character we emit.  So this is about 10k of data.
+I'm not sure if it's that useful.
+
+* Provide our own RNG.  Gather entropy from events.
+
+* Sound
+
+* Check that when the category is changed, the title updates too
+
+* Click field captions to zoom in on that form
+
+* Beaming
+
+* Implement our own encryption algorithm
+
+So we can run on PalmOS2.
+
+Perhaps build a separate version of the app, so that people who have
+OS3 or later don't need to waste memory storing it.
+
+* Optionally check for password when entering the app, rather than when opening a key
+* Relock on power-on
+
+Option in the preferences dialog to do this, I think.
+
+* Attack tree
+Fill it out with more possible attacks.
+
+* Setting initial password
+
+** Require set password on first run
+This is the current behaviour, but is it the best?  
+
+** Default to empty
+But then people might not realize they have to set a password.  This
+would seem to encourage insecure behaviour. 
+
+** Require set password when creating first record
+Would this perhaps be a bit more friendly?
+
+* Button in list form to forget the password
+Useful?  Mutt has this.
+
+* Support categories, and store in appinfo
+I think there's a standard format for this.  We might have to change
+the appinfo from our current usage: perhaps the key information goes
+into some other location.  It'd be a shame to change it rather than
+just adding to it.
+
+* Different security settings and passwords per category
+... but if we do this perhaps we really want separate databases?
+
+* Script to decode records on PC
+
+* Use exceptions for error handling?
+
+* Soft arrows to flip through records
+
+Nah, not required.  It's easy enough to use the hardbuttons or to flip
+back to the list form.
+
+* PC conduit
+
+GNOME-pilot or JPilot? 
+
+On the flip side, it may be better *not* to offer this function: the
+security issues to do with opening this information on the PC are very
+scary.  PCs can be broken across the network, and a GUI module can
+never be audited properly.
+
+So on the whole I am inclined _not_ to implement this.
+
+* Lost passwords
+
+What can we offer people?  The best is probably a warning as they set
+their password that lost passwords cannot be recovered.
+
+If people do lose their password we should offer the choice to delete
+all records.  If they use the app launcher's "Delete" function then
+they lose the Keyring application as well as their data.
+
+* Hint for forgotten passwords
+
+Set when setting password, display from password dialog.
+
+* Keep example databases from various releases to test compatibility
+
+* Support multiple databases
+
+I think this is more important than having multiple categories in a
+single database, because we can only specify which database to hotsync
+and people are likely to want to classify databases according to
+different security requirements.
+
+Do this instead of categories??
+
+* Is there any useful way to support PalmOS global Find?
+Just search public names?
+
+* Zero-knowledge authentication
+
+Use a handheld as a token that talks to a custom PAM module to
+authenticate the user without ever typing a password.  One way to do
+this would be to implement S/Key on the handheld, and somehow securely
+get the seed onto the handheld. 
+
+OPIE (one-time passwords everywhere) might be another good
+alternative.
+
+This is a little out of the scope of Keyring.
+
+* If no password is set, don't encrypt or require password.
+Really?  Yes, probably this would be good: better than decrypting on
+the PC.
+
+* Import memos
+
+* How to load in long data?
+
+* New version that does 0kp to authenticate to a custom PAM module.
+
+  -- This really belongs in a separate program.
+
+
+* Event loop timeout to show countdown?
+
+Perhaps show a little open-lock icon while unlocked, and a closed-lock
+while locked.  Perhaps clicking that icon ought to relock the keyring.
+
+* GNOME-Pilot or JPilot conduit/module.
+
+* Database info.  Multiple dbs?
+
+* Check password timeout when paging?
+
+** Wrong password
+** Lock/unlock
+
+* Perhaps re-sort records after returning to list, not on save?
+
+* Better handling of error conditions
+Especially out of memory.
+
+* Store a password hint
+
+* Reminder to change the password
+
+for each record, put a reminder that it should be changed e.g. every N weeks.
+
+* Resize edit form fields when text is entered, like the address book
+

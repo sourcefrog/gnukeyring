@@ -1,0 +1,5 @@
+Skapa lösenord sätter denna nyckels lösenord till ett nytt slumpmässigt värde.
+
+Längd är antalet tecken i det nya lösenordet.
+
+Inkludera specifierar vilka tecken som är tillåtna i lösenordet. Minst en klass måste inkluderas.
