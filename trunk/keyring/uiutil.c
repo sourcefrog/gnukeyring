@@ -167,7 +167,7 @@ Char* UI_TxtParamString(const Char *inTemplate,
 	UInt16 len = StrLen(inTemplate);
 
 	for (i = 0; i < 4; i++) {
-	    if (!params[i])
+	    if (!params[i] || StrLen(params[i]) < 2)
 		continue;
 	    
 	    /* Use TxtGlueReplaceStr to find number of occurences. */
@@ -180,7 +180,7 @@ Char* UI_TxtParamString(const Char *inTemplate,
 		occurences[i] += occurences[j] * 
 		    TxtGlueReplaceStr((Char *)params[j], 0xffff, NULL, i);
 	    }
-	    len += (StrLen(param0) - 2) * occurences[i];
+	    len += (StrLen(params[i]) - 2) * occurences[i];
 	}
 	/* Now that we know the length we do the replacement */
 	h = MemHandleNew(len+1);
