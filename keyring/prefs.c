@@ -1,4 +1,5 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
  * Tightly Bound -- store passwords securely on a handheld
@@ -19,8 +20,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* This file looks after the "Preferences" dialog.  For the time being
- * the only setting here is how long the keyring stays unlocked. */
+/*
+ * This file looks after the "Preferences" dialog.  For the time being
+ * the only setting here is how long the keyring stays unlocked.
+ *
+ * TODO: Require that we're unlocked to set the preferences.
+ */
 
 #include <PalmOS.h>
 

@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -35,7 +35,10 @@
 /* Set Password dialog
  *
  * TODO: Perhaps show a caution if the master password is less than
- * (say) five characters.  */
+ * (say) five characters.
+ *
+ * TODO: "Generate" button when setting master password.
+ */
 
 
 /* Return true if set, false if cancelled. */

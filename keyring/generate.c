@@ -1,4 +1,5 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
  * Tightly Bound -- store passwords securely on a handheld
@@ -25,6 +26,8 @@
  * TODO: Generate pronouncable text
  *
  * TODO: Prevent people from choosing no options.
+ *
+ * TODO: Strong randomness.
  */
 
 #include <PalmOS.h>
