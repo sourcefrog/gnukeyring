@@ -46,6 +46,7 @@ TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
 AWK		= awk
 PERL		= perl
+JAVA		= java
 
 # Note: 
 # Turning on debugger support (-g) costs about 100 bytes
@@ -66,7 +67,7 @@ PERL		= perl
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.2-pre2
+VERSION         = 1.2-pre3
 DEFINES		= -DBETA -DkAppVersion=0x1012
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
@@ -106,7 +107,10 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 # For a list of ISO language codes, see
 # http://www.loc.gov/standards/iso639-2/englangn.html
 # The codes nn and nb for nynorsk and bokmål are recent additions.
-LANGUAGES = en da de es fr it ja nl nb nn pt sv 
+LANGUAGES = en da de es fr it ja nl nb nn pt sv
+
+LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it jpJP <ja \
+          nlNL <nl noNO <nb ptBR <pt svSE <sv
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
@@ -128,7 +132,7 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
 
-dist: $(DIST_BALL) $(DIST_BIN) $(DIST_NEWS)
+dist: $(DIST_BALL) $(DIST_ZIP) $(DIST_NEWS)
 
 tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
@@ -139,14 +143,11 @@ $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	rm -fr $(tmpdir)
 
-$(DIST_ZIP): $(TOP_DIST) $(PRCS) $(SSLEAYLIBS)
-	$(ZIP) -jq9 $@ $^
-
 $(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS)
 	$(ZIP) -jq9 $@ $^
 
-$(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
-	(cat NEWS ; md5sum $(DIST_BIN) $(DIST_BALL);echo ) > NEWS.tmp
+$(DIST_NEWS): NEWS $(DIST_ZIP) $(DIST_BALL)
+	(cat NEWS ; md5sum $(DIST_ZIP) ovl/* $(DIST_BALL);echo ) > NEWS.tmp
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
 	@ls -l $(DIST_BIN) $(DIST_BALL)
@@ -161,6 +162,18 @@ $(RCP): $(RCP_IN) Makefile $(RESOURCES)
 
 $(EXE): $(OBJ) ;
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $(EXE)
+
+# Rules for building overlays
+#
+# XXX The java program to build the overlays is still under construction
+# mail me (hoenicke at users.sf.net) if you're interested in the source.
+#
+$(DIST_ZIP): $(PRCS) $(SSLEAYLIBS)
+	@[ -d ovl ] || mkdir ovl
+	CLASSPATH=script/astroinfo-pdb.jar $(JAVA) \
+	net.sf.astroinfo.pdb.CreateOverlay ovl/$(BASE) \
+	$(LOCALES:<%=$(BASE)-%.prc)
+	$(ZIP) -jq9 $(BASE).zip ovl/* $(SSLEAYLIBS)
 
 # We try to avoid touching auto.h, because that will kick off
 # rebuilding a lot of source and it's often not necessary.
