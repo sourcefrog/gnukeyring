@@ -27,7 +27,9 @@
 /* Some constants for old keyring version */
 #define kOldMessageBufSize 64
 #define kOldSaltSize        4
+#ifndef kMD5HashSize
 #define kMD5HashSize MD5_DIGEST_LENGTH
+#endif
 
 /* The old salt, hash and crypto structures */
 typedef struct {
@@ -268,6 +270,8 @@ Err Upgrade_UnpackOldRecord(Char *recPtr,
     }
     pft->len = ENDMARKER;
 
+    MemWipe(decryptBuf, MemPtrSize(decryptBuf));
+    MemPtrFree(decryptBuf);
     
     return 0;
 }
@@ -286,12 +290,15 @@ Err Upgrade_ConvertRecords(DmOpenRef oldDB, char *passwd) {
     Err         err;
     UInt16      attr;
     UInt32      uniqueID;
+    FormPtr	frm, oldFrm;
 
     newRecordKey = MemPtrNew(sizeof(CryptoKey));
     if (!newRecordKey)
 	return memErrNotEnoughSpace;
-    if (!PwHash_Check(newRecordKey, passwd))
-	return appErrMisc;
+    if (!PwHash_Check(newRecordKey, passwd)) {
+	err = appErrMisc;
+	goto out;
+    }
 
     MD5((void *) passwd, StrLen(passwd), keyMD5sum);
     des_set_odd_parity((des_cblock*) keyMD5sum);
@@ -301,6 +308,11 @@ Err Upgrade_ConvertRecords(DmOpenRef oldDB, char *passwd) {
     MemWipe(keyMD5sum, sizeof(keyMD5sum));
 
     err = 0;
+
+    oldFrm = FrmGetActiveForm();
+    frm = FrmInitForm(BusyEncryptForm);
+    FrmSetActiveForm(frm);
+    FrmDrawForm(frm);
     for (idx = 0; idx < numRecs; idx++) {
 	err = DmRecordInfo(oldDB, idx, &attr, &uniqueID, NULL);
 	if (err)
@@ -328,7 +340,12 @@ Err Upgrade_ConvertRecords(DmOpenRef oldDB, char *passwd) {
 	if (err)
 	    break;
     }
+    FrmEraseForm(frm);
+    FrmDeleteForm(frm);
+    if (oldFrm)
+	FrmSetActiveForm(oldFrm);
     MemWipe(oldRecordKey, sizeof(oldRecordKey));
+    out:
     MemWipe(newRecordKey, sizeof(newRecordKey));
     CryptoDeleteKey(newRecordKey);
     MemPtrFree(newRecordKey);
@@ -486,23 +503,15 @@ UPGRADE_SECTION Err UpgradeDB(UInt16 oldVersion)
 	    }
 	    if (Upgrade_CheckPwHash(passwd, &checkHash))
 		break;
-	    else
-                FrmAlert(WrongKeyAlert);
+	    FrmAlert(WrongKeyAlert);
+	    MemWipe(passwd, StrLen(passwd));
+	    MemPtrFree(passwd);
 	}
 	if (!err) {
-	    FormPtr	frm, oldFrm;
-	    oldFrm = FrmGetActiveForm();
-	    frm = FrmInitForm(BusyEncryptForm);
-	    FrmSetActiveForm(frm);
-	    FrmDrawForm(frm);
-
 	    err = Upgrade_ConvertDB(oldVersion, passwd, cipher, iter);
-
-	    FrmEraseForm(frm);
-	    FrmDeleteForm(frm);
-	    if (oldFrm)
-		FrmSetActiveForm(oldFrm);
 	}
+	MemWipe(passwd, StrLen(passwd));
+	MemPtrFree(passwd);
     } else {
 	UpgradeDB_Failed(oldVersion);
 	err = appErrMisc;

@@ -161,6 +161,7 @@ void SetPasswd_Reencrypt(CryptoKey *oldRecordKey,
     LocalID      clearAppInfo, appInfo;
     UInt16       version;
     UInt32       type;
+    FormPtr	 frm, oldFrm;
 
     newRecordKey = MemPtrNew(sizeof(CryptoKey));
     if (!newRecordKey) {
@@ -170,7 +171,6 @@ void SetPasswd_Reencrypt(CryptoKey *oldRecordKey,
 
     if ((err = PwHash_Create(newPassword, cipher, iter, 
 			     &salthash, newRecordKey))) {
-	FrmCustomAlert(NotEnoughFeaturesAlert, "crypto library", NULL, NULL);
 	MemPtrFree(newRecordKey);
 	return;
     }
@@ -196,7 +196,17 @@ void SetPasswd_Reencrypt(CryptoKey *oldRecordKey,
 	goto outErr1;
     }
 
+    oldFrm = FrmGetActiveForm();
+    frm = FrmInitForm(BusyEncryptForm);
+    FrmSetActiveForm(frm);
+    FrmDrawForm(frm);
+
     err = SetPasswd_ReencryptRecords(oldRecordKey, newRecordKey, newKeyDB);
+
+    FrmEraseForm(frm);
+    FrmDeleteForm(frm);
+    if (oldFrm)
+	FrmSetActiveForm(oldFrm);
 
     if (!err) {
 	appInfo = DmGetAppInfoID(gKeyDB);
@@ -218,6 +228,8 @@ void SetPasswd_Reencrypt(CryptoKey *oldRecordKey,
 			  NULL, NULL, &appInfo, NULL,
 			  &type, NULL);
 	PwHash_Store(newPassword, &salthash);
+	CryptoDeleteKey(newRecordKey);
+	MemPtrFree(newRecordKey);
 	MemWipe(&salthash, sizeof(salthash));
 	MemWipe(&newRecordKey, sizeof(newRecordKey));
 	return;
