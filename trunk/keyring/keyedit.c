@@ -306,11 +306,18 @@ static Boolean KeyEditForm_IsDirty(FormPtr frm) {
 
 
 static void KeyEditForm_New(void) {
-    // Nothing to do, fields can allocate their own memory
+    /* All of the text fields allocate their own memory as they go.
+     * The others we have to set up by hand. */
     gRecord.lastChangeDirty = false;
     DateSecondsToDate(TimGetSeconds(), &gRecord.lastChange);
     KeyEditForm_SetDateTrigger(UI_ObjectFromActiveForm(DateTrigger),
 			       &gRecord);
+
+    gRecord.categoryDirty = false;
+    if (gPrefs.category == dmAllCategories)
+	gRecord.category = dmUnfiledCategory;
+    else
+	gRecord.category = gPrefs.category;
 }
 
 
