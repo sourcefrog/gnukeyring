@@ -50,7 +50,7 @@
   }}}
 }
 
-{\def {\gplstatement} {{\font \size=-1 
+{\def {\gplstatement} {
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the {\externallink
@@ -63,7 +63,6 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   General Public License for more details.
   }}
-}
 
 {\def {\pullquote \=attrib \&content}
   {\div \style=quote \align=right \content
@@ -110,10 +109,9 @@
       \content={GNU Keyring, PalmOS, security,
                 secrets, encryption, crypto, triple DES, PalmPilot, Visor,
                 WorkPad, handheld, passwords, pin}}
-  }
-  {\body \bgcolor=#000000 \text=#dddddd \link=#ff0000 \vlink=#dd0000
-         \background=Blatant-Plug-Insert-4-Cheap-Dark.jpg
-    {\center
+     {\link \href=style.css \rel=stylesheet \type=\"text/css\"}}
+  {\body \bgcolor=#000000 \text=#dddddd \link=#ff0000 \vlink=#dd0000 }
+   {\center
      {\h1 \Product}
 
      {\pagelink \pageid=index introduction} |
@@ -173,11 +171,7 @@
       {\tt \rcsid}}
 
    {\br \clear=all}
-  }
-
- }
-}
-} 
+}}}
 
 {\def \cur_ver 1.0}
 

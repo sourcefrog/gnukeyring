@@ -1,10 +1,10 @@
 # Makefile for the Keyring for PalmOS site
-# $Id$
+# $Header$
 
 pages=index screenshots download thanks plans faq	\
       history conduits lists contribute building
 
-extra=robots.txt Blatant-Plug-Insert-4-Cheap-Dark.jpg snaps/*.png icons/*.gif
+extra=robots.txt style.css snaps/*.png icons/*.gif
 # cvs_logs=$(addsuffix -log.txt, $(pages))
 
 include latte.mk
