@@ -20,6 +20,4 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-Boolean ListForm_HandleEvent(EventPtr event);
-
 extern Int16 f_FirstIdx;

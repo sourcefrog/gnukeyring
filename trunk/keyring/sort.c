@@ -20,13 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-
-#include "keyring.h"
-#include "keydb.h"
-#include "sort.h"
-#include "auto.h"
-#include "uiutil.h"
+#include "includes.h"
 
 /*
  * Alphanumeric sorting of records.
