@@ -29,7 +29,6 @@
 #include "keydb.h"
 #include "passwd.h"
 #include "uiutil.h"
-#include "upgrade.h"
 #include "keyedit.h"
 #include "crypto.h"
 
@@ -83,64 +82,6 @@ void App_SavePrefs(void) {
 }
 
 
-static Boolean App_OfferUpgrade(void) {
-    return FrmAlert(UpgradeAlert) == 0;	/* button 0 = convert */
-}
-
-
-static Boolean App_TooNew(void) {
-    FrmAlert(TooNewAlert);
-    return false;
-}
-
-
-static Err Keyring_PrepareDB(void) {
-    Err		err;
-    UInt16	ver;
-    
-    /* If the database doesn't already exist, then we require the user
-     * to set their password. */
-    err = KeyDB_OpenExistingDB();
-    
-    /* TODO: Check for dmErrReadOnly, dmErrROMBased and offer to open
-     * the database read only.  If so, and the version is old, then
-     * complain that we can't upgrade it. */
-    
-    if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
-	return err;		/* error already reported */
-    } else if (err) {
-	goto failDB;
-    } else {
-	/* So, we opened a database OK.  Now, is it old, new, or just right? */
-	if ((err = KeyDB_GetVersion(&ver)))
-	    goto failDB;
-	if (ver < kDatabaseVersion) {
-	    if (App_OfferUpgrade()) {
-		if ((err = UpgradeDB(ver)))
-		    return err;
-
-	        /* We always mark the database here, because we may
-		 * have converted from an old version of keyring that
-		 * didn't do that. */
-		if ((err = KeyDB_MarkForBackup()))
-		    goto failDB;
-
-	    } else {
-		return 1;
-	    }
-	} else if (ver > kDatabaseVersion) {
-	    App_TooNew();
-	    return 1;
-	}
-    }
-
-    return 0;
-
- failDB:
-    UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
-    return err;
-}
-
 
 static Err App_Start(void) {
     Err err;
@@ -153,7 +94,7 @@ static Err App_Start(void) {
     if ((err = Snib_Init()))
 	return err;
 
-    if ((err = Keyring_PrepareDB())) {
+    if ((err = KeyDB_Init())) {
 	Snib_Close();
         return err;
     }

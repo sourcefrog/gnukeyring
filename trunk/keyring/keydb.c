@@ -39,6 +39,7 @@
 #include "uiutil.h"
 #include "auto.h"
 #include "reencrypt.h"
+#include "upgrade.h"
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
@@ -91,6 +92,62 @@ Boolean g_ReadOnly;
  * the final 0.13 release, and is almost correct for previous versions
  * except that the data was stored in AppInfo or SortInfo rather than
  * in record 0. */
+
+
+
+/*
+ * Get everything going: either open an existing DB (converting if
+ * necessary), or create a new one, or return an error.
+ */
+Err KeyDB_Init(void)
+{
+    Err		err;
+    UInt16	ver;
+    
+    /* If the database doesn't already exist, then we require the user
+     * to set their password. */
+    err = KeyDB_OpenExistingDB();
+    
+    /* TODO: Check for dmErrReadOnly, dmErrROMBased and offer to open
+     * the database read only.  If so, and the version is old, then
+     * complain that we can't upgrade it. */
+    
+    if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
+	return err;		/* error already reported */
+    } else if (err) {
+	goto failDB;
+    } else {
+	/* So, we opened a database OK.  Now, is it old, new, or just right? */
+	if ((err = KeyDB_GetVersion(&ver)))
+	    goto failDB;
+	if (ver < kDatabaseVersion) {
+	    if (Keyring_OfferUpgrade()) {
+		if ((err = UpgradeDB(ver)))
+		    return err;
+
+	        /* We always mark the database here, because we may
+		 * have converted from an old version of keyring that
+		 * didn't do that. */
+		if ((err = KeyDB_MarkForBackup()))
+		    goto failDB;
+
+	    } else {
+		return 1;
+	    }
+	} else if (ver > kDatabaseVersion) {
+             Keyring_TooNew();
+             return 1;
+	}
+    }
+
+    return 0;
+
+ failDB:
+    UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+    return err;
+}
+
+
 
 /*
  * Set the master password for the database.  This is called after the

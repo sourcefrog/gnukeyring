@@ -1,4 +1,5 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
  * GNU Keyring -- store passwords securely on a handheld
@@ -20,3 +21,5 @@
  */
 
 Err UpgradeDB(UInt16 oldVersion);
+Boolean Keyring_OfferUpgrade(void);
+void Keyring_TooNew(void);

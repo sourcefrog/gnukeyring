@@ -49,3 +49,4 @@ Err KeyDB_CreateReservedRecords(void);
 
 extern Boolean g_ReadOnly;
      
+Err KeyDB_Init(void);
