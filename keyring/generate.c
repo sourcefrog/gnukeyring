@@ -28,7 +28,9 @@
  *
  * TODO: Prevent people from choosing no options.  To do that, I think
  * we would have to do a custom event loop, rather than calling
- * FrmDoDialog.  */
+ * FrmDoDialog.  We may than also have a better hex handling, e.g.
+ * doubling the length and disabling all other options.
+ */
 
 #include "includes.h"
 
@@ -38,6 +40,7 @@ enum includes {
     kDigits = 4,
     kPunct = 8,
     kHigh = 16,
+    kHex  = 64,
     kPronounceable = 32
 };
 
@@ -60,6 +63,7 @@ static const Int16 includeMapDefault[] = {
     kDigits, IncludeDigits,
     kPunct, IncludePunct,
     0, ID_IncludeHigh,
+    kHex, ID_Hex,
     kPronounceable, ID_Syllables,
     -1
 };
@@ -70,6 +74,7 @@ static const Int16 includeMapPalmLatin[] = {
     kDigits, IncludeDigits,
     kPunct, IncludePunct,
     kHigh, ID_IncludeHigh,
+    kHex, ID_Hex,
     kPronounceable, ID_Syllables,
     -1
 };
@@ -161,6 +166,28 @@ static void Generate_Save(GeneratePrefsPtr prefs)
 			  true);
 }
 
+static void Generate_HexSelected(FormPtr frm, int selected)
+{
+    int i;
+    static char lenLabels[(sizeof(lenMap)/sizeof(Int16) - 1)/2][3];
+
+    for (i = 0; includeMap[i] != -1; i += 2) {
+	if (includeMap[i] != kHex) {
+	    UInt16 idx = FrmGetObjectIndex(frm, includeMap[i+1]);
+	    if (selected) {
+		FrmHideObject(frm, idx);
+		CtlSetUsable(UI_GetObjectByID(frm, includeMap[i+1]), false);
+	    } else {
+		FrmShowObject(frm, idx);
+	    }
+	}
+    }
+    for (i = 0; lenMap[i] != -1; i += 2) {
+	StrIToA(lenLabels[i], lenMap[i] * (selected ? 2 : 1));
+	CtlSetLabel(UI_GetObjectByID(frm, lenMap[i+1]), lenLabels[i]);
+    }
+}
+
 
 static void Generate_Init(FormPtr frm)
 {
@@ -170,8 +197,29 @@ static void Generate_Init(FormPtr frm)
 
     UI_ScanAndSet(frm, lenMap, prefs.len);
     UI_UnionSet(frm, includeMap, prefs.classes);
+    Generate_HexSelected(frm, (prefs.classes & kHex) ? 1 : 0);
 }
 
+
+/*
+ * FLAGS is a mask of allowed character classes from classMap.
+ */
+static void Generate_Hex(Char * ptr, Int16 len)
+{
+    Int16 	i;
+    UInt8	ch;
+    static const char hexchars[16] = {
+	'0', '1', '2', '3', '4', '5', '6', '7', 
+	'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
+
+    for (i = 0; i < len; i+=2) {
+	ch = Secrand_GetByte();
+	ptr[i  ] = hexchars[ch >> 4];
+	ptr[i+1] = hexchars[ch & 0xf];
+    }
+    ptr[i] = 0;
+}
 
 /*
  * FLAGS is a mask of allowed character classes from classMap.
@@ -309,6 +357,8 @@ static MemHandle Generate_MakePassword(FormPtr frm)
 
     Generate_Save(&prefs);
 
+    if(prefs.classes & kHex)
+	prefs.len *= 2;
     h = MemHandleNew(prefs.len + 1);
     if (!h) {
 	FrmAlert(OutOfMemoryAlert);
@@ -317,7 +367,9 @@ static MemHandle Generate_MakePassword(FormPtr frm)
     
     ptr = MemHandleLock(h);
 
-    if(prefs.classes & kPronounceable) {
+    if(prefs.classes & kHex) {
+	Generate_Hex(ptr, prefs.len);
+    } else if(prefs.classes & kPronounceable) {
 	Generate_Word(ptr, prefs.classes, prefs.len);
     } else {
 	Generate_Garbage(ptr, prefs.classes, prefs.len);
@@ -327,6 +379,14 @@ static MemHandle Generate_MakePassword(FormPtr frm)
     return h;
 }
 
+static Boolean Generate_HandleEvent(EventPtr event)
+{
+    if (event->eType == ctlSelectEvent
+	&& event->data.ctlSelect.controlID == ID_Hex) 
+	Generate_HexSelected(FrmGetActiveForm(), event->data.ctlSelect.on);
+
+    return false;
+}
 
 MemHandle Generate_Run(void)
 {
@@ -347,6 +407,7 @@ MemHandle Generate_Run(void)
     frm = FrmInitForm(GenerateForm);
 
     Generate_Init(frm);
+    FrmSetEventHandler(frm, Generate_HandleEvent);
     
     btn = FrmDoDialog(frm);
 

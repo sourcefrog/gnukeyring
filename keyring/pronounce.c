@@ -39,7 +39,7 @@ to Robin Stephenson.
 
 #define IS_FLAG(flag)         (digram[last_unit]][unit] & (flag))
 #define MAX_UNACCEPTABLE      20
-#define MAX_RETRIES           (4 * (int) pwlen + RULE_SIZE)
+#define MAX_RETRIES           (4 * pwlen + RULE_SIZE)
 
 
 /*
