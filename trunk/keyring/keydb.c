@@ -178,7 +178,7 @@ static Err KeyDB_CreateReservedRecords(void)
     UInt16 attr;
     MemHandle recHandle;
 
-    for (i = 0; i <= 1; i++) {
+    for (i = 0; i < kNumHiddenRecs; i++) {
 	idx = i;
 	recHandle = DmNewRecord(gKeyDB, &idx, 1);
 	if (!recHandle) {
