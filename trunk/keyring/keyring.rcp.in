@@ -653,7 +653,7 @@ END
 // ======================================================================
 // Norwegian (nynorsk) translation by Andreas-Johann Ulvestad <aj@nlc.no>
 
-TRANSLATION "no_NY"
+TRANSLATION "ny_NO"
 BEGIN
   "New" = "Ny"
   "Key ______ of ______" = "Nøkkel ______ av ______" 
@@ -741,6 +741,103 @@ BEGIN
   "@accel_Keyboard" = "K"
   "@accel_Graffiti" = "G"
 END
+
+
+
+// ======================================================================
+// Portuguese translation contributed by Leonardo Eloy 
+// <leonardo@grupofortes.com.br>
+
+TRANSLATION "pt"
+BEGIN
+  "New" = "Nova"
+  "Key ______ of ______" = "Chave ______ de ______"
+  "Name:" = "Nome:"
+  "Account:" = "Conta:"
+  "Password:" = "Senha:"
+  "Confirm:"  = "Confirmar:"
+  "Changed:" = "Modificado:"
+  "Done" = "Pronto"
+  "Preferences" = "Preferencias"
+  "Stay unlocked for:" = "Permanecer desbloqueado por:"
+  "No time" = "Nunca"
+  "15 sec" = "15 Seg."
+  "60 sec" = "1 Min."
+  "5 min" = "5 Min."
+
+  "Cancel" = "Cancelar"
+
+  "Set Keyring Password" =  "Ajustar Senha do Keyring"
+
+  "@@choosepassword" = "Escolha uma senha:"
+
+  "Generate Password" = "Gerar Senha"
+  "@@generate1" = "Generar una clave aleatoria "
+  "@@generate2" = "Senha:"
+
+  "Length:" = "Tamanho:"
+  "Include:" = "Incluir:"
+  "Generate" = "Gerar"
+
+  "Unlock" =  "Desbloquear"
+
+  "Enter your password:" = "Entre com a sua senha:"
+
+  "Encrypting..." = "Encriptando..."
+  "Decrypting..." = "Desencriptando..."
+
+  "@@OutOfMemory" =  "Nao ha memoria suficiente disponivel."
+  "@@WrongPassword" = "Senha incorreta, tente novamente."
+  "@@PasswordMismatch" =  "As senhas nao sao iguais, tente novamente."
+
+  "Not here yet" = "Ainda nao esta aqui"
+  "@@NotImplemented" = "Ainda nao implementado"
+
+  "^1: System error ^2" =  "^1: Error: ^2"
+  "Couldn't launch the Memo Pad" =  "Nao pude executar o Memo Pad"
+
+  "Delete Key" = "Deletar Chave"
+  "Delete current key record?" = "Deletar a entrada da chave atual?"
+  "Save archive copy on PC" = "Salvar copia no PC"
+
+  "Database" = "Banco de Dados"
+  "Set Password..." = "Ajustar senha..."
+  "Options" = "Opcoes"
+  "Edit" = "Editar"
+
+  "Preferences..." =  "Preferencias..."
+  "Tips" = "Dicas"
+  "About..." =  "Sobre..."
+
+  "Undo" = "Desfazer"
+  "Graffiti Help" = "Ajuda do Graffiti"
+  "Paste" = "Colar"
+  "Cut" = "Recortar"
+  "Select All" = "Selecionar Tudo"
+  "Key %d of %d" = "Chave %d de %d"
+  "Copy" = "Copiar"
+  "Keyboard" = "Teclado"
+  "New Key" = "Nova Chave"
+
+  "Record" =  "Entrada"
+  "Generate Password..." = "Generar senha..."
+  "Export to Memo" = "Exportar para o Memo Pad"
+  "Delete..." = "Deletar..."
+
+  "@@GenerateHelp" = "help/es/generate.txt"
+  "@@KeyEditHelp" = "help/es/keyedit.txt"
+
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S"
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
+END
+
 
 
 #include "resource.h"
