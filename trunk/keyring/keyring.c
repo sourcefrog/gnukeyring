@@ -38,7 +38,7 @@ MemHandle handleFontPW;
 
 static void App_LoadPrefs(void) {
     Int16 size = sizeof(KeyringPrefsType);
-    Int16 ret;
+    Int16 version;
 
     /* Set up the defaults first, then try to load over the top.  That
      * way, if the structure is too short or not there, we'll be left
@@ -47,10 +47,18 @@ static void App_LoadPrefs(void) {
     gPrefs.timeoutSecs = 60;
     gPrefs.category = dmAllCategories;
     
-    ret = PrefGetAppPreferences(kKeyringCreatorID,
-                                kGeneralPref,
-                                &gPrefs, &size,
-                                (Boolean) true);
+    version = PrefGetAppPreferences(kKeyringCreatorID,
+				    kGeneralPref,
+				    &gPrefs, &size,
+				    (Boolean) true);
+
+#ifdef BETA
+    /* If this is a beta version and it previous version was different
+     * give a alarm.
+     */
+    if (version != kAppVersion)
+	FrmAlert(BetaAlert);
+#endif
 }
 
 
@@ -76,7 +84,6 @@ static Err App_Start(void)
     FntDefineFont(fntPassword, (FontPtr)MemHandleLock(handleFontPW));
 
     App_LoadPrefs();
-    Gkr_CheckBeta();
 
     if ((err = Snib_Init()))
 	return err;
