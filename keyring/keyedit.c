@@ -58,6 +58,8 @@
  * TODO: When the category is changed, don't re-encrypt the record.
  * Instead just move it into the new category and update the position
  * indicator.
+ *
+ * TODO: Perhaps close the list form while we're in the edit form?
  */
 
 
@@ -72,7 +74,9 @@ static UnpackedKeyType gRecord;
 static void KeyEditForm_Save(void);
 static void KeyEditForm_UpdateScrollbar(void);
 static Boolean KeyEditForm_IsDirty(void);
+static Boolean KeyEditForm_IsEmpty(void);
 static void KeyEditForm_MarkClean(void);
+static void KeyEditForm_DeleteKey(Boolean saveBackup);
 
 static Boolean keyDeleted;
 
@@ -80,6 +84,13 @@ static Boolean keyDeleted;
 static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
 static ScrollBarPtr f_NotesScrollBar;
 static FormPtr f_KeyEditForm;
+
+/* Index of the current record in the database as a whole. */
+UInt16		gKeyRecordIndex = kNoRecord;
+
+/* Index of the current record within the currently-displayed
+ * category. */
+UInt16		gKeyPosition = kNoRecord;
 
 
 // ======================================================================
@@ -109,11 +120,13 @@ static FormPtr f_KeyEditForm;
  * If the user cancels, we don't need to do anything except go back to
  * the list view: the fields will deallocate their storage.
  *
- * All of the database interaction is meant to support adding
- * encryption of records at a later stage.  This mostly means that we
- * have to be able to use temporary buffers and not access the
- * database itself when packing and unpacking. */
-
+ * When the user creates a new record, we allocate it immediately on
+ * entering the form: this fits well with the user interface
+ * abstraction, which is that a new blank record is allocated at that
+ * point.  It also means that all the rest of the code just has to
+ * deal with a single case of editing an existing record.  To get rid
+ * of the record, the user must choose to delete it or (equivalently)
+ * leave all the fields empty. */
 
 
 /* Update the form title to reflect the current record.  If this is a
@@ -134,7 +147,7 @@ static void KeyEditForm_UpdateTitle(void)
     if (f_KeyFormTitle)
         MemPtrFree(f_KeyFormTitle);
 
-    if (gKeyPosition != kNoRecord) {
+    if (gKeyRecordIndex != kNoRecord) {
         pos = gKeyPosition + 1;
         total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
         
@@ -272,11 +285,14 @@ static void KeyEditForm_Load(void)
 
 /* Save the record if any fields are dirty, and also update
  * gRecord from the field values. */
-static void KeyEditForm_MaybeSave(void) {
+static void KeyEditForm_Commit(void) {
     if (keyDeleted)
         return;
-    
-    if (KeyEditForm_IsDirty()) {
+
+    if (KeyEditForm_IsEmpty()) {
+        KeyEditForm_DeleteKey(false); /* no backup */
+        KeyEditForm_MarkClean();
+    } else if (KeyEditForm_IsDirty()) {
         // TODO: Delete record if all fields empty?
         KeyEditForm_ToUnpacked(&gRecord);
 
@@ -344,6 +360,8 @@ static void Keys_UndoAll(void) {
     if (gKeyRecordIndex == kNoRecord) {
         KeyEditForm_Clear();
     } else {
+        /* TODO: Check that this works OK if the record is
+         * newly-allocated and zero length. */
         KeyEditForm_Load();
     }
     /* TODO: Put the category back to what it was when we entered. */
@@ -367,13 +385,34 @@ static void KeyEditForm_MarkClean(void)
  * user. */
 static Boolean KeyEditForm_IsDirty(void)
 {
-    if (FldDirty(f_KeyNameFld) || FldDirty(f_PasswdFld)
-        || FldDirty(f_AcctFld) || FldDirty(f_NotesFld))
-     return true;
-
-    return false;
+    return (FldDirty(f_KeyNameFld) || FldDirty(f_PasswdFld)
+            || FldDirty(f_AcctFld) || FldDirty(f_NotesFld));
 }
 
+
+/* Check if all fields are empty.  If so, when leaving we will discard
+ * the record rather than saving it. */
+static Boolean KeyEditForm_IsEmpty(void)
+{
+    return !(FldGetTextLength(f_KeyNameFld) || FldGetTextLength(f_PasswdFld)
+             || FldGetTextLength(f_AcctFld) || FldGetTextLength(f_NotesFld));
+}
+
+
+/* Called from the list form when creating a new record. */
+void KeyEditForm_GotoNew(void) {
+    gKeyRecordIndex = gKeyPosition = kNoRecord;
+    
+    FrmGotoForm(KeyEditForm);
+}
+
+
+
+void KeyEditForm_GotoRecord(UInt16 recordIdx) {
+    gKeyRecordIndex = recordIdx;
+    gKeyPosition = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
+}
+        
 
 
 static void KeyEditForm_New(void) {
@@ -431,6 +470,8 @@ static void KeyEditForm_DeleteKey(Boolean saveBackup)
     UnpackedKeyType unpacked;
     
     // Unpack and obliterate values so they're not left in memory.
+    // XXX: This sounds kind of unnecessary -- can we avoid it, since
+    // we're not obliterating field data?
     KeyEditForm_ToUnpacked(&unpacked);
 
     // We set keyDeleted to make sure that we don't try to save this
@@ -456,7 +497,7 @@ static void KeyEditForm_DeleteKey(Boolean saveBackup)
 /* Delete the record if the user is sure that's what they want.
  * Return true if deleted and we should return to the list form,
  * otherwise false. */
-static Boolean KeyEditForm_MaybeDeleteKey(void) {
+static Boolean KeyEditForm_MaybeDelete(void) {
     // TODO: Check if the record is empty; if it is delete without
     // seeking confirmation.
     UInt16 buttonHit;
@@ -502,7 +543,7 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
         return true;
         
     case DeleteKeyCmd:
-        if (KeyEditForm_MaybeDeleteKey())
+        if (KeyEditForm_MaybeDelete())
             FrmGotoForm(ListForm);
         return true;
 
@@ -511,9 +552,8 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
         return true;
 
     case ExportMemoCmd:
-        /* As a side effect, MaybeSave commits the changes into
-           gRecord. */
-        KeyEditForm_MaybeSave();
+        /* As a side effect, write into gRecord. */
+        KeyEditForm_Commit();
         ExportKey(&gRecord);
         return true;
 
@@ -574,7 +614,7 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
         return;
     }
     
-    KeyEditForm_MaybeSave();
+    KeyEditForm_Commit();
 
     numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
 
@@ -709,7 +749,7 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
         break;
 
     case frmCloseEvent:
-        KeyEditForm_MaybeSave();
+        KeyEditForm_Commit();
         result = false;
         break;
 

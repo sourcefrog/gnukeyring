@@ -1,4 +1,4 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -21,6 +21,6 @@
 
 Boolean KeyEditForm_HandleEvent(EventPtr event);
 
-/* Reasonable limits on dates */
-#define kYearMin 1900
-#define kYearMax 2100
+void KeyEditForm_GotoNew(void);
+void KeyEditForm_GotoRecord(UInt16 idx);
+

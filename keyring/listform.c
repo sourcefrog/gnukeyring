@@ -31,6 +31,7 @@
 #include "listform.h"
 #include "keydb.h"
 #include "auto.h"
+#include "keyedit.h"
 
 // =====================================================================
 // List form
@@ -291,8 +292,7 @@ static Boolean ListForm_TableSelect(EventPtr event)
         idx = 0;
         err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
                                      dmSeekForward, gPrefs.category);
-        gKeyRecordIndex = idx;
-        gKeyPosition = listIdx;
+        KeyEditForm_GotoRecord(idx);
         FrmGotoForm(KeyEditForm);
     }
     return true;
@@ -300,9 +300,8 @@ static Boolean ListForm_TableSelect(EventPtr event)
 
 
 static void ListForm_NewKey(void) {
-    gKeyRecordIndex = gKeyPosition = kNoRecord;
     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
-        FrmGotoForm(KeyEditForm);
+        KeyEditForm_GotoNew();
     }
 }
 
