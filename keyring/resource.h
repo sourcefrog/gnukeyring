@@ -19,7 +19,6 @@
 #define SetPasswdForm			1010
 #define ConfirmPasswdForm		1011
 #define PasswdMismatchAlert		1012
-#define PrefsForm			1013
 #define InitForm			1014
 #define BusyEncryptForm			1015
 #define BusyDecryptForm			1016
@@ -91,7 +90,6 @@
 #define SecurityCmd			1304
 #define DeleteKeyCmd			1305
 #define SetPasswdCmd			1306
-#define PrefsCmd			1307
 #define GenerateCmd			1308
 #define ExportMemoCmd			1309
 #define HelpCmd				1310
@@ -103,7 +101,6 @@
 #define EditSelectAll			1404
 
 #define GenerateHelp			1502
-#define PreferencesHelp			1503
 #define KeyEditHelp			1504
 #define SetPasswdHelp                   1505
 

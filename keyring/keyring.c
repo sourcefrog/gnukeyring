@@ -259,7 +259,7 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	result = true;
 	break;
 
-    case PrefsCmd:
+    case ID_PrefsCmd:
 	PrefsForm_Run();
 	result = true;
 	break;

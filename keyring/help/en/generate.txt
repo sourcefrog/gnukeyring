@@ -1,7 +1,5 @@
-GNU Keyring can generate random passwords fitting certain criteria.  Longer passwords containing a variety of characters are harder to guess.
+Generate Password sets the password of this key to a new random value.
 
-Length: choose the length of the password in characters.
+Length is the number of characters in the new password.
 
-Include: specify which characters are allowed in the password.  At least one category must be specified.
-
-Generate: generate a new random password, and make it be the password for the current record.
+Include specifies which characters are allowed in the password.  At least one class must be included.
