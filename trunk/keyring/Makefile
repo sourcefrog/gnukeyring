@@ -77,8 +77,10 @@ DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
 		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
 		  $(HELP_TXT)
 
+DIST_BIN = $(PRCS) COPYING
+
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
-DIST_SIG        = $(DIST_BALL).asc
+BIN_ZIP    = $(APP)-$(VERSION)-bin.zip
 TAR		= tar
 
 SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
@@ -109,15 +111,16 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
 	touch $@
 
-dist: $(DIST_BALL)
+dist: $(DIST_BALL) $(BIN_ZIP)
 
 tmpdir:=$(shell echo _build.$$$$)
-$(DIST_BALL): $(DISTFILES)
+$(DIST_BALL) $(BIN_ZIP): $(DISTFILES)
 	rm -rf $(tmpdir)
 	mkdir -p $(tmpdir)/$(BASE)
 	cp --parents $(DISTFILES) $(tmpdir)/$(BASE)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
-	ls -l $(DIST_BALL)
+	zip -q9 $(BIN_ZIP) $(DIST_BIN)
+	ls -l $(DIST_BALL) $(BIN_ZIP)
 	rm -fr $(tmpdir)
 
 # I hate accidentally editing the generated file, so the chmod 
