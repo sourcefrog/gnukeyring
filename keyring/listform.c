@@ -1,8 +1,8 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
  * $Id$
  * 
- * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 by Martin Pool
+ * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,10 @@ static void ListForm_ListDraw(Int16 itemNum,
     ErrFatalDisplayIf(!gKeyDB, __FUNCTION__ ": !gKeyDB");
     ErrFatalDisplayIf(itemNum > 10000, __FUNCTION__ ": unreasonable itemnum");
 
+    /* FIXME: We need to skip the first few reserved records, but that
+     * depends on the category: if it is zero (if that's their
+     * category) or all, then we must increase the itemNum; otherwise
+     * not. */
     idx = 0;
     err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum,
 				 dmSeekForward, gPrefs.category);
