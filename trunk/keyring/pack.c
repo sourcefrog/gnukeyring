@@ -122,9 +122,11 @@ void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr,
 }
 
 
-/* Write just a single NUL to keep space for this record.  It's not
+/*
+ * Write just a single NUL to keep space for this record.  It's not
  * marked dirty yet -- that'll happen when some real data is written
- * in. */
+ * in.
+ */
 Err KeyDB_CreateNew(UInt16 *idx)
 {
     MemHandle	recHandle;
