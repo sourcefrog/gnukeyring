@@ -84,10 +84,10 @@ void KeyDB_Reencrypt(UInt8 *oldRecordKey, Char const *newPasswd)
 	Keys_UnpackRecord(recPtr, &unpacked, oldRecordKey);
         MemHandleUnlock(recHand);
         Keys_SaveRecord(&unpacked, idx, newRecordKey);
+	err = DmReleaseRecord(gKeyDB, idx, true);
+	ErrFatalDisplayIf(err, "DmReleaseRecord");
 
 	UnpackedKey_Free(&unpacked);
-
-
     }
 
     // Finally, make the new unlock hash the currently active one
