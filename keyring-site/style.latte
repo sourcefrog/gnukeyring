@@ -1,6 +1,9 @@
 \; Rules imported into every Latte source file
 
-{\def \style_rcsid \"$Id$\"}
+{\def \style_rcsid
+   \"$Id$\"}
+
+{\def \Product {GNU Keyring}}
 
 {\def {\externallink \=href \&rest}
     {\a \href={\href} \rest}
@@ -125,8 +128,7 @@ USA.
 
      {\externallink \href=http://sourceforge.net/projects/gnukeyring/
         sourceforge project } |
-     {\a \href=\"http://sourceforge.net/mail/?group_id=306\"
-        mailing lists } |
+     {\pagelink \pageid=lists mailing lists } |
      {\externallink \href={http://sourceforge.net/news/?group_id=306}
         news } |
      {\externallink \href={http://sourceforge.net/bugs/?group_id=306}
@@ -138,10 +140,14 @@ USA.
    }
 
    {\warning}
+ 
+   {\br} {\br}
    
    \rest
 
-  {\font \size=-2
+   {\br} {\br}
+
+   {\font \size=-2
     {\rule}
 
     Copyright {\c-copy} 1999, 2000 by {\externallink
