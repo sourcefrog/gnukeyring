@@ -100,7 +100,7 @@ install: $(PRC)
 .PHONY: _upload
 hosting_dir = gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
 upload_doc: $(DOCS)
-	rsync -e ssh -v $(DOCS) $(hosting_dir) 
+	rsync --times -e ssh -v $(DOCS) $(hosting_dir) 
 
 # TODO: Also upload the release to the SourceForge download area
 
