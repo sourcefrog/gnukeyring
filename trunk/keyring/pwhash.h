@@ -3,7 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,5 +28,5 @@ Err PwHash_Store(Char *newPasswd);
 
 typedef struct {
      UInt32     salt;
-     UInt8      hash[64];
+     UInt8      hash[kMD5HashSize];
 } CheckHashType;
