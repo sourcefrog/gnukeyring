@@ -46,7 +46,7 @@ href="&#109;ai&#108;to&#58;key&#114;ing&#64;zia&#46;com&#46;br">Alexandre
    <li>The keyring CVS repository also contains a java library to
    access the keyring library.  Just <a
     href="http://sourceforge.net/cvs/?group_id=306">checkout</a> the
-    module <code>keyring-site/java</code>.
+    module <code>keyring-link/java</code>.
   </li>
   </ul>
 </section>
