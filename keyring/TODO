@@ -129,6 +129,12 @@ while locked.  Perhaps clicking that icon ought to relock the keyring.
 
 * Check password timeout when paging?
 
+* Keep temporary key in a locked DB
+
+This way we won't relock when switching applications.
+
+* Screenshots
+
 * Beep appropriately
 
 ** Wrong password
