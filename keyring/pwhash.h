@@ -1,4 +1,5 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+ *
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -19,11 +20,5 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
-/* Sizes in bytes */
-#define kDESBlockSize		8
-#define kMD5HashSize            16
-
-Err DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
-	     UInt8 const *key);
-
+Boolean PwHash_Check(Char *guess);
+Err PwHash_Store(Char *newPasswd);
