@@ -8,12 +8,28 @@
   You should see a file called {\tt Keys-Gtkr.pdb} on your PC, which
   contains the encrypted keyring.
 
-  Stefan Wundrak wrote a {\a \href="http://www.wundrak.de/keyring/"
-   keyring viewer for windows}.  You can use it to browse the keys on
-  your PC.  Note: I didn't see the source code, so use it at your own
-  risk.
+  There are some viewers to inspect the backed up keyring
+  database on the PC.  There is no support for editing yet.  These
+  tools are from different authors, please report problems to the
+  respective author.
 
-  There is a {\b preview} version of a PC conduit available here:
+  {\ul
+   {\li
+    {\a \href="http://sourceforge.net/sendmessage.php?touser=160221"
+     Stefan Wundrak} wrote a {\a \href="http://www.wundrak.de/keyring/"
+     viewer for Windows}.
+   }
+
+   {\li Chris Ridd wrote a viewer for MacOS X (coming soon)}
+
+   {\li There is a keyring conduit included in 
+	{\a \href="http://www.jpilot.org/" JPilot}.  It
+	runs under Linux and other Unix-like OSes.}
+
+   {\li If you want to create your own keyring conduit you can base it on
+	the following (official) source code. 
+	To compile this, you will need the {\em OpenSSL} and
+	{\em pilot-link} libraries.
 
   {\table {\tr 
     {\td
@@ -22,11 +38,7 @@
    {\tr
     {\td {\download keyring-link_0.1.1-1_i386.deb box2.gif}}
     {\td Debian i386 binary.}}}
+	}
+  }
 
-  Older versions are available from the 
-  {\a \href={http://sourceforge.net/project/showfiles.php?group_id=306}
-    SourceForge download site.}
-
-  There is no support for editing yet.  To run this, you will need the
-  {\em OpenSSL} and {\em pilot-link} libraries.
 }}
