@@ -1,8 +1,9 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
  * Tightly Bound -- store passwords securely on a handheld
- * Copyright (C) 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* FIXME: MemoPad limits memos to 4kb.  We should use that too, and
+/*
+ * FIXME: MemoPad limits memos to 4kb.  We should use that too, and
  * make sure that we never write out more text than can be accepted.
  * I think we're safe, because all our edit fields have smaller
  * lengths.
@@ -28,7 +30,11 @@
  * "...possible memory leak...". The only time in my limited Palm
  * programming I ran into this was because all forms weren't closed
  * before exiting my app.  I'm not sure this is really a problem, as
- * memory should be given back by the fact Keyring has exited.  -- Dell */
+ * memory should be given back by the fact Keyring has exited.  -- Dell
+ *
+ * TODO: Export using localized field headings, or perhaps don't
+ * export the headings at all.
+ */
 
 #include <PalmOS.h>
 #include <Password.h>

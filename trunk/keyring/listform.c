@@ -1,8 +1,9 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
  * Tightly Bound -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,8 @@
  * source.
  *
  * TODO: Show category headings in the list.
+ *
+ * TODO: Scroll to show newly-inserted items.
  */
 
 static TablePtr f_Table;

@@ -56,9 +56,7 @@
  *
  * TODO: Perhaps close the list form while we're in the edit form?
  *
- * FIXME: Category changes do not seem to stick.
- *
- * FIXME: Crash when deleting existing record.
+ * TODO: Newline in single-line fields should move down one.
  */
 
 
