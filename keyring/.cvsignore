@@ -6,6 +6,7 @@
 *.psf
 *.tmp
 *~
+.dependencies
 ChangeLog
 ID
 bin
