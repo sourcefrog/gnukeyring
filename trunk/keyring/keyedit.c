@@ -701,6 +701,10 @@ static void KeyEditForm_Generate(void)
     FldSetTextHandle(passwdFld, (MemHandle) h);
     FldSetDirty(passwdFld, true);
     FldDrawField(passwdFld);
+
+    DateSecondsToDate(TimGetSeconds(), &gRecord.lastChange);
+    f_lastChangeDirty = true;
+    KeyEditForm_SetDateTrigger();
 }
 
 

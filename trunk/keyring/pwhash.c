@@ -50,12 +50,15 @@
  */
 static Err PwHash_Calculate(UInt8 *digest, Char *salt, Char *passwd)
 {
-    UInt8	buffer[kMessageBufSize];
+    UInt8 buffer[kMessageBufSize];
+    UInt8 pwlen;
 
-    MemSet(buffer, kMessageBufSize, 0);
     MemMove(buffer, salt, kSaltSize);
-    
     StrNCopy(buffer + kSaltSize, passwd, kMessageBufSize - 1 - kSaltSize);
+    pwlen = kSaltSize + StrLen(passwd);
+
+    if (pwlen < kMessageBufSize)
+	MemSet(buffer + pwlen, kMessageBufSize - pwlen, 0);
 
     MD5(buffer, kMessageBufSize, digest);
 

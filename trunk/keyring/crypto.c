@@ -30,8 +30,8 @@
 
 void CryptoPrepareKey(UInt8 *rawKey, CryptoKey cryptKey)
 {
-    des_set_key(rawKey, cryptKey[0]);
-    des_set_key(rawKey + DES_KEY_SZ, cryptKey[1]);
+    des_set_key((des_cblock*) rawKey, cryptKey[0]);
+    des_set_key((des_cblock*) rawKey + 1, cryptKey[1]);
 }
 
 Err CryptoRead(void * from, void * to, UInt32 len, CryptoKey cryptKey)
@@ -53,11 +53,12 @@ Err CryptoRead(void * from, void * to, UInt32 len, CryptoKey cryptKey)
 Err CryptoWrite(void *recPtr, UInt32 off, char const *from, UInt32 len,
 		CryptoKey cryptKey)
 {
-    UInt8	third[kDESBlockSize];
+    des_cblock third;
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
     do {
-	des_ecb2_encrypt(from, third, cryptKey[0], cryptKey[1], true);
+	des_ecb2_encrypt((des_cblock*)from, &third, 
+			 cryptKey[0], cryptKey[1], true);
 
         DmWrite(recPtr, off, third, kDESBlockSize);
 
