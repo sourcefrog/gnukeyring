@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+/* -*- c-file-style: "k&r"; c-basic-offset: 4; -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -80,6 +80,7 @@ static Boolean KeyEditForm_IsEmpty(void);
 static void KeyEditForm_MarkClean(void);
 static void KeyEditForm_DeleteKey(Boolean saveBackup);
 static void KeyEditForm_FindMyPosition(void);
+static void KeyEditForm_GetFields(void);
 
 static Boolean keyDeleted;
 
@@ -103,14 +104,14 @@ Char f_KeyFormTitle[32];
 // ======================================================================
 // Key edit form
 
-/* Here's one possible way to make storing these fields a bit
- * simpler: keep a struct in memory that holds the handles all the
- * fields are using to edit.  Fill the struct as records are read in,
- * and use it to calculate lengths and read values when writing out
- * without having to repeatedly interrogate the GUI fields.  We have
- * to cope specially with fields which are null and created by the
- * GUI, and also somehow check for dirty fields or whether the whole
- * record is empty and should be deleted.  */
+/* All of the text fields manage their own memory, including resizing
+ * the allocations when required.  We fill the struct containing
+ * handles as records are read in, and use it to calculate lengths and
+ * read values when writing out without having to repeatedly
+ * interrogate the GUI fields.  We have to cope specially with fields
+ * which are null and created by the GUI, and also somehow check for
+ * dirty fields or whether the whole record is empty and should be
+ * deleted.  */
 
 /* When we open a record for editing, we copy each field into a memory
  * chunk of its own so that the fields can resize them as necessary.
@@ -149,20 +150,17 @@ static void KeyEditForm_UpdateTitle(void)
     Char * titleTemplate;
     UInt16 pos, total;
 
-    if (gKeyRecordIndex != kNoRecord) {
-        pos = gKeyPosition + 1;
-        total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
-        
-        titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
-        ErrFatalDisplayIf(!titleTemplate, "no titleTemplate");
+    ErrNonFatalDisplayIf(gKeyRecordIndex == kNoRecord,
+                         __FUNCTION__ ": no record");
 
-        StrPrintF(f_KeyFormTitle, titleTemplate, pos, total);
-        MemPtrUnlock(titleTemplate);
-    } else {
-        titleTemplate = MemHandleLock(DmGetResource(strRsc, EmptyTitleStr));
-        StrCopy(f_KeyFormTitle, titleTemplate);
-        MemPtrUnlock(titleTemplate);    
-    }
+    pos = gKeyPosition + 1;
+    total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
+        
+    titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
+    ErrFatalDisplayIf(!titleTemplate, __FUNCTION__ ": no titleTemplate");
+
+    StrPrintF(f_KeyFormTitle, titleTemplate, pos, total);
+    MemPtrUnlock(titleTemplate);
 
     FrmCopyTitle(f_KeyEditForm, f_KeyFormTitle);
     return;
@@ -244,6 +242,7 @@ static void KeyEditForm_Load(void)
     ErrNonFatalDisplayIf(!recPtr, "couldn't lock record");
     
     busyForm = FrmInitForm(BusyDecryptForm);
+    FrmSetActiveForm(busyForm);
     FrmDrawForm(busyForm);
 
     Keys_Unpack(record, &gRecord);
@@ -255,7 +254,6 @@ static void KeyEditForm_Load(void)
     FrmSetActiveForm(f_KeyEditForm);
 
     KeyEditForm_FromUnpacked();
-    KeyEditForm_UpdateScrollbar();
 
     /* NotifyRegister is not present in 3.0.  We need to check for
      * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
@@ -320,7 +318,6 @@ static void KeyEditForm_Save(void)
        KeyEditForm_Save, last two lines, which in your remarks say are
        unnecessary.  Removing these two lines eliminates the bus
        error. */
-    KeyEditForm_UpdateTitle();
     FrmSetActiveForm(f_KeyEditForm);
 }
 
@@ -334,6 +331,7 @@ static void KeyEditForm_UpdateCategory(void) {
 
 static void KeyEditForm_UpdateAll(void)
 {
+    KeyEditForm_GetFields();
     KeyEditForm_UpdateCategory();
     KeyEditForm_UpdateTitle();
     FrmDrawForm(f_KeyEditForm);
@@ -407,13 +405,14 @@ void KeyEditForm_GotoRecord(UInt16 recordIdx) {
         
 
 
-static void KeyEditForm_New(void) {
-    /* All of the text fields allocate their own memory as they go.
-     * The others we have to set up by hand. */
+static void Key_SetNewRecordCategory(void)
+{
     if (gPrefs.category == dmAllCategories)
         gRecord.category = dmUnfiledCategory;
     else
         gRecord.category = gPrefs.category;
+
+    Key_SetCategory(gKeyRecordIndex, gRecord.category);
 }
 
 
@@ -424,9 +423,8 @@ static void KeyEditForm_OpenRecord(void) {
     if (gKeyRecordIndex != kNoRecord) 
         KeyEditForm_Load();
     else {
-        KeyEditForm_New();
         KeyDB_CreateNew(&gKeyRecordIndex);
-        Key_SetCategory(gKeyRecordIndex, gPrefs.category);
+        Key_SetNewRecordCategory();
         /* TODO: If this fails, do something. */
     }
 
