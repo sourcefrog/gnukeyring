@@ -38,6 +38,8 @@
 #include <openssl/md5.h>
 
 #include "trace.h"
+#include "hextype.h"
+
 
 /* #include <popt.h> */
 
@@ -77,31 +79,6 @@ int main(int argc, char **argv)
     return 0;
 }
 
-
-static void hextype(FILE *f, unsigned char const *d, size_t len)
-{
-    int               i, j;
-
-    for (i = 0; i < len; i++) {
-	j = i;
-	fprintf(f, "%6x: ", i);
-	for (; i < len && (i%16) != 15; i++) {
-	    fprintf(f, "%02x ", d[i]);
-	}
-	for (; (i%16) != 15; i++) {
-	    fprintf(f, "   ");
-	}
-	printf("    ");
-	i = j;
-	for (; i < len && (i%16) != 15; i++) {
-	    fprintf(f, "%c", isprint(d[i]) ? d[i] : '.');
-	} 
-	
-	if (i != (len-1))
-	    fprintf(f, "\n");
-    }
-    fprintf(f, "\n");
-}
 
 
 static int keyring_verify(const unsigned char *rec0, size_t rec_len,
@@ -170,8 +147,24 @@ static void des_read(char const *from, char *to, size_t len, char const *snib)
 
 static void des_setup(unsigned char const *snib)
 {
+
+    /* fix parity: */
+    des_set_odd_parity((des_cblock *) snib);
+    des_set_odd_parity(((des_cblock *) snib) + 1);
+
+    printf("Adjusted snib:\n");
+    hextype(stdout, snib, 2 * DES_KEY_SZ);
+   
     des_set_key((const_des_cblock *) snib,                key1);
     des_set_key((const_des_cblock *) (snib + DES_KEY_SZ), key2);
+}
+
+
+static void calc_snib(char const *pass, unsigned char *snib)
+{
+    MD5((unsigned char *) pass, strlen(pass), snib);
+    printf("Snib:\n");
+    hextype(stdout, snib, 2 * DES_KEY_SZ);
 }
 
 
@@ -181,6 +174,7 @@ static void keyring_dumprecords(struct pi_file *pif, char const *pass)
     int                i;
     unsigned char      snib[MD5_DIGEST_LENGTH];
     unsigned char      *plain;
+    char const         *readp;
     void               *recp;
     size_t             rec_len;
     int                attr, category;
@@ -190,12 +184,12 @@ static void keyring_dumprecords(struct pi_file *pif, char const *pass)
 	rs_fatal("error getting number of records");
     }
 
-    MD5((unsigned char *) pass, strlen(pass), snib);
-    printf("Snib:\n");
-    hextype(stdout, snib, sizeof snib);
+    calc_snib(pass, snib);
     des_setup(snib);
 
     for (i = kNumReservedRecords; i < nrecords; i++) {
+	size_t len;
+	
 	printf("Record %d:\n", i);
 	if (pi_file_read_record(pif, i, &recp, &rec_len,
 				&attr, &category, NULL) == -1) {
@@ -205,17 +199,32 @@ static void keyring_dumprecords(struct pi_file *pif, char const *pass)
 	record_name = (char const *) recp;
 	printf("Record: %s\n", record_name);
 
-	rec_len -= strlen(record_name) + 1;
+	len = strlen(record_name);
+	rec_len -= len + 1;
+	recp += len + 1;
 
  	if (!(plain = malloc(rec_len))) 
  	    rs_fatal("allocation failed");
 
  	des_read(recp, plain, rec_len, snib);
-	acct = plain;
+	
+	readp = acct = plain;
+	len = strlen(readp) + 1;
 	printf("Account: \n");
+	hextype(stdout, readp, len);
 
-	hextype(stdout, acct, strlen(acct));
+	readp += len; 
+	len = strlen(readp) + 1;
+	printf("Password: \n");
+	hextype(stdout, readp, len);
+	
+	readp += len; 
+	len = strlen(readp) + 1;
+	printf("Body: \n");
+	hextype(stdout, readp, len);
+	
 	printf("\n");
+	free(plain);
     }
 }
 
