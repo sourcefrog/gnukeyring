@@ -31,6 +31,9 @@
  * TODO: Are we accessing uninitialized memory here somewhere?  I
  * seemed to get different preferences when I ran with the memory
  * shaker, but I might be wrong.
+ *
+ * TODO: Also include high-ASCII characters that can be easily written
+ * using Graffiti.  This makes it *much* harder to break.
  */
 
 #include <PalmOS.h>
