@@ -26,6 +26,7 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
+#include <ctype.h>
 
 #include <netinet/in.h>
 
@@ -79,15 +80,25 @@ int main(int argc, char **argv)
 
 static void hextype(FILE *f, unsigned char const *d, size_t len)
 {
-    int               i;
+    int               i, j;
 
     for (i = 0; i < len; i++) {
-	if (i % 16 == 0) {
-	    if (i > 0)
-		fprintf(f, "\n");
-	    fprintf(f, "%6x: ", i);
+	j = i;
+	fprintf(f, "%6x: ", i);
+	for (; i < len && (i%16) != 15; i++) {
+	    fprintf(f, "%02x ", d[i]);
 	}
-	fprintf(f, "%02x ", d[i]);
+	for (; (i%16) != 15; i++) {
+	    fprintf(f, "   ");
+	}
+	printf("    ");
+	i = j;
+	for (; i < len && (i%16) != 15; i++) {
+	    fprintf(f, "%c", isprint(d[i]) ? d[i] : '.');
+	} 
+	
+	if (i != (len-1))
+	    fprintf(f, "\n");
     }
     fprintf(f, "\n");
 }
@@ -159,9 +170,9 @@ static void des_read(char const *from, char *to, size_t len, char const *snib)
 
 static void des_setup(unsigned char const *snib)
 {
-    des_set_key((const_des_cblock *) snib,              key1);
+    des_set_key((const_des_cblock *) snib,                key1);
     des_set_key((const_des_cblock *) (snib + DES_KEY_SZ), key2);
-}    
+}
 
 
 static void keyring_dumprecords(struct pi_file *pif, char const *pass)
@@ -192,7 +203,7 @@ static void keyring_dumprecords(struct pi_file *pif, char const *pass)
 	}
 
 	record_name = (char const *) recp;
-	printf("Account: %s\n", record_name);
+	printf("Record: %s\n", record_name);
 
 	rec_len -= strlen(record_name) + 1;
 
@@ -201,8 +212,9 @@ static void keyring_dumprecords(struct pi_file *pif, char const *pass)
 
  	des_read(recp, plain, rec_len, snib);
 	acct = plain;
-	printf("Account: %s\n", acct);
-	
+	printf("Account: \n");
+
+	hextype(stdout, acct, strlen(acct));
 	printf("\n");
     }
 }
