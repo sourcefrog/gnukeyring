@@ -21,7 +21,11 @@
 
 /* This file looks after generating random passwords on request. */
 
-/* TODO: Save length and class settings for next time. */
+/*
+ * TODO: Save length and class settings for next time.
+ *
+ * TODO: Are we accessing uninitialized memory here somewhere?
+ */
 
 #include <PalmOS.h>
 #include <Password.h>
