@@ -23,19 +23,14 @@
 
 <section title="pre-release information">
 
-<p>This is a pre-release of keyring and it may contain bugs that destroy
+<p>This is a prerelease of keyring and it may contain bugs that destroy
 the database or even require a hard reset.  So update your backup,
-before installing this.</p>
+before installing this.  And keep a backup of the Keys-Gtkr.pdb file
+in a seperate place in case you want to downgrade back to 1.2.2 later.</p>
 
-<p>On the positive side, this prerelease will live happily with
-keyring-1.2.2 without interfering.  It uses a different database and
-different creator IDs.  I also hadn't any hard resets or database
-corruption with this program.</p>
-
-<p>Upgrading your keyring-1.2.2 database is not yet supported.  And I
-can't promise that later versions of keyring will understand the new
-database.  So use it just for testing and keep important passwords
-with keyring-1.2.2.</p>
+<p>If you choose "No" as Cipher you do not get any encryption.  This
+option is there only for test purposes, it will be removed in the</p>
+final release.
 </section>
 
 <section title="download">
