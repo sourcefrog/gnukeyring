@@ -230,6 +230,21 @@ UInt32 PilotMain(UInt16 launchCode,
 {
     Err err = 0;
 
+    if (launchCode == kKeyringResumeSleepLaunch) {
+	/* We were relaunched by the sleep notify handler.
+	 * Enqueue event to resume sleeping 
+	 */
+	struct EventType keyev;
+	keyev.eType = keyDownEvent;
+	keyev.data.keyDown.chr = resumeSleepChr;
+	keyev.data.keyDown.keyCode = 0;
+	keyev.data.keyDown.modifiers = commandKeyMask;
+	EvtAddEventToQueue(&keyev);
+
+	/* Set launch code to normal */
+	launchCode = sysAppLaunchCmdNormalLaunch;
+    }
+
     if (launchCode == sysAppLaunchCmdNormalLaunch) {
 	UInt32 rom30 = sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0);
 	
@@ -248,7 +263,7 @@ UInt32 PilotMain(UInt16 launchCode,
     }
 
     /* TODO: We should handle: sysAppLaunchCmdSaveData,
-     * sysAppLaunchCmdTimeChange, sysAppLaunchCmdFind,
+     * sysAppLaunchCmdFind,
      * sysAppLaunchCmdGoTo, sysAppLaunchCmdSystemLock, ... */
 
     return err;
