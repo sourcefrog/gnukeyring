@@ -1,0 +1,34 @@
+                                        View Keyring
+
+This is a viewer application for Keyring files on Mac OS X, written by Chris Ridd <chrisridd@mac.com> and contributed to the Keyring for PalmOS project under the BSD license.
+
+Build requirements
+------------------
+View Keyring uses the OpenSSL crypto shared library supplied by Apple to do the required hashing and decryption. Unfortunately Apple only started shipping the OpenSSL header files in Mac OS X 10.2 (Jaguar), so this makes building View Keyring a bit more difficult if you're still on 10.1. The OS X boxes in Sourceforge's "Compile Farm" are still running 10.1.
+
+If you don't have the OpenSSL headers, then just grab a tarball of the appropriate OpenSSL version from <http://www.openssl.org/> and extract it. Add the path to the OpenSSL headers to the C compiler settings in the View Keyring project.
+
+That's roughly how to do it anyway, since I haven't had 10.1 for quite a while now my memory's a bit rusty on the details!
+
+Build instructions
+------------------
+From the Project Builder GUI, just click the hammer icon or type Command-B. Easy :-)
+
+If you're using the command-line then you can do an "install" (to a mounted disk image, perhaps) as well.
+
+% cd "View Keyring"
+% pbxbuild install -buildStyle Deployment "DSTROOT=/Volumes/View Keyring"
+
+The linker warns about a multiply defined symbol (_crypt) being present in the OpenSSL crypto library and the standard library. Ignore it, as View Keyring doesn't use that function anyway.
+
+Bugs
+----
+There probably are bugs in the app :-( In particular I haven't done any testing of the Japanese character conversion stuff using Japanese characters (using 7-bit ASCII it seems to work OK), so please report back if you've got a Japanese Palm!
+
+Please use Sourceforge to log any bug reports/enhancement requests.
+
+Future
+------
+Obviously it would be nice to use View Keyring to make modifications to the keyring file.
+
+What would be even better IMO would be to have a real conduit that synchronized changes on the Palm to an Apple keychain. Currently it is extremely difficult (impossible?) to build conduits on OS X using gcc, so sadly that dream will have to wait...
