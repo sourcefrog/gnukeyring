@@ -48,6 +48,9 @@ static FormPtr f_ListForm;
 /* Number of rows that fit in the visible table space */
 static UInt16 f_VisRows;
 
+/* Pixel width of the table */
+static UInt16 f_TableWidth, f_TableHeight;
+
 /* Number of records available to be shown in the table, after taking
  * into account categories and reserved records. */
 static UInt16 f_NumListed;
@@ -55,6 +58,9 @@ static UInt16 f_NumListed;
 /* Index of the first record displayed in the table.  Zero shows top
  * of table, etc. */
 static Int16 f_FirstIdx;
+
+/* Width of '.' character in pixels */
+static Int16 f_DotWidth;
 
 static Int16 ListForm_RecordIdx(Int16 itemNum)
 {
@@ -86,6 +92,35 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
 }
 
 
+static void ListForm_DrawToFit(Char * name, Int16 x, Int16 y)
+{
+    Int16 titleLen, width, titleWidth;
+    Int16 charsToDraw;
+    Boolean stringFit;
+	
+    charsToDraw = StrLen(name);
+
+    width = f_TableWidth - x;
+    titleWidth = width;
+    titleLen = charsToDraw;
+    FntCharsInWidth(name, &titleWidth, &titleLen, &stringFit);
+
+    if (stringFit) {
+        WinDrawChars(name, titleLen, x, y);
+    } else {
+        width -= (f_DotWidth * 3);
+        while (titleWidth > width || 
+               name[titleLen - 1] == ' ' || 
+               name[titleLen - 1] == tabChr)
+            {
+                titleWidth -= FntCharWidth(name[--titleLen]);
+            }
+        WinDrawChars(name, titleLen, x, y);
+        x += titleWidth;
+        WinDrawChars("...", 3, x, y);
+    }
+}
+
 
 static void ListForm_DrawCell(TablePtr UNUSED(table),
                               Int16 row, Int16 UNUSED(col), 
@@ -99,7 +134,6 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
      * since it will likely change to be a table in the future. */
     MemHandle   rec = 0;
     Char       *recPtr = 0, *scrStr;
-    UInt16      len;
     Char        altBuf[10];
     Int16       idx = row;
 
@@ -134,13 +168,11 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
 
  draw:
     /* TODO: Maybe add ellipsis if too wide? */
-    len = StrLen(scrStr);
-    WinDrawChars(scrStr, len, bounds->topLeft.x + 2, bounds->topLeft.y);
+    ListForm_DrawToFit(scrStr, bounds->topLeft.x + 2, bounds->topLeft.y);
     
     if (recPtr)
         MemHandleUnlock(rec);
 }
-
 
 
 static void ListForm_UpdateTable(void)
@@ -149,11 +181,6 @@ static void ListForm_UpdateTable(void)
     UInt16 numRows;
     UInt16 lineHeight;
     UInt16 dataHeight;
-    UInt16 tableHeight;
-    RectangleType r;
-
-    TblGetBounds(f_Table, &r);
-    tableHeight = r.extent.y;
 
     lineHeight = FntLineHeight();
 
@@ -162,7 +189,7 @@ static void ListForm_UpdateTable(void)
     numRows = TblGetNumberOfRows(f_Table);
     dataHeight = 0;
     for (row = 0; row < numRows; row++) {
-        if ((tableHeight >= dataHeight + lineHeight)
+        if ((f_TableHeight >= dataHeight + lineHeight)
             && (row + f_FirstIdx < f_NumListed)) {
             /* Row is usable */
             TblSetRowHeight(f_Table, row, lineHeight);
@@ -234,9 +261,17 @@ static void ListForm_Update(void)
 
 
 static void ListForm_FormOpen(void) {
+    RectangleType r;
+       
     f_ListForm = FrmGetActiveForm();
     f_Table = UI_GetObjectByID(f_ListForm, ID_KeyTable);
     f_ScrollBar = UI_GetObjectByID(f_ListForm, ID_KeyTableScrollBar);
+
+    TblGetBounds(f_Table, &r);
+    f_TableHeight = r.extent.y;
+    f_TableWidth = r.extent.x;
+
+    f_DotWidth = FntCharWidth('.');
 
     ListForm_Update();
 }
