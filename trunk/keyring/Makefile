@@ -28,8 +28,8 @@
 
 APP             = keyring
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 2.0-pre2
-DEFINES		= -DBETA -DkAppVersion=0x1992
+VERSION         = 2.0-pre3
+DEFINES		= -DBETA -DkAppVersion=0x1993
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-384 -Wshadow -Wcast-align
