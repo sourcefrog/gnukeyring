@@ -1482,7 +1482,7 @@ BEGIN
 	
 	label "Cipher:" autoid at (right@40 prevbottom+2) font 1
 	pushbutton "No" id CipherNoPush at (prevright+2 prevtop auto auto) group 2
-	pushbutton "DES" id CipherDESPush at (prevright+1 prevtop auto auto) group 2
+	pushbutton "3DES" id CipherDESPush at (prevright+1 prevtop auto auto) group 2
 	pushbutton "AES" id CipherAES128Push at (prevright+1 prevtop auto auto) group 2
 	pushbutton "AES-256" id CipherAES256Push at (prevright+1 prevtop auto auto) group 2
 
