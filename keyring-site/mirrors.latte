@@ -3,12 +3,18 @@
 {
   {\subhead mirrors}
 
-  {\ul
+  {\table
    {\foreach \mirror \mirrorlist 
     {\let {{\url {\cadr \mirror}} {\countrycode {\car \mirror}}}
 
-      {\li {\externallink \href=\url \url} ({\upcase \countrycode})}
+      {\tr {\td {\img \src={flags/\countrycode.gif} \alt=\countrycode}}
+        {\td {\externallink \href=\url \url}} 
       }
+     }
     }
    }
+
+   {\font \size=-1 Flag icons by {\externallink
+				  \href=http://www.qnet.com/~moonbase/miniflag/
+				  Moony's Miniflags}.}
 }}
