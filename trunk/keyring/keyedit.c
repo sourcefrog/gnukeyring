@@ -1,6 +1,7 @@
-/* -*- c-file-style: "k&r"; c-basic-offset: 4; -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
- * 
+ *
  * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
@@ -40,10 +41,8 @@
 #include "auto.h"
 
 
-/* TODO: Show position and do paging within category -- is this working now?
- *
- * TODO: If we can, page down in the notes field before going to the
- * next record.  Similarly backwards.
+/* TODO: Show position and do paging within category -- is this
+ * working now?
  *
  * TODO: Be more careful about not saving unless actually modified, as
  * this can save a lot of time.  I think we handle all the obvious
@@ -54,10 +53,6 @@
  *
  * FIXME: Position in the form title is wrong after changing
  * categories.  Do we want to stay in the originally selected category?
- *
- * TODO: When the category is changed, don't re-encrypt the record.
- * Instead just move it into the new category and update the position
- * indicator.
  *
  * TODO: Perhaps close the list form while we're in the edit form?
  *
@@ -279,9 +274,7 @@ static void KeyEditForm_Commit(void) {
         KeyEditForm_DeleteKey(false); /* no backup */
         KeyEditForm_MarkClean();
     } else if (KeyEditForm_IsDirty()) {
-        // TODO: Delete record if all fields empty?
         KeyEditForm_ToUnpacked(&gRecord);
-
         KeyEditForm_Save();
         KeyEditForm_MarkClean();
     }
@@ -612,13 +605,16 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
     
     KeyEditForm_Commit();
 
-    /* TODO: If we just deleted the current record, then moving
-     * forward a page should actually stay at the same position,
-     * because the next record will have shuffled down.  We won't have
-     * explicitly deleted it of course, but we might have left an
-     * empty record. */
+    /* If we just deleted the current record, then moving forward a
+     * page should actually stay at the same position, because the
+     * next record will have shuffled down.  We won't have explicitly
+     * deleted it of course, but we might have left an empty
+     * record. */
+    if (keyDeleted && offset == +1)
+         ;
+    else
+         gKeyPosition += offset;
 
-    gKeyPosition += offset;
     gKeyRecordIndex = 0;
     DmSeekRecordInCategory(gKeyDB, &gKeyRecordIndex, gKeyPosition,
                            dmSeekForward, gPrefs.category);
@@ -716,20 +712,18 @@ static void KeyEditForm_CategorySelected(void) {
 
 
 Boolean KeyEditForm_HandleEvent(EventPtr event) {
-    Boolean result = false;
-    
     switch (event->eType) {
     case ctlSelectEvent:
         switch (event->data.ctlSelect.controlID) {
         case DoneBtn:
             KeyEditForm_Done();
-            result = true;
-            break;
+            return true;
         case CategoryTrigger:
             KeyEditForm_CategorySelected();
             return true;
+        default:
+             return false;
         }
-        break;
 
     case fldChangedEvent:
         if (event->data.fldChanged.fieldID == ID_NotesField) {
@@ -740,24 +734,20 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 
     case frmOpenEvent:
         KeyEditForm_FormOpen();
-        result = true;
-        break;
+        return true;
 
     case frmCloseEvent:
         KeyEditForm_Commit();
-        result = false;
-        break;
+        return false;
 
     case keyDownEvent:
-        result = KeyEditForm_HandleKeyDownEvent(event);
-        break;
+        return KeyEditForm_HandleKeyDownEvent(event);
 
     case menuEvent:
         if (!Common_HandleMenuEvent(event)
             && !KeyEditForm_HandleMenuEvent(event))
             App_NotImplemented();
-        result = true;
-        break;
+        return true;
 
     case sclRepeatEvent:
     case sclExitEvent:
@@ -766,5 +756,6 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 
     default:
     }
-    return result;
+
+    return false;
 }
