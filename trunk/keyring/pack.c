@@ -144,22 +144,6 @@ Err KeyDB_CreateNew(UInt16 *idx)
     return err;
 }
 
-
-static MemHandle Keys_PrepareExisting(UInt16 idx, Int16 recLen)
-{
-    MemHandle	recHandle;
-
-    recHandle = DmResizeRecord(gKeyDB, idx, recLen);
-    if (!recHandle) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),
-                           __FUNCTION__);
-	return NULL;
-    }
-
-    return recHandle;
-}
-
-
 void Key_SetCategory(UInt16 idx, UInt16 category)
 {
      UInt16 attr;
@@ -211,10 +195,12 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
                          __FUNCTION__ ": no record to save");
     
     ErrFatalDisplayIf(idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
-    recHandle = Keys_PrepareExisting(idx, packRecLen);
-    if (!recHandle)
+    recHandle = DmResizeRecord(gKeyDB, idx, packRecLen);
+    if (!recHandle) {
+	UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),
+                           __FUNCTION__);
 	return;
-    
+    }
     recPtr = MemHandleLock(recHandle);
     Keys_WriteRecord(unpacked, recPtr, recordKey);
     MemHandleUnlock(recHandle);
@@ -223,4 +209,3 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
     if (err)
 	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 }
-

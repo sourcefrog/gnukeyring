@@ -35,15 +35,16 @@ void Keys_UnpackRecord(Char *recPtr, UnpackedKeyType *u, UInt8 *recordKey)
     MemSet(u, sizeof(UnpackedKeyType), (UInt8) 0);
     
     remain = MemPtrSize(recPtr);
-    if (!remain) 
-         return;
-    
     u->nameHandle = Mem_ReadString(&recPtr, &remain, &u->nameLen);
-    if (!remain) 
-         return;
+
+    if (remain < 0) {
+        FrmCustomAlert(ID_KeyDatabaseAlert,
+                       "record underflow", __FUNCTION__, "");
+	return;
+    }
 
     plainBuf = MemPtrNew(remain);
-    if (!remain)  {
+    if (!plainBuf)  {
          FrmCustomAlert(ID_KeyDatabaseAlert,
                         "not enough memory to unpack record",
                         __FUNCTION__, "");
@@ -62,6 +63,11 @@ void Keys_UnpackRecord(Char *recPtr, UnpackedKeyType *u, UInt8 *recordKey)
     u->acctHandle = Mem_ReadString(&recPtr, &remain, &u->acctLen);
     u->passwdHandle = Mem_ReadString(&recPtr, &remain, &u->passwdLen);
     u->notesHandle = Mem_ReadString(&recPtr, &remain, &u->notesLen);
+
+    if (remain < 0) {
+        FrmCustomAlert(ID_KeyDatabaseAlert,
+                       "record underflow", __FUNCTION__, "");
+    }
 
     MemPtrFree(plainBuf); 
 }
