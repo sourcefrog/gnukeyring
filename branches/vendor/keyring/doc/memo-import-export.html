@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title>Import/Export of Memos</title>
+  </head>
+
+  <body>
+    <h1>Import/Export of Memos</h1>
+
+    <p><tt>$Id$</tt></p>
+
+    
+    <p>It might be nice if GNU Keyring gained the ability to import data from 
+      and export it to the PalmOS Memo Pad.
+
+    <h2>Why?</h2>
+
+    <ul>
+      <li>Without Keyring, people tend to store their secret data in
+      the memo pad -- I certainly did.
+
+      <li>The memo pad provides a reasonably accessible way to enter
+      data on the PC.
+    </ul>
+
+    <p>I'm not sure if this is really useful, but it merits
+    consideration. 
+
+
+      
+    <h2>Import</h2>
+
+    <p>To import data, the user should choose either a whole category
+      of Memo Pad records or a single record.  (Is doing one record at
+      a time sufficient?)  This should be invoked from a menu command
+      in the list form, which shows a dialog listing the first line of
+      all memos.  
+
+    <p>For each record, we create a new record in
+      the Keyring, having a name equal to the first line of the memo,
+      and the notes field equal to the rest.
+
+    <p>On completion we should leave the user in the new record so
+      that they can tidy it up or at least see that it has been
+      completed.
+
+
+      
+    <h2>Export</h2>
+
+    <p>Similarly, for each exported record, create a new memo
+    containing on successive lines all non-null fields from the key.
+    This should be invoked from the menu in the Record form, and
+    should ask which category will receive the exported record.
+
+
+    <h2>Technicalities</h2>
+
+    <p>We need to understand the category format and the record format
+      for the memo pad, but they're pretty trivial: records are just
+      nul-terminated strings.
+  </body>
+</html>
