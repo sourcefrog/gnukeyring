@@ -457,6 +457,107 @@ BEGIN
   "@accel_Graffiti" = "G"
 END
 
+
+
+
+// ======================================================================
+// French translation contributed by Rick Moen <rick@linuxmafia.com>
+
+TRANSLATION "fr"
+BEGIN
+  "New" = "Nouveau"
+  "Key ______ of ______" = "Clef ______ v. ______"
+  "Name:" = "Nom:"
+  "Account:" = "Compte:" 
+  "Password:" = "Mot de passe:"
+  "Confirm:" = "Confirmez:"
+  "Changed:" = "Changé:"
+  "Done" = "Fait"
+  "Preferences" = "Préférences"
+  "Stay unlocked for:" = "Restez déverrouillé pour:"
+  "No time" = "pas de temps"
+  "15 sec" = "15 sec."
+  "60 sec" = "60 sec."
+  "5 min" = "5 min."
+
+  "Cancel" = "Annuler"
+  "Set Keyring Password" = "Changer son mot de passe pour Keyring"
+  "@@choosepassword" = "Choisez un mot de passe, s'il vous plait:"
+  "Generate Password" = "Générez un Mot de Passe"
+  "@@generate1" = "Un nouveau mot de passe "
+  "@@generate2" = "Générez:"
+
+  "Length:" = "Longueur:"
+  "Include:" = "Incluez:"
+  "Generate" = "Générez"
+
+  "Unlock" =  "Déverrouillez"
+
+  "Enter your password:" = "Entrez votre mot de passe:"
+
+  "Encrypting..." = "Chifferent..."
+  "Decrypting..." = "Déchifferent..."
+
+  "@@OutOfMemory" =  "Hors de mémoire vive"
+  "@@WrongPassword" = "Mot de passe incorrect. Essayez encore."
+  "@@PasswordMismatch" =  "Les mot de passe n'appariez pas.  Essayez encore, s'il vous plaît."
+
+  "Not here yet" = "Pas encore mis en application"
+  "@@NotImplemented" = "Cette function n'est pas encore mis en application."
+
+  "^1: System error ^2" =  "^1: Erreur système ^2"
+  "Couldn't launch the Memo Pad" =  "N'a pas pu lancer le bloc-notes."
+
+  "Delete Key" = "Clé d'effacement"
+  "Delete current key record?" = "Effacez principal enregistrement?"
+  "Save archive copy on PC" = "Enregistrez la copie d'archives sur le PC?"
+
+  "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+   = "Ceci est une vserion pilote d'essai de GNU Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de n'importe quelles donnÃ©es irrÃ©mÃ©diables."
+
+  "This is free software.  No warranty." = "C'est logiciel libre.  Il n'y a aucune garantie."
+
+  "Released under the GNU GPL v2." = "Liscencée sous le GNU GPL v2." 
+
+  "Save archive copy on PC" = "Enregistrez la copie d'archives sur le PC.""
+
+  "Database" = "Base de Données"
+  "Set Password..." = "Créez le mot de passe..."
+  "Options" = "Options"
+  "Tips" = ""
+  "Edit" = "éditez"
+
+  "Preferences..." =  "Préférences..."
+  "About..." =  "Au sujet de..."
+
+  "Undo" = "Défaites""
+  "Undo All" = "Défaites tout"
+  "Graffiti Help" = "Graffiti-aide"
+  "Paste" = "Collez"
+  "Cut" = "Coupez"
+  "Select All" = "Choisissez tout"
+  "Key %d of %d" = "Clef %d de %d"
+  "Copy" = "Copiez"
+  "Keyboard" = "Clavier"
+  "New Key" = "Nouvelle clé"
+
+  "Record" =  "Enregistrement"
+  "Generate Password..." = "Générez un mot de passe..."
+  "Export to Memo" = "Exportez vers une Note"
+  "Delete..." = "Effacez..."
+
+  "@@GenerateHelp" = "help/fr/generate.txt"
+  "@@KeyEditHelp" = "help/fr/keyedit.txt"
+
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "V"
+  "@accel_SelectAll" = "A"
+  "@accel_Keyboard" = "T"
+  "@accel_Graffiti" = "G"
+END
+
 #include "resource.h"
 
 VERSION ID 1000 "__VERSION__"
