@@ -5,12 +5,6 @@
 
 
 <set cur_ver="1.2.1">
-
-<def name="dlentry" option="icon file desc">
-  <tr><td>
-  <a href="http://prdownloads.sourceforge.net/gnukeyring/${file}"><img src="icons/$icon" border="0" alt="&nbsp;" align="center"><code><use file></code></a>
-  </td><td><use desc></td></tr>
-</def>
 <def name="zipentry"  option="code lang">
   <dlentry icon="binary.gif" 
            file="keyring-${cur_ver}-${code}.zip" 
@@ -63,8 +57,8 @@
   <rule>
 
   You might be interested in
-   <a href="http://sourceforge.net/softwaremap/trove_list.php?form_cat=223"
-    other PalmOS projects on SourceForge}.  
+   <a href="http://sourceforge.net/softwaremap/trove_list.php?form_cat=223">
+    other PalmOS projects on SourceForge</a>.  
 
   The current version of the development source is also available from 
   <a href="http://sourceforge.net/cvs/?group_id=306">CVS in SourceForge</a>.

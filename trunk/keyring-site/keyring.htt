@@ -39,8 +39,7 @@
      <br>
      <externallink href="https://sourceforge.net/projects/gnukeyring/" name="sourceforge project"> |
      <externallink href="http://freshmeat.net/projects/gnukeyring" name="freshmeat record">
-     <hr width="10%">
-   </center><br><br>
+   </center><rule>
 
 <if head>
  <use head>
@@ -76,9 +75,9 @@
  <use footer>
 </if>
 
-   <br> <br>
+   <br>
 
-   <center><hr width="10%"></center>
+   <rule>
 
    <p><font size="-2"><a href="https://sourceforge.net/projects/gnukeyring"><img src="http://sourceforge.net/sflogo.php?group_id=306&amp;type=1" alt="SourceForge" align="right" border="0" width=88 height=31></a></font>
 

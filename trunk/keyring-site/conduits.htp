@@ -1,0 +1,38 @@
+<set chapter="conduits">
+<set rcsid="$$Id$$">
+
+<file template="keyring.htt">
+
+<section title="conduits">
+
+  <p>The database can be backed up using the normal Hotsync mechanism.
+  You should see a file called <tt>Keys-Gtkr.pdb</tt> on your PC, which
+  contains the encrypted keyring.
+
+  <p>There are some viewers to inspect the backed up keyring
+  database on the PC.  There is no support for editing yet.  These
+  tools are from different authors, please report problems to the
+  respective author.
+
+  <ul>
+   <li><a href="&quot;http://sourceforge.net/sendmessage.php?touser=160221&quot;">Stefan Wundrak</a> wrote a <a href="&quot;http://www.wundrak.de/keyring/&quot;">viewer for Windows</a>.</li>
+
+   <li>Chris Ridd wrote a viewer for MacOS X (coming soon)</li>
+
+   <li>There is a keyring conduit included in
+        <a href="http://www.jpilot.org/">JPilot</a>.  It
+        runs under Linux and other Unix-like OSes.</li>
+
+   <li>If you want to create your own keyring conduit you can base it on
+        the following (official) source code.
+        To compile this, you will need the <em>OpenSSL</em> and
+        <em>pilot-link</em> libraries.
+
+     <table>
+       <dlentry icon="compressed.gif" file="keyring-link-0.1.1.tar.gz"
+                desc="PC conduit source">
+       <dlentry icon="box2.gif" file="keyring-link_0.1.1-1_i386.deb"
+                desc="Debian i386 binary">
+     </table></li>
+  </ul>
+</section>
