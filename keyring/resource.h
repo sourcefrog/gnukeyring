@@ -1,5 +1,7 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
- * Copyright 1999 by Martin Pool
+ *
+ * Copyright (C) 1999, 2000 by Martin Pool
+ *
  * $Id$
  *
  * Keyring for PalmOS
@@ -25,6 +27,7 @@
 #define GenerateForm			1017
 #define MemoDatabaseErrorAlert		1018
 #define OutOfMemoryAlert		1019
+#define CouldntLaunchMemoAlert		1020
 
 #define ListMenuBar			1100
 #define KeyEditMenuBar			1101

@@ -241,6 +241,15 @@ BEGIN
 END
 
 
+ALERT ID CouldntLaunchMemoAlert
+ERROR
+BEGIN
+	MESSAGE "Couldn't launch the Memo Pad"
+
+	BUTTONS "OK"
+END
+
+
 FORM ID ConfirmDeleteForm AT (2 94 156 64)
 HELPID ConfirmDeleteStr
 MODAL
@@ -266,7 +275,7 @@ BEGIN
 	FORMBITMAP AT (48 15) BITMAP GnuBitmap
 
 	LABEL "GNU Keyring __VERSION__" AUTOID AT (CENTER 96) FONT 1
-  	LABEL "Copyright 1999 by Martin Pool" AUTOID AT (CENTER PREVBOTTOM)
+  	LABEL "Copyright 1999, 2000 by Martin Pool" AUTOID AT (CENTER PREVBOTTOM)
 	LABEL "This is free software.  No warranty." AUTOID AT (CENTER PREVBOTTOM) 
 
 	BUTTON "OK" AUTOID AT (CENTER 139 30 12)
