@@ -50,9 +50,9 @@ MemHandle        g_SnibHandle;
 SnibPtr          g_Snib;
 DmOpenRef        g_SnibDB;
 
-static const char *k_SnibDBName = "Keys-Gtkr-Temp";
+#define k_SnibDBName "Keys-Gtkr-Temp"
 
-static UInt32 k_SnibDBType = 'GkyT';
+#define k_SnibDBType 'GkyT'
 
 #define k_SnibVersion 1
 

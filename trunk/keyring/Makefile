@@ -41,10 +41,14 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 
 # Note: 
 # Turning on debugger support (-g) costs about 100 bytes
+
 # Turning on  -finline-functions costs about 532 bytes
 # Empirically the smallest executables come from -O2, which makes sense
 # because it is defined to be the greatest amount of optimization that
 # does not involve size-speed tradeoffs.
+
+# On the other hand -O0 seems to make gcc not treat constants
+# properly. Foo. 
 
 DEFINES		= -DPALM_KEYRING
 WARN	        = -Wall -Winline -Wunused -W	\
@@ -52,7 +56,7 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wmissing-prototypes -Winline		\
 		-Wlarger-than-256 -Wshadow -Wcast-align	
 # OPTIM		= -O3 -finline-functions
-OPTIM		= -O0 -g
+OPTIM		= -g
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD 
 
 HELP_TXT        = $(wildcard help/*/*.txt)

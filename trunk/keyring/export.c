@@ -52,8 +52,9 @@
 #define kMaxExport (16<<10)
 
 
-static UInt32 const kMemoType = 'DATA', kApplType = 'appl';
-static UInt32 const kMemoCreator = 'memo';
+#define kMemoType 'DATA'
+#define kApplType 'appl'
+#define kMemoCreator 'memo'
 
 
 static void Export_Failure(void)
