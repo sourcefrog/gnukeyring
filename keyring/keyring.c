@@ -212,8 +212,10 @@ static void App_EventLoop(void)
     UInt16			error;
 	
     do {
+#ifdef MEM_CHECK
 	MemHeapCheck(0);
 	MemHeapCheck(1);
+#endif
 
 	EvtGetEvent(&event, (Int32) evtWaitForever);
 	
@@ -361,8 +363,10 @@ UInt32 PilotMain(UInt16 launchCode,
 
     if (launchCode == sysAppLaunchCmdNormalLaunch) {
 	err = App_Start();
+#ifdef MEM_CHECK
 	MemHeapCheck(0);
 	MemHeapCheck(1);
+#endif
 	if (!err) {
 	    App_EventLoop();
 	    App_Stop();
