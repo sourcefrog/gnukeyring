@@ -68,9 +68,11 @@
       \bugid=108323}, {\buglink \bugid=106167} and {\buglink
       \bugid=108332}.  There's no need to report it again.
       
-      There is a workaround that will let you recover your data into
-      an earlier version of the application.  Category information
-      will unfortunately be lost.  Here's what you have to do:
+      There is a workaround that may let you recover your data into an
+      earlier version of the application.  Whether the data is
+      recoverable seems to depend on the version of PalmOS and the
+      backup software you're using.  Category information will
+      unfortunately be lost.  Here's what you have to do:
 
       {\ol
 
@@ -87,18 +89,20 @@
 	 {\blockquote {\pre
 $ ./fix-eleven.pl -d Keys-Gtkr.pdb -o fixed-keys.pdb}}
 
-	 If you don't have Perl or don't know how to install the
-         packages, then you can mail your database to me and I will
-         fix it for you.  (Without peeking, I promise! ;-)}
-
         {\li Install GNU Keyring 0.9.2 on the handheld.}
 
 	{\li Reinstall the patched database.}
 
       }
 
-      Please let me know if this works or does not work for you.
+    }
 
-      } 
+    If you don't have Perl, don't know how to install the packages
+    or have trouble with this procedure, then you can mail your
+    database to me and I will fix it for you.  (Without peeking, I
+    promise! ;-)
 
-} }
+    Please let me know if this works or does not work for you.
+    } 
+  } 
+}
