@@ -606,8 +606,6 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
 {
     UInt16 numRecs;
     Int16 offset = (dir == winDown) ? +1 : -1;
-    
-    KeyEditForm_Commit();
 
     numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
 
@@ -617,6 +615,8 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
         SndPlaySystemSound(sndWarning);
         return;
     }
+    
+    KeyEditForm_Commit();
 
     gKeyPosition += offset;
     gKeyRecordIndex = 0;
