@@ -1,0 +1,5 @@
+Jelszó generálása: egy új, véletlen jelszót készít a kritériumoknak megfelelõen.
+
+Exportálás a Memoba: az aktuális bejegyzés összes adatát exportálja a Memoba.
+
+Mindent vissza: elvet minden változtatást, ami a bejegyzés megnyitása óta történt.
