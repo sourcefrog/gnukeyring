@@ -1,0 +1,9 @@
+GNU Keyring kann Passworte nach gewissen Kriterien generieren.  Je länger ein Passwort ist, und je größer der Zeichenvorrat ist, desto schwerer ist es zu erraten oder zu knacken.
+
+Länge: Wählen sie die Länge des zu generierenden Passworts.
+
+Zeichen: Legen sie die erlaubten Zeichen fest.  Es muß mindestens eine Kategorie ausgewählt werden.
+
+Generieren: Ein neues Passwort generieren und in den aktuellen Eintrag einfügen.
+
+Abbrechen: Vorgang abbrechen.
