@@ -62,3 +62,11 @@
   <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gnukeyring/${file}">
   <use desc></a>
 </def>
+
+<def name="dlentry" option="icon file desc">
+  <tr><td>
+  <a href="http://prdownloads.sourceforge.net/gnukeyring/${file}"><img src="icons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
+  </td><td><use desc></td></tr>
+</def>
+
+<def name="rule"><center><br><hr width="10%"><br></center></def>

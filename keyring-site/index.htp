@@ -21,22 +21,22 @@
   (PalmPilot, Visor, WorkPad) handheld computer.  Many people use
   Keyring for PalmOS to store
 
-  <p><ul><li>Computer account passwords</li>
+  <ul><li>Computer account passwords</li>
     <li>Credit card numbers</li>
     <li>Confidential memos or diary entries</li>
     <li>GnuPG or PGP passphrases</li>
     <li>SKey one-time-pads</li>
-    <li>Phone banking keywords</li></ul></p>
+    <li>Phone banking keywords</li></ul>
 
   <p>Other features include:</p>
 
-  <p><ul><li>Secure triple-DES encryption using a 112-bit key derived from
+  <ul><li>Secure triple-DES encryption using a 112-bit key derived from
      the password</li>
     <li>Open Source Software: no back doors, no license fees</li>
-    <li>English, German, Spanish and Swedish localized versions</li>
+    <li>English, Danish, German, Spanish, French, Italian, Japanese, 
+        Norwegian, Dutch, Portuguese, and Swedish localized versions</li>
     <li>Export records to the Memo Pad</li>
     <li>Generate random new passwords</li></ul>
-  </p>
 </section>
 
 
