@@ -317,6 +317,27 @@ void KeyRecord_Update(UnpackedKeyType const *unpacked,
     encBuf = KeyRecord_Pack(unpacked, gRecordKey);
     recLen = MemPtrSize(encBuf);
     
+    /* XXX: It seems there is some kind of bug here in resizing
+     * the record, but I don't know what it is yet.
+     *
+     * From the Programmer's Companion: ``To resize a record to
+     * grow or shrink its contents, call DmResizeRecord. This
+     * routine automatically reallocates the record in another
+     * heap of the same card if the current heap does not have
+     * enough space for it. Note that if the data manager needs to
+     * move the record into another heap to resize it, the handle
+     * to the record changes. DmResizeRecord returns the new
+     * handle to the record.''
+     *
+     * ``May display a fatal error message if any of the following
+     * occur: [] You don t have write access to the database. []
+     * The index parameter is out of range. [] The record chunk is
+     * locked.''
+     *
+     * Alternatively I wonder if something really strange is happening
+     * here, like perhaps we're running out of heap or dynamic memory.
+     * Certainly the encryption stuff might be a bit
+     * memory-intensive.  */
     record = DmResizeRecord(gKeyDB, idx, recLen);
     if (!record) {
 	App_ReportSysError(KeyDatabaseAlert, DmGetLastErr());
