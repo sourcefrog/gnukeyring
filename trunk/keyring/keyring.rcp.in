@@ -604,6 +604,17 @@ BEGIN
 END
 
 
+ALERT ID alertID_ExportEmpty
+ERROR
+BEGIN
+	TITLE "Export"
+
+	MESSAGE "There is no data to export."
+
+	BUTTONS "OK"
+END
+
+
 ALERT ID UpgradeAlert
 CONFIRMATION
 BEGIN
