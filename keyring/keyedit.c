@@ -905,17 +905,17 @@ Boolean KeyEditForm_HandleEvent(EventPtr event)
         return true;
 
     case frmCloseEvent:
-         Edit_FormClose();
-         return false;
+	Edit_FormClose();
+	return false;
 
     case keyDownEvent:
         return KeyEditForm_HandleKeyDownEvent(event);
 
     case menuEvent:
-        if (!Common_HandleMenuEvent(event)
-            && !KeyEditForm_HandleMenuEvent(event))
-            App_NotImplemented();
-        return true;
+        if (Common_HandleMenuEvent(event)
+            || KeyEditForm_HandleMenuEvent(event))
+	    return true;
+	break;
 
     case sclRepeatEvent:
     case sclExitEvent:
