@@ -58,6 +58,7 @@ END
 
 TRANSLATION "it"
 BEGIN
+  "Look Up:" = "Cerca:"
   "New" = "Nuovo"
   "Key ______ of ______" = "Record ______ di ______" 
   "Name:" = "Nome:"
@@ -139,7 +140,7 @@ BEGIN
   "Keyboard" = "Tastiera"
   "New Key" = "Nuovo record"
 
-  "Record" =  "Record"
+  "Key" =  "Record"
   "Generate Password..." = "Genera password..."
   "Export to Memo" = "Esporta in Memo Pad"
   "Delete..." = "Elimina..."
@@ -169,8 +170,8 @@ END
 
 TRANSLATION "de"
 BEGIN
+  "Look Up:" = "Suche:"
   "New" = "Neu"
-  "Key ______ of ______" = "Schlüssel ______ v. ______" 
   "Name:" = "Name:"
   "Account:" = "Konto:"
   "Password:" = "Passwort:"
@@ -232,10 +233,10 @@ BEGIN
   "Database" = "Datenbank"
   "Set Password..." = "Passwort festlegen..."
   "Options" = "Optionen"
-  "Tips" = "Tipps"
-  "Edit" = "Bearbeiten"
+  "Edit" = "Bearb."
 
   "Preferences..." =  "Einstellungen..."
+  "Tips..." = "Tipps..."
   "About..." =  "Info..."
 
   "Undo" = "Rückgängig"
@@ -244,12 +245,13 @@ BEGIN
   "Paste" = "Einfügen"
   "Cut" = "Ausschneiden"
   "Select All" = "Alles auswählen"
-  "Key ^0 of ^1" = "Schlüssel ^0 v. ^1"
+  "Key ______ of ______" = "Schl. ______ v. ______" 
+  "Key ^0 of ^1" = "Schl. ^0 v. ^1"
   "Copy" = "Kopieren"
   "Keyboard" = "Tastatur"
   "New Key" = "Neuer Schlüssel"
 
-  "Record" =  "Eintrag"
+  "Key" =  "Schlüssel"
   "Generate Password..." = "Passwort generieren..."
   "Export to Memo" = "Als Merkzettel exportieren"
   "Delete..." = "Eintrag löschen..."
@@ -278,6 +280,7 @@ END
 
 TRANSLATION "es"
 BEGIN
+  "Look Up:" = "Buscar:"
   "New" = "Nueva"
   "Key ______ of ______" = "Clave ______ de ______" 
   "Name:" = "Nombre:"
@@ -350,7 +353,7 @@ BEGIN
   "Keyboard" = "Teclado"
   "New Key" = "Nueva Clave"
 
-  "Record" =  "Ficha"
+  "Key" =  "Ficha"
   "Generate Password..." = "Generar Clave..."
   "Export to Memo" = "Exportar al Block de Notas"
   "Delete..." = "Borrar..."
@@ -453,7 +456,7 @@ BEGIN
   "Keyboard" = "Tangentbord"
   "New Key" = "Ny nyckel"
 
-  "Record" =  "Post"
+  "Key" =  "Post"
   "Generate Password..." = "Skapa lösenord..."
   "Export to Memo" = "Spara som Memo"
   "Delete..." = "Ta bort..."
@@ -564,7 +567,7 @@ BEGIN
   "Keyboard" = "Toetsenbord"
   "New Key" = "Nieuwe sleutel"
 
-  "Record" =  "Record"
+  "Key" =  "Sleutel"
   "Generate Password..." = "Genereer Wachtwoord..."
   "Export to Memo" = "Naar Memo exporteren"
   "Delete..." = "Verwijderen..."
@@ -590,8 +593,10 @@ END
 
 TRANSLATION "fr"
 BEGIN
-  "New" = "Nouveau"
-  "Key ______ of ______" = "Clef ______ v. ______"
+  "New" = "Nouv."
+  "Look Up:" = "Trouver:"
+  "Key ______ of ______" = "Clef ______ de ______"
+  "Key ^0 of ^1" = "Clef ^0 de ^1"
   "Name:" = "Nom:"
   "Account:" = "Compte:" 
   "Password:" = "Mot de passe:"
@@ -649,39 +654,39 @@ BEGIN
 
   "Database" = "Base de Données"
   "Set Password..." = "Créez le mot de passe..."
-  "Options" = "Options"
   "Tips" = ""
-  "Edit" = "éditez"
 
+  "Key" = "Clef"
+  "Generate Password..." = "Générer un mot de passe..."
+  "Undo All" = "Annuler tout"
+  "Export to Memo" = "Exporter vers une Note"
+  "Delete..." = "Purge..."
+
+  "Edit" = "Edition"
+  "Undo" = "Annuler"
+  "Cut" = "Couper"
+  "Copy" = "Copier"
+  "Paste" = "Coller"
+  "Select All" = "Sélectionner tout"
+  "Keyboard" = "Clavier"
+  "Graffiti Help" = "Aide Graffiti"
+
+  "Options" = "Options"
   "Preferences..." =  "Préférences..."
   "About..." =  "Au sujet de..."
 
-  "Undo" = "Défaites"
-  "Undo All" = "Défaites tout"
-  "Graffiti Help" = "Graffiti-aide"
-  "Paste" = "Collez"
-  "Cut" = "Coupez"
-  "Select All" = "Choisissez tout"
-  "Key ^0 of ^1" = "Clef ^0 de ^1"
-  "Copy" = "Copiez"
-  "Keyboard" = "Clavier"
   "New Key" = "Nouvelle clé"
-
-  "Record" =  "Enregistrement"
-  "Generate Password..." = "Générez un mot de passe..."
-  "Export to Memo" = "Exportez vers une Note"
-  "Delete..." = "Effacez..."
 
   "@@GenerateHelp" = "help/fr/generate.txt"
   "@@KeyEditHelp" = "help/fr/keyedit.txt"
   "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
-  "@@accel_Undo" = "U"
+  "@@accel_Undo" = "Z"
   "@@accel_Cut" = "X"
   "@@accel_Copy" = "C"
   "@@accel_Paste" = "V"
-  "@@accel_SelectAll" = "A"
-  "@@accel_Keyboard" = "T"
+  "@@accel_SelectAll" = "T"
+  "@@accel_Keyboard" = "A"
   "@@accel_Graffiti" = "G"
 END
 
@@ -767,7 +772,7 @@ BEGIN
   "Keyboard" = "Tastatur"
   "New Key" = "Ny nøkkel"
 
-  "Record" =  "Post"
+  "Key" =  "Nøkkel"
   "Generate Password..." = "Generer passord..."
   "Export to Memo" = "Lagre som Memo"
   "Delete..." = "Slett..."
@@ -781,8 +786,6 @@ BEGIN
   "Computer" = "Datamaskin"
   "Phone" = "Telefon"
   "Web" = "Web" /* I might use "vev" her, but I really hate that word. */
-
-  "Key" = "Nøkkel"
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
@@ -1009,14 +1012,17 @@ BEGIN
 	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@149 0 AUTO AUTO) RIGHTANCHOR USABLE
 	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
 
-	TABLE ID ID_KeyTable AT (0 17 152 129) COLUMNS 1 ROWS 16
+	TABLE ID ID_KeyTable AT (0 15 152 132) COLUMNS 1 ROWS 12
 		EDITABLE COLUMNWIDTHS 150
 
 	SCROLLBAR ID ID_KeyTableScrollBar 
 		AT (PREVRIGHT+1 PREVTOP 7 PREVHEIGHT)
 		VALUE 0 MIN 0 MAX 0 PAGESIZE 0
 
-	BUTTON "New" NewKeyBtn AT (1 147 AUTO AUTO)
+	LABEL "Look Up:" AUTOID AT (0 149)
+	FIELD ID LookUpFld AT (PREVRIGHT+2 PREVTOP 70 AUTO) UNDERLINED MAXCHARS 20
+	BUTTON "New" NewKeyBtn AT (RIGHT@149 148 AUTO 11)
+	GRAFFITISTATEINDICATOR AT (152 150)
 END
 
 
@@ -1057,7 +1063,7 @@ BEGIN
 	BUTTON "Done" DoneBtn AT (1 147 AUTO AUTO)
 	BUTTON "Generate" GenerateBtn AT (PREVRIGHT+5 PREVTOP AUTO AUTO)
 
-	GRAFFITISTATEINDICATOR AT (150 150)
+	GRAFFITISTATEINDICATOR AT (152 150)
 END
 
 

@@ -218,9 +218,7 @@ static Err KeyDB_MarkForBackup(void) {
 
 static Err KeyDB_GetVersion(UInt16 *ver) {
     return DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, 0, 0,
-			  ver,
-			  0, 0, 0, 0,
-			  0, 0, 0, 0);
+			  ver, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 
@@ -273,39 +271,12 @@ static Err KeyDB_CreateDB(void) {
 }
 
 
-
-static Err KeyDB_InitReadOnly(void)
-{
-     Err err;
-     Int16 ver;
-     
-     if (!Keyring_AcceptsReadOnly())
-          return appCancelled;
-
-     if ((err = KeyDB_OpenReadOnly()))
-          return err;
-          
-     if ((err = KeyDB_GetVersion(&ver)))
-          return err;
-          
-     if (ver > kDatabaseVersion) {
-	 FrmAlert(TooNewAlert);
-	 return appCancelled;
-     } else if (ver != kDatabaseVersion) {
-	 FrmAlert(alertID_UpgradeReadOnly);
-	 return appCancelled;
-     }
-
-     return 0;
-}
-
 /* Current database version may have problems finding
  * the hidden records containing hash if some backup
  * program shuffled it around.  
  */
 static Err KeyDB_CheckHiddenRecord(void) {
     UInt16 len = DmNumRecords(gKeyDB);
-    UInt16 i;
     UInt16 recAttr;
 
     if (len > 0
@@ -313,15 +284,6 @@ static Err KeyDB_CheckHiddenRecord(void) {
 	&& (recAttr & dmRecAttrSecret)) {
 	/* Hidden record is okay */
 	return errNone;
-    }
-
-    for (i = 0; i < len; i++) {
-	if (DmRecordInfo(gKeyDB, i, &recAttr, NULL, NULL) == errNone
-	    && (recAttr & dmRecAttrSecret)) {
-	    /* We found the hash record. Move it to right position. */
-	    DmMoveRecord(gKeyDB, i, 0);
-	    return errNone;
-	}
     }
     
     /* The hidden record is missing.  Ask for password and restore it.
@@ -335,28 +297,36 @@ static Err KeyDB_CheckHiddenRecord(void) {
  */
 Err KeyDB_Init(void)
 {
-     Err                err;
-     UInt16     ver;
+     Err    err;
+     UInt16 ver;
     
      /* If the database doesn't already exist, then we require the user
       * to set their password. */
      err = KeyDB_OpenExistingDB();
-    
-     /* TODO: Check for dmErrReadOnly, dmErrROMBased and offer to open
-      * the database read only.  If so, and the version is old, then
-      * complain that we can't upgrade it. */
 
-     if (err == dmErrReadOnly || err == dmErrROMBased) {
-          if ((err = KeyDB_InitReadOnly())) {
-               if (err == appCancelled)
-                    return err;
-               else
-                    goto failDB;
-          }
-     } else if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
-          return err;           /* error already reported */
-     } else if (err) {
-          goto failDB;
+     switch (err) {
+     case errNone:
+	 /* Sort Database just in case a backup program scrambled the
+          * record order. */
+	 Keys_Sort();
+	 break;
+
+     case dmErrReadOnly:
+     case dmErrROMBased:
+	 if (!Keyring_AcceptsReadOnly())
+	     return appCancelled;
+
+	 if ((err = KeyDB_OpenReadOnly()))
+	     goto failDB;
+	 break;
+	 
+     case dmErrCantFind:
+	 if ((err = KeyDB_CreateDB()))
+	     return err;           /* error already reported */
+	 break;
+
+     default:	 
+	 goto failDB;
      }
 
      /* So, we opened a database OK.  Now, is it old, new, or
@@ -388,7 +358,7 @@ Err KeyDB_Init(void)
 	     return err;
      }
 
-     /* Remember the r/o state, so one doesn't need to reconfirm. */
+     /* Remember or clear the r/o state, so one doesn't need to reconfirm. */
      PrefSetAppPreferences(kKeyringCreatorID, prefID_ReadOnlyAccepted,
                            kAppVersion, 
 			   g_ReadOnly ? &g_ReadOnly : NULL, 

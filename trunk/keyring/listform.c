@@ -26,34 +26,27 @@
 // List form
 
 /*
- * TODO: As a possible optimization, scroll the bitmap of the table
- * rather than redrawing it.  See ListViewScroll in the MemoPad
- * source.
- *
  * TODO: Show category headings in the list.
- *
- * TODO: Scroll to show newly-inserted items.
  */
 
 static TablePtr f_Table;
 static ScrollBarPtr f_ScrollBar;
+static FieldPtr f_LookUp;
 static FormPtr f_ListForm;
 
 /* Number of table rows that could possibly fit on the screen.  Some
  * of them might not be actually in use if there's less than a screen
  * of records. */
-static Int16 f_ScreenRows;
-
-/* Pixel width of the table */
-static Int16 f_TableWidth, f_TableHeight;
+static UInt16 f_ScreenRows;
 
 /* Number of records available to be shown in the table, after taking
  * into account categories and reserved records. */
-static Int16 f_NumListed;
+static UInt16 f_NumListed;
 
 /* Index of the first record displayed in the table.  Zero shows top
  * of table, etc. */
-Int16 f_FirstIdx;
+UInt16 f_FirstIdx;
+UInt16 f_SelectedIdx;
 
 /* Width of '.' character in pixels */
 static Int16 f_DotWidth;
@@ -74,44 +67,37 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
      *
      * Is there no "hidden" bit we can set to avoid all this?
      */
-    
-    err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum,
-                                 dmSeekForward, gPrefs.category);
+    err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum, 
+				 dmSeekForward, gPrefs.category);
 
-    if (err != errNone) {
-        return -1;
-    } 
-
-    return idx;
+    return err == errNone ? idx : -1;
 }
 
 
-static void ListForm_DrawToFit(Char const * name, Int16 x, Int16 y)
+void ListForm_DrawToFit(const Char* name, UInt16 idx, 
+			Coord x, Coord y, Coord width)
 {
-    Int16 titleLen, width, titleWidth;
-    Int16 charsToDraw;
-    Boolean stringFit;
+    Coord textWidth;
+    Int16 nameLen;
+    Char altBuf[maxStrIToALen + 1];
 
-    charsToDraw = StrLen(name);
+    if (!*name) {
+        /* If there is no name, use the record index instead.  */
+        altBuf[0] = '#';
+        StrIToA(altBuf + 1, idx - kNumHiddenRecs);
+        name = altBuf;
+    }
 
-    width = f_TableWidth - x;
-    titleWidth = width;
-    titleLen = charsToDraw;
-    FntCharsInWidth(name, &titleWidth, &titleLen, &stringFit);
+    FntSetFont(stdFont);
+    nameLen = StrLen(name);
+    textWidth = FntCharsWidth(name, nameLen);
 
-    if (stringFit) {
-        WinDrawChars(name, titleLen, x, y);
-    } else {
-        width -= (f_DotWidth * 3);
-        while (titleWidth > width || 
-               name[titleLen - 1] == ' ' || 
-               name[titleLen - 1] == tabChr)
-            {
-                titleWidth -= FntCharWidth(name[--titleLen]);
-            }
-        WinDrawChars(name, titleLen, x, y);
-        x += titleWidth;
-        WinDrawChars("...", 3, x, y);
+    WinDrawChars(name, nameLen, x, y);
+    if (textWidth > width) 
+    {
+	Coord dotsLen;
+	dotsLen = FntCharWidth('.') * 3;
+	WinDrawChars("...", 3, x + width - dotsLen, y);
     }
 }
 
@@ -120,24 +106,17 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
                               Int16 row, Int16 UNUSED(col), 
                               RectanglePtr bounds)
 {
-    /* We keep deleted records at the end, so the first N records will
-     * be ones we can draw. */
-
     /* This could be faster if we remembered the current position and
-     * stepped forward to the next.  However it's not worth optimizing
-     * since it will likely change to be a table in the future. */
+     * stepped forward to the next.
+     */
     MemHandle   rec = 0;
     Char const *recPtr = 0, *scrStr;
-    Char        altBuf[10];
-    Int16       idx = row;
-
-    ErrFatalDisplayIf(row > 10000, __FUNCTION__ ": unreasonable itemnum");
+    Int16       idx;
 
     idx = ListForm_RecordIdx(row + f_FirstIdx); 
-    if (idx == -1) { 
-        scrStr = "<err>"; 
-         goto draw; 
-      } 
+    if (idx == -1) 
+	/* We reached the end of the table; return immediately. */
+	return;
 
     rec = DmQueryRecord(gKeyDB, idx);
     if (!rec) {
@@ -150,22 +129,10 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
         scrStr = "<no-ptr>";
         goto draw;
     }
-    
-    if (!*recPtr) {
-        /* If there is no name, use the record index instead.  At the
-         * moment this skips over records that have been deleted, but
-         * I think once we've included sorting that will not
-         * happen. */
-        altBuf[0] = '#';
-        StrIToA(altBuf + 1, idx - kNumHiddenRecs);
-        scrStr = altBuf;
-    } else {
-        scrStr = recPtr;
-    }
-
+    scrStr = recPtr;
  draw:
-    /* TODO: Maybe add ellipsis if too wide? */
-    ListForm_DrawToFit(scrStr, bounds->topLeft.x + 2, bounds->topLeft.y);
+    ListForm_DrawToFit(scrStr, idx, bounds->topLeft.x, bounds->topLeft.y, 
+		       bounds->extent.x);
     
     if (recPtr)
         MemHandleUnlock(rec);
@@ -195,56 +162,9 @@ static void ListForm_DrawLockBitmap(void) {
  */
 static void ListForm_UpdateTable(void)
 {
-    Int16 row;
-    Int16 lineHeight;
-    Int16 dataHeight;
-    Int16 maxRows;
-
-    lineHeight = FntLineHeight();
-
-    /* Get the total number of rows allocated.  */
-    maxRows = TblGetNumberOfRows(f_Table);
-
     f_NumListed = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
     ErrNonFatalDisplayIf(f_NumListed > 30000,
                          "unreasonable numListed");
-
-    f_ScreenRows = f_TableHeight / lineHeight;
-
-    /* Work out which record should be at the top.  It can't be less
-     * than zero of course, but also we don't allow whitespace at the
-     * bottom if there are enough rows to fill the display.  However
-     * we leave the display as close as possible to where the user put
-     * it last. */
-    if (f_FirstIdx > f_NumListed - f_ScreenRows)
-         f_FirstIdx = f_NumListed - f_ScreenRows;
-    if (f_FirstIdx < 0)
-         f_FirstIdx = 0;
-
-    /* Update all row controls, but also mark ones for which there is
-     * no data as not usable.
-     *
-     * TODO: Try to avoid calling all the TblSet routines more than
-     * once per invocation of the list form. */
-    dataHeight = 0;
-    for (row = 0; row < maxRows; row++) {
-        if ((f_TableHeight >= dataHeight + lineHeight)
-            && (row + f_FirstIdx < f_NumListed)) {
-            /* Row is usable */
-            TblSetRowHeight(f_Table, row, lineHeight);
-            TblSetItemStyle(f_Table, row, 0, customTableItem);
-            TblSetRowUsable(f_Table, row, true);
-        } else {
-            TblSetRowUsable(f_Table, row, false);
-        }
-        dataHeight += lineHeight;
-    }
-    TblSetColumnUsable(f_Table, 0, true);
-    
-    TblSetCustomDrawProcedure(f_Table, 0,
-                              (TableDrawItemFuncPtr) ListForm_DrawCell);
-
-    TblHasScrollBar(f_Table, true);
 }
 
 
@@ -256,13 +176,10 @@ static void ListForm_UpdateScrollBar(void)
      * all happen from inside the key details form.  Therefore, we
      * don't have to update the size of the scroll bar.
      */
-    Int16 max;
-
-    max = f_NumListed - f_ScreenRows;
-    if (max < 0) {
-        /* Less than one page of records. */
-        max = 0;
-    }
+    UInt16 max;
+    max = f_NumListed <= f_ScreenRows ? 0 :f_NumListed - f_ScreenRows;
+    if (f_FirstIdx > max)
+	f_FirstIdx = max;
     SclSetScrollBar(f_ScrollBar, f_FirstIdx, 0, max, f_ScreenRows);
 }
 
@@ -274,7 +191,14 @@ static void ListForm_UpdateCategory(void)
     Category_UpdateName(f_ListForm, gPrefs.category);
 }
 
-
+static void ListForm_UpdateSelection(void)
+{
+    if (f_SelectedIdx >= f_FirstIdx
+	&& f_SelectedIdx < f_FirstIdx + f_ScreenRows)
+	TblSelectItem(f_Table, f_SelectedIdx - f_FirstIdx, 0);
+    else
+	TblUnhighlightSelection(f_Table);
+}
 
 static void ListForm_Update(void)
 {
@@ -283,38 +207,53 @@ static void ListForm_Update(void)
     ListForm_UpdateScrollBar();
     
     FrmDrawForm(f_ListForm);
+    ListForm_UpdateSelection();
     ListForm_DrawLockBitmap();
+}
+
+static void ListForm_InitTable(void)
+{
+    UInt16 row;
+
+    /* Get the total number of rows allocated.  */
+    f_ScreenRows = TblGetNumberOfRows(f_Table);
+
+    /* Mark all rows as usable.
+     */
+    for (row = 0; row < f_ScreenRows; row++) {
+	TblSetItemStyle(f_Table, row, 0, customTableItem);
+	TblSetRowUsable(f_Table, row, true);
+    }
+    TblSetColumnUsable(f_Table, 0, true);
+    
+    TblSetCustomDrawProcedure(f_Table, 0,
+                              (TableDrawItemFuncPtr) ListForm_DrawCell);
+
+    TblHasScrollBar(f_Table, true);
 }
 
 
 static void ListForm_FormOpen(void)
 {
-    RectangleType r;
-       
     f_ListForm = FrmGetActiveForm();
     f_Table = UI_GetObjectByID(f_ListForm, ID_KeyTable);
     f_ScrollBar = UI_GetObjectByID(f_ListForm, ID_KeyTableScrollBar);
+    f_LookUp = UI_GetObjectByID(f_ListForm, LookUpFld);
+    f_SelectedIdx = 0xffff;
 
-    TblGetBounds(f_Table, &r);
-    f_TableHeight = r.extent.y;
-    f_TableWidth = r.extent.x;
-
-    f_DotWidth = FntCharWidth('.');
-
+    ListForm_InitTable();
     ListForm_Update();
+    FrmSetFocus(f_ListForm, FrmGetObjectIndex(f_ListForm, LookUpFld));
 }
 
 
-static Boolean ListForm_TableSelect(EventPtr event)
+static Boolean ListForm_SelectIndex(UInt16 listIdx)
 {
-    Int16       listIdx, idx;
+    UInt16      idx;
     Err         err;
-    if (event->data.tblSelect.tableID != ID_KeyTable)
-        return false;
 
     /* Map from a position within this category to an overall
      * record index. */
-    listIdx = f_FirstIdx + event->data.tblSelect.row;
     idx = 0;
     err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
 				 dmSeekForward, gPrefs.category);
@@ -331,44 +270,73 @@ static void ListForm_NewKey(void)
 
 
 /*
- * Scroll if possible.  Update table and scrollbar.
+ * Scroll to the record.  Update table and scrollbar.
+ *
+ * It can't be less than zero of course, but also we don't allow
+ * whitespace at the bottom if there are enough rows to fill the
+ * display.  However we leave the display as close as possible to
+ * where the user put it last.  
  */
-static void ListForm_Scroll(Int16 newPos)
+static void ListForm_Scroll(UInt16 newPos)
 {
-     if (newPos > f_NumListed - f_ScreenRows)
-          newPos = f_NumListed - f_ScreenRows;
-     if (newPos < 0)
-          newPos = 0;
-     
-     f_FirstIdx = newPos;
-
-     ListForm_UpdateScrollBar();
-     TblMarkTableInvalid(f_Table);
-     TblRedrawTable(f_Table);
+    UInt16 oldPos = f_FirstIdx;
+    f_FirstIdx = newPos;
+    ListForm_UpdateScrollBar();
+    if (f_FirstIdx != oldPos) {
+	TblUnhighlightSelection(f_Table);
+	TblMarkTableInvalid(f_Table);
+	TblRedrawTable(f_Table);
+	ListForm_UpdateSelection();
+    }
 }
 
 
-static void ListForm_ScrollRepeat(EventPtr event)
+static void ListForm_LookUpItem(Char *item)
 {
-    int new = event->data.sclRepeat.newValue;
-    ListForm_Scroll(new);
+    UInt16 idx, itemLen, matchLen;
+    UInt16 catpos;
+    MemHandle rec;
+    Char *recPtr;
+    Int16 compare;
+    if (!item || !(itemLen = StrLen(item))) {
+	f_SelectedIdx = 0xffff;
+	ListForm_UpdateSelection();
+	return;
+    }
+
+    idx = 0;
+    for (;;) {
+	rec = DmQueryNextInCategory(gKeyDB, &idx, gPrefs.category);
+	if (!rec) {
+	    /* scroll to the end */
+	    ListForm_Scroll(f_NumListed);
+	    break;
+	}
+	recPtr = MemHandleLock(rec); 
+	if (recPtr) {
+	    compare = TxtGlueCaselessCompare(recPtr, StrLen(recPtr), NULL,
+					     item, itemLen, &matchLen);
+	    MemHandleUnlock(rec);
+	    if (compare >= 0) {
+		catpos = DmPositionInCategory(gKeyDB, idx, gPrefs.category);
+		if (matchLen == itemLen)
+		    f_SelectedIdx = catpos;
+		else
+		    f_SelectedIdx = 0xffff;
+		ListForm_Scroll(catpos);
+		ListForm_UpdateSelection();
+		break;
+	    }
+	}
+	idx++;
+    }
 }
-
-
-static void ListForm_ScrollPage(WinDirectionType dir)
-{
-    Int16 newPos = f_FirstIdx +
-        ((dir == winDown) ? +f_ScreenRows : -f_ScreenRows);
-    ListForm_Scroll(newPos);
-}
-
-
+    
 static void ListForm_CategoryTrigger(void)
 {
     if (Category_Selected(&gPrefs.category, true)) {
-        /* XXX: Is this really the only place we have to erase? */
-        TblEraseTable(f_Table);
         ListForm_Update();
+	ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
     }
 }
 
@@ -411,21 +379,34 @@ Boolean ListForm_HandleEvent(EventPtr event)
         break;
 
     case sclRepeatEvent:
-        ListForm_ScrollRepeat(event);
+        ListForm_Scroll(event->data.sclRepeat.newValue);
         break;
 
     case tblSelectEvent:
-        return ListForm_TableSelect(event);
+	if (event->data.tblSelect.tableID != ID_KeyTable)
+	    break;
+        return ListForm_SelectIndex(f_FirstIdx + event->data.tblSelect.row);
 
     case keyDownEvent:
         if (event->data.keyDown.chr == pageUpChr) {
-            ListForm_ScrollPage(winUp);
+            ListForm_Scroll(f_FirstIdx > f_ScreenRows ? 
+			    f_FirstIdx - f_ScreenRows : 0);
             return true;
         } else if (event->data.keyDown.chr == pageDownChr) {
-            ListForm_ScrollPage(winDown);
+            ListForm_Scroll(f_FirstIdx + f_ScreenRows);
             return true;
-        }
+        } else if (event->data.keyDown.chr == chrLineFeed) {
+	    if (f_SelectedIdx != 0xffff)
+		return ListForm_SelectIndex(f_SelectedIdx);
+	} else if (FldHandleEvent (f_LookUp, event)) {
+	    /* user entered a new char... */
+	    ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
+	    return true;
+	}
         break;
+
+    case fldChangedEvent:
+	return true;
 
     default:
         ;       
@@ -433,5 +414,3 @@ Boolean ListForm_HandleEvent(EventPtr event)
 
     return result;
 }
-
-

@@ -22,24 +22,6 @@
 
 #include "includes.h"
 
-static void SearchDrawItem(Char* name, Coord x, Coord y, Coord width)
-{
-    Coord textWidth;
-    Int16 nameLen;
-
-    FntSetFont(stdFont);
-    nameLen = StrLen(name);
-    textWidth = FntCharsWidth(name, nameLen);
-
-    WinDrawChars(name, nameLen, x, y);
-    if (textWidth > width) 
-    {
-	Coord dotsLen;
-	dotsLen = FntCharWidth('.') * 3;
-	WinDrawChars("...", 3, x + width - dotsLen, y);
-    }
-}
-
 void Search(FindParamsPtr findParams)
 {
     DmOpenRef keyDB;
@@ -139,7 +121,8 @@ void Search(FindParamsPtr findParams)
 		break;
 
 	    FindGetLineBounds(findParams, &r);
-	    SearchDrawItem(rec, r.topLeft.x, r.topLeft.y, r.extent.x);
+	    ListForm_DrawToFit(rec, recordNum, 
+			       r.topLeft.x, r.topLeft.y, r.extent.x);
 	    findParams->lineNumber++;
 	}
 	recordNum++;

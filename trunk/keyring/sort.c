@@ -49,40 +49,33 @@ static Int16 Keys_Compare(void * rec1, void * rec2,
                           MemHandle UNUSED(appInfoHand))
 {
     Int16 result;
-    Char	*cp1, *cp2;
+    Char  *cp1, *cp2;
     const Int16 attr1 = info1->attributes, attr2 = info2->attributes;
-
+    
     if (attr1 & dmRecAttrSecret) {
-         if (attr2 & dmRecAttrSecret)
-              return 0;
-         else
-              return -1;
-    } else {
-         if (attr2 & dmRecAttrSecret)
-              return +1;
-    }
-
-    if (attr1 & dmRecAttrDelete)
+	if (attr2 & dmRecAttrSecret)
+	    result = 0;
+	else
+	    result = -1;
+    } else if (attr2 & dmRecAttrSecret) {
 	result = +1;
-    else if (attr2 & dmRecAttrDelete)
-	result = -1;
-    else {
+
+    } else if (!rec1) {
+	if (!rec2)
+	    result = 0;
+	else
+	    result = -1;
+    } else if (!rec2) {
+	result = +1;
+    } else {
+    
 	cp1 = (Char *) rec1;
 	cp2 = (Char *) rec2;
-	
-	if (rec1  &&  !rec2)
-	    result = -1;
-	else if (!rec1  &&  rec2)
-	    result = +1;
-	else if (!rec1 && !rec2)
-	    result = 0;
-	else if (*cp1 && !*cp2)
-	    result = -1;
-	else if (!*cp1 && *cp2)
-	    result = +1;
-	else 
-	    result = StrCompare(cp1, cp2);
+	result = TxtGlueCaselessCompare(cp1, StrLen(cp1), NULL, 
+					cp2, StrLen(cp2), NULL);
     }
+    if (!result)
+	result = MemCmp(info1->uniqueID, info2->uniqueID, 3);
     return result;
 }
 
