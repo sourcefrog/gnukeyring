@@ -26,7 +26,8 @@
 #include "resource.h"
 #include "keyring.h"
 #include "crypto.h"
-#include "sesskey.h"
+#include "snib.h"
+#include "transient.h"
 
 // ======================================================================
 // DES3 functions
@@ -35,20 +36,27 @@
 
 #ifndef DISABLE_DES
 
+/*
+ * Decrypt or encrypt a block using the session key, which must already be
+ * unlocked.
+ */
 static Err DES3_Block(void const *from, void *to, Boolean crypt)
 {
     Err err;
     char other[kDESBlockSize];
+    UInt8 *kp =  (UInt8 *) &g_Snib->sessKey[0];
+
+    ErrFatalDisplayIf(!kp, "record key unready");
     
-    err = EncDES((UInt8 *) from, (UInt8 *) gRecordKey, to, crypt);
+    err = EncDES((UInt8 *) from, kp, to, crypt);
     if (err)
         return err;
 
-    err = EncDES((UInt8 *) to, (UInt8 *) gRecordKey+kDESKeySize, other, !crypt);
+    err = EncDES((UInt8 *) to, kp + kDESKeySize, other, crypt);
     if (err)
         return err;
 
-    err = EncDES((UInt8 *) other, (UInt8 *) gRecordKey, to, crypt);
+    err = EncDES((UInt8 *) other, kp + kDESKeySize*2, to, crypt);
     if (err)
         return err;
 
