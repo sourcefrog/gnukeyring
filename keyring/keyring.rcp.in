@@ -178,8 +178,8 @@ BEGIN
   "Export to Memo" = "Exportar al Bloc de Notes"
   "Delete..." = "Esborrar..."
 
-  "@@GenerateHelp" = "help/en/generate.txt"
-  "@@KeyEditHelp" = "help/en/keyedit.txt"
+  "@@GenerateHelp" = "help/ca/generate.txt"
+  "@@KeyEditHelp" = "help/ca/keyedit.txt"
   "@@SetPasswdHelp" = "La Clau principal protegeix totes les claus, i cal escriure-la per accedir a la base de dades. Si l'oblides, no podràs accedir a la base de dades."
 "There is no data to export." = "No hi ha dades per exportar."
 
