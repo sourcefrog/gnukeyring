@@ -29,8 +29,8 @@ BEGIN
   "New" = "新規"
   "Key ______ of ______" = "キー ______ / ______" 
   "Name:" = "名称:"
-  "Account:" = "アカウント:"
-  "Password:" = "パスワード:"
+  "Account:" = "ｱｶｳﾝﾄ:"
+  "Password:" = "ﾊﾟｽﾜｰﾄﾞ:"
   "Confirm:"  = "再確認:" 
   "Changed:" = "変更後:"
   "Done" = "完了"
@@ -48,6 +48,7 @@ BEGIN
   "@@choosepassword" = "パスワードの入力:"
 
   "Generate Password" = "パスワードの生成\ "
+  "Veil password" = "パスワードを隠す"
   "@@generate1" = "乱数で生成 "
   "@@generate2" = "パスワード:"
 
