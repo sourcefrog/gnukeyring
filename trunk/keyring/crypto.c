@@ -61,13 +61,16 @@ static Err DES3_Block(void const *from, void *to, Boolean encrypt,
 
 Err DES3_Read(void * from, void * to, UInt32 len, UInt8 *cryptKey)
 {
-    //    Err		err = 0;
+    Err		err = 0;
 
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
 
     do {
-        DES3_Block(from, to, false, cryptKey);
+	if ((err = DES3_Block(from, to, false, cryptKey))) {
+	    UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
+	    return err;
+	}
 
 	to += kDESBlockSize;
 	from += kDESBlockSize;
@@ -88,7 +91,10 @@ Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len,
 			 __FUNCTION__ ": not block padded");
 
     do {
-        err = DES3_Block(from, third, true, cryptKey);
+	if ((err = DES3_Block(from, third, true, cryptKey))) {
+	    UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
+	    return err;
+	}
 
         DmWrite(recPtr, off, third, kDESBlockSize);
 

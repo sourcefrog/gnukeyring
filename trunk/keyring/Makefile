@@ -66,7 +66,7 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
 
-OPTIM		= -O3 -finline-functions -g
+OPTIM		= -g #-O3 -finline-functions -g
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
