@@ -33,6 +33,7 @@
 #define TooNewAlert			1024
 #define CantUpgradeAlert		1025
 #define UpgradeFailedAlert		1026
+#define NotEnoughFeaturesAlert          1027
 
 #define ListMenuBar			1100
 #define KeyEditMenuBar			1101
@@ -40,6 +41,7 @@
 #define KeyringBitmap			1103
 #define NoteBitmap			1104
 #define FieldsBitmap			1105
+#define KeyBitmap                       1106
 
 #define KeysList			1200
 #define KeyNameField			1201
@@ -107,5 +109,9 @@
 #define GenerateHelp			1502
 #define PreferencesHelp			1503
 #define KeyEditHelp			1504
+#define SetPasswdHelp                   1505
+
+#define ErrCheckingROM                  1600
 
 #define CategoryRsrc			2000
+
