@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; -*-
  *
  * $Id$
  * 

@@ -38,9 +38,6 @@ typedef struct {
     /* Date password was last changed. */
     DateType lastChange;
 
-    /* Last change date has been modified? */
-    Boolean lastChangeDirty;
-
     Boolean categoryDirty;
     UInt16 category;
 } UnpackedKeyType;
