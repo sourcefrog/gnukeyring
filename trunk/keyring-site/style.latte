@@ -190,6 +190,13 @@
   }
 }
 
+{\def {\download \filename \icon} 
+  {\a
+   \href={\concat http://download.sourceforge.net/gnukeyring/ \filename} 
+   {\img \src={icons/\icon} \border=0} {\tt \filename}
+  }
+}
+
 {\def {\prcfile \langcode}
   {\filelink binary.gif {\concat -\langcode.prc }}
 }
