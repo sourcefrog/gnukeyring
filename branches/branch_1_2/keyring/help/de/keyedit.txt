@@ -1,0 +1,5 @@
+Passwort Generieren: Ein neues Passwort nach gewissen Kriterien generieren.
+
+Als Merkzettel exportieren: Alle Schlüsselinformationen in einen neuen Merkzettel kopieren.
+
+Änderungen verwerfen: Alle Änderungen seit Öffnen des Eintrags verwerfen.
