@@ -150,7 +150,8 @@ $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	rm -fr $(tmpdir)
 
-$(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS)
+$(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS) \
+	$(BASE)-%.prc.sig $(SSLEAYLIBS_SIG)
 	$(ZIP) -jq9 $@ $^
 
 $(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
