@@ -290,32 +290,33 @@ Err KeyDB_CreateAppInfo(void)
 }
 
 
-Err KeyDB_SetVersion(void) 
+Err KeyDB_SetDBInfo(Int16 cardNo, LocalID id) 
 {
     UInt16 version = kDatabaseVersion;
-    return DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID,
-			     NULL, NULL,
-			     &version,
+    UInt16 attr;
+
+    DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL, &attr, NULL, NULL,
+		   NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    attr |= dmHdrAttrBackup;
+    return DmSetDatabaseInfo(cardNo, id,
+			     NULL, &attr, &version,
 			     NULL, NULL, NULL, NULL,
 			     NULL, NULL, NULL, NULL);
 }
 
+Err KeyDB_InitDB(char* newPasswd, Int16 cipher, Int16 iter)
+{
+    SaltHashType salthash;
+    Err err;
 
-/* Set the backup bit.  It seems that without this the Windows desktop
- * software doesn't make the backup properly 
- */
-static Err KeyDB_MarkForBackup(void) {
-    UInt16 attr;
+    if ((err = KeyDB_CreateAppInfo()))
+	return err;
     
-    /* TODO: Here or elsewhere set the database version! */
-    
-    DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL, &attr, NULL, NULL,
-		   NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    attr |= dmHdrAttrBackup;
-    DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL, &attr, NULL, NULL,
-		      NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
-    return 0;
+    err = PwHash_Create(newPasswd, cipher, iter, &salthash, NULL);
+    if (!err)
+	PwHash_Store(newPasswd, &salthash);
+    MemWipe(&salthash, sizeof(salthash));
+    return err;
 }
 
 
@@ -326,7 +327,6 @@ static Err KeyDB_MarkForBackup(void) {
 static Err KeyDB_CreateDB(void) {
     Err err;
     Char *newPasswd;
-    SaltHashType salthash;
     UInt16 cipher, iter;
 
     newPasswd = SetPasswd_Ask(&cipher, &iter);
@@ -343,30 +343,21 @@ static Err KeyDB_CreateDB(void) {
     if (!gKeyDBID)
 	goto outFindErr;
 
-    if ((err = KeyDB_SetVersion()))
+    err = KeyDB_SetDBInfo(gKeyDBCardNo, gKeyDBID);
+    MemWipe(newPasswd, StrLen(newPasswd));
+    MemPtrFree(newPasswd);
+    if (err)
 	goto outErr;
 
     gKeyDB = DmOpenDatabase(gKeyDBCardNo, gKeyDBID, dmModeReadWrite);
     if (!gKeyDB)
 	goto outFindErr;
 
-    if ((err = KeyDB_CreateAppInfo()))
-	goto outErr;
-    
-    err = PwHash_Create(newPasswd, cipher, iter, &salthash, NULL);
-    if (!err)
-	PwHash_Store(newPasswd, &salthash);
-    MemSet(&salthash, sizeof(salthash), 0);
-    MemSet(newPasswd, StrLen(newPasswd), 0);
-    MemPtrFree(newPasswd);
+    err = KeyDB_InitDB(newPasswd, cipher, iter);
     if (err)
 	goto outErr;
-
-    if ((err = KeyDB_MarkForBackup()))
-	goto outErr;
-
     return 0;
-    
+
  outFindErr:
     err = DmGetLastErr();
     
@@ -396,9 +387,6 @@ Err KeyDB_Init(void)
 
      switch (err) {
      case errNone:
-	 /* Sort Database just in case a backup program scrambled the
-          * record order. */
-	 Keys_Sort();
 	 break;
 
      case dmErrReadOnly:
@@ -429,24 +417,20 @@ Err KeyDB_Init(void)
 	     return appCancelled;
 	 }
 
-	 if (FrmAlert(UpgradeAlert) != 0)
-	     return appCancelled;
-
-#if 1
-	 return appCancelled;
-#else 
-	 if ((err = UpgradeDB(ver)))
+	 if ((err = UpgradeDB(ver))) {
+	     if (err != appErrMisc && err != appCancelled)
+		 UI_ReportSysError2(UpgradeFailedAlert, err, __FUNCTION__);
 	     return err;
-	     
-	 /* We always mark the database here, because we may
-	  * have converted from an old version of keyring that
-	  * didn't do that. */
-	 if ((err = KeyDB_MarkForBackup()))
-	     goto failDB;
-#endif
+	 }
      } else if (ver > kDatabaseVersion) {
 	 FrmAlert(TooNewAlert);
 	 return appCancelled;
+     }
+
+     if (!g_ReadOnly) {
+	 /* Sort Database just in case a backup program scrambled the
+	  * record order. */
+	 Keys_Sort();
      }
 
      /* Remember or clear the r/o state, so one doesn't need to reconfirm. */

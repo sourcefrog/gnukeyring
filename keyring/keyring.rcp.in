@@ -37,6 +37,9 @@ BEGIN
   "@@PasswordMismatch" = "The passwords you entered do not match."
   "@@NotImplemented" = "Sorry, that feature is not implemented yet."
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@CouldntLaunchMemo" = "Couldn't launch the Memo Pad."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
@@ -115,6 +118,9 @@ BEGIN
   "Not here yet" = "Encara no disponible"
   "@@NotImplemented" = "Aquesta característica no està implementada encara."
   "@@NotEnoughFeatures" = "Aquesta versió de Keyring requereix ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronunciable"
 
@@ -257,6 +263,9 @@ BEGIN
   "Not here yet" = "Funzione non ancora implementata"
   "@@NotImplemented" = "Questa caratteristica non è ancora stata implementata."
   "@@NotEnoughFeatures" = "Questa versione di Keyring richiede ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
 
   "@@CouldntLaunchMemo" = "Impossibile avviare Memo Pad."
 
@@ -375,6 +384,12 @@ BEGIN
   "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
   "Not Enough Features" = "Systemfehler"
   "@@NotEnoughFeatures" = "Diese Version von Keyring benötigt ^1."
+  "@@CipherNotSupported" = "Diese Version von Keyring unterstützt Cipher ^1 nicht."
+  "@@UpgradeDatabase" = "Es wurde eine alte Datenbank gefunden. Diese muss in das neue Format konvertiert werden. Wenn Sie kein Backup haben, sollten Sie jetzt abbrechen.  Ansonsten geben Sie ihr altes Passwort im folgenden Dialog ein. "
+  "@@UpgradeMissingHash" = "Diese Datenbank wurde beschädigt.  Bitte geben Sie ihr Passwort ein, um sie zu reparieren. WENN SIE DAS FALSCHE PASSWORT EINGEBEN, WIRD DIE DATENBANK KOMPLETT ZERSTÖRT."
+  "Error" = "Fehler"
+  "Error upgrading database: ^1" = "Fehler beim Konvertieren: ^1"
+
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "aussprechbar"
 
@@ -414,6 +429,9 @@ BEGIN
   "Keyboard" = "Tastatur"
   "New Key" = "Neuer Schlüssel"
 
+  "Upgrade Database?" = "Datenbank konvertieren?"
+  "Database Damaged" = "Datenbank beschädigt"
+
   "Key" =  "Schlüssel"
   "Generate Password..." = "Passwort generieren..."
   "Export to Memo" = "Als Merkzettel exportieren"
@@ -428,6 +446,7 @@ BEGIN
   "Unfiled" = "Nicht abgelegt"
   "Phone" = "Telekommunikation"
   "Banking" = "Banken"
+  "Convert" = "Konvertieren"
 
   "@@accel_Undo" = "U"
   "@@accel_Cut" = "X"
@@ -488,6 +507,9 @@ BEGIN
   "Not here yet" = "Vuelva Vd. mañana"
   "@@NotImplemented" = "Esta característica no está implementada aun."
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -588,6 +610,9 @@ BEGIN
   "Not here yet" = "Inte här ännu"
   "@@NotImplemented" = "Denna funktion är inte implementerad ännu."
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -700,6 +725,9 @@ BEGIN
   "Not here yet" = "Nog niet geimplementeerd."
   "@@NotImplemented" = "Deze functie is nog niet geimplementeerd."
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -815,6 +843,9 @@ BEGIN
   "Not here yet" = "Non disponible actuellement"
   "@@NotImplemented" = "Non implémenté."
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -925,6 +956,9 @@ BEGIN
   "Not here yet" = "Ikke her enda"
   "@@NotImplemented" = "Denne funksjonen er enda ikke implementert."
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -1035,6 +1069,9 @@ BEGIN
   "Not here yet" = "Ikkje her endå"
   "@@NotImplemented" = "Denne funksjonen er endå ikkje implementert."
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -1137,6 +1174,9 @@ BEGIN
   "Not here yet" = "Ainda nao esta aqui"
   "@@NotImplemented" = "Ainda nao implementado"
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -1237,6 +1277,9 @@ BEGIN
   "Not here yet" = "Ikke her endnu"
   "@@NotImplemented" = "Denne funktion er endnu ikke implementeret."
   "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
+  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
+  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
+  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -1644,7 +1687,7 @@ CONFIRMATION
 BEGIN
 	TITLE "Upgrade Database?"
 
-	MESSAGE "This database is from a previous version of Keyring.  Convert it to the new format?  (Please make a backup before doing this.)"
+	MESSAGE "@@UpgradeDatabase"
 
 	BUTTONS "Convert" "Cancel"
 END
@@ -1653,9 +1696,9 @@ END
 ALERT ID BetaAlert
 WARNING
 BEGIN
-	TITLE "Alpha Software"
+	TITLE "Beta Software"
 
-	MESSAGE "@@AlphaVersion"
+	MESSAGE "@@BetaVersion"
 
 	BUTTONS "OK" 
 END
@@ -1688,20 +1731,9 @@ WARNING
 BEGIN
     TITLE "Database Damaged"
 
-    MESSAGE "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken so make a backup first."
+    MESSAGE "@@UpgradeMissingHash"
 
     BUTTONS "OK" "Cancel"
-END
-
-
-ALERT ID ID_CategoriesMissing
-WARNING
-BEGIN
-	TITLE "Database Upgrade"
-
-	MESSAGE "There are no categories defined in this database.  Default categories have been added."
-
-	BUTTONS "OK"
 END
 
 
@@ -1711,6 +1743,16 @@ BEGIN
 	TITLE "Not Enough Features"
 
 	MESSAGE "@@NotEnoughFeatures"
+
+	BUTTONS "OK"
+END
+
+ALERT ID CipherNotSupportedAlert
+ERROR
+BEGIN
+	TITLE "Not Enough Features"
+
+	MESSAGE "@@CipherNotSupported"
 
 	BUTTONS "OK"
 END

@@ -27,9 +27,11 @@
 
 
 #define kKeyDBType		'Gkyr'
-#define kKeyDBName		"Keys-GtkR-Test"
-#define kKeyringCreatorID	'GtkR'
+#define kKeyDBName		"Keys-Gtkr"
+#define kKeyringCreatorID	'Gtkr'
 #define kAppName		"Keyring"
+#define kKeyDBTempName          "Keys-Gtkr-tmp"
+#define kKeyDBTempType          'ktmp'
 
 /* The database version we use:
  *

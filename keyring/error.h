@@ -22,3 +22,4 @@
 #define appErrMisc		(appErrorClass | 1)
 #define appErrNotEnoughFeatures (appErrorClass | 2)
 #define appCancelled            (appErrorClass | 3)
+#define appErrMissingHash	(appErrorClass | 4)

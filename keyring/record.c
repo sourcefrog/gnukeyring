@@ -104,7 +104,7 @@ Err Record_Unpack(MemHandle record, UnpackedKeyType **u, CryptoKey *recordKey)
     *u = MemPtrNew(sizeof(UnpackedKeyType) + (fieldCnt -1) *sizeof(UInt16));
 
     if (*u == NULL) {
-	MemSet(plainBuf, size, 0);
+	MemWipe(plainBuf, size);
 	MemPtrFree(plainBuf);
 	MemHandleUnlock(record);
 	return memErrNotEnoughSpace;
@@ -154,7 +154,7 @@ void Record_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
     UInt8     *cryptPtr;
     UInt16    nameLen, lastOffset, size, bodySize, packSize;
     UInt8     ivec[recordKey->blockSize];
-    UInt16    i;
+    UInt16    i, attr;
     
     plainPtr = unpacked->plainText;
 
@@ -187,30 +187,20 @@ void Record_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
     CryptoWrite(cryptPtr, cryptPtr, packSize, recordKey, ivec);
     DmWrite(recPtr, nameLen + recordKey->blockSize, cryptPtr, packSize);
     MemHandleUnlock(recHandle);
+    if (DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL) == 0) {
+	attr = (attr & ~dmRecAttrCategoryMask) | unpacked->category;
+	DmSetRecordInfo(gKeyDB, idx, &attr, NULL);
+    }
 }
 
 
 void Record_Free(UnpackedKeyPtr u)
 {
     if (u->plainText) {
-	MemSet(u->plainText, MemPtrSize(u->plainText), 0);
+	MemWipe(u->plainText, MemPtrSize(u->plainText));
 	MemPtrFree(u->plainText);
     }
     MemPtrFree(u);
-}
-
-
-Err Record_GetCategory(Int16 idx, UInt16 *category)
-{
-    UInt16		attr;
-    Err			err;
-
-    if ((err = DmRecordInfo(gKeyDB, idx, &attr, 0, 0)))
-	return err;
-
-    *category = (attr & dmRecAttrCategoryMask);
-
-    return 0;
 }
 
 Err Record_SetField(UnpackedKeyPtr record, UInt16 idx, 
@@ -241,7 +231,7 @@ Err Record_SetField(UnpackedKeyPtr record, UInt16 idx,
 		oldSize - offset - EVEN(fldLen));
 	for (i = idx + 1; i < record->numFields; i++)
 	    record->fieldOffset[i] += diff;
-	MemSet(record->plainText, oldSize, 0);
+	MemWipe(record->plainText, oldSize);
 	MemPtrFree(record->plainText);
 	record->plainText = newText;
 	fldHeader = (FieldHeaderType *)
@@ -303,7 +293,7 @@ void Key_SetCategory(UInt16 idx, UInt16 category)
     if ((err = DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL)))
 	goto fail;
     
-    attr = (attr & ~dmRecAttrCategoryMask) | dmRecAttrBusy | category;
+    attr = (attr & ~dmRecAttrCategoryMask) | category;
     if ((err = DmSetRecordInfo(gKeyDB, idx, &attr, NULL)))
 	goto fail;
      

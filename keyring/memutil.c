@@ -27,90 +27,12 @@
 // Memory and database management routines
 
 
-
-/* Return handle of a new chunk containing a copy of the string at
- * SRCPTR, and also put the length of that string in *LEN.  If the string
- * is "", then return null.  The returned length does not include the
- * terminal NUL, but the allocated chunk does have space for it.
- *
- * Running out before remain should never happen unless there's a bug
- * in the decryption stuff. */
-static MemHandle Mem_StrToHandle(Char * srcPtr, Int16 *remain, Int16 *len)
-{
-    MemHandle h;
-    Char* destPtr;
-    Int16 i;
-
-    if (*remain <= 0)
-        return 0;
-
-    /* Search for up to REMAIN bytes looking for the terminator. */
-    for (i = 0; i < *remain && srcPtr[i]; i++)
-        ;
-    *len = i;
-
-    if (i > 0) {
-	h = MemHandleNew(i + 1);
-	ErrFatalDisplayIf(!h, __FUNCTION__ ": out of memory");
-	destPtr = MemHandleLock(h);
-        MemMove(destPtr, srcPtr, i);
-	destPtr[i] = '\0';
-	MemHandleUnlock(h);
-	return h;
-    } else {
-	return 0;
-    }
-}
-
-
-/*
- * PTR points to a pointer pointing to a buffer containing a string,
- * which runs on for no more than REMAIN bytes.  We copy out the first
- * NUL-terminated string, return it in a newly-allocated buffer, and
- * put its length in LEN.  PTR and REMAIN are adjusted to show
- * the amount remaining.
- */
-MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len)
-{
-    MemHandle h;
-
-    if (*remain < 0)
-        return NULL;
-    
-    h = Mem_StrToHandle(*ptr, remain, len);
-
-    *ptr += *len + 1;
-    *remain -= *len + 1;
-    
-    return h;
-}
-
-/*
- * PTR points to a pointer pointing to a buffer containing a memory chunk,
- * which runs on for no more than REMAIN bytes.  We copy out the first
- * count bytes, put it in the destination buffer.
- * PTR and REMAIN are adjusted to show the amount remaining.
- */
-void Mem_ReadChunk(Char **ptr, Int16 *remain, void *dest, Int16 count)
-{
-    if (*remain < 0)
-	return;
-    if (count > *remain)
-	count = *remain;
-    MemMove(dest, *ptr, count);
-    *ptr += count;
-    *remain -= count;
-}
-
-void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len)
-{
-    if (h) {
-	Char * p = MemHandleLock(h);
-	MemMove(*dest, p, len);
-	*dest += len;
-	MemHandleUnlock(h);
-    } else {
-	**dest = 0;
-	*dest += 1;
-    }
+void MemWipe(void *data, UInt16 len) {
+    /* Wipe out a chunk of memory that contained passwords, key or
+     * other sensitive data.  Overwrite it several times.  This is
+     * probably a bit too paranoid, but it doesn't hurt :)
+     */
+    MemSet(data, len, 0);
+    MemSet(data, len, 0xff);
+    MemSet(data, len, 0);
 }

@@ -28,8 +28,8 @@
 
 APP             = keyring
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 2.0-pre1
-DEFINES		= -DBETA -DkAppVersion=0x1991
+VERSION         = 2.0-pre2
+DEFINES		= -DBETA -DkAppVersion=0x1992
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-384 -Wshadow -Wcast-align
@@ -54,16 +54,16 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  export.c record.c category.c				\
 		  setpasswd.c pwhash.c snib.c reencrypt.c sort.c	\
 		  secrand.c search.c pronounce.c sha1.c			\
-#		  upgrade.c
+		  upgrade.c
 
 ASMGEN          = sha1-m68k.pl
 
-#GLIBDEF         = ssl-md.def ssl-des.def
-GLIBDEF         = ssl-des.def
+GLIBDEF         = ssl-md.def ssl-des.def
+#GLIBDEF         = ssl-des.def
 
 HEADERS	        = sections.h sha1.h keyring.h record.h error.h    \
 		  resource.h crypto.h pwhash.h snib.h includes.h  \
-		  pronounce.h AESLib-noinline.h AESLib-inline.h
+		  pronounce.h AESLib-noinline.h AESLib-inline.h # md5.h
 
 OBJ		= $(subst .c,.o,$(SRC)) $(subst .def,-stubs.o,$(GLIBDEF)) \
 		  $(subst .pl,.o,$(ASMGEN)) \

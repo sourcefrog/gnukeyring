@@ -79,12 +79,10 @@ void Snib_Eradicate(void)
 #ifndef GREMLINS
 
     if (!err) {
-	err = MemSet(snib, sizeof (FtrSnibType), 0);
-	if (!err) {
-	    err = MemPtrFree(snib);
-	    if (!err)
-		err = FtrUnregister(kKeyringCreatorID, k_SnibFtrId);
-	}
+	MemWipe(snib, sizeof (FtrSnibType));
+	err = MemPtrFree(snib);
+	if (!err)
+	    err = FtrUnregister(kKeyringCreatorID, k_SnibFtrId);
     }
 
     if (err) {

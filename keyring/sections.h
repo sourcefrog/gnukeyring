@@ -24,6 +24,6 @@
 #define UPGRADE_SECTION __attribute__ ((section ("code2")))
 #define REENCRYPT_SECTION __attribute__ ((section ("code2")))
 #define GUI_SECTION __attribute__ ((section ("code2")))
-#define MD5_SECTION  /* __attribute__ ((section (".text"))) */
+#define MD5_SECTION __attribute__ ((section ("code2")))
 #define SHA1_SECTION /* __attribute__ ((section (".text"))) */
 
