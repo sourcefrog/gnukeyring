@@ -210,9 +210,9 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx,
 
     Keys_CalcPackedSize(unpacked);
     ErrFatalDisplayIf(packRecLen > 8000,
-		      __FUNCTION__ ": immmoderate packRecLen"); /* paranoia */
+		      __FUNCTION__ ": immoderate packRecLen"); /* paranoia */
 
-    ErrNonFatalDisplayIf(idx == kNoRecord,
+    ErrNonFatalDisplayIf(*idx == kNoRecord,
                          __FUNCTION__ ": no record to save");
     
     ErrFatalDisplayIf(*idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
