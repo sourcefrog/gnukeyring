@@ -1,0 +1,5 @@
+Generate Password sets the password of this key to a new random value.
+
+Length is the number of characters in the new password.
+
+Include specifies which characters are allowed in the password.  At least one class must be included.
