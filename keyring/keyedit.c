@@ -79,6 +79,7 @@ static Boolean KeyEditForm_IsDirty(void);
 static Boolean KeyEditForm_IsEmpty(void);
 static void KeyEditForm_MarkClean(void);
 static void KeyEditForm_DeleteKey(Boolean saveBackup);
+static void KeyEditForm_FindMyPosition(void);
 
 static Boolean keyDeleted;
 
@@ -142,7 +143,7 @@ Char f_KeyFormTitle[32];
  * - I haven't isolated the next as it is sometimes intermittent: a
  * bus error results after selecting a record from the list then
  * pressing Page Up key.  I think it's somewhere in
- * KeyEditForm_SetTitle(). -- Dell */
+ * KeyEditForm_SetTitle(). -- dmgarner */
 static void KeyEditForm_UpdateTitle(void)
 {
     Char * titleTemplate;
@@ -285,6 +286,8 @@ static void KeyEditForm_Commit(void) {
         KeyEditForm_Save();
         KeyEditForm_MarkClean();
     }
+
+    KeyEditForm_FindMyPosition();
 }
 
 
@@ -609,6 +612,12 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
     
     KeyEditForm_Commit();
 
+    /* TODO: If we just deleted the current record, then moving
+     * forward a page should actually stay at the same position,
+     * because the next record will have shuffled down.  We won't have
+     * explicitly deleted it of course, but we might have left an
+     * empty record. */
+
     gKeyPosition += offset;
     gKeyRecordIndex = 0;
     DmSeekRecordInCategory(gKeyDB, &gKeyRecordIndex, gKeyPosition,
@@ -620,8 +629,7 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
 
 /*
  * If possible, scroll the notes field.  Otherwise, flip forward or
- * backward by one record.
- */
+ * backward by one record.  */
 static void KeyEditForm_PageButton(WinDirectionType dir)
 {
     Int16 lines;
