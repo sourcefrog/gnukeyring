@@ -44,12 +44,21 @@ static UInt16 f_ScreenRows;
  * into account categories and reserved records. */
 static UInt16 f_NumListed;
 
-/* Index of the first record displayed in the table.  Zero shows top
- * of table, etc. */
+/* Index of the first displayed row of the table.  Zero shows top of table,
+ * etc.
+ */
 UInt16 f_FirstIdx;
-
-static UInt16 f_FirstIndex;
+/* Index of the selected row in the table */
 static UInt16 f_SelectedIdx;
+
+/* Record index of the first displayed record */
+static UInt16 f_FirstIndex;
+
+#ifdef IMPLEMENT_ROCKER
+/* Should we scroll in the table with the rocker buttons */
+static Boolean rockerNavTable;
+#endif
+
 
 static GUI_SECTION Int16 ListForm_RecordIdx(Int16 row)
 {
@@ -71,31 +80,6 @@ static GUI_SECTION Int16 ListForm_RecordIdx(Int16 row)
 				 dmSeekForward, gPrefs.category);
 
     return err == errNone ? idx : -1;
-}
-
-
-/**
- * Draws a text at the given coordinate.  If the text is longer than
- * width it is abbreviated by dots.
- *
- * This is also called by Search function.  Therefore it must reside
- * in the default text section.
- */
-void ListForm_DrawToFit(const Char* name, UInt16 len,
-			Coord x, Coord y, Coord width)
-{
-    Coord textWidth;
-
-    FntSetFont(stdFont);
-    textWidth = FntCharsWidth(name, len);
-
-    WinDrawChars(name, len, x, y);
-    if (textWidth > width) 
-    {
-	Coord dotsLen;
-	dotsLen = FntCharWidth('.') * 3;
-	WinDrawChars("...", 3, x + width - dotsLen, y);
-    }
 }
 
 
@@ -140,9 +124,9 @@ static GUI_SECTION void ListForm_DrawCell(TablePtr UNUSED(table),
 	len = StrLen(scrStr);
     }
  draw:
-    ListForm_DrawToFit(scrStr, len, 
-		       bounds->topLeft.x, bounds->topLeft.y, 
-		       bounds->extent.x);
+    WinGlueDrawTruncChars(scrStr, len, 
+			  bounds->topLeft.x, bounds->topLeft.y, 
+			  bounds->extent.x);
     
     if (recPtr)
         MemHandleUnlock(rec);
@@ -257,6 +241,10 @@ static GUI_SECTION void ListForm_FormOpen(void)
     ListForm_InitTable();
     ListForm_Update();
     FrmSetFocus(f_ListForm, FrmGetObjectIndex(f_ListForm, LookUpFld));
+
+#ifdef IMPLEMENT_ROCKER
+    rockerNavTable = false; 
+#endif
 }
 
 
@@ -311,6 +299,7 @@ static GUI_SECTION void ListForm_LookUpItem(Char *item)
     MemHandle rec;
     FieldHeaderType *fldHeader;
     Int16 compare;
+
     if (!item || !(itemLen = StrLen(item))) {
 	f_SelectedIdx = kNoRecord;
 	ListForm_UpdateSelection();
@@ -357,7 +346,9 @@ static GUI_SECTION void ListForm_CategoryTrigger(void)
 
 GUI_SECTION Boolean ListForm_HandleEvent(EventPtr event)
 {
-    Boolean result = false;
+    UInt16        tableIndex; 
+    f_ListForm = FrmGetActiveForm();
+    tableIndex = FrmGetObjectIndex (f_ListForm, ID_KeyTable);
     
     switch (event->eType) {
     case ctlSelectEvent:
@@ -368,8 +359,7 @@ GUI_SECTION Boolean ListForm_HandleEvent(EventPtr event)
 
         case NewKeyBtn:
             ListForm_NewKey();
-            result = true;
-            break;
+            return true;
 
         case CategoryTrigger:
             ListForm_CategoryTrigger();
@@ -414,30 +404,137 @@ GUI_SECTION Boolean ListForm_HandleEvent(EventPtr event)
 	    ListForm_Update();
 	    ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
 	    return true;
-	} else if (event->data.keyDown.chr == pageUpChr) {
-            ListForm_Scroll(f_FirstIdx > f_ScreenRows ? 
-			    f_FirstIdx - f_ScreenRows : 0);
-            return true;
-        } else if (event->data.keyDown.chr == pageDownChr) {
-            ListForm_Scroll(f_FirstIdx + f_ScreenRows);
-            return true;
-        } else if (event->data.keyDown.chr == chrLineFeed) {
-	    if (f_SelectedIdx != kNoRecord)
-		return ListForm_SelectIndex(f_SelectedIdx);
-	} else if (FldHandleEvent (f_LookUp, event)) {
-	    /* user entered a new char... */
-	    ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
-	    return true;
-	}
-        break;
+	} else {
+	    switch (event->data.keyDown.chr) {
+	    case pageUpChr:
+		ListForm_Scroll(f_FirstIdx > f_ScreenRows ? 
+				f_FirstIdx - f_ScreenRows : 0);
+		return true;
 
+	    case pageDownChr:
+		ListForm_Scroll(f_FirstIdx + f_ScreenRows);
+		return true;
+
+	    case chrLineFeed:
+		if (f_SelectedIdx != kNoRecord)
+		    return ListForm_SelectIndex(f_SelectedIdx);
+		break;
+
+#ifdef IMPLEMENT_ROCKER
+		/* Handle 5-way Nav Rocker Buttons.
+		 * If rockerNavTable is "true" then we are currently
+		 * navigating the lines of the table.
+		 */
+
+                /* If rockerNavTable is set, scroll up and down the
+                 * table with the rocker keys, otherwise, follow the
+                 * focus specified in the fnav resource.
+                 */
+	    case vchrRockerCenter:
+		if (rockerNavTable) {
+		    /* view the item that we have highlighted */
+		    if (f_SelectedIdx != kNoRecord) {
+			return ListForm_SelectIndex(f_SelectedIdx);
+		    }
+		} else if (FrmGetFocus(f_ListForm) == 
+			   FrmGetObjectIndex(f_ListForm, LookUpFld)) {
+
+		    /* If we are clicking the centerRocker in the
+		     * LookUpFld, then navigate the table.
+		     */
+		    rockerNavTable = true;
+		    if ((f_SelectedIdx == kNoRecord) && (f_NumListed > 0)) {
+			f_SelectedIdx = f_FirstIdx;
+		    }
+		    ListForm_UpdateSelection();                        
+		    return true;
+		}
+		/* We did not process the event, let the system process it.
+		 */
+		break;
+		
+	    case vchrRockerUp:
+	    case vchrRockerDown:
+		if (rockerNavTable && f_SelectedIdx != kNoRecord) {
+		    /* navigating the rows of the table
+		     * move up/down one.
+		     */
+		    int newIdx = f_SelectedIdx + 
+			(event->data.keyDown.chr == vchrRockerUp ? -1 : 1);
+		    if (newIdx >= 0 && newIdx < f_NumListed) {
+			f_SelectedIdx = newIdx;
+
+			/* Scroll the list so that the selected index is 
+			 * visible.
+			 */
+			if (f_SelectedIdx < f_FirstIdx)
+			    ListForm_Scroll(f_SelectedIdx);
+			else if (f_SelectedIdx >= f_FirstIdx + f_ScreenRows)
+			    ListForm_Scroll(f_SelectedIdx - f_ScreenRows + 1);
+
+			ListForm_UpdateSelection();
+			/* clear the LookUpFld during navigation */
+			FldDelete(f_LookUp,0,FldGetTextLength(f_LookUp));
+		    }
+		} else {
+		    /* Use rockerUp as a pageUp button */
+		    ListForm_Scroll(f_FirstIdx > f_ScreenRows ?
+				    f_FirstIdx - f_ScreenRows : 0);
+		}
+		// return here so no other rockerUp events can be processed.
+		return true; 
+		
+		if (rockerNavTable) {
+		    // navigating the rows of the table
+		    // move down one if we aren't on the last element
+		    if ((f_SelectedIdx != kNoRecord) && (f_SelectedIdx < (f_NumListed-1))) {
+			++f_SelectedIdx;
+			// if we are on the last element on the screen, scroll the list down
+			if (f_SelectedIdx == (f_FirstIdx + f_ScreenRows)) {
+			    ListForm_Scroll(f_FirstIdx+1);
+			}
+			ListForm_UpdateSelection();
+			// clear the LookUpFld during navigation
+			FldDelete(f_LookUp,0,FldGetTextLength(f_LookUp));
+		    }
+		} else {
+		    // use rockerdown as a pagedown button
+		    ListForm_Scroll(f_FirstIdx + f_ScreenRows);
+		}
+		// return so no other rockerDown events can be processed.
+		return true;
+		
+	    case vchrRockerLeft:
+	    case vchrRockerRight:
+		if (rockerNavTable) {
+		    /* if navigating the table, turn off table nav on
+		     * rockerLeft/Right.
+		     */
+		    rockerNavTable = false;
+		    f_SelectedIdx = kNoRecord;
+		    ListForm_UpdateSelection();
+		}
+		/* Let the system handle event */
+		break;
+#endif
+	    default:
+
+		if (FldHandleEvent (f_LookUp, event)) {
+		    ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
+#ifdef IMPLEMENT_ROCKER
+		    rockerNavTable = true;
+#endif
+		    return true;
+		}
+		break;
+	    }
+	}
     case fldChangedEvent:
 	ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
 	return true;
 
     default:
-        ;       
     }
 
-    return result;
+    return false;
 }

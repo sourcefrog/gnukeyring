@@ -129,8 +129,8 @@ void Search(FindParamsPtr findParams, Boolean hasGlobals)
 
 	    fldHeader = MemHandleLock(handle);
 	    FindGetLineBounds(findParams, &r);
-	    ListForm_DrawToFit((char*) (fldHeader + 1), fldHeader->len,
-			       r.topLeft.x, r.topLeft.y, r.extent.x);
+	    WinGlueDrawTruncChars((char*) (fldHeader + 1), fldHeader->len,
+				  r.topLeft.x, r.topLeft.y, r.extent.x);
 	    findParams->lineNumber++;
 	    MemHandleUnlock(handle);
 	}
