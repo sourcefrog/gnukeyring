@@ -266,10 +266,10 @@ static void KeyEditForm_MaybeSave(void) {
     if (keyDeleted)
         return;
     
-    // TODO: Delete record if all fields empty?
-    KeyEditForm_ToUnpacked(&gRecord);
-
     if (KeyEditForm_IsDirty()) {
+        // TODO: Delete record if all fields empty?
+        KeyEditForm_ToUnpacked(&gRecord);
+
         KeyEditForm_Save();
         KeyEditForm_MarkClean();
     }
@@ -336,6 +336,7 @@ static void Keys_UndoAll(void) {
  */
 static void KeyEditForm_MarkClean(void)
 {
+    gRecord.categoryDirty = false;
     FldSetDirty(f_KeyNameFld, false);
     FldSetDirty(f_PasswdFld, false);
     FldSetDirty(f_AcctFld, false);
