@@ -208,6 +208,7 @@
 				F5450DAF02CA52AF017D0FEF,
 				67D3C0A40417DED400095AE4,
 				67953B0D041CE90B00199361,
+				6738159E041CEDDD0090EE6E,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -429,6 +430,12 @@
 //672
 //673
 //674
+		6738159E041CEDDD0090EE6E = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = README;
+			refType = 4;
+		};
 		67953B0D041CE90B00199361 = {
 			children = (
 				67953B0E041CE90B00199361,
