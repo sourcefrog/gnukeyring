@@ -1,5 +1,5 @@
 /*
- * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * GNU Keyring for PalmOS -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool
  * $Id$
  *
@@ -204,6 +204,87 @@ BEGIN
 END
 
 
+// ======================================================================
+// Swedish translation by Kalle Svensson <kalle@gnupung.net>
+
+TRANSLATION "sv"
+BEGIN
+  "New" = "Ny"
+  "Key ______ of ______" = "Nyckel ______ av ______" 
+  "Name:" = "Namn:"
+  "Account:" = "Konto:"
+  "Password:" = "Lösenord:"
+  "Confirm:"  = "Bekräfta:" 
+  "Changed:" = "Ändrad:"
+  "Done" = "Klar"
+  "Preferences" = "Inställningar"
+  "Stay unlocked for:" = "Håll upplåst:"
+  "No time" = "0 sek."
+  "15 sec" = "15 sek."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+
+  "Cancel" = "Avbryt"
+
+  "Set Keyring Password" =  "Sätt nyckelringslösenord"
+
+  "@@choosepassword" = "Välj ett lösenord:"
+
+  "Generate Password" = "Skapa lösenord"
+  "@@generate1" = "Skapa ett nytt "
+  "@@generate2" = "lösenord:"
+
+  "Length:" = "Längd:"
+  "Include:" = "Inkludera:"
+  "Generate" = "Skapa"
+
+  "Unlock" =  "Lås upp"
+
+  "Enter your password:" = "Mata in ditt lösenord:"
+
+  "Encrypting..." = "Krypterar..."
+  "Decrypting..." = "Dekrypterar..."
+
+  "@@OutOfMemory" =  "För lite dynamiskt minne för att fortsätta."
+  "@@WrongPassword" = "Felaktigt lösenord. Försök igen."
+  "@@PasswordMismatch" =  "Lösenorden stämmer inte överens. Försök igen."
+
+  "Not here yet" = "Inte här ännu"
+  "@@NotImplemented" = "Denna funktion är inte implementerad ännu."
+
+  "^1: System error ^2" =  "^1: Systemfel ^2"
+  "Couldn't launch the Memo Pad" =  "Kunde inte starta Memo Pad."
+
+  "Delete Key" = "Ta bort nyckel"
+  "Delete current key record?" = "Ta bort den aktuella nyckeln?"
+  "Save archive copy on PC" = "Spara arkivkopia på PC"
+
+  "Database" = "Databas"
+  "Set Password..." = "Sätt lösenord..."
+  "Options" = "Alternativ"
+  "Edit" = "Redigera"
+
+  "Preferences..." =  "Inställningar..."
+  "About GNU Keyring" =  "Om GNU Keyring"
+
+  "Undo" = "Ångra"
+  "Graffiti Help" = "Graffiti-hjälp"
+  "Paste" = "Klistra in"
+  "Cut" = "Klipp ut"
+  "Select All" = "Markera alla"
+  "Key %d of %d" = "Nyckel %d av %d"
+  "Copy" = "Kopiera"
+  "Keyboard" = "Tangentbord"
+  "New Key" = "Ny nyckel"
+
+  "Record" =  "Post"
+  "Generate Password..." = "Skapa lösenord..."
+  "Export to Memo" = "Spara som Memo"
+  "Delete..." = "Ta bort..."
+
+  "@@GenerateHelp" = "help/sv/generate.txt"
+  "@@KeyEditHelp" = "help/sv/keyedit.txt"
+END
 
 #include "resource.h"
 
