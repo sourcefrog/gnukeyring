@@ -32,5 +32,5 @@
 #include "pwhash.h"
 #include "record.h"
 #include "snib.h"
-#include "prototype.h"
 #include "pronounce.h"
+#include "prototype.h"
