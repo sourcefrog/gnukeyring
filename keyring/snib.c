@@ -33,13 +33,13 @@
 /*
  * The snib database holds working values which have to persist even
  * when switching to and from the Keyring application.  At the moment
- * this is just the expiry time, and the unencrypted session key.
+ * this is just the expiry time, and the master password hash, which
+ * is used as the encryption key for the records.
  *
  * We want to make fairly sure that this data cannot be stolen off the
  * handheld, so we destroy it on timeout.  At the moment that's only
  * when the timer expires, but eventually we should have a timer to
- * check it.
- */
+ * check it.  */
 
 
 
