@@ -6,3 +6,11 @@ OBJS = keyring.o trace.o hextype.o
 keyring-link: $(OBJS)
 	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
+install: keyring-link
+	install keyring-link $(DESTDIR)/usr/bin/
+
+clean: 
+	rm -f keyring-link $(OBJS)
+
+.PHONY: install clean
+
