@@ -9,7 +9,7 @@
 
    {\dt 1.1}
 
-   {\dd (not released yet)
+   {\dd (2002-03-11)
 
     {\ul
      {\li Add strong randomness patch by Jochen Hoenicke, based on the
@@ -27,9 +27,24 @@
 	  use, and an alarm locks the keyring when the timeout
 	  expires.}
 
+     {\li {\buglink \bugid=113320} If the Keyring database is
+      marked read-only or in Flash ROM, then it can still be opened
+      and viewed.  Trying to modify it produces a warning.}
+
      {\li Merge {\a
      \href=https://sourceforge.net/tracker/index.php?func=detail&aid=401263&group_id=306&atid=300306
 	  patch from Mustafa Kocaturk} to hide records at power-on.}}}
+
+     {\li {\buglink \bugid=109050} Hide passwords as they are entered.}
+
+     {\li Repair databases broken by removing private records.}
+
+     {\li Provide a custom font that makes the small letter l and the large
+     letter I are distinguishable in passwords. }
+
+     {\li A lot of new translations by various people.  Thanks to 
+	  Jeroen Vloothuis, Rick Moen, Andreas-Johann Ulvestad,
+	  Paolo Gasti, Hiroshi Miura. }
 
     {\dt {\externallink
 	  \href=\"https://sourceforge.net/project/shownotes.php?release_id=14465\"
