@@ -37,6 +37,8 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
 CFLAGS          = -O2 -Wall -Werror -Winline -Wno-unused -W \
 		  $(DEFINES) $(INCLUDES) -MMD -g
 
+HELP_TXT        = $(wildcard help/*/*.txt)
+
 TOP_DOCS	= HACKING COPYING BUGS TODO TESTS 
 DOCS		= $(TOP_DOCS) \
 		  doc/break.html doc/find.html doc/index.html \
@@ -46,7 +48,8 @@ DOCS		= $(TOP_DOCS) \
 		  doc/keyring.css
 
 DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
-		  $(DOCS) $(wildcard *.c *.h)
+		  $(DOCS) $(wildcard *.c *.h) $(DEF) \
+		  $(HELP_TXT)
 
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
 DIST_SIG        = $(DIST_BALL).asc
@@ -63,9 +66,9 @@ PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
 all: $(DOCS) $(PRCS) 
 
-include .dependencies
+include $(DEP)
 
-$(BASE)-%.prc: res/%/resstamp $(EXE) $(DEF)
+$(BASE)-%.prc: %.resstamp $(EXE) $(DEF)
 	cd res/$* && $(BUILDPRC) -o ../../$@ ../../$(DEF) ../../$(EXE) *.bin
 	ls -l $@
 
@@ -82,8 +85,8 @@ $(RCP): $(RCP).in Makefile
 $(EXE):       $(SRC:.c=.o) ;
 	$(CC) $(CFLAGS) $^ -o $(EXE)
 
-res/%/resstamp: $(RCP) $(BITMAPS) resource.h 
-	[ -d res/$* ] || mkdir res/$*
+%.resstamp: $(RCP) $(BITMAPS) resource.h 
+	[ -d res/$* ] || mkdir -p res/$*
 	-rm -f res/$*/*
 	-rm -f *.bin
 	$(PILRC) -q -L $* $(RCP) res/$*/
@@ -92,8 +95,7 @@ res/%/resstamp: $(RCP) $(BITMAPS) resource.h
 %.o %.d: %.c ;
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
-depend dep: ;
-	$(CC) -M $(SRC) > .dependencies
+depend: $(DEP)
 
 clean:
 	rm -rf *.o $(EXE) *.bin res/*/* *.grc *.prc *.stamp *.bin *.d *.stamp
