@@ -47,13 +47,14 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 # because it is defined to be the greatest amount of optimization that
 # does not involve size-speed tradeoffs.
 
-# -Wconversion
-
 DEFINES		= -DPALM_KEYRING
-CFLAGS          = -O2 -Wall -Winline -Wunused -W \
-		   -Wsign-compare -Wstrict-prototypes \
-		  -Wmissing-prototypes \
-		  $(DEFINES) $(INCLUDES) -MMD -g
+CFLAGS          = -O3 -Wall -Winline -Wunused -W	\
+		-Wsign-compare -Wstrict-prototypes	\
+		-Wmissing-prototypes			\
+		-Wlarger-than-255 -Wshadow -Wcast-align	\
+		-Wwrite-strings -Winline		\
+		-finline-functions			\
+		$(DEFINES) $(INCLUDES) -MMD -g
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
