@@ -9,6 +9,30 @@
 {
   {\h2 frequently asked questions}
 
+  {\faqentry \faqid=protection
+   
+   {What do you mean when you say "PalmOS does not have memory
+   protection between applications".  Does it mean that if I loose my
+   palm, someone can Hotsynk with a PC and read in a way the Keyring
+   database?}
+
+   What that means is that one application installed on the PalmPilot can
+   read the memory and records of all other applications.  This is why
+   the HotSync application and similar utilities can backup all of the
+   data on the handheld.
+
+   Normally, this is not a problem for Keyring, because all the data is
+   kept encrypted except when it is actually being used for display.
+   However, it's theoretically possible that somebody could write a
+   malicious application that when installed on your Palm device would
+   steal the secret information next time you unlocked it.  I don't know
+   of any such program at the moment.  In addition, it would need a
+   cooperating PC conduit to take the information off the handheld and to
+   the attacker.
+
+   So, as long as you don't have a virus or other malicious program on
+   your handheld, you are fine.}
+
   {\faqentry \faqid=bad_download
     { {\buglink \bugid=119744} When I try to install \Product, my
         handheld or PC crashes.  }
