@@ -7,6 +7,29 @@
       
   {\dl
 
+   {\dt 1.1}
+
+   {\dd (not released yet)
+    {\ul
+     {\li Add strong randomness patch by Jochen Hoenicke, based on the
+	  Linux entropy device by Ted T'so.}
+
+     {\li Ship only tar and zip files containing both binaries and
+	  source, and not bare .prc files.  I hope the zip file will
+	  reduce the incidence of people suffering corrupted (and
+	  unreported) downloads.}
+
+     {\li Merge {\a
+	  \href=https://sourceforge.net/tracker/index.php?func=detail&aid=429615&group_id=306&atid=300306
+	  excellent security patch} from Jochen Hoenicke, so that the
+	  encryption key is kept on the heap, and obliterated after
+	  use, and an alarm locks the keyring when the timeout
+	  expires.}
+
+     {\lu Merge {\a
+     \href=https://sourceforge.net/tracker/index.php?func=detail&aid=401263&group_id=306&atid=300306
+	  patch from Mustafa Kocaturk} to hide records at power-on.}
+
     {\dt {\externallink
 	  \href=\"https://sourceforge.net/project/shownotes.php?release_id=14465\"
 	  1.0}}
