@@ -32,7 +32,7 @@
 <def name=sfperson option="id login name">
   <a href="http://sourceforge.net/users/$login"><use name></a>
   &lt;<a href="https://sourceforge.net/sendmessage.php?touser=$id"><use login
-  >&#64;users.source&#102;orge. net</a>&gt;
+  >&#64;users.source&#102;orge.net</a>&gt;
 </def>
 
 
