@@ -1,0 +1,1 @@
+Por comodidad, despues de introducir su clave, el llavero permanece desbloqueado durante el tiempo que Vd. establezca. El llavero siempre se bloqueará cuando Vd. cambie de aplicación.

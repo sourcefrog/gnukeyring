@@ -1,0 +1,24 @@
+ * Forward-compatible change to use database version 2, which supports
+   categories and doesn't lose the encryption key in backups :-/
+
+ * A cleaner dialog to set the master password, including dialog help.
+
+ * Improved About box (!), including the home page URL.
+
+ * Keyring now checks the PalmOS ROM feature set at startup, and if it
+   can't run it says so right away.
+
+ * If this is an unstable release of GNU Keyring, then display a
+   warning at startup.
+
+ * Add in sprinklings of memory validation, and a magic menu to turn
+   on memory checking.
+
+ * Add Record/UndoAll menu item
+
+ * Improved record export.
+
+ * Records without names are now displayed with an index number rather
+   than random hex.
+
+ 
