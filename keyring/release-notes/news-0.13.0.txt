@@ -1,6 +1,9 @@
 GNU Keyring
 Changes from 0.11 to 0.13
 
+ * Use a table control rather than a list control for the list of
+   keys: better performance and scrolling.
+
  * Forward-compatible change to use database version 2, which supports
    categories and doesn't lose the encryption key in backups :-/
 
