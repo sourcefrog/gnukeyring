@@ -2,8 +2,8 @@
  *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,6 @@
 #include "upgrade.h"
 #include "error.h"
 #include "resource.h"
-#include "uiutil.h"
-
-/*
- * TODO: In the future, when converting the database, write out to a
- * new database so that if something goes wrong we won't be lost.
- *
- * TODO: Upgrade to v3 from v1.
- */
 
 
 static void UpgradeDB_Failed(int oldVersion) {
@@ -90,7 +82,7 @@ Err UpgradeDB(UInt16 oldVersion) {
 	 * with the hash of the password, and stores the encrypted
 	 * session key in the AppInfo section. */
 	if ((err = Upgrade_From0())) {
-	    UI_ReportSysError2(UpgradeFailedAlert, err, __FUNCTION__);
+	    App_ReportSysError(UpgradeFailedAlert, err);
 	    return err;
 	}
     } else {

@@ -1,9 +1,8 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
- *
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,22 +30,29 @@
 #include "uiutil.h"
 #include "upgrade.h"
 #include "keyedit.h"
-#include "crypto.h"
-
 #include "prefs.h"
-#include "snib.h"
 #include "listform.h"
-#include "error.h"
-#include "beta.h"
-#include "auto.h"
-
-/* TODO: Call MemSetDebugMode!!  Let people turn this on and off at
- * runtime through some kind of magic keystroke. */
 
 // ======================================================================
 // Globals
 
+// Reference to the keys database
+DmOpenRef       gKeyDB;
+
+/* Index of the current record in the database as a whole. */
+UInt16		gKeyRecordIndex = kNoRecord;
+
+/* Index of the current record within the currently-displayed
+ * category. */
+UInt16		gKeyPosition = kNoRecord;
+
+
 KeyringPrefsType gPrefs;
+
+
+/* If the keyring is unlocked, this holds the hash of the master
+ * password, which is used for the two DES keys to decrypt records. */
+UInt8		gRecordKey[kPasswdHashSize];
 
 
 // ======================================================================
@@ -54,9 +60,18 @@ KeyringPrefsType gPrefs;
 
 
 
+
+void App_ReportSysError(UInt16 msgID, Err err) {
+    Char buf[256];
+
+    *buf = '\0';
+    SysErrString(err, buf, (UInt16) sizeof buf);
+    FrmCustomAlert(msgID, buf, 0, 0);
+}
+
+
 static void App_LoadPrefs(void) {
     Int16 size = sizeof(KeyringPrefsType);
-    Int16 ret;
 
     /* Set up the defaults first, then try to load over the top.  That
      * way, if the structure is too short or not there, we'll be left
@@ -65,10 +80,10 @@ static void App_LoadPrefs(void) {
     gPrefs.timeoutSecs = 60;
     gPrefs.category = dmAllCategories;
     
-    ret = PrefGetAppPreferences(kKeyringCreatorID,
-                                kGeneralPref,
-                                &gPrefs, &size,
-                                (Boolean) true);
+    PrefGetAppPreferences(kKeyringCreatorID,
+			  kGeneralPref,
+			  &gPrefs, &size,
+			  (Boolean) true);
 }
 
 
@@ -93,15 +108,21 @@ static Boolean App_TooNew(void) {
 }
 
 
-static Err Keyring_PrepareDB(void) {
+static Err App_PrepareDB(void) {
     Err		err;
     UInt16	ver;
     
     /* If the database doesn't already exist, then we require the user
      * to set their password. */
-    err = KeyDB_OpenExistingDB();
-    if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
-	return err;		/* error already reported */
+    err = KeyDB_OpenExistingDB(&gKeyDB);
+    if (err == dmErrCantFind) {
+	if ((err = KeyDB_CreateDB())
+	    || (err = KeyDB_OpenExistingDB(&gKeyDB))
+	    || (err = KeyDB_CreateRingInfo())
+	    || (err = KeyDB_CreateCategories()))
+	    goto failDB;
+	if (!SetPasswd_Run())
+	    return 1;
     } else if (err) {
 	goto failDB;
     } else {
@@ -112,13 +133,6 @@ static Err Keyring_PrepareDB(void) {
 	    if (App_OfferUpgrade()) {
 		if ((err = UpgradeDB(ver)))
 		    return err;
-
-	        /* We always mark the database here, because we may
-		 * have converted from an old version of keyring that
-		 * didn't do that. */
-		if ((err = KeyDB_MarkForBackup()))
-		    goto failDB;
-
 	    } else {
 		return 1;
 	    }
@@ -128,10 +142,14 @@ static Err Keyring_PrepareDB(void) {
 	}
     }
 
+    if ((err = KeyDB_MarkForBackup()))
+	goto failDB;
+
     return 0;
 
+
  failDB:
-    UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+    App_ReportSysError(KeyDatabaseAlert, err);
     return err;
 }
 
@@ -139,33 +157,25 @@ static Err Keyring_PrepareDB(void) {
 static Err App_Start(void) {
     Err err;
 
-    SysRandom(TimGetTicks() ^ SysRandom(0));
-	
+    Unlock_Reset();
     App_LoadPrefs();
-    Gkr_CheckBeta();
-    if ((err = Snib_Init()))
+
+    if ((err = App_PrepareDB()))
 	return err;
-
-    if ((err = Keyring_PrepareDB()))
-        return err;
-
+	   
     FrmGotoForm(ListForm);
-    
-    /* TODO: Make more sure that we don't leave the Snib open */
-
+  
     return 0;
 }
 
 
 static void App_Stop(void) {
-    /* TODO: Make more sure that we don't leave the Snib open */
     App_SavePrefs();
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
 #ifdef ENABLE_OBLITERATE
     Unlock_ObliterateKey();
 #endif
-    Snib_Close();
     DmCloseDatabase(gKeyDB);
 }
 
@@ -209,9 +219,6 @@ static void App_EventLoop(void)
     UInt16			error;
 	
     do {
-	MemHeapCheck(0);
-	MemHeapCheck(1);
-
 	EvtGetEvent(&event, (Int32) evtWaitForever);
 	
 	if (!SysHandleEvent(&event))
@@ -234,22 +241,25 @@ void App_AboutCmd(void) {
 }
 
 
+void App_NotImplemented(void) {
+    FrmAlert(NotImplementedAlert);
+}
+
+
 Boolean Common_HandleMenuEvent(EventPtr event)
 {
-    FieldPtr		fld;
-    Boolean		result = false;
-    Int16		itemId;
+    FieldPtr fld;
+    Boolean result = false;
 
     fld = UI_GetFocusObjectPtr();
-    itemId = event->data.menu.itemID;
     
-    switch (itemId) {
+    switch (event->data.menu.itemID) {
     case AboutCmd:
 	App_AboutCmd();
 	result = true;
 	break;
 
-    case ID_PrefsCmd:
+    case PrefsCmd:
 	PrefsForm_Run();
 	result = true;
 	break;
@@ -300,75 +310,19 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 }
 
 
-/***********************************************************************
- *
- * FUNCTION:    RomVersionCompatible
- *
- * DESCRIPTION: This routine checks that a ROM version meets your
- *              minimum requirement.
- *
- * PARAMETERS:  requiredVersion - minimum rom version required
- *                                (see sysFtrNumROMVersion in SystemMgr.h 
- *                                for format)
- *              launchFlags     - flags that indicate if the application 
- *                                UI is initialized.
- *
- * RETURNED:    error code or zero if rom is compatible
- *                             
- *
- * REVISION HISTORY:
- *			Name	Date		Description
- *			----	----		-----------
- *			art	11/15/96	Initial Revision
- *
- ***********************************************************************/
-static Err RomVersionCompatible (UInt32 requiredVersion, UInt16 launchFlags)
-{
-    UInt32 romVersion;
-
-    // See if we have at least the minimum required version of the ROM or later.
-    FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
-    if (romVersion < requiredVersion) {
-        if ((launchFlags & (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp)) ==
-            (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp)) {
-            FrmAlert(NotEnoughFeaturesAlert);
-            
-            // Pilot 1.0 will continuously relaunch this app unless we switch to 
-            // another safe one.
-            if (romVersion < 0x02000000)
-                AppLaunchWithCommand(sysFileCDefaultApp, sysAppLaunchCmdNormalLaunch, NULL);
-        }
-        
-        return sysErrRomIncompatible;
-    }
-    
-    return 0;
-}
-
-
 UInt32 PilotMain(UInt16 launchCode,
 		 void UNUSED(*cmdPBP),
 		 UInt16 UNUSED(launchFlags))
 {
     Err err = 0;
-    UInt32 rom30 = sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0);
-
-    if ((err = RomVersionCompatible(rom30, launchFlags)))
-        return err;
 
     if (launchCode == sysAppLaunchCmdNormalLaunch) {
 	err = App_Start();
-	MemHeapCheck(0);
-	MemHeapCheck(1);
 	if (!err) {
 	    App_EventLoop();
 	    App_Stop();
 	}
     }
-
-    /* TODO: We should handle: sysAppLaunchCmdSaveData,
-     * sysAppLaunchCmdTimeChange, sysAppLaunchCmdFind,
-     * sysAppLaunchCmdGoTo, sysAppLaunchCmdSystemLock, ... */
 
     return err;
 }

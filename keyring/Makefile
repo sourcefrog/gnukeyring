@@ -1,28 +1,21 @@
-# Copyright (C) 1999, 2000 by Martin Pool
+# GNU Keyring for PalmOS
+# Copyright (C) 1999, 2000 by Martin Pool <mbp@users.sourceforge.net>
 # $Id$
-
-# FIXME: We don't know how to build auto.h to get started!
 
 APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.13.0dev3
+VERSION         = 0.11.1pr1
 
 RCP             = $(APP).rcp
-SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
-		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
-		  export.c dbutil.c upgrade.c record.c category.c	\
-		  beta.c setpasswd.c pwhash.c snib.c sesskey.c		\
-		  pack.c unpack.c 
+SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
+		  crypto.c passwd.c uiutil.c generate.c prefs.c \
+		  export.c dbutil.c upgrade.c record.c category.c
 
-HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
-		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
-		resource.h sesskey.h					\
-		util.h crypto.h export.h keyedit.h memutil.h		\
-		pwhash.h uiutil.h snib.h pack.h unpack.h
-
-# 		  libdes/des_enc.c
+HEADERS = category.h crypto.h dbutil.h error.h export.h generate.h	\
+keydb.h keyedit.h keyring.h listform.h memutil.h passwd.h prefs.h	\
+record.h resource.h uiutil.h upgrade.h util.h
 
 DEP             = $(subst .c,.d,$(SRC))
 OBJ		= $(subst .c,.o,$(SRC))
@@ -37,7 +30,7 @@ PILRC           = pilrc
 TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
 
-BITMAPS         = keyring-15.xbm keyring-22.xbm 
+BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
 
 # Note: 
 # Turning on debugger support (-g) costs about 100 bytes
@@ -56,7 +49,7 @@ CFLAGS          = -O3 -Wall -Winline -Wunused -W	\
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
-DOCS		= COPYING HACKING TODO TESTS 
+DOCS		= COPYING HACKING TESTS 
 # The web site is now maintained separately
 
 DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
@@ -82,7 +75,7 @@ all: $(PRCS)
 
 -include $(DEP)
 
-$(BASE)-%.prc: %.resstamp  $(EXE) $(DEF)
+$(BASE)-%.prc: %.resstamp $(EXE) $(DEF)
 	cd res/$* && $(BUILDPRC) -o ../../$@ ../../$(DEF) ../../$(EXE) *.bin
 	ls -l $@
 
@@ -97,16 +90,22 @@ $(BASE)-%.prc: %.resstamp  $(EXE) $(DEF)
 
 dist: $(DIST_BALL)
 
+tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(DISTFILES)
-	$(TAR) -C .. -czf $(DIST_BALL) $(addprefix $(APP)/,$(DISTFILES))
+	rm -rf $(tmpdir)
+	mkdir -p $(tmpdir)/$(BASE)
+	cp --parents $(DISTFILES) $(tmpdir)/$(BASE)
+	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	ls -l $(DIST_BALL)
+	rm -fr $(tmpdir)
+
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
 $(RCP): $(RCP).in Makefile
 	rm -f $@
 	(echo '// ******DYNAMICALLY GENERATED DO NOT EDIT********'; \
-	 sed $(SED_SUBST) $@.in) > $@
+	sed $(SED_SUBST) $@.in) > $@
 	chmod -w $@
 
 $(EXE):       $(SRC:.c=.o) ;
@@ -124,11 +123,6 @@ auto.h: en.resstamp
 
 clean:
 	rm -f *.o $(EXE) *.bin res/*/* *.grc *.prc *.resstamp *.bin *.d *.stamp
-
-sig: $(DIST_SIG)
-
-$(DIST_SIG): $(DIST_BALL)
-	gpg -u 40C90109 -a -b $(DIST_BALL)
 
 tags: TAGS
 TAGS: *.c *.h

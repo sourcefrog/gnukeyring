@@ -1,8 +1,8 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,36 +24,37 @@
 #endif	/* !__GNUC__ */
 
 #define kKeyDBType		'Gkyr'
-#define kKeyDBName		"Keys-Gtkr2"
+#define kKeyDBName		"Keys-Gtkr"
 #define kKeyringCreatorID	'Gtkr'
-#define kAppName		"Keyring"
+#define kAppName		"GNU Keyring"
 
-/* The database version we use:
- *
- * v0 had the session key stored in the AppInfo block, and could not
- * support Categories
- *
- * v1 had the session key stored in the SortInfo block, which was a
- * mistake.  Records are encrypted by the MD5 hash of the master
- * password.
- *
- * v2 was in 0.13.0pr1 and not supported
- *
- * v3 has the session key and master password checksum stored in
- * hidden records.  */
-#define kDatabaseVersion	3
+/* The database version we use. */
+#define kDatabaseVersion	1
 
 /* The app and preferences version */
-#define kAppVersion		132
+#define kAppVersion		66
 
 #define kLockExpiryPref		0
 #define kGeneralPref		1
 #define kGeneratePref		2
-#define kLastVersionPref        3
 
-#define kMaxRecords             2000
+#define kPasswdHashSize		16
 
 #define kNoRecord		((UInt16) -1)
+
+#define kBlockSize		8
+
+
+/* Application info */
+typedef struct {
+    UInt32 	passwdSalt;
+    Char 	passwdHash[16];
+
+    /* THIS FIELD IS NO LONGER USED -- USE THE DATABASE VERSION INSTEAD! */
+    UInt16 	appInfoVersion;
+} KeyringInfoType;
+typedef KeyringInfoType *KeyringInfoPtr;
+
 
 typedef struct {
     UInt32		timeoutSecs;
@@ -65,13 +66,16 @@ typedef KeyringPrefsType *KeyringPrefsPtr;
 Boolean Common_HandleMenuEvent(EventPtr event);
 
 void App_AboutCmd(void);
+void App_NotImplemented(void);
+void App_ReportSysError(UInt16 msgID, Err err);
 void App_SavePrefs(void);
 
-/*
- * All current preferences.  Read in at application startup, and
- * written out when they change.
- */
+extern DmOpenRef gKeyDB;
+extern UInt16 gKeyRecordIndex;
+extern UInt16 gKeyPosition;
+extern UInt8 gRecordKey[kPasswdHashSize];
 extern KeyringPrefsType gPrefs;
+
 
 enum updateCodes {
     updateCategory = 1

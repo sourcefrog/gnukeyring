@@ -1,8 +1,8 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,7 @@
 
 /* This file looks after generating random passwords on request. */
 
-/*
- * TODO: Generate pronouncable text
- *
- * TODO: Prevent people from choosing no options.
- */
+/* TODO: Save length and class settings for next time. */
 
 #include <PalmOS.h>
 #include <Password.h>
@@ -35,14 +31,12 @@
 #include "keyring.h"
 #include "generate.h"
 #include "uiutil.h"
-#include "auto.h"
 
 enum includes {
     kLower = 1,
     kUpper = 2,
     kDigits = 4,
-    kPunct = 8,
-    kHigh = 16
+    kPunct = 8
 };
 
 static const Int16 lenMap[] = {
@@ -60,57 +54,8 @@ static const Int16 includeMap[] = {
     kUpper, IncludeUpper,
     kDigits, IncludeDigits,
     kPunct, IncludePunct,
-    kHigh, ID_IncludeHigh,
     -1
 };
-
-
-/* Borrowed from linux/lib/ctype.c.  Thanks!  */
-#define U	kUpper	/* upper */
-#define L	kLower	/* lower */
-#define D	kDigits	/* digit */
-#define P	kPunct	/* punct */
-#define H      kHigh   /* high but writable in Graffiti */
-
-static const UInt8 classMap[256] = {
-    0, 0, 0, 0, 0, 0, 0, 0,      /* 0-7 */
-    0, 0, 0, 0, 0, 0, 0, 0,      /* 8-15 */
-    0, 0, 0, 0, 0, 0, 0, 0,      /* 16-23 */
-    0, 0, 0, 0, 0, 0, 0, 0,      /* 24-31 */
-    0, P, P, P, P, P, P, P,      /* 32-39 */
-    P, P, P, P, P, P, P, P,      /* 40-47 */
-    D, D, D, D, D, D, D, D, /* 48-55 */
-    D, D, P, P, P, P, P, P, /* 56-63 */
-    P, U, U, U, U, U, U, U, /* 64-71 */
-    U, U, U, U, U, U, U, U, /* 72-79 */
-    U, U, U, U, U, U, U, U, /* 80-87 */
-    U, U, U, P, P, P, P, P, /* 88-95 */
-    P, L, L, L, L, L, L, L, /* 96-103 */
-    L, L, L, L, L, L, L, L, /* 104-111 */
-    L, L, L, L, L, L, L, L, /* 112-119 */
-    L, L, L, P, P, P, P, 0,     /* 120-127 */
-    0, 0, 0, 0, 0, 0, 0, 0,      /* 128-135 */
-    0, 0, 0, 0, 0, 0, 0, 0,      /* 136-143 */
-    0, H, H, H, H, H, 0, 0,      /* 144-151 */
-    H, H, 0, 0, 0, 0, 0, H,      /* 152-159 */
-    H, H, H, H, 0, H, 0, H,      /* 160-167 */
-    0, H, 0, 0, 0, 0, H, 0,      /* 168-175 */
-    H, H, 0, 0, 0, 0, 0, 0,      /* 176-183 */
-    0, 0, 0, 0, 0, 0, 0, H,      /* 184-191 */
-    H, H, H, H, H, H, H, H,      /* 192-199 */
-    H, H, H, H, H, H, H, H,      /* 200-207 */
-    0, H, H, H, H, H, H, H,      /* 208-215 */
-    H, H, H, H, H, H, 0, 0,      /* 216-223 */
-    H, H, H, H, H, H, H, H,      /* 224-231 */
-    H, H, H, H, H, H, H, H,      /* 232-239 */
-    0, H, H, H, H, H, H, H,      /* 240-247 */
-    H, H, H, H, H, H, 0, H       /* 248-255 */
-};
-
-#undef U
-#undef L
-#undef P
-#undef H
 
 
 typedef struct {
@@ -163,21 +108,28 @@ static void Generate_Init(FormPtr frm) {
 static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
     Int16 	i;
     Char	ch;
-    Int16	ri;
-    Int16       mask;
+    Int16		ri;
 
     for (i = 0; i < len; i++) {
-        /* If we just choose characters at random and then check,
-             * then we get too many high ascii characters.  So instead
-             * we apply a random mask. */
-        do {
-            mask = includeMap[(SysRandom(0) % 5) * 2];
-        } while (!(mask & flags));
-        
-        do {
-            ri = SysRandom(0);
-            ch = (ri >> 8) ^ ri;
-        } while (!(classMap[(UInt8) ch] & mask));
+	while (true) {
+	    ri = SysRandom (0);
+	    ch = (ri >> 8) ^ ri;
+	    if (flags & kLower)
+		if (ch >= 'a'  &&  ch <= 'z')
+		    break;
+	    if (flags & kUpper)
+		if (ch >= 'A' && ch <= 'Z')
+		    break;
+	    if (flags & kDigits)
+		if (ch >= '0' && ch <= '9')
+		    break;
+	    if (flags & kPunct)
+		if ((ch >= '!' && ch <= '/')
+		    || (ch >= ':' && ch <= '@')
+		    || (ch >= '[' && ch <= '`')
+		    || (ch >= '{' && ch <= '~'))
+		    break;
+	}
 	
 	ptr[i] = ch;
     }

@@ -1,8 +1,8 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +27,10 @@
 #include "resource.h"
 #include "category.h"
 #include "uiutil.h"
-#include "keydb.h"
-#include "auto.h"
 
 static Char		categoryName[dmCategoryLength];
 
 
-/*
- * Update a popuptrigger to show a new category name.
- */
 void Category_UpdateName(FormPtr frm, UInt16 category) {
     ControlPtr		ctl;
     
@@ -61,7 +56,11 @@ Boolean Category_Selected(Int16 *category, Boolean showAll) {
 				    categoryName,
 				    1, 0);
 
-    return (categoryEdited || *category != oldCategory);
+    if (categoryEdited || *category != oldCategory) {
+	FrmUpdateForm(FrmGetActiveFormID(), updateCategory);
+	return true;
+    }
+    return false;
 }
 
 

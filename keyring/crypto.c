@@ -1,8 +1,8 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,104 +26,44 @@
 #include "resource.h"
 #include "keyring.h"
 #include "crypto.h"
-#include "snib.h"
 
 // ======================================================================
 // DES3 functions
 
+#undef DISABLE_DES
 
-// static const UInt8 noKey[kDES3KeySize];
-
-
-#ifndef DISABLE_DES
-
-/*
- * Decrypt or encrypt a block using the session key, which must already be
- * unlocked.
- */
-static Err DES3_Block(void const *from, void *to, Boolean encrypt)
+Err DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
+	     UInt8 const *key)
 {
-    Err err;
-    char other[kDESBlockSize];
-    UInt8 *kp = encrypt ? g_Snib->sessKey : g_Snib->sessKey + 2*kDESKeySize;
-
-    ErrFatalDisplayIf(!kp, "record key unready");
-
-    err = EncDES((UInt8 *) from, kp, to, encrypt);
-    if (err)
-        return err;
-    kp += encrypt ? +kDESKeySize : -kDESKeySize;
-
-    err = EncDES((UInt8 *) to, kp, other, !encrypt);
-    if (err)
-        return err;
-    kp += encrypt ? +kDESKeySize : -kDESKeySize;
-
-    err = EncDES((UInt8 *) other, kp, to, encrypt);
-    if (err)
-        return err;
-
-    return 0;
-}
-
-
-Err DES3_Read(void * from, void * to, UInt32 len)
-{
-    //    Err		err = 0;
-
-    ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
-			 __FUNCTION__ ": not block padded");
-
-    do {
-        DES3_Block(from, to, false);
-
-	to += kDESBlockSize;
-	from += kDESBlockSize;
-	len -= kDESBlockSize;
-    } while (len > 0);
-
-    return 0;
-}
-
-
-Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len)
-{
-    UInt8	third[kDESBlockSize];
+    UInt8	other[kBlockSize];
     Err		err = 0;
-
-    ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
+    
+    ErrNonFatalDisplayIf(len & (kBlockSize-1),
 			 __FUNCTION__ ": not block padded");
+    ErrFatalDisplayIf(!to || !from, __FUNCTION__ ":null");
 
     do {
-        err = DES3_Block(from, third, true);
+#ifndef DISABLE_DES	
+	err = EncDES(from, (UInt8 *) key, to, encrypt);
+	if (err)
+	    return err;
 
-        DmWrite(recPtr, off, third, kDESBlockSize);
+	err = EncDES(to, (UInt8 *) key+kBlockSize, other, !encrypt);
+	if (err)
+	    return err;
 
-        off += kDESBlockSize;
-	from += kDESBlockSize;
-	len -= kDESBlockSize;
+	err = EncDES(other, (UInt8 *) key, to, encrypt);
+	if (err)
+	    return err;
+#else /* DISABLE_DES */
+	MemMove(to, from, kBlockSize);
+#endif /* DISABLE_DES */
+	to += kBlockSize;
+	from += kBlockSize;
+	len -= kBlockSize;
     } while (len > 0);
 
     return 0;
 }
 
 
-#else /* DISABLE_DES */
-
-/*
- * Encrypt (or not!) and write out
- */
-Err DES3_Write(void *recPtr, UInt32 off,
-                char const *src, UInt32 len)
-{
-    return DmWrite(recPtr, off, src, len);
-}
-
-
-Err DES3_Read(void * from, void * to, UInt32 len)
-{
-    MemMove(to, from, len);
-
-    return 0;
-}
-#endif /* DISABLE_DES */

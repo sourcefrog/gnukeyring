@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,28 +24,11 @@
 #include <Encrypt.h>
 
 #include "uiutil.h"
-#include "auto.h"
+
 
 
 // ======================================================================
 // User-interface utilities
-
-void UI_ReportSysError2(UInt16 msgID, Err err, char const *where) 
-{
-    Char buf[256];
-
-    *buf = '\0';		/* in case nothing is inserted? */
-    SysErrString(err, buf, (UInt16) sizeof buf);
-    FrmCustomAlert(msgID, buf, where, 0);
-}
-
-
-void App_NotImplemented(void) {
-    FrmAlert(ID_NotImplementedAlert);
-}
-
-
-
 FieldPtr UI_GetFocusObjectPtr(void) {
     FormPtr frm;
     UInt16 focus;

@@ -1,9 +1,8 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
- *
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,28 +19,24 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-extern Int16 gKeyDBCardNo;
-extern LocalID gKeyDBID;
-extern DmOpenRef gKeyDB;
-
-
-#define kMasterHashRec 0
-#define kSessionKeyRec 1
-#define kNumHiddenRecs 2
-
-Err KeyDB_CreateCategories(void);
-
 Err KeyDB_CreateRingInfo(void);
-void KeyDB_SetPasswd(Char *newPasswd);
+void KeyDB_SetPasswd(Char const *newPasswd);
 
-Err KeyDB_OpenExistingDB(void);
+Err KeyDB_OpenExistingDB(DmOpenRef *dbp);
 Err KeyDB_CreateDB(void);
 Err KeyDB_MarkForBackup(void);
 Err KeyDB_GetVersion(UInt16 *ver);
 Err KeyDB_SetVersion(void);
 
+extern Int16 gKeyDBCardNo;
+extern LocalID gKeyDBID;
+
 
 enum KeyDB_State KeyDB_Examine(void);
 Boolean KeyDB_Verify(Char const *guess);
+#ifdef REALLY_OBLITERATE
+void UnpackedKey_Obliterate(UnpackedKeyPtr u);
+#endif /* REALLY_OBLITERATE */
 
-Int16 Keys_IdxOffsetReserved(void);
+
+Err KeyDB_CreateCategories(void);

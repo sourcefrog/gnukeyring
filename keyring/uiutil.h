@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 by Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,3 @@ int UI_ScanUnion(FormPtr frm, UInt16 const * map);
 void UI_UnionSet(FormPtr frm, UInt16 const *map, UInt16 value);
 
 void UI_UpdateCategoryName(FormPtr frm, UInt16 category);
-
-void UI_ReportSysError2(UInt16 msgID, Err err, char const *where);
-
-void App_NotImplemented(void);

@@ -1,9 +1,9 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,47 +34,78 @@
 #include "record.h"
 #include "passwd.h"
 #include "resource.h"
-#include "pwhash.h"
-#include "sesskey.h"
-#include "error.h"
-#include "uiutil.h"
 #include "auto.h"
+#include "error.h"
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
 
-// Reference to the keys database
-DmOpenRef       gKeyDB;
+static Err KeyDB_OpenRingInfo(KeyringInfoPtr *);
+
+// ======================================================================
+// Key database
 
 
-/* ======================================================================
- * Key database
- *
- * All the keys are kept in a single PalmOS database.  Each record
- * begins with an unencrypted name, which is followed by a
- * 3DES-encrypted block containing all the other fields.
- *
- * We encrypt the records not with the master password itself, but
- * rather with a session key stored in record 0 of the database.  The
- * session key is just random noise.  The session key is stored
- * encrypted by the master password.
- *
- * We also need to be able to tell whether the user has entered the
- * right master password, since we want to give them an error message
- * rather than just display random garbage.  Therefore the MD5 hash of
- * the master password is also stored.  This goes into record #1.
- *
- * Rather than worrying about creating these records when they're
- * used, we create them with the database so we know they'll never be
- * used.  These records are marked secret, because that flag is not
- * otherwise used in this application.
- *
- * Once the session key is set, it is never changed throughout the
- * life of the database.  If the user changes their master password,
- * then we re-encrypt the session key with the new password and store
- * that as record 0.  This is (I think) as close to atomic as we can
- * get under PalmOS.  It would be a bad thing if e.g. the system
- * crashed while we were changing it, and the session key was lost. */
+
+static void KeyDB_HashNewPasswd(Char const *newPasswd,
+				KeyringInfoPtr ai)
+{
+    Char msgBuf[64];
+    Char * ptr;
+    Err err;
+    
+    ai->passwdSalt = ((UInt32) SysRandom(0) << 16L) | SysRandom(0);
+
+    MemSet(msgBuf, 64, 0);
+    ptr = msgBuf;
+    MemMove(ptr, &ai->passwdSalt, sizeof(Int32));
+    ptr += sizeof(Int32);
+    StrNCopy(ptr, newPasswd, 64 - 1 - sizeof(Int32));
+
+    err = EncDigestMD5(msgBuf, 64, ai->passwdHash);
+    if (err)
+	App_ReportSysError(CryptoErrorAlert, err);
+}
+
+
+static Boolean KeyDB_CheckPasswdHash(Char const *guess, KeyringInfoPtr ki) {
+    Char msgBuf[64];
+    UInt8 guessHash[kPasswdHashSize];
+    Char * ptr;
+    Err err;
+    
+    MemSet(msgBuf, 64, 0);
+    ptr = msgBuf;
+    MemMove(ptr, &ki->passwdSalt, sizeof(Int32));
+    ptr += sizeof(Int32);
+    StrNCopy(ptr, guess, 64 - 1 - sizeof(Int32));
+
+    err = EncDigestMD5(msgBuf, 64, guessHash);
+    if (err)
+	App_ReportSysError(CryptoErrorAlert, err);
+
+    return !MemCmp(guessHash, &ki->passwdHash[0], kPasswdHashSize);
+}
+
+
+/* Return a locked pointer to the ring info block stored in the
+ * database's SortInfo pointer. */
+Err KeyDB_CreateRingInfo(void) {
+    LocalID		KeyringInfoID;
+    MemHandle		KeyringInfoHand;
+    Err			err;
+
+    KeyringInfoHand = DmNewHandle(gKeyDB, sizeof(KeyringInfoType));
+    KeyringInfoID = MemHandleToLocalID(KeyringInfoHand);
+    
+    if ((err = DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID,
+				 0, 0, 0, 0,
+				 0, 0, 0,
+				 0, &KeyringInfoID, 0, 0)))
+	return err;
+
+    return 0;
+}
 
 
 Err KeyDB_CreateCategories(void) {
@@ -112,85 +143,207 @@ Err KeyDB_CreateCategories(void) {
 }
 
 
-/*
- * Set the master password for the database.  This is called after the
- * user has entered a new password and it has been properly checked,
- * so all it has to do is the database updates.  This routine is also
- * called when we're setting the initial master password for a newly
- * created database.
+/* Store the checking-hash of a password into the database info. */
+static Err KeyDB_StorePasswdHash(Char const *newPasswd) {
+    KeyringInfoPtr	dbPtr;
+    KeyringInfoType		kiBuf;
+    Err			err;
+
+    if ((err = KeyDB_OpenRingInfo(&dbPtr)))
+	return err;
+
+    if (!dbPtr) {
+        /* May be missing if we suffered SortInfo damage; since we've
+         * already explained to the user, go ahead and create it
+         * again. */
+        if ((err = KeyDB_CreateRingInfo()))
+            return err;
+
+        if ((err = KeyDB_OpenRingInfo(&dbPtr)))
+            return err;
+
+        if (!dbPtr) {
+            FrmAlert(UpgradeFailedAlert);
+            return appErrMisc;
+        }
+    }
+    
+    MemSet(&kiBuf, sizeof(kiBuf), 0);
+    kiBuf.appInfoVersion = kAppVersion;	/* no longer checked, here for compatibility */
+    KeyDB_HashNewPasswd(newPasswd, &kiBuf);
+    DmWrite(dbPtr, 0, (void *) &kiBuf, sizeof(kiBuf));
+    MemPtrUnlock(dbPtr);
+
+    return 0;
+}
+
+
+/* Called after setting the password: walks through the database
+ * changing the encryption of each record to suit the new key.
  *
- * This routine must do two things: re-encrypt the session key and
- * store it back, and store a check hash of the new password.
- */
-void KeyDB_SetPasswd(Char *newPasswd)
-{
-    PwHash_Store(newPasswd);
-    SessKey_Store(newPasswd);
+ * This method must be called with the old unlock hash still
+ * present in memory. */
+/* XXX: It would be REALLY BAD if this failed: we've changed the encryption
+ * on some record, but not others.  This will mean the
+ * user can't decrypt some of them.  We need a systematic
+ * way around this.
+ *
+ * Probably a good way is to not use the key to really encrypt the
+ * records, but rather an invariant session key.  */
+static void KeyDB_Reencrypt(Char const *newPasswd) {
+    /* We read each record into memory, decrypt it using the old
+     * unlock hash, then encrypt it using the new hash and write it
+     * back. */
+    UInt16 	numRecs = DmNumRecords(gKeyDB);
+    UInt16 	idx;
+    MemHandle 	fromRec;
+    void	*recPtr, *toPtr;
+    UInt16	attr;
+    Err		err;
+    UnpackedKeyType	unpacked;
+    UInt32		recLen;
+    UInt8		newRecordKey[kPasswdHashSize];
+
+    err = EncDigestMD5((void *) newPasswd,
+		       StrLen(newPasswd),
+		       newRecordKey);
+    if (err)
+	App_ReportSysError(CryptoErrorAlert, err);
+
+    for (idx = 0; idx < numRecs; idx++) {
+	// Skip deleted records.  Handling of archived records is a
+	// bit of an open question, because we'll still want to be
+	// able to decrypt them on the PC.  (If we can ever do
+	// that...)
+	err = DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL);
+	ErrFatalDisplayIf(err, "DmRecordInfo");
+	if (attr & (dmRecAttrDelete | dmRecAttrSecret))
+	    continue;
+
+	// Open read-only and read in to memory
+	fromRec = DmQueryRecord(gKeyDB, idx);
+	ErrFatalDisplayIf(!fromRec, "couldn't query record");
+
+	// Read into a temporary unpacked buffer
+	KeyRecord_Unpack(fromRec, &unpacked, gRecordKey);
+	
+	// Pack and encrypt using the new key
+	toPtr = KeyRecord_Pack(&unpacked, newRecordKey);
+	ErrNonFatalDisplayIf(!toPtr, "!toPtr");
+
+	// Now resize record to fit packed size	
+	recLen = MemPtrSize(toPtr);
+	ErrNonFatalDisplayIf(!recLen, "!recLen");
+
+	fromRec = DmResizeRecord(gKeyDB, idx, recLen);
+	ErrNonFatalDisplayIf(!fromRec, "resize failed");
+
+	recPtr = MemHandleLock(fromRec);
+	ErrNonFatalDisplayIf(!recPtr, "!recPtr");
+	DmWrite(recPtr, 0, toPtr, recLen);
+	MemHandleUnlock(fromRec);
+	MemPtrFree(toPtr);
+
+	UnpackedKey_Free(&unpacked);
+
+	DmReleaseRecord(gKeyDB, idx, true); // dirty
+    }
+
+    // Finally, make the new unlock hash the currently active one
+    MemMove(gRecordKey, newRecordKey, kPasswdHashSize);
+}
+
+
+void KeyDB_SetPasswd(Char const *newPasswd) {
+    KeyDB_Reencrypt(newPasswd);
+    KeyDB_StorePasswdHash(newPasswd);
     Unlock_PrimeTimer();
 }
 
 
-/*
- * Try to open an existing key database.
- * 
- * Will return an error if the database does not exist, in which case
- * you can try to create a new one.  
- */
-Err KeyDB_OpenExistingDB(void) {
-    Err err;
-    
-    // TODO: Give people the option to name the database, or to create
-    // it on different cards?
-    gKeyDB = DmOpenDatabaseByTypeCreator(kKeyDBType, kKeyringCreatorID,
-					 dmModeReadWrite);
-    if (!gKeyDB)
-	return DmGetLastErr();
 
-    if ((err = DmOpenDatabaseInfo(gKeyDB, &gKeyDBID, NULL, NULL,
-				  &gKeyDBCardNo, NULL)))
+
+
+/* Get a locked pointer to keyring info; or make *PP NULL if there is
+ * no keyring info present.  The pointer is into the database, so it
+ * can't be written directly, only through DmWrite and friends.
+ *
+ * If the SortInfo bug has smitten us, then we'll return no error but
+ * have PP NULL. */
+Err KeyDB_OpenRingInfo(KeyringInfoPtr *pp) {
+    LocalID		kiID;
+    Err			err;
+
+    *pp = 0;
+
+    err = DmDatabaseInfo(gKeyDBCardNo, gKeyDBID,
+			 NULL, NULL, NULL, NULL, NULL,
+			 NULL, NULL, 0, &kiID, NULL, NULL);
+    if (err)
 	return err;
+
+    if (!kiID)
+	return 0;
+
+    *pp = (KeyringInfoPtr) MemLocalIDToLockedPtr(kiID, gKeyDBCardNo);
 
     return 0;
 }
 
 
-/*
- * Create the reserved records that will contain the encrypted session
- * key and master password check-hash.  We don't populate them yet,
- * but creating them here means that later on we can just count on
- * them existing and being in the right place.
- *
- * gKeyDB is open and refers to an empty database when this is called.
- */
-static Err KeyDB_CreateReservedRecords(void)
+/* Handle a database that's missing its SortInfo data, having been
+ * restored from a broken backup.  We temporarily allow this access,
+ * and explain that the user should reset their password.  Return true
+ * if access should be allowed, false to abort. */
+static Boolean KeyDB_HandleMissingSortInfo(void)
 {
-    Err err;
-    Int16 i, idx;
-    UInt16 attr;
-    MemHandle recHandle;
+    return FrmAlert(alertID_SortInfoMissing) == 0; /* 0 = "OK" */
+}
 
-    for (i = 0; i <= 1; i++) {
-	idx = i;
-	recHandle = DmNewRecord(gKeyDB, &idx, 1);
-	if (!recHandle) {
-	    err = DmGetLastErr();
-	    goto outErr;
-	}
-	ErrNonFatalDisplayIf(idx != i, __FUNCTION__ " inserted into wrong place");
 
-	if ((err = DmReleaseRecord(gKeyDB, idx, true)))
-	    goto outErr;
+/*
+ * Check whether GUESS is the right password for this database, and return
+ * accordingly.
+ *
+ * Deep ugliness happens here to cope with the PalmOS SortInfo bug.
+ * If there is no SortInfo block in the database, we display a dialog
+ * explaining the problem, assume the user's password is correct, and
+ * continue anyhow.
+ */
+Boolean KeyDB_Verify(Char const *guess) {
+    KeyringInfoPtr	ptr;
+    Boolean    		result;
+    Err			err;
 
-	attr = dmRecAttrSecret | dmRecAttrDirty;
-	if ((err = DmSetRecordInfo(gKeyDB, idx, &attr, NULL)))
-	    goto outErr;
+    err = KeyDB_OpenRingInfo(&ptr);
+    if (err) {
+        App_ReportSysError(KeyDatabaseAlert, err);
+        return false;
     }
+    if (!ptr) {
+        return KeyDB_HandleMissingSortInfo();
+    }
+    result = KeyDB_CheckPasswdHash(guess, ptr);
+    MemPtrUnlock(ptr);
+    return result;
+}
+
+
+/* Will return an error if the database does not exist. */
+Err KeyDB_OpenExistingDB(DmOpenRef *dbp) {
+    Err err;
+    
+    // TODO: Give people the option to name the database, or to create
+    // it on different cards?
+    *dbp = DmOpenDatabaseByTypeCreator(kKeyDBType, kKeyringCreatorID,
+				       dmModeReadWrite);
+    if (!*dbp)
+	return DmGetLastErr();
+
+    if ((err = DmOpenDatabaseInfo(*dbp, &gKeyDBID, NULL, NULL, &gKeyDBCardNo, NULL)))
+	return err;
 
     return 0;
-
- outErr:
-    UI_ReportSysError2(ID_CreateDBAlert, err, __FUNCTION__);
-    return err;
 }
 
 
@@ -211,42 +364,17 @@ Err KeyDB_CreateDB(void) {
     if ((err = DmCreateDatabase(gKeyDBCardNo, kKeyDBName,
 				kKeyringCreatorID, kKeyDBType,
 				false /* not resource */)))
-	goto outErr;
+	return err;
 
     gKeyDBID = DmFindDatabase(gKeyDBCardNo, kKeyDBName);
-    if (!gKeyDBID)
-	goto outFindErr;
+    if (!gKeyDBID) {
+	return DmGetLastErr();
+    }
 
     if ((err = KeyDB_SetVersion()))
-	goto outErr;
-
-    gKeyDB = DmOpenDatabase(gKeyDBCardNo, gKeyDBID, dmModeReadWrite);
-    if (!gKeyDB)
-	goto outFindErr;
-
-    if ((err = KeyDB_CreateReservedRecords()))
 	return err;
-    
-    if ((err = KeyDB_CreateCategories()))
-	goto outErr;
-    
-    if ((err = SessKey_Generate()))
-	goto outErr;
-
-    if (!SetPasswd_Run())
-	return appCancelled;
-
-    if ((err = KeyDB_MarkForBackup()))
-	goto outErr;
 
     return 0;
-    
- outFindErr:
-    err = DmGetLastErr();
-    
- outErr:
-    UI_ReportSysError2(ID_CreateDBAlert, err, __FUNCTION__);
-    return err;
 }
 
 
@@ -275,11 +403,3 @@ Err KeyDB_GetVersion(UInt16 *ver) {
 			  0, 0, 0, 0);
 }
 
-
-Int16 Keys_IdxOffsetReserved(void)
-{
-    if (gPrefs.category == 0 || gPrefs.category == dmAllCategories) 
-	return kNumHiddenRecs;
-    else
-	return 0;
-}

@@ -1,8 +1,8 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-MemHandle Mem_ReadString(Char **ptr, Int16 *, Int16 *);
+MemHandle Mem_StrToHandle(Char * ptr, UInt32 *);
+MemHandle Mem_ReadString(Char * *ptr, UInt32 *);
 void Mem_ReadChunk(Char **ptr, UInt32 len, void * dest);
 void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len);
 

@@ -1,8 +1,8 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,7 @@
  */
 
 /* FIXME: MemoPad limits memos to 4kb.  We should use that too, and
- * make sure that we never write out more text than can be accepted.
- * I think we're safe, because all our edit fields have smaller
- * lengths.
- *
- * FIXME: - Selecting a record to export to memo results in
- * "...possible memory leak...". The only time in my limited Palm
- * programming I ran into this was because all forms weren't closed
- * before exiting my app.  I'm not sure this is really a problem, as
- * memory should be given back by the fact Keyring has exited.  -- Dell */
+ * make sure that we never write out more text than can be accepted. */
 
 #include <PalmOS.h>
 #include <Password.h>
@@ -67,10 +59,8 @@ static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
     /* XXX: Ugh, ugly.  Try rewriting this more concisely. */
 
     off = 0;
-
-    /* NB it's OK to call this with a null handle. */
     DB_WriteStringFromHandle(memoRecord, &off, keyRecord->nameHandle,
-                             keyRecord->nameLen);
+			     keyRecord->nameLen);
     if (keyRecord->acctHandle) {
 	DB_WriteString(memoRecord, &off, "\nAccount: ");
 	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->acctHandle,
@@ -86,6 +76,7 @@ static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->notesHandle,
 				 keyRecord->notesLen);
     }
+    DB_WriteString(memoRecord, &off, "\n(Exported from GNU Keyring)");
 
     DmWrite(memoRecord, off, "", 1); /* write nul */
     off++;
