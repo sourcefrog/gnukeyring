@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "java"; -*-
  *
- * $Id$
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,9 +164,12 @@ void Snib_StoreRecordKey(UInt8 *newHash)
 }
 
 
-/* Retrieve the key hash from the snib if it exists, and return TRUE.
- * Otherwise, return FALSE.  */
-Boolean Snib_RetrieveKey(UInt8* keyHash) {
+/**
+ * Retrieve the key hash from the snib if it exists, and return TRUE.
+ * Otherwise, return FALSE.
+ **/
+Boolean Snib_RetrieveKey(UInt8* keyHash)
+{
     SnibPtr snib;
     UInt32  now;
     Err     err;

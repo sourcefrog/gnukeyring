@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "java"; -*-
  *
  * $Id$
  *
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,8 @@ static void KeyEditForm_UpdateTitle(void)
 }
 
 
-static void KeyEditForm_FromUnpacked(void) {
+static void KeyEditForm_FromUnpacked(void)
+{
     FldFreeMemory(f_KeyNameFld);
     FldSetTextHandle(f_KeyNameFld, (MemHandle) gRecord.nameHandle);
     FldFreeMemory(f_AcctFld);
@@ -176,7 +177,8 @@ static void KeyEditForm_FromUnpacked(void) {
 /*
  * Wipe out all the fields on this form.
  */
-static void KeyEditForm_Clear(void) {
+static void KeyEditForm_Clear(void)
+{
      Int16 i;
 
      for (i = 0; i < k_NumFields; i++) {
@@ -185,7 +187,8 @@ static void KeyEditForm_Clear(void) {
 }
 
 
-static void KeyEditForm_ToUnpacked(UnpackedKeyType *u) {
+static void KeyEditForm_ToUnpacked(UnpackedKeyType *u)
+{
     FieldPtr fld;
 
     u->nameHandle = (MemHandle) FldGetTextHandle(f_KeyNameFld);
@@ -207,12 +210,14 @@ static void KeyEditForm_ToUnpacked(UnpackedKeyType *u) {
 }
 
 
-static void KeyEditForm_Done(void) {
+static void KeyEditForm_Done(void)
+{
     FrmGotoForm(ListForm);
 }
 
 
-static Err KeyEditForm_Wakeup(SysNotifyParamType *np) {
+static Err KeyEditForm_Wakeup(SysNotifyParamType *np)
+{
     if (np->notifyType == sysNotifyLateWakeupEvent) {
 	 SysNotifyUnregister(gKeyDBCardNo,
 			     gKeyDBID,
@@ -272,7 +277,8 @@ static void KeyEditForm_Load(void)
  * from the field values.  If the record has been left empty, then
  * delete it rather than saving an empty record.
  */
-static void KeyEditForm_Commit(void) {
+static void KeyEditForm_Commit(void)
+{
     if (f_keyDiscarded)
         return;
 
@@ -314,7 +320,8 @@ static void KeyEditForm_Save(void)
 
 /* Update the category popuptrigger to show the current record's
  * category name. */
-static void KeyEditForm_UpdateCategory(void) {
+static void KeyEditForm_UpdateCategory(void)
+{
     Category_UpdateName(f_KeyEditForm, gRecord.category);
 }
 
@@ -393,7 +400,8 @@ static Boolean KeyEditForm_IsEmpty(void)
      return true;
 }
 
-void KeyEditForm_GotoRecord(UInt16 recordIdx) {
+void KeyEditForm_GotoRecord(UInt16 recordIdx)
+{
     gKeyRecordIndex = recordIdx;
      
     if (Unlock_GetKey(false, gRecordKey)) {
@@ -415,7 +423,8 @@ static void Key_SetNewRecordCategory(void)
 
 
 
-static void KeyEditForm_OpenRecord(void) {
+static void KeyEditForm_OpenRecord(void)
+{
     if (gKeyRecordIndex != kNoRecord) 
         KeyEditForm_Load();
     else {
@@ -475,7 +484,8 @@ static void Edit_PrepareFields(void)
 }
 
 
-static void KeyEditForm_FormOpen(void) {
+static void KeyEditForm_FormOpen(void)
+{
      f_needsSort = false;
      KeyEditForm_GetFields();
      Edit_PrepareFields();
@@ -483,7 +493,8 @@ static void KeyEditForm_FormOpen(void) {
 }
 
 
-static void Edit_SortAndFollow(void) {
+static void Edit_SortAndFollow(void)
+{
      UInt32 uniqueId;
      Boolean followRecord;
 
@@ -501,7 +512,8 @@ static void Edit_SortAndFollow(void) {
 }
 
 
-static void Edit_FormClose(void) {
+static void Edit_FormClose(void)
+{
      KeyEditForm_Commit();
      MemSet(gRecordKey, sizeof(gRecordKey), 0);
      if (f_needsSort) {
@@ -577,7 +589,8 @@ static void Edit_MaybeDelete(void)
 
 
 
-static void KeyEditForm_Generate(void) {
+static void KeyEditForm_Generate(void)
+{
     FormPtr     frm;
     MemHandle   h;
     FieldPtr    passwdFld;
@@ -614,7 +627,8 @@ static void Edit_MaybeExport(void)
 }
 
 
-static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
+static Boolean KeyEditForm_HandleMenuEvent(EventPtr event)
+{
     switch (event->data.menu.itemID) {
     case HelpCmd:
         FrmHelp(KeyEditHelp);
@@ -642,7 +656,8 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
 }
 
 
-static void KeyEditForm_UpdateScrollbar(void) {
+static void KeyEditForm_UpdateScrollbar(void)
+{
     UInt16 textHeight, fieldHeight, maxValue, scrollPos;
 
     FldGetScrollValues(f_NotesFld, &scrollPos, &textHeight, &fieldHeight);
@@ -658,7 +673,8 @@ static void KeyEditForm_UpdateScrollbar(void) {
 }
 
 
-static void KeyEditForm_Dragged(EventPtr event) {
+static void KeyEditForm_Dragged(EventPtr event)
+{
     Int32 lines = event->data.sclExit.newValue - event->data.sclExit.value;
     WinDirectionType direction;
 
@@ -784,7 +800,8 @@ static void KeyEditForm_PageButton(WinDirectionType dir)
 
 
 
-static Boolean KeyEditForm_Arrow(int dir) {
+static Boolean KeyEditForm_Arrow(int dir)
+{
     FormPtr frm;
     UInt16 activeIdx;
     UInt16 activeId, nextId;
@@ -819,7 +836,8 @@ static Boolean KeyEditForm_Arrow(int dir) {
 }
 
 
-static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
+static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event)
+{
     const int chr = event->data.keyDown.chr;
     
     switch (chr) {
@@ -839,7 +857,8 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
 
 
 
-static void KeyEditForm_CategorySelected(void) {
+static void KeyEditForm_CategorySelected(void)
+{
      Boolean categoryChanged;
      
      if (App_CheckReadOnly())
@@ -858,7 +877,8 @@ static void KeyEditForm_CategorySelected(void) {
 
 
 
-Boolean KeyEditForm_HandleEvent(EventPtr event) {
+Boolean KeyEditForm_HandleEvent(EventPtr event)
+{
     switch (event->eType) {
     case ctlSelectEvent:
         switch (event->data.ctlSelect.controlID) {

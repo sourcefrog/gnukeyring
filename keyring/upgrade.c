@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "java"; -*-
  *
- * $Id$
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,8 @@ Boolean Keyring_OfferUpgrade(void)
 }
 
 
-static void UpgradeDB_Failed(int oldVersion) {
+static void UpgradeDB_Failed(int oldVersion)
+{
     char oldVer[8];
     StrIToA(oldVer, oldVersion);
     FrmCustomAlert(CantUpgradeAlert, oldVer, "", "");
@@ -109,7 +110,8 @@ static Err Upgrade_MoveToHash(LocalID id)
 
 
 
-static Err Upgrade_From0(void) {
+static Err Upgrade_From0(void)
+{
     /* Move the AppInfo block to the SortInfo block */
     LocalID             appInfoID;
     Err			err;
@@ -232,7 +234,8 @@ static Err Upgrade_From1(void)
 
 
 /* Convert from a database version oldVersion to the new version. */
-Err UpgradeDB(UInt16 oldVersion) {
+Err UpgradeDB(UInt16 oldVersion)
+{
     Err err;
 
     if (oldVersion == 0) {

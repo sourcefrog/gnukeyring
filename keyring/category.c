@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r" -*-
+/* -*- c-file-style: "java" -*-
  *
- * $Id$
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ static Char		categoryName[dmCategoryLength];
 /*
  * Update a popuptrigger to show a new category name.
  */
-void Category_UpdateName(FormPtr frm, UInt16 category) {
+void Category_UpdateName(FormPtr frm, UInt16 category)
+{
     ControlPtr		ctl;
 
     /* TODO: Instead, cache this per form. */
@@ -54,7 +55,8 @@ void Category_UpdateName(FormPtr frm, UInt16 category) {
 }
 
 
-Boolean Category_Selected(Int16 *category, Boolean showAll) {
+Boolean Category_Selected(Int16 *category, Boolean showAll)
+{
     FormPtr frm;
     Boolean		categoryEdited;
     Int16		oldCategory;
@@ -74,7 +76,8 @@ Boolean Category_Selected(Int16 *category, Boolean showAll) {
 }
 
 
-Err KeyDB_CreateCategories(void) {
+Err KeyDB_CreateCategories(void)
+{
     LocalID		appInfoID;
     MemHandle h;
     AppInfoPtr		appInfoPtr;
