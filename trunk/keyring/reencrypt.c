@@ -37,7 +37,8 @@ Err SetPasswd_ReencryptRecords(CryptoKey *oldRecordKey,
 {
     UInt16 	numRecs = DmNumRecords(gKeyDB);
     UInt16	attr, idx, newIdx;
-    MemHandle   oldRecH, newRecH;
+    UInt32	uniqueID;
+    MemHandle	oldRecH, newRecH;
     void	*oldRecPtr, *newRecPtr;
     UInt8       *plainBuf;
     UInt16      maxBlockSize = 
@@ -60,10 +61,10 @@ Err SetPasswd_ReencryptRecords(CryptoKey *oldRecordKey,
 	 * able to decrypt them on the PC.  (If we can ever do
 	 * that...)
 	 */
-	err = DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL);
+	err = DmRecordInfo(gKeyDB, idx, &attr, &uniqueID, NULL);
 	if (err)
 	    goto outErr;
-	if ((attr & (dmRecAttrDelete | dmRecAttrSecret)))
+	if ((attr & dmRecAttrDelete))
 	    continue;
 
 	/* Open record */
@@ -108,6 +109,8 @@ Err SetPasswd_ReencryptRecords(CryptoKey *oldRecordKey,
 	    goto outErr;
 	}
 	
+	/* Preserve attributes, categories and unique id */
+	DmSetRecordInfo(newKeyDB, newIdx, &attr, &uniqueID);
         newRecPtr = MemHandleLock(newRecH);
 	for (i = 0; i < newRecordKey->blockSize; i++) 
 	    ivec[i] = Secrand_GetByte();
