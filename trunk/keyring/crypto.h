@@ -1,7 +1,8 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,10 +24,8 @@
 /* Sizes in bytes */
 #define kDESBlockSize		8
 #define kDESKeySize             8
-#define kDES3KeySize            24
+#define k2DESKeySize            16
 #define kMD5HashSize            16
-
-typedef UInt8 DES3KeyType[kDES3KeySize];
 
 Err DES3_Read(void * from, void * to, UInt32 len);
 Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32);

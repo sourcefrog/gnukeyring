@@ -1,5 +1,5 @@
 /*
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool
  * $Id$
  *
@@ -101,7 +101,7 @@ BEGIN
   "Edit" = "Bearbeiten"
 
   "Preferences..." =  "Einstellungen..."
-  "About GNU Keyring" =  "GNU Keyring-Info"
+  "About..." =  "Info..."
 
   "Undo" = "Rückgängig"
   "Graffiti Help" = "Graffiti-Hilfe"
@@ -184,7 +184,7 @@ BEGIN
 
   "Preferences..." =  "Preferencias..."
   "Tips" = "Sugerencias"
-  "About GNU Keyring" =  "Acerca de GNU Keyring"
+  "About..." =  "Acerca..."
 
   "Undo" = "Deshacer"
   "Graffiti Help" = "Ayuda de Grafitti"
@@ -266,7 +266,7 @@ BEGIN
   "Edit" = "Redigera"
 
   "Preferences..." =  "Inställningar..."
-  "About GNU Keyring" =  "Om GNU Keyring"
+  "About..." =  "Om Keyring"
 
   "Undo" = "Ångra"
   "Graffiti Help" = "Graffiti-hjälp"
@@ -294,7 +294,7 @@ VERSION ID 1000 "__VERSION__"
 FORM ID ListForm AT (0 0 160 160)
 MENUID ListMenuBar
 BEGIN
-	TITLE "GNU Keyring"
+	TITLE "Tightly Bound"
 
 	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 0 AUTO AUTO) RIGHTANCHOR USABLE
 	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
@@ -560,7 +560,7 @@ WARNING
 BEGIN
   TITLE "Beta Software"
 
-  MESSAGE "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data."
+  MESSAGE "This is a beta test version of Tightly Bound.  It may have bugs.  Please keep another copy of any unrecoverable data."
 
   BUTTONS "OK" 
 END
@@ -593,7 +593,7 @@ ERROR
 BEGIN
 	TITLE "Not Enough Features"
 
-	MESSAGE "This version of GNU Keyring requires PalmOS 3.0 features and cannot run here."
+	MESSAGE "This version of Tightly Bound requires PalmOS 3.0 features and cannot run here."
 
 	BUTTONS "OK"
 END
@@ -629,11 +629,11 @@ END
 FORM ID AboutForm AT (2 2 156 156)
 MODAL
 BEGIN
-	TITLE "GNU Keyring"
+	TITLE "Tightly Bound"
 
 	FORMBITMAP AT (69 20) BITMAP KeyBitmap
 
-	LABEL "GNU Keyring"
+	LABEL "Tightly Bound"
 		AUTOID AT (CENTER 50) FONT 1
 	LABEL "__VERSION__ (__DATE__)" 
 		AUTOID AT (CENTER PREVBOTTOM) FONT 1
@@ -659,7 +659,7 @@ BEGIN
 	PULLDOWN "Options"
 	BEGIN
 		MENUITEM "Preferences..." ID ID_PrefsCmd "P"
-		MENUITEM "About GNU Keyring" ID AboutCmd "A"
+		MENUITEM "About..." ID AboutCmd
 	END
 END
 
@@ -691,7 +691,7 @@ BEGIN
 	BEGIN
 		MENUITEM "Preferences..." ID ID_PrefsCmd "R"
 		MENUITEM "Tips..."	ID HelpCmd
-		MENUITEM "About GNU Keyring" ID AboutCmd
+		MENUITEM "About..." ID AboutCmd
 	END
 END
 

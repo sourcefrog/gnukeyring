@@ -1,8 +1,8 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -222,16 +222,31 @@ void Snib_SetExpiry(UInt32 newTime)
 }
 
 
+
 /*
- * Store the decrypted session key for use later in this session.
+ * Calculate the hash of a password and store it in the snib database.
+ * This is called as the keyring is unlocked, so that we always have
+ * the hash available in the future for convenient access.
  */
-void Snib_SetSessKey(UInt8 const *newKey)
+void Snib_StoreFromPasswd(Char const *passwd)
+{
+    UInt8 hash[kMD5HashSize];
+
+    
+}
+
+
+/*
+ * Store the record key (hash of master password) for use later in
+ * this session.
+ */
+void Snib_StorePasswdHash(UInt8 const *newHash)
 {
     Err		err;
     
-    err = DmWrite(g_Snib, OFFSET(g_Snib, sessKey[0]),
-		  newKey, kDES3KeySize);
-
+    err = DmWrite(g_Snib, OFFSET(g_Snib, recordKey[0]),
+		  newHash, k2DESKeySize);
+    
     if (err) {
 	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
     }

@@ -1,8 +1,8 @@
-/* -*- c-file-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,6 @@
 #include "passwd.h"
 #include "resource.h"
 #include "pwhash.h"
-#include "sesskey.h"
 #include "error.h"
 #include "uiutil.h"
 #include "auto.h"
@@ -122,6 +121,18 @@ Err KeyDB_CreateCategories(void) {
 
 
 /*
+ * Walk through the database, and for each record decrypt it using the
+ * old session key from the snib, and then store it back encrypted by
+ * the new session key.  Finally update the snib to hold the hash of
+ * the new password.
+ */
+static void KeyDB_ReEncrypt(Char * UNUSED(newPasswd))
+{
+     /* XXXX */
+}
+
+
+/*
  * Set the master password for the database.  This is called after the
  * user has entered a new password and it has been properly checked,
  * so all it has to do is the database updates.  This routine is also
@@ -133,9 +144,9 @@ Err KeyDB_CreateCategories(void) {
  */
 void KeyDB_SetPasswd(Char *newPasswd)
 {
-    PwHash_Store(newPasswd);
-    SessKey_Store(newPasswd);
-    Unlock_PrimeTimer();
+     PwHash_Store(newPasswd);
+     KeyDB_ReEncrypt(newPasswd);
+     Unlock_PrimeTimer();
 }
 
 
@@ -239,9 +250,6 @@ Err KeyDB_CreateDB(void) {
     if ((err = KeyDB_CreateCategories()))
 	goto outErr;
     
-    if ((err = SessKey_Generate()))
-	goto outErr;
-
     if (!SetPasswd_Run())
 	return appCancelled;
 

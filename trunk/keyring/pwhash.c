@@ -2,7 +2,7 @@
  *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,7 +87,8 @@ static Err PwHash_Calculate(UInt8 *digest, UInt32 salt, Char *passwd)
 
 
 /*
- * Generate new salt, and calculate a checking-hash.  Store this in kMasterHashRec.
+ * Generate new salt, and calculate a checking-hash.  Store this in
+ * kMasterHashRec.
  */
 Err PwHash_Store(Char *newPasswd)
 {

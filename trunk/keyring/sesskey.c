@@ -1,8 +1,8 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; -*-
+/* -*- c-file-style: "bsd"; c-basic-offset: 4; -*-
  *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,11 +24,6 @@
 /*
  * Manages session keys stored in hidden records at the start of the
  * database.
- */
-
-/*
- * TODO: Generate a genuine random key, and save it encrypted by the
- * user's password.
  */
 
 #include <PalmOS.h>

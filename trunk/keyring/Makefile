@@ -1,4 +1,4 @@
-# GNU Keyring for PalmOS
+# Tightly Bound
 # Copyright (C) 1999, 2000 by Martin Pool
 # $Id$
 
@@ -6,21 +6,20 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.13.0dev3
+VERSION         = 0.13.0dev4
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
-		  beta.c setpasswd.c pwhash.c snib.c sesskey.c		\
+		  beta.c setpasswd.c pwhash.c snib.c          		\
 		  pack.c unpack.c 
 
 HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
 		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
-		resource.h sesskey.h					\
-		util.h crypto.h export.h keyedit.h memutil.h		\
-		pwhash.h uiutil.h snib.h pack.h unpack.h
+		resource.h util.h crypto.h export.h keyedit.h		\
+		memutil.h pwhash.h uiutil.h snib.h pack.h unpack.h
 
 # 		  libdes/des_enc.c
 
