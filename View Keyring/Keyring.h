@@ -97,9 +97,9 @@
  * @abstract Try to unlock the database with a given password.
  * @param p The password to use.
  * @result YES if the password was correct.
- * @discussion No character translations are performed on the input Unicode
- *             string; this method is unlikely to work if the password contains
- *             non-7-bit ASCII data.
+ * @discussion The input Unicode string is converted to ISO Latin 1, not the
+ *             appropriate PalmOS encoding. Thus passwords containing
+ *             non-7-bit ASCII data are unlikely to work.
  */
 - (BOOL)unlock: (NSString *)p;
 
@@ -140,13 +140,13 @@
 - (NSString *)nameForIndex: (unsigned int)i;
 
 /*!
-    * @method decryptIndex:
+ * @method _decryptIndex:
  * @abstract Decrypt a record.
  * @param i Raw record index to decrypt
  * @discussion This is used internally by the -decrypted...ForIndex methods.
  *             There is no need to use this method directly.
  */
-- (void)decryptIndex: (unsigned int)i;
+- (void)_decryptIndex: (unsigned int)i;
 
 /*!
  * @method decryptedAccountNameForIndex:

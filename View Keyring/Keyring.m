@@ -92,6 +92,7 @@
         if ([recordZero length] < 20) {
             NSLog(@"PDB record zero is too short! (%d < 20)", [recordZero length]);
         }
+        // BUG - should convert to one of the PalmOS encodings, not Latin 1.
         pass = [p dataUsingEncoding: NSISOLatin1StringEncoding
                allowLossyConversion: NO];
         if (pass == nil) {
@@ -134,7 +135,7 @@
     return [[pdb recordData: i] palmCString: 0];
 }
 
-- (void)decryptIndex: (unsigned int)i
+- (void)_decryptIndex: (unsigned int)i
 {
     if (i != decryptedRecordIndex) {
         NSData *k1, *k2;
@@ -197,25 +198,25 @@
 
 - (NSString *)decryptedAccountNameForIndex: (unsigned int)i
 {
-    [self decryptIndex: i];
+    [self _decryptIndex: i];
     return [decryptedRecord objectAtIndex: 0];
 }
 
 - (NSString *)decryptedPasswordForIndex: (unsigned int)i
 {
-    [self decryptIndex: i];
+    [self _decryptIndex: i];
     return [decryptedRecord objectAtIndex: 1];
 }
 
 - (NSCalendarDate *)decryptedDateForIndex: (unsigned int)i
 {
-    [self decryptIndex: i];
+    [self _decryptIndex: i];
     return [decryptedRecord objectAtIndex: 2];
 }
 
 - (NSString *)decryptedNotesForIndex: (unsigned int)i
 {
-    [self decryptIndex: i];
+    [self _decryptIndex: i];
     return [decryptedRecord objectAtIndex: 3];
 }
 
