@@ -4,7 +4,7 @@
 pages=index guide download thanks plans faq crypto	\
       history conduits lists contribute building prerelease
 
-extra=robots.txt style.css snaps/*.png icons/*.gif
+extra=robots.txt style.css snaps/*.png myicons/*.gif
 
 htp_libs=htp.def keyring.htt
 

@@ -65,7 +65,7 @@
 
 <def name="dlentry" option="icon file desc">
   <tr><td>
-  <a href="http://prdownloads.sourceforge.net/gnukeyring/${file}"><img src="icons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
+  <a href="http://prdownloads.sourceforge.net/gnukeyring/${file}"><img src="myicons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
   </td><td><use desc></td></tr>
 </def>
 

@@ -6,10 +6,10 @@
 <undef dlentry>
 <def name="dlentry" option="icon file desc">
   <tr><td>
-  <a href="http://gnukeyring.sourceforge.net/keyring2-pre/${file}"><img src="icons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
+  <a href="http://gnukeyring.sourceforge.net/keyring2-pre/${file}"><img src="myicons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
   </td>
   <td>
-  <a href="http://gnukeyring.sourceforge.net/keyring2-pre/${file}.sig"><img src="icons/sig.gif" border="0" alt="&nbsp;" align="middle"><code>GPG signature</code></a>
+  <a href="http://gnukeyring.sourceforge.net/keyring2-pre/${file}.sig"><img src="myicons/sig.gif" border="0" alt="&nbsp;" align="middle"><code>GPG signature</code></a>
   </td>
   <td><use desc></td></tr>
 </def>
