@@ -14,7 +14,7 @@ site_files=$(html_pages) $(extra)
 
 $(site_files): style.latte
 
-sites=gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
+sites=gnukeyring.sourceforge.net:/home/groups/g/gn/gnukeyring/htdocs
 
 latte_libs=style.latte
 
