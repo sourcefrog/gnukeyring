@@ -198,15 +198,14 @@ static void KeyEditForm_Done(void)
 }
 
 
-static Err KeyEditForm_Wakeup(SysNotifyParamType *np)
-{
-    if (np->notifyType == sysNotifyLateWakeupEvent) {
-	 SysNotifyUnregister(gKeyDBCardNo,
-			     gKeyDBID,
-			     sysNotifyLateWakeupEvent,
-			     sysNotifyNormalPriority);
-	 KeyEditForm_Done();
-    }
+static Err KeyEditForm_Sleep(SysNotifyParamType *np) {
+    /* Close all form and erase screen */
+    FrmCloseAllForms();
+
+    /* Enqueue event to switch to main form, this won't be
+     * processed before power on.
+     */
+    FrmGotoForm(ListForm);
     return 0;
 }
 
@@ -221,6 +220,7 @@ static void KeyEditForm_Load(void)
     MemHandle   record = 0;
     Char *      recPtr;
     FormPtr     busyForm;
+    UInt32      version;
 
     // Open r/o
     record = DmQueryRecord(gKeyDB, gKeyRecordIndex);
@@ -249,8 +249,11 @@ static void KeyEditForm_Load(void)
      *
      * POSE doesn't seem to send this notification on wakeup, so you
      * can't test this in the simulator. */
-    SysNotifyRegister(gKeyDBCardNo, gKeyDBID, sysNotifyLateWakeupEvent,
-		      KeyEditForm_Wakeup, sysNotifyNormalPriority, NULL);
+    
+    if (FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &version) == 0
+	&& version)
+	 SysNotifyRegister(gKeyDBCardNo, gKeyDBID, sysNotifySleepRequestEvent,
+			   KeyEditForm_Sleep, sysNotifyNormalPriority, NULL);
 }
 
 
@@ -493,9 +496,9 @@ static void Edit_SortAndFollow(void)
           DmFindRecordByID(gKeyDB, uniqueId, &gKeyRecordIndex);
 }
 
-
 static void Edit_FormClose(void)
 {
+     UInt32 version;
      KeyEditForm_Commit();
      MemSet(gRecordKey, sizeof(gRecordKey), 0);
      if (f_needsSort) {
@@ -509,6 +512,13 @@ static void Edit_FormClose(void)
      else
           f_FirstIdx = DmPositionInCategory(gKeyDB, gKeyRecordIndex,
                                             gPrefs.category);
+     if (FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &version) == 0
+	 && version) {
+	  SysNotifyUnregister(gKeyDBCardNo,
+			      gKeyDBID,
+			      sysNotifySleepRequestEvent,
+			      sysNotifyNormalPriority);
+     }
 }
 
 
