@@ -51,8 +51,10 @@ static TablePtr f_Table;
 static ScrollBarPtr f_ScrollBar;
 static FormPtr f_ListForm;
 
-/* Number of rows that fit in the visible table space */
-static Int16 f_VisRows;
+/* Number of table rows that could possibly fit on the screen.  Some
+ * of them might not be actually in use if there's less than a screen
+ * of records. */
+static Int16 f_ScreenRows;
 
 /* Pixel width of the table */
 static Int16 f_TableWidth, f_TableHeight;
@@ -63,7 +65,7 @@ static Int16 f_NumListed;
 
 /* Index of the first record displayed in the table.  Zero shows top
  * of table, etc. */
-static Int16 f_FirstIdx;
+Int16 f_FirstIdx;
 
 /* Width of '.' character in pixels */
 static Int16 f_DotWidth;
@@ -182,27 +184,51 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
 }
 
 
+/*
+ * Update the table control, after querying the database to see how
+ * many rows can be displayed.
+ */
 static void ListForm_UpdateTable(void)
 {
     Int16 row;
-    Int16 numRows;
     Int16 lineHeight;
     Int16 dataHeight;
+    Int16 maxRows;
 
     lineHeight = FntLineHeight();
 
-    /* Get the total number of rows allocated.  Then mark ones which
-     * are off the bottom of the screen as not usable. */
-    numRows = TblGetNumberOfRows(f_Table);
+    /* Get the total number of rows allocated.  */
+    maxRows = TblGetNumberOfRows(f_Table);
+
+    f_NumListed = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
+    ErrNonFatalDisplayIf(f_NumListed > 30000,
+                         "unreasonable numListed");
+
+    f_ScreenRows = f_TableHeight / lineHeight;
+
+    /* Work out which record should be at the top.  It can't be less
+     * than zero of course, but also we don't allow whitespace at the
+     * bottom if there are enough rows to fill the display.  However
+     * we leave the display as close as possible to where the user put
+     * it last. */
+    if (f_FirstIdx > f_NumListed - f_ScreenRows)
+         f_FirstIdx = f_NumListed - f_ScreenRows;
+    if (f_FirstIdx < 0)
+         f_FirstIdx = 0;
+
+    /* Update all row controls, but also mark ones for which there is
+     * no data as not usable.
+     *
+     * TODO: Try to avoid calling all the TblSet routines more than
+     * once per invocation of the list form. */
     dataHeight = 0;
-    for (row = 0; row < numRows; row++) {
+    for (row = 0; row < maxRows; row++) {
         if ((f_TableHeight >= dataHeight + lineHeight)
             && (row + f_FirstIdx < f_NumListed)) {
             /* Row is usable */
             TblSetRowHeight(f_Table, row, lineHeight);
             TblSetItemStyle(f_Table, row, 0, customTableItem);
             TblSetRowUsable(f_Table, row, true);
-            f_VisRows = row;
         } else {
             TblSetRowUsable(f_Table, row, false);
         }
@@ -227,27 +253,15 @@ static void ListForm_UpdateScrollBar(void)
      */
     Int16 max;
 
-    max = f_NumListed - f_VisRows - 1;
+    max = f_NumListed - f_ScreenRows;
     if (max < 0) {
         /* Less than one page of records. */
         max = 0;
     }
-    SclSetScrollBar(f_ScrollBar, f_FirstIdx, 0, max, f_VisRows);
+    SclSetScrollBar(f_ScrollBar, f_FirstIdx, 0, max, f_ScreenRows);
 }
 
 
-
-/*
- * Return the number of listed records, taking into account the
- * current category and omitting the records reserved for the master
- * password hash and the encrypted session key.
- */
-static void ListForm_CountNumListed(void)
-{
-    f_NumListed = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
-    ErrNonFatalDisplayIf(f_NumListed > 30000,
-                         "unreasonable numListed");
-}
 
 
 static void ListForm_UpdateCategory(void)
@@ -256,10 +270,9 @@ static void ListForm_UpdateCategory(void)
 }
 
 
+
 static void ListForm_Update(void)
 {
-    ListForm_CountNumListed();
-
     ListForm_UpdateTable();
     ListForm_UpdateCategory();
     ListForm_UpdateScrollBar();
@@ -308,9 +321,9 @@ static Boolean ListForm_TableSelect(EventPtr event)
 
 
 static void ListForm_NewKey(void) {
-    if (Unlock_CheckTimeout() || UnlockForm_Run()) {
-        KeyEditForm_GotoNew();
-    }
+     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
+          KeyEditForm_GotoNew();
+     }
 }
 
 
@@ -318,16 +331,16 @@ static void ListForm_NewKey(void) {
  * Scroll if possible.  Update table and scrollbar.
  */
 static void ListForm_Scroll(Int16 newPos) {
-    if (newPos < 0)
-        f_FirstIdx = 0;
-    else if (newPos > f_NumListed - f_VisRows)
-        f_FirstIdx = f_NumListed - f_VisRows - 1;
-    else
-        f_FirstIdx = newPos;
+     if (newPos > f_NumListed - f_ScreenRows)
+          newPos = f_NumListed - f_ScreenRows;
+     if (newPos < 0)
+          newPos = 0;
+     
+     f_FirstIdx = newPos;
 
-    ListForm_UpdateScrollBar();
-    TblMarkTableInvalid(f_Table);
-    TblRedrawTable(f_Table);
+     ListForm_UpdateScrollBar();
+     TblMarkTableInvalid(f_Table);
+     TblRedrawTable(f_Table);
 }
 
 
@@ -339,7 +352,7 @@ static void ListForm_ScrollRepeat(EventPtr event) {
 
 static void ListForm_ScrollPage(WinDirectionType dir) {
     Int16 newPos = f_FirstIdx +
-        ((dir == winDown) ? +f_VisRows : -f_VisRows); /* XXXXXX */
+        ((dir == winDown) ? +f_ScreenRows : -f_ScreenRows);
     ListForm_Scroll(newPos);
 }
 

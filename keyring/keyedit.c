@@ -38,6 +38,7 @@
 #include "unpack.h"
 #include "auto.h"
 #include "sort.h"
+#include "listform.h"
 
 /*
  * TODO: Newline in single-line fields should move down one.
@@ -440,6 +441,10 @@ static void Edit_FormClose(void) {
      if (f_needsSort) {
           Keys_Sort();
      }
+
+     /* This is not necessarily a reasonable index, but the list form
+      * will check it before use. */
+     f_FirstIdx = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
 }
 
 
