@@ -45,3 +45,7 @@ Boolean KeyDB_Verify(Char const *guess);
 
 Int16 Keys_IdxOffsetReserved(void);
 Err KeyDB_CreateReservedRecords(void);
+
+
+extern Boolean g_ReadOnly;
+     

@@ -39,6 +39,7 @@
 #include "error.h"
 #include "beta.h"
 #include "auto.h"
+#include "uiutil.h"
 
 /* TODO: Call MemSetDebugMode!!  Let people turn this on and off at
  * runtime through some kind of magic keystroke. */
@@ -260,12 +261,16 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	break;
 
     case SetPasswdCmd:
+         if (App_CheckReadOnly())
+              return true;
 	if (UnlockForm_Run()) 
 	    SetPasswd_Run();
 	result = true;
 	break;
 
     case KeyboardCmd:
+         if (App_CheckReadOnly())
+              return true;
 	SysKeyboardDialog(kbdDefault);
 	result = true;
 	break;
@@ -281,21 +286,27 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	break;
 
     case EditPaste:
-	FldPaste(fld);
-	result = true;
-	break;
+         if (App_CheckReadOnly())
+              return true;
+         FldPaste(fld);
+         result = true;
+         break;
 
     case EditCut:
-	FldCut(fld);
-	result = true;
-	break;
-
+         if (App_CheckReadOnly())
+              return true;
+         FldCut(fld);
+         result = true;
+         break;
+         
     case EditSelectAll:
 	FldSetSelection(fld, 0, FldGetTextLength(fld));
 	result = true;
 	break;
 
     case EditUndo:
+         if (App_CheckReadOnly())
+              return true;
 	FldUndo(fld);
 	result = true;
 	break;
@@ -379,3 +390,13 @@ UInt32 PilotMain(UInt16 launchCode,
 
     return err;
 }
+
+
+
+Boolean App_CheckReadOnly(void)
+{
+     if (g_ReadOnly)
+          FrmAlert(alertID_ReadOnly);
+     return g_ReadOnly;
+}
+
