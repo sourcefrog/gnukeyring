@@ -21,6 +21,8 @@
 
 /* This file looks after generating random passwords on request. */
 
+/* TODO: Save length and class settings for next time. */
+
 #include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
@@ -159,7 +161,10 @@ static MemHandle Generate_MakePassword(FormPtr frm) {
     Generate_Save(reqLength, reqFlags);
 
     h = MemHandleNew(reqLength + 1); // plus nul
-    ErrFatalDisplayIf(!h, __FUNCTION__ ": no memory for new password");
+    if (!h) {
+	FrmAlert(OutOfMemoryAlert);
+	return NULL;
+    }
     
     ptr = MemHandleLock(h);
     Generate_Garbage(ptr, reqFlags, reqLength);
@@ -192,5 +197,3 @@ MemHandle Generate_Run(void) {
 
     return result;
 }
-
-/* TODO: Save length and class settings for next time. */

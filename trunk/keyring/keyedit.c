@@ -129,13 +129,14 @@ static void KeyEditForm_SetTitle(FormPtr frm) {
 	len = StrLen(titleTemplate) - 4 + 6 + 6 + 1;
 
 	gKeyFormTitle = MemPtrNew(len);
-	ErrFatalDisplayIf(!gKeyFormTitle, "couldn't allocate gKeyFormTitle");
+	ErrFatalDisplayIf(!gKeyFormTitle, "couldn't allocate memory for title");
 	
 	StrPrintF(gKeyFormTitle, titleTemplate, pos, total);
 	MemPtrUnlock(titleTemplate);
     } else {
 	titleTemplate = MemHandleLock(DmGetResource(strRsc, EmptyTitleStr));
 	gKeyFormTitle = MemPtrNew(StrLen(titleTemplate) + 1);
+	ErrFatalDisplayIf(!gKeyFormTitle, "couldn't allocate memory for title");
 	StrCopy(gKeyFormTitle, titleTemplate);
 	MemPtrUnlock(titleTemplate);	
     }
