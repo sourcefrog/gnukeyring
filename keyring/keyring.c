@@ -373,5 +373,9 @@ UInt32 PilotMain(UInt16 launchCode,
 	}
     }
 
+    /* TODO: We should handle: sysAppLaunchCmdSaveData,
+     * sysAppLaunchCmdTimeChange, sysAppLaunchCmdFind,
+     * sysAppLaunchCmdGoTo, sysAppLaunchCmdSystemLock, ... */
+
     return err;
 }
