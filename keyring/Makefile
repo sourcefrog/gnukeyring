@@ -5,7 +5,7 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.7.3
+VERSION         = 0.7.4pre
 
 RCP             = $(APP).rcp
 PRC             = $(APP)-$(VERSION).prc
@@ -32,7 +32,7 @@ BITMAPS         = keyring-15.bmp keyring-22.bmp philosophical-gnu-tiny-bw.bmp
 # Empirically the smallest executables come from -O2, which makes sense
 # because it is defined to be the greatest amount of optimization that
 # does not involve size-speed tradeoffs.
-CFLAGS          = -O2 -Wall -Werror -Winline -W $(DEFINES) $(INCLUDES) -MMD
+CFLAGS          = -O2 -Wall -Werror -Winline -W $(DEFINES) $(INCLUDES) -MMD -g
 
 DOCS		= HACKING COPYING index.html Blatant-Plug-Insert-4-Cheap.JPG \
 		  BUGS TODO TESTS doc/attack-tree.txt \
@@ -103,6 +103,9 @@ hosting_dir = gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
 upload_files = $(DIST_BALL) $(DOCS) $(PRC) 
 upload: $(upload_files)
 	rsync --relative -e ssh -v $(upload_files) $(hosting_dir) 
+
+upload_doc: $(DOCS)
+	rsync --relative -e ssh -v $(DOCS) $(hosting_dir) 
 
 count: 
 	wc -l *.[ch] *.rcp Makefile
