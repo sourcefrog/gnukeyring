@@ -139,7 +139,7 @@
 - (IBAction)clickNameTable: (id)sender
 {
     static NSCalendarDate *noDate = nil;
-    unsigned realRecordIndex;
+    unsigned realRecordIndex = 0;
     int r = [nameView selectedRow];
 
     // The noDate value represents records with no real changed field
