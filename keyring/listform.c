@@ -37,9 +37,19 @@
 // List form
 
 /*
+ * Sort order will be (not implemented yet): reserved records (fixed
+ * positions), records with no name in order of insertion by database index,
+ * normal records sorted by name and then by database index, and finally
+ * deleted records.  I think we'll try just always inserting into the right
+ * position and never explicitly inserting.
+ */
+
+/*
  * TODO: As a possible optimization, scroll the bitmap of the table
  * rather than redrawing it.  See ListViewScroll in the MemoPad
  * source.
+ *
+ * TODO: Show category headings in the list.
  */
 
 static TablePtr f_Table;
@@ -157,7 +167,10 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
     }
     
     if (!*recPtr) {
-        // If there is no name, use the record index instead
+        /* If there is no name, use the record index instead.  At the
+         * moment this skips over records that have been deleted, but
+         * I think once we've included sorting that will not
+         * happen. */
         altBuf[0] = '#';
         StrIToA(altBuf + 1, idx - kNumHiddenRecs);
         scrStr = altBuf;
@@ -339,6 +352,8 @@ static void ListForm_ScrollPage(WinDirectionType dir) {
 static void ListForm_CategoryTrigger(void)
 {
     if (Category_Selected(&gPrefs.category, true)) {
+        /* XXX: Is this really the only place we have to erase? */
+        TblEraseTable(f_Table);
         ListForm_Update();
     }
 }
