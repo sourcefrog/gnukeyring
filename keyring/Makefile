@@ -6,7 +6,7 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.11.2a
+VERSION         = 0.11.2
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
