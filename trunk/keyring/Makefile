@@ -40,7 +40,7 @@ LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
 RCP             = $(APP).rcp
-RCP_IN          = $(RCP).ja $(RCP).iso2 $(RCP).in
+RCP_IN          = $(RCP).ja $(RCP).iso2 $(RCP).cp1251 $(RCP).in
 BITMAPS         = keyring-15-1.pbm keyring-22-1.pbm keyring-22-8.ppm    \
 		  keyring-64-8.ppm keyring-22.xcf keyring-64.xcf \
                   lock-1.pbm lock-8.ppm lock-hi-8.ppm \
@@ -115,10 +115,11 @@ DEFAULTLANG     = de
 # For a list of ISO language codes, see
 # http://www.loc.gov/standards/iso639-2/englangn.html
 # The codes nn and nb for nynorsk and bokmål are recent additions.
-LANGUAGES = en ca da de es fr it ja nl nb nn pt sv pl
+LANGUAGES = en ca cs da de es fi fr hu it ja nl nb nn pl pt sv ru
 
-LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it \
-          jpJP <ja nlNL <nl noNO <nb ptBR <pt svSE <sv plPL <pl
+LOCALES = enUS <en caES <ca csCZ <cs daDK <da deDE <de esES <es fiFI <fi \
+          frFR <fr huHU <hu itIT <it jaJP <ja nlNL <nl noNO <nb plPL <pl \
+          ptBR <pt svSE <sv ruRU <ru
 
 PILRCOPTS_ja = -Fj
 PILRCOPTS_ru = -Fc

@@ -1,0 +1,145 @@
+/* -*-coding:windows-1251;-*-
+ *
+ * Keyring -- store passwords securely on a handheld
+ *
+ * Copyright (C) 1999-2001 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 2001-2003 by Jochen Hoenicke <hoenicke@users.sf.net>
+ * 
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+
+// Russian translation contributed by Alexander V. Sashnov <sashnov@ngs.ru>
+// (codepage cp1251)
+
+TRANSLATION "ru"
+BEGIN
+  "Look Up:" = "Поиск:"
+  "New" = "Новый"
+  "Name:" = "Название:"
+  "Account:" = "Логин:"
+  "Password:" = "Пароль:"
+  "Confirm:"  = "Еще раз:"
+  "Iter:"  = "Циклы:"
+  "Changed:" = "Изменен:"
+  "Done" = "Готово"
+  "Preferences" = "Настройки"
+  "Stay unlocked for:" = "Не запирать:"
+  "No time" = "0 Сек."
+  "15 sec" = "15 Сек."
+  "60 sec" = "1 Мин."
+  "5 min" = "5 Мин."
+  "Only lock when inactive" = "Запирать когда неактивен"
+  "Use Keyring fonts" = "Шрифты от Keyring"
+  "Veil password" = "Скрыть пароль"
+
+  "Cancel" = "Отмена"
+
+  "Keyring for PalmOS" = "Keyring для PalmOS"
+
+  "Set Keyring Password" =  "Установка пароля"
+
+  "@@choosepassword" = "Введите новый пароль Keyring:"
+
+  "Generate Password" = "Генерация пароля"
+  "@@generate1" = "Создать случайный "
+  "@@generate2" = "пароль:"
+
+  "Length:" = "Длина:"
+  "Include:" = "Знаки:"
+  "Generate" = "Генерация"
+
+  "Change Date" = "Изменение даты"
+
+  "Unlock" =  "Разблокировать"
+
+  "Enter your password:" = "Введите ваш пароль:"
+
+  "Encrypting..." = "Шифровка..."
+  "Decrypting..." = "Расшифровка..."
+
+  "@@OutOfMemory" =  "Не хватает динамической памяти для продолжения."
+  "Password" = "Пароль"
+  "@@WrongPassword" = "Неправильный пароль. Попробуйте еще раз."
+  "@@PasswordMismatch" =  "Введеные пароли не совпадают."
+
+  "Not here yet" = "Не сделано еще"
+  "@@NotImplemented" = "Извините, эта возможность еще не реализована."
+  "Not Enough Features" = "Нехватает возможностей"
+  "@@NotEnoughFeatures" = "Эта версия Keyring требует ^1."
+  "@@langSpecificChars" =  "дҐ©"
+  "@@pronounceable" = "произносимый"
+
+  "@@CouldntLaunchMemo" =  "Не могу запустить Memo Pad."
+
+  "Delete Key" = "Удалить ключ"
+  "Delete current key record?" = "Удалить текущую запись?"
+
+  "@@AlphaVersion" = "Это тестовая альфа версия Keyring и она имеет ошибки! Пожалуйста, не используйте ее для настоящих данных."
+  "@@BetaVersion" = "Это тестовая бета версия Keyring.  Она может иметь ошибки.  Пожалуйста сделайте еще одну копию любых невостанавливаемых данных."
+
+  "This is free software.  No warranty." = "Программа бесплатная. Без гарантий."
+
+  "Released under the GNU GPL v2." = "Распространяется под GNU GPL v2."
+
+  "Save archive copy on PC" = "Архивная копия на ПК"
+
+  "Database" = "База данных"
+  "Set Password..." = "Установка пароля..."
+  "Options" = "Опции"
+  "Edit" = "Правка"
+
+  "Preferences..." =  "Настройки..."
+  "Tips..." = "Советы..."
+  "About..." =  "О программе..."
+
+  "Undo" = "Откат"
+  "Undo All" = "Откатить Все"
+  "Graffiti Help" = "Graffiti Help"
+  "Paste" = "Вставить"
+  "Cut" = "Вырезать"
+  "Select All" = "Выбрать все"
+  "Key ______ of ______" = "Ключ ______ от ______"
+  "Key ^0 of ^1" = "Ключ. ^0 от. ^1"
+  "Copy" = "Копировать"
+  "Keyboard" = "Клавиатура"
+  "New Key" = "Новый ключ"
+
+  "Key" =  "Ключ"
+  "Generate Password..." = "Генерация Пароля..."
+  "Export to Memo" = "Экспорт в Memo"
+  "Delete..." = "Удалить..."
+
+  "@@GenerateHelp" = "help/ru/generate.txt"
+  "@@KeyEditHelp" = "help/ru/keyedit.txt"
+  "@@SetPasswdHelp" = "Пароль Keyring защищает все ваши ключи и используется для доступа к базе данных.  Если вы его забудете, вы не сможете получить доступ к базе данных.  Число циклов должно быть выбрано как компромис между защищеностью и скоростью: Большое значение усложняет перебор нескольких паролей взломщику потому что замедляет проверку пароля."
+
+  "There is no data to export." = "Нет данных для экспортирования."
+
+  "Unfiled" = "Unfiled"
+  "Phone" = "Телефоны"
+  "Banking" = "Банковские"
+
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "P"
+  "@@accel_SelectAll" = "S"
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
+END
+

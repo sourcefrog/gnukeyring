@@ -140,3 +140,261 @@ BEGIN
   "@@accel_Keyboard" = "K"
   "@@accel_Graffiti" = "G"
 END
+
+// ======================================================================
+// Czech translation - Tom Z. Meinlschmidt <tomas@meinlschmidt.org>
+
+TRANSLATION "cs"
+BEGIN
+  "Look Up:" = "Hledat:"
+  "New" = "Nový"
+  "Key ______ of ______" = "Klíè ______ z ______" 
+  "Name:" = "Jméno:"
+  "Account:" = "Úèet:"
+  "Password:" = "Heslo:"
+  "Confirm:"  = "Potvrzení:" 
+  "Changed:" = "Zmìnìno:"
+  "Done" = "Hotovo"
+  "Preferences" = "Nastavení"
+  "Stay unlocked for:" = "Zùstat nezablokovaný po:"
+  "No time" = "0 sec."
+  "15 sec" = "15 sec."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+  "Veil password" = "Maskovat heslo"
+  "Generate"="Generovat"
+
+  "Cancel" = "Zru¹it"
+
+  "Set Keyring Password" =  "Nastavit pøístupové heslo"
+
+  "@@choosepassword" = "Zvolte nové pøístupové heslo:"
+
+  "Generate Password" = "Generovat heslo"
+  "@@generate1" = "Generování náhodného hesla "
+  "@@generate2" = "heslo:"
+
+  "Length:" = "Délka:"
+  "Include:" = "Obsahuje:"
+  "Generate" = "Generovat"
+
+  "Unlock" =  "Odblokovat"
+
+  "Enter your password:" = "Vlo¾te své heslo:"
+
+  "Encrypting..." = "©ifruji..."
+  "Decrypting..." = "De¹ifruji..."
+
+  "@@OutOfMemory" =  "Málo pamìti."
+  "Password" = "Heslo"
+  "@@WrongPassword" = "©patné heslo. Zadejte znovu"
+  "@@PasswordMismatch" =  "Heslo nesouhlasí."
+  "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "vyslovitelné"
+
+  "Not here yet" = "Zatím neimplementováno."
+  "@@NotImplemented" = "Tato vlastnosti zatím není implementována."
+  "@@NotEnoughFeatures" = "Tato verze Keyring vy¾aduje ^1."
+
+  "@@CouldntLaunchMemo" = "Nemohu spustit Poznámkový blok."
+
+  "Delete Key" = "Smazat záznam?"
+  "Delete current key record?" = "Smazat aktuální záznam?"
+
+  "@@BetaVersion"
+   = "Toto je beta verze Keyringu. Mù¾e obsahovat chyby. Udìlejte si zálohu jinde nezazálohovaných, zde ulo¾ených, dat."
+
+  "This is free software.  No warranty." = "Toto je svobodný software. Bez záruk." 
+
+  "Released under the GNU GPL v2." = "Vydáno pod licencí GNU GPL v2." 
+
+  "Save archive copy on PC" = "Ulo¾it kopii do PC"
+
+  "Database" = "Databáze"
+  "Set Password..." = "Nastavení hesla..."
+  "Options" = "Nastavení"
+  "Tips" = "Tipy"
+  "Edit" = "Úpravy"
+
+  "Preferences..." =  "Pøedvolby..."
+  "About..." =  "O aplikaci..."
+
+  "Undo" = "Zpìt"
+  "Undo All" = "Zìpìt v¹e"
+  "Graffiti Help" = "Nápovìda Graffiti"
+  "Paste" = "Vlo¾it"
+  "Cut" = "Vyjmout"
+  "Select All" = "Oznaèit v¹e"
+  "Key ^0 of ^1" = "Záznam ^0 z ^1"
+  "Copy" = "Kopie"
+  "Keyboard" = "Klávesnice"
+  "New Key" = "Nový záznam"
+
+  "Key" =  "Záznam"
+  "Generate Password..." = "Generování hesla..."
+  "Export to Memo" = "Export do Poznámkového bloku"
+  "Delete..." = "Smazat..."
+
+  "@@GenerateHelp" = "help/cs/generate.txt"
+  "@@KeyEditHelp" = "help/cs/keyedit.txt"
+  "@@SetPasswdHelp" = "Pøístupové heslo chrání v¹echny záznamy. Je vy¾adováno pro vstup do databáze. Je-li ztraceno nebo zapomenuto, není pøístup do databáze mo¾ný."
+
+  "There is no data to export." = "Nejsou zde data pro export."
+
+  "Unfiled" = "Nevyplnìno"
+  "Phone" = "Telefon"
+  "Banking" = "Banka"
+
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "V"
+  "@@accel_SelectAll" = "S"
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
+END
+
+// ======================================================================
+// Hungarian translation contributed by Gergõ Fülöp
+
+TRANSLATION "hu"
+BEGIN
+  "Look Up:" = "Keresés:"
+  "New" = "Új"
+  "Key ______ of ______" = "Kulcs ______ / ______"
+  "Name:" = "Név:"
+  "Account:" = "Fiók:"
+  "Password:" = "Jelszó:"
+  "Confirm:"  = "Még egyszer:" 
+  "Changed:" = "Változtatva:"
+  "Done" = "Kész"
+  "Preferences" = "Beállítások"
+  "Stay unlocked for:" = "Maradjon feloldva:"
+  "No time" = "Ne"
+  "15 sec" = "15 mp."
+  "60 sec" = "1 perc"
+  "5 min" = "5 perc"
+
+  "Use Keyring fonts" = "Keyring fontok használata"
+  "Lock when switched off" = "Kikapcsoláskor zárolás"
+  "Veil password" = "Jelszó elrejtése"
+
+  "Generate"="Generálás"
+  "OK" = "OK"
+  "Cancel" = "Mégse"
+
+  "Set Keyring Password" =  "Keyring jelszó beállítása"
+
+  "@@choosepassword" = "Válassz jelszót:"
+"Password:" = "Jelszó:"
+"Confirm:" = "Még egyszer:"
+  "Generate Password" = "Jelszó generálása"
+  "@@generate1" = "Új jelszó generálása "
+  "@@generate2" = "Jelszó:"
+
+  "Length:" = "Hosszúság:"
+  "Include:" = "Legyen benne:"
+  "Generate" = "Generálás"
+
+  "Unlock" =  "Feloldás"
+
+  "Enter your password:" = "Írd be a jelszót:"
+
+  "Encrypting..." = "Kódolás..."
+  "Decrypting..." = "Dekódolás..."
+
+  "@@OutOfMemory" =  "Nincs elég szabad memória."
+  "Password" = "Jelszó"
+  "@@WrongPassword" = "Rossz jelszó. Kérlek próbáld újra!"
+  "@@PasswordMismatch" =  "A beírt jelszavak nem egyeznek. Kérlek próbáld újra!"
+
+  "Not here yet" = "A funkció nem elérhetõ."
+  "@@NotImplemented" = "Sajnálom, ez a funkció egyelõre nem elérhetõ."
+  "@@NotEnoughFeatures" = "A Keyring ezen verziója ^1-t igényel."
+  "@@langSpecificChars" =  "ä¥©"
+
+  "@@pronounceable" = "kiejthetõ"
+
+  "@@BetaVersion" = "Ez egy béta verziójú Keyring. Lehet, hogy nem mûködik megfelelõen. Kérlek tarts egy másolatot a pótolhatatlan adataidról!" 
+
+  "@@CouldntLaunchMemo" =  "A Memo Pad elindítása nem sikerült."
+"Cryptographic error: ^1" = "Kódolási hiba: ^1"
+"Error accessing key database: ^1 (^2)" = "Hiba a kulcsadatbázis elérése közben: ^1 (^2)"
+"Error accessing snib database: ^1 (^2)" = "Hiba a snib adatbázis elérése közben: ^1 (^2)"
+"Error creating keyring database: ^1 (^2)" = "Hiba a kulcsadatbázis létrehozása közben: ^1 (^2)" 
+"This keyring may not be changed." = "Ezen bejegyzés megváltozatása nem ajánlott."
+"The Keyring database is in read-only memory.  Do you want to open it with editing disabled?" = "A Keyring adatbázis a csak olvasható memóriában van. Szeretnéd megnyitni csak olvasásra?"
+"Upgrade Database?" = "Adatbázis frissítése?"
+"This database is from a previous version of Keyring.  Convert it to the new format?  (Please make a backup before doing this.)" = "Ez az adatbázis a Keyring egy elõzõ verziójából való. Szeretnéd átkonvertálni az új verzióhoz? (Kérlek készíts biztonsági másolatot a mûvelet elõtt.)"
+"Convert" = "Konvertálás"
+"Can't upgrade database from version ^1." = "Az adatbázis átkonvertálása nem lehetséges a következõ verzióból: ^1."
+"Error upgrading database: ^1" = "Hiba az adatbázis frissítése közben"
+"Database Damaged" = "Sérült az adatbázis!"
+"Database Upgrade" = "Adatbázis frissítése"
+"There are no categories defined in this database.  Default categories have been added." = "Ebben az adatbázisban nincsenek kategóriák. Az alapértelmezett kategóriák hozzáadásra kerültek."
+"Sort Error" = "Rendezési hiba"
+"Error sorting database: ^1" = "Hiba az adatbázis rendezése közben: ^1"
+"Incompatible Database" = "Inkompatibilis adatbázis"
+"This database is from a later version of Keyring, and cannot be opened." = "Ez az adatbázis a Keyring egy újabb verziójából való, a megnyitása nem lehetséges."
+"This database is from an earlier version of Keyring, but cannot be converted because it is in read-only memory." = "Ez az adatbázis a Keyring egy korábbi verziójából való, de a konvertálása nem lehetséges, mert a csak olvasható memóriában van."
+
+
+
+
+
+  "Delete Key" = "Bejegyzés törlése"
+  "Delete current key record?" = "Aktuális bejegyzés törlése?"
+  "Save archive copy on PC" = "Õrizzen meg egy másolatot az asztali gépen"
+ "This is free software.  No warranty." = "Ez egy szabad szoftver. Nincs garancia." 
+
+  "Released under the GNU GPL v2." = "GNU GPL v2 licence alatt." 
+
+  "Database" = "Adatbázis"
+  "Set Password..." = "Jelszó beállítása..."
+  "Options" = "Opciók"
+  "Edit" = "Szerkesztés"
+
+  "Preferences..." =  "Beállítások..."
+  "Tips" = "Tippek"
+  "About..." =  "Névjegy"
+
+  "Undo" = "Vissza"
+  "Undo All" = "Mindent vissza"
+
+  "Graffiti Help" = "Grafitti segítség"
+  "Paste" = "Beillesztés"
+  "Cut" = "Kivágás"
+  "Select All" = "Mindent kijelöl"
+  "Key ^0 of ^1" = "Kulcs ^0 / ^1"
+  "Copy" = "Másolás"
+  "Keyboard" = "Billentyûzet"
+  "New Key" = "Új bejegyzés"
+"Change Date" = "Adat megváltozatása"
+"Error checking ROM version: ^1" = "Hiba a ROM verzió ellenõrzése közben: ^1"
+  "Key" =  "Bejegyzés"
+  "Generate Password..." = "Jelszó generálása..."
+  "Export to Memo" = "Exportálás a Jegyzetekbe"
+  "Delete..." = "Törlés..."
+
+  "@@GenerateHelp" = "help/hu/generate.txt"
+  "@@KeyEditHelp" = "help/hu/keyedit.txt"
+  "@@SetPasswdHelp" = "A fõ jelszó védi az összes bejegyzést."
+"There is no data to export." = "Nincs exportálható adat."
+
+
+  "Unfiled" = "Egyéb"
+  "Phone" = "Telefon"
+  "Banking" = "Bank"
+  "Computer" = "Számítógép"
+
+  "@@accel_Undo" = "D"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "E"
+  "@@accel_SelectAll" = "S" 
+  "@@accel_Keyboard" = "T"
+  "@@accel_Graffiti" = "G"
+  
+   "Version" = "Verzió"
+
+END
