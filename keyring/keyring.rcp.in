@@ -674,6 +674,7 @@ END
 
 // ======================================================================
 // Norwegian (bokmål) translation by Andreas-Johann Ulvestad <aj@nlc.no>
+// and Kjetil Wiekhorst Jørgensen (zarhan)
 
 TRANSLATION "no"
 BEGIN
@@ -728,6 +729,13 @@ BEGIN
   "Delete current key record?" = "Slett den aktuelle nøkkelen?"
   "Save archive copy on PC" = "Lagre en arkivkopi på PC"
 
+  "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data."
+   = "Dette er en beta- versjon av Keyring.  Den kan inneholde feil.  Vennligst sørg for å ha sikkerhetskopi av alle data som kan gå tapt."
+
+  "This is free software.  No warranty." = "Gratis programvare.   Ingen garanti."
+
+  "Released under the GNU GPL v2." = "Tilgjengelig under GNU GPL v2."
+
   "Database" = "Database"
   "Set Password..." = "Sett passord..."
   "Options" = "Alternativer"
@@ -740,9 +748,9 @@ BEGIN
   "Graffiti Help" = "Graffiti-hjelp"
   "Paste" = "Lim inn"
   "Cut" = "Klipp ut"
-  "Select All" = "Velg alle"
+  "Select All" = "Merk alt"
   "Key ^0 of ^1" = "Nøkkel ^0 av ^1"
-  "Copy" = "Kopier"
+  "Copy" = "Kopiere"
   "Keyboard" = "Tastatur"
   "New Key" = "Ny nøkkel"
 
@@ -754,14 +762,22 @@ BEGIN
   "@@GenerateHelp" = "help/no/generate.txt"
   "@@KeyEditHelp" = "help/no/keyedit.txt"
 
+  "Unfiled" = "Ingen kategori"
+  "Banking" = "Bank"
+  "Computer" = "Datamaskin"
+  "Phone" = "Telefon"
+  "Web" = "Web" /* I might use "vev" her, but I really hate that word. */
+
+  "Key" = "Nøkkel"
+
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
-  "@accel_Undo" = "U"
+  "@accel_Undo" = "A"
   "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "P"
-  "@accel_SelectAll" = "S" 
-  "@accel_Keyboard" = "K"
+  "@accel_Copy" = "K"
+  "@accel_Paste" = "L"
+  "@accel_SelectAll" = "M" 
+  "@accel_Keyboard" = "T"
   "@accel_Graffiti" = "G"
 END
 
