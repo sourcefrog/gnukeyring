@@ -5,14 +5,17 @@ Critical: ------------------------------------------------------------
 
 Important ------------------------------------------------------------
 
-(2) Don't use private records, because they're deleted when the system
+Good -----------------------------------------------------------------
+
+(3) Don't use private records, because they're deleted when the system
     password is reset.
 
     This possibly requires an upgrade to the database format, because
     older versions of the application will miscount if the record is
     not secret. This change will be done in a later version.
 
-Good -----------------------------------------------------------------
+    This isn't that important anymore as we can automatically recover
+    now but it is still annoying.
 
 (3) Optionally lock on power off or switching applications.  This
     should be new check boxes in preferences dialog.
@@ -66,13 +69,7 @@ or perhaps don't export them at all.
 
 * Beaming
 
-* Distinguish I from l
-
 * Safe way to change password and re-encrypt
-
-* Perhaps use the SSLeay-Palm port?
-
-http://www.isaac.cs.berkeley.edu/pilot/ 
 
 * Markov chain generation
 
@@ -169,9 +166,6 @@ and people are likely to want to classify databases according to
 different security requirements.
 
 Do this instead of categories??
-
-* Is there any useful way to support PalmOS global Find?
-Just search public names?
 
 * Zero-knowledge authentication
 

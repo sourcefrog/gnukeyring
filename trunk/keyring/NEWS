@@ -1,5 +1,4 @@
-Keyring for PalmOS 1.1
-(previously GNU Keyring)
+Keyring for PalmOS 1.2-pre1  (prerelease)
 
 Copyright 1999-2002 The GNU Keyring Sourceforge Team
 
@@ -23,36 +22,22 @@ When you need to set a password, Keyring can generate a random
 password of specified length, optionally including letters, numbers or
 symbols.
 
-Changes from 1.0:
+Changes from 1.1:
 
- * Renamed project from "GNU Keyring" to "Keyring for PalmOS".
+ * Support PalmOS global Find.
 
- * Added an entropy pool contributed by Jochen Hoenicke
-   <https://sf.net/users/hoenicke>, based on the Linux entropy device.
-   This makes generated password harder to predict.
+ * Support interactive search for a key name on list form.}
 
- * Ship a tar files containing the sources and a zip files containing
-   all binaries.  I hope the zip file will reduce the incidence of
-   people confused by truncated downloads.
+ * Keyedit form is left on auto off if the timeout has also expired.
+   Code works for all supported PalmOS versions.
 
- * Encryption keys are now stored on the heap, not in a temporary
-   database, and are obliterated after use.  The encryption key is
-   destroyed after the timeout elapses, and not on the next
-   action.  Patch from Jochen Hoenicke.
+ * Use pilotSSLeay for encryption, which is a bit faster than 
+   the PalmOS builtin encryption.  The binaries from
+   pilotSSLeay are included.
 
- * Before the Palm enteres sleep mode, it returns from the edit
-   form to the list form.  Patches from Mustafa Kocaturk
-   <https://sf.net/users/mkocaturk> and Jochen Hoenicke.
+ * The last-modified-date is back again.
 
- * Add a lock bitmap to display the state of the database.  Pressing
-   it will lock the database immediately.
-
- * The master key can now be veiled when the data base unlocked.
-
- * Translations for Dutch, French, Norwegian, Italian and Japanese.
-
- * Login and Passwords are displayed in a special font to distinguish
-   I and l.
+ * Support larger notes, up to 32000 characters.
 
 Files may be downloaded from:
 

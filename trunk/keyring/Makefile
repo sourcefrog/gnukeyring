@@ -64,7 +64,7 @@ AWK		= awk
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.1a
+VERSION         = 1.2-pre1
 DEFINES		= -DBETA -DkAppVersion=0x1011
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
@@ -85,7 +85,8 @@ DOCS		= HACKING TODO TESTS
 
 SRC_DIST        = $(RCP_IN) Makefile $(RESOURCES) \
 		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
-		  $(HELP_TXT) $(SCRIPTS) $(PILOTSSLEAY)
+		  $(subst .def,-stubs.c,$(GLIBDEF)) \
+		  $(HELP_TXT) $(SCRIPTS) $(SSLEAY)
 
 TOP_DIST	= COPYING README INSTALL NEWS
 
