@@ -4,6 +4,8 @@
  *
  * Copyright (C) 1999-2001 by Martin Pool <mbp@humbug.org.au>
  * Copyright (C) 2001-2003 by Jochen Hoenicke <hoenicke@users.sf.net>
+ * Copyright (C) 2003-2004 Alex Smolyanov <smol@users.sourceforge.net>
+ * Copyright (C) 2003-2004 Alex Raschepkin <araschepkin@users.sourceforge.net>
  * 
  * $Id$
  *
@@ -297,7 +299,7 @@ BEGIN
   "Paste" = "Incolla"
   "Cut" = "Taglia"
   "Select All" = "Seleziona tutto"
-  "Key %d of %d" = "Record %d di %d"
+  "Key ^0 of ^1" = "Record ^0 di ^1"
   "Copy" = "Copia"
   "Keyboard" = "Tastiera"
   "New Key" = "Nuovo record"
@@ -1900,8 +1902,18 @@ BEGIN
 	BITMAP "keyring-32-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 1
 	BITMAP "keyring-64-8.ppm" BPP 8 DENSITY 2
 END
-BITMAP ID LockBitmap "lock.xbm"
-BITMAP ID UnlockBitmap "unlock.xbm"
+
+BITMAPFAMILYEX ID LockBitmap
+BEGIN
+	BITMAP "lock.xbm" BPP 1
+	BITMAP "lock-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 2
+END
+
+BITMAPFAMILYEX ID UnlockBitmap
+BEGIN
+	BITMAP "unlock.xbm" BPP 1
+	BITMAP "unlock-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 2
+END
 
 STRING ID KeyringFindStr "Keyring"
 
