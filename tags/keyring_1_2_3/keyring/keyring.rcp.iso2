@@ -1,0 +1,141 @@
+/* -*-coding:latin-2;-*-
+ *
+ * Keyring -- store passwords securely on a handheld
+ *
+ * Copyright (C) 1999-2001 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 2001-2003 by Jochen Hoenicke <hoenicke@users.sf.net>
+ * 
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+// ======================================================================
+// Polish translation by Michal Cieslicki <yoshi@aip.pl>
+
+TRANSLATION "pl"
+BEGIN
+  "Look Up:" = "Szukaj:"
+  "New" = "Nowy"
+  "Key ______ of ______" = "Klucz ______ z ______"
+  "Name:" = "Nazwa:"
+  "Account:" = "Konto:"
+  "Password:" = "Has³o:"
+  "Confirm:"  = "Potwierd¼:"
+  "Changed:" = "Zmienione:"
+  "Done" = "Zrobione"
+  "Preferences" = "Preferencje"
+  "Stay unlocked for:" = "Zostañ odblokowany przez:"
+  "No time" = "0 sek."
+  "15 sec" = "15 sek."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+  "Use keyring fonts" = "U¿ywaj fontów Keyringa"
+  "Veil password" = "Ukryj has³o"
+
+  "Cancel" = "Anuluj"
+
+  "Set Keyring Password" =  "Ustaw has³o Keyringu"
+
+  "@@choosepassword" = "wybierz has³o:"
+
+  "Generate Password" = "Generuj has³o"
+  "@@generate1" = "Generuj nowe losowe "
+  "@@generate2" = "has³o:"
+
+  "Length:" = "Rozmiar:"
+  "Include:" = "Za³±cz:"
+  "Generate" = "Generuj"
+	
+  "Change Date" = "Zmieñ datê"
+
+  "Unlock" =  "Odblokuj"
+
+  "Enter your password:" = "Podaj swoje has³o:"
+
+  "Encrypting..." = "Szyfrowanie..."
+  "Decrypting..." = "Deszyfrowanie..."
+
+  "@@OutOfMemory" =  "Za ma³o pamiêci."
+  "Password" = "Has³o"
+  "@@WrongPassword" = "Niew³a¶ciwe has³o. Spróbuj ponownie."
+  "@@PasswordMismatch" =  "Wprowadzone has³a nie s± zgodne. Spróbuj ponownie."
+
+  "Not here yet" = "Jeszcze niezaimplementowana."
+  "@@NotImplemented" = "Ta funkcja nie zosta³a jeszcze zaimplementowana."
+  "@@NotEnoughFeatures" = "Ta wersja Keyring wymaga ^1."
+  "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "wymawialne"
+
+  "@@CouldntLaunchMemo" =  "Nie mo¿na by³o uruchomiæ Memo Pad."
+
+  "Delete Key" = "Usuñ klucz"
+  "Delete current key record?" = "Usun±æ aktualny klucz?"
+  "Save archive copy on PC" = "Zapisz kopiê archiwaln± na PC"
+
+  "@@BetaVersion"
+   = "Ta wersja Keyring jest bet±. Mo¿e zawieraæ b³êdy. Lepiej miej kopiê nieodzyskiwalnych danych."
+
+  "This is free software.  No warranty." = "To jest Wolny Program. Bez gwarancji."
+
+  "Released under the GNU GPL v2." = "Dystrybuowane na zasadach GNU GPL v2."
+
+  "Database" = "Baza danych"
+  "Set Password..." = "Ustal has³o..."
+  "Options" = "Opcje"
+  /* "Tips" = "Tips" */
+  "Edit" = "Edytuj"
+
+  "Preferences..." =  "Preferencje..."
+  "About..." =  "O Keyring..."
+
+  "Undo" = "Cofnij"
+  "Undo All" = "Cofnij wszystko"
+  "Graffiti Help" = "Graffiti - pomoc"
+  "Paste" = "Wklej"
+  "Cut" = "Wytnij"
+  "Select All" = "Zaznacz wszystko"
+  "Key ^0 of ^1" = "Klucz ^0 z ^1"
+  "Copy" = "Kopiuj"
+  "Keyboard" = "Klawiatura"
+  "New Key" = "Nowy klucz"
+
+  "Key" =  "Klucz"
+  "Generate Password..." = "Generuj has³o..."
+  "Export to Memo" = "Eksportuj do Memo"
+  "Delete..." = "Usuñ..."
+
+  "@@GenerateHelp" = "help/pl/generate.txt"
+  "@@KeyEditHelp" = "help/pl/keyedit.txt"
+  "@@SetPasswdHelp" = "G³ówne has³o chroni wszystkie Twoje klucze, i musi byæ wprowadzone aby uzyskaæ dostêp do bazy. Je¶li je zapomnisz dany w bazie stan± siê nieosi±galne."
+
+  "There is no data to export." = "Nie ma danych do wyeksportowania."
+  
+  "Unfiled" = "Unfiled"
+  "Banking" = "Bank"
+  "Computer" = "Komputer"
+  "Phone" = "Telefon"
+  "Web" = "Web"
+
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "P"
+  "@@accel_SelectAll" = "S"
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
+END

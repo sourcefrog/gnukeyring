@@ -1,0 +1,198 @@
+-*- indented-text -*-
+$Id$
+
+Critical: ------------------------------------------------------------
+
+Important ------------------------------------------------------------
+
+Good -----------------------------------------------------------------
+
+(3) Don't use private records, because they're deleted when the system
+    password is reset.
+
+    This possibly requires an upgrade to the database format, because
+    older versions of the application will miscount if the record is
+    not secret. This change will be done in a later version.
+
+    This isn't that important anymore as we can automatically recover
+    now but it is still annoying.
+
+(3) Optionally lock on power off or switching applications.  This
+    should be new check boxes in preferences dialog.
+
+(3) Draw the edit form using a table so that the fields can resize,
+    like in the address book.
+
+Nice -----------------------------------------------------------------
+
+(4) Choose fonts.  This should be per entry.  Probably requires to
+    change database format, so leave it for a later version.
+
+(4) Database info dialog.
+
+(4) Internationalised text for pronounceable passwords: in help text for
+    generate dialog and for button text resource.
+
+Possible -------------------------------------------------------------
+
+(5) Make the buttons in the "generate" dialog behave like radio buttons;
+    the "pronounceable" one should be mutually exclusive to all the other
+    character class buttons, but state for these should be remembered.  At
+    the moment the pronounceable button simply ignores the setting of these
+    other buttons.
+
+(5) Nag people to make a backup if they haven't done so for some
+    time.  
+
+    This is only good if the pilot-xfer program resets the backup
+    time when it makes a backup.  I'm not sure if it does.
+
+* Scroll to show newly-inserted items
+
+* Export using localized field headings
+
+or perhaps don't export them at all.
+
+* Update pos when changing categories
+
+* Move to right record on empty record & page down
+
+* Newline in single-line fields should move down one field
+
+
+--- Enforcing good passwords: ---
+
+* Prevent people from choosing no options in the Generate dialog?
+
+* Advice on secure passwords
+
+  minimum length; use of accented/extended characters; impact of
+  pronounceable passwords (full dictionary of all these can be
+  surprisingly short)
+
+* Reminder to change the password
+
+for each record, put a reminder that it should be changed e.g. every N weeks.
+
+* Generate button when setting master password?
+
+* Setting initial password,  three possibilities:
+ 1. Require set password on first run
+    This is the current behaviour, but is it the best?  
+    Maybe it scares people who just want to try it.
+
+ 2. Default to empty
+    But then people might not realize they have to set a password.  This
+    would seem to encourage insecure behaviour. 
+
+ 3. Require set password when creating first record
+    Would this perhaps be a bit more friendly?  You play around much
+    without creating a record though.
+    
+* Safe way to change password and re-encrypt.  
+  Currently if reencryption crashes half of the database gets
+  unusable.  Maybe we should write to a new database, and only if
+  everything succeeded remove old database and rename new one.
+
+* Beaming
+
+* Click field captions to zoom in on that form
+
+* Check if we can run on PalmOS2.
+Does anyone still use these old devices?
+
+Problems: PalmOS2 doesn't support custom fonts.
+
+* Attack tree
+Fill it out with more possible attacks.
+
+* Support categories, and store in appinfo
+I think there's a standard format for this.  We might have to change
+the appinfo from our current usage: perhaps the key information goes
+into some other location.  It'd be a shame to change it rather than
+just adding to it.
+
+* Different security settings and passwords per category
+... but if we do this perhaps we really want separate databases?
+
+* Script to decode records on PC
+
+* Use exceptions for error handling?
+
+* Soft arrows to flip through records
+
+Nah, not required.  It's easy enough to use the hardbuttons or to flip
+back to the list form.
+
+* PC conduit
+
+There are already some (third-party supplied) conduits for keyring.
+
+On the flip side, it may be better *not* to use this function: the
+security issues to do with opening this information on the PC are very
+scary.  PCs can be broken across the network, and a GUI module can
+never be audited properly.
+
+So on the whole I am inclined _not_ to implement this.  Though I may
+help others with file format and cryptographic issues.
+
+* Lost passwords
+
+What can we offer people?  The best is probably a warning as they set
+their password that lost passwords cannot be recovered.
+
+If people do lose their password we should offer the choice to delete
+all records.  If they use the app launcher's "Delete" function then
+they lose the Keyring application as well as their data.
+
+One may also try to brute-force lost passwords.  For most kinds of
+(badly chosen) passwords or if you can remember most of it this can be
+really effective.
+
+* Hint for forgotten passwords
+
+Set when setting password, display from password dialog.  But you can
+also put a hint into a Memo sheet if you need that.
+
+* Keep example databases from various releases to test compatibility
+
+* Support multiple databases
+
+I think this is more important than having multiple categories in a
+single database, because we can only specify which database to hotsync
+and people are likely to want to classify databases according to
+different security requirements.
+
+Do this instead of categories??
+
+* Zero-knowledge authentication
+
+Use a handheld as a token that talks to a custom PAM module to
+authenticate the user without ever typing a password.  One way to do
+this would be to implement S/Key on the handheld, and somehow securely
+get the seed onto the handheld. 
+
+OPIE (one-time passwords everywhere) might be another good
+alternative.
+
+This is a little out of the scope of Keyring.  See PilOTP at
+http://astro.uchicago.edu/home/web/valdes/pilot/pilOTP/ for a nice one-time
+password generator.
+
+* If no password is set, don't encrypt or require password.
+Really?  Yes, probably this would be good: better than decrypting on
+the PC.
+
+* Import memos
+  Other way how to load in long data?
+
+* New version that does 0kp to authenticate to a custom PAM module.
+
+  -- This really belongs in a separate program.
+
+
+* Event loop timeout to show countdown?
+
+* Better handling of error conditions.  Especially out of memory.
+
+* Store a password hint
