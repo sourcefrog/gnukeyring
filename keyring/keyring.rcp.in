@@ -105,6 +105,15 @@ BEGIN
   "Delete current key record?" = "Aktuellen Schlüssel löschen?"
   "Save archive copy on PC" = "Archivkopie auf dem PC speichern"
 
+  "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+   = "Dies ist ein beta Testversion von GNU Keyring.  Es könnten Fehler auftreten.  Bitte bewahren sie eine Kopie ihrer Daten auf."
+
+  "This is free software.  No warranty." = "Free Software.  Keine Gewährleistung." 
+
+  "Released under the GNU GPL v2." = "Herausgegeben unter GNU GPL v2." 
+
+  "Save archive copy on PC" = "Archivkopie auf PC speichern"
+
   "Database" = "Datenbank"
   "Set Password..." = "Passwort festlegen..."
   "Options" = "Optionen"
