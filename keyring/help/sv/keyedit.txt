@@ -1,5 +1,0 @@
-Skapa lösenord: Skapa ett nytt slumpmässigt lösenord efter vissa förutsättningar.
-
-Spara som Memo: Spara all information från denna nyckel som ett nytt memo.
-
-Ångra alla: Ångra alla ändringar sedan posten öppnades.

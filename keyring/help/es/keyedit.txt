@@ -1,3 +1,0 @@
-Generar Clave: Genera una nueva clave aleatoria cumpliendo ciertos requisitos.
-
-Exportar al Block de Notas: Guarda toda la informacion de esta clave en una nota nueva sin categoria asociada.
