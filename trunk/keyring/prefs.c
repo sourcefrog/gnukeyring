@@ -33,14 +33,6 @@
 // Preferences
 
 
-void PrefsForm_RunChecked(void)
-{
-     UInt8    dummy[k2DESKeySize];
-     
-     if (Unlock_GetKey(false, dummy))
-	  PrefsForm_Run();
-}
-
 void PrefsForm_Run(void)
 {
     FormPtr 	prevFrm = FrmGetActiveForm();
