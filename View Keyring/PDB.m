@@ -86,7 +86,7 @@
     recordsByCategory[16] = [[NSMutableArray alloc] initWithCapacity: [self numRecords]];
     
     // Now build arrays of all the records in each category
-    for (i = f; i < l; i++) {
+    for (i = f; i <= l; i++) {
         unsigned attr;
         NSNumber *n;
 
