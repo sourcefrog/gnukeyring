@@ -120,3 +120,14 @@ Boolean Unlock_GetKey(Boolean askAlways, UInt8 *key)
 	return true;
     return UnlockForm_Run(key);
 }
+
+Boolean Unlock_CheckKey(void)
+{
+     UInt8    dummy[k2DESKeySize];
+     Boolean  result;
+
+     result = Unlock_GetKey(false, dummy);
+     MemSet(dummy, k2DESKeySize, 0);
+     return result;
+}
+

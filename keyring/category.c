@@ -39,31 +39,51 @@ void Category_UpdateName(FormPtr frm, UInt16 category)
 {
     ControlPtr		ctl;
 
-    /* TODO: Instead, cache this per form. */
     ctl = UI_GetObjectByID(frm, CategoryTrigger);
     CategoryGetName(gKeyDB, category, categoryName);
     CategorySetTriggerLabel(ctl, categoryName);
 }
 
-
 Boolean Category_Selected(Int16 *category, Boolean showAll)
 {
     FormPtr frm;
-    Boolean		categoryEdited;
-    Int16		oldCategory;
+    ListPtr lst;
+    Boolean categoryEdited = false;
+    Int16   oldCategory, newSelection;
 
     oldCategory = *category;
 
     frm = FrmGetActiveForm();
-    categoryEdited = CategorySelect(gKeyDB, frm,
-				    CategoryTrigger,
-				    CategoryList,
-				    showAll, 
-				    category,
-				    categoryName,
-				    1, 0);
+    lst = UI_GetObjectByID(frm, CategoryList);
 
-    return (categoryEdited || *category != oldCategory);
+    /* We can't simply use CategorySelect as we want to check for password. */
+
+    CategoryCreateList (gKeyDB, lst, oldCategory, showAll, true, 1, 
+			categoryDefaultEditCategoryString, true);
+    newSelection = LstPopupList (lst);
+
+    if (newSelection == LstGetNumberOfItems(lst) - 1) {
+	if (Unlock_CheckKey()) {
+	    categoryEdited = CategoryEdit(gKeyDB, category, 
+					  categoryEditStrID, 1);
+	    /* category may have been renamed */
+	    Category_UpdateName(frm, *category);
+	}
+    } else if (newSelection != -1) {
+	if (showAll && newSelection == 0)
+	    *category = dmAllCategories;
+	else
+	    *category = CategoryFind
+		(gKeyDB, LstGetSelectionText(lst, newSelection));
+    }
+    CategoryFreeList (gKeyDB, lst, showAll, categoryDefaultEditCategoryString);
+
+    if (*category != oldCategory)
+	categoryEdited = true;
+
+    if (categoryEdited)
+	Category_UpdateName(frm, *category);
+    return categoryEdited;
 }
 
 
