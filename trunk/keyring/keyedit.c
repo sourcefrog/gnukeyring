@@ -573,44 +573,36 @@ static void KeyEditForm_FormOpen(void)
     KeyEditForm_OpenRecord();
 }
 
-
-static void Edit_SortAndFollow(void)
-{
-     UInt32 uniqueId;
-     Boolean followRecord;
-
-     /* TODO: We need to update gKeyRecordIndex as the "current"
-      * record may now have a different index. */
-     followRecord = (gKeyRecordIndex != kNoRecord);
-
-     if (followRecord)
-          DmRecordInfo(gKeyDB, gKeyRecordIndex, NULL, &uniqueId, NULL);
-
-     Keys_Sort();
-
-     if (followRecord)
-          DmFindRecordByID(gKeyDB, uniqueId, &gKeyRecordIndex);
-}
-
 static void Edit_FormClose(void)
 {
 #if 0
      UInt32 version;
 #endif
+     UInt32 uniqueId = 0;
+
      KeyEditForm_Commit();
-     if (gKeyRecordIndex != kNoRecord)
-	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
      MemSet(gRecordKey, sizeof(gRecordKey), 0);
+
+     if (gKeyRecordIndex != kNoRecord) {
+	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+	 /* Save the uniqueId, so we find the record again after
+          * sorting. */
+	 DmRecordInfo(gKeyDB, gKeyRecordIndex, NULL, &uniqueId, NULL);
+	 gKeyRecordIndex = kNoRecord;
+     }
+
      if (f_needsSort)
-          Edit_SortAndFollow();
+	 Keys_Sort();
 
      /* This is not necessarily a reasonable index, but the list form
       * will check it before use. */
-     if (gKeyRecordIndex == kNoRecord)
-          f_FirstIdx = 0;
-     else
-          f_FirstIdx = DmPositionInCategory(gKeyDB, gKeyRecordIndex,
-                                            gPrefs.category);
+     if (!uniqueId)
+	 f_FirstIdx = 0;
+     else {
+	 UInt16 index;
+	 DmFindRecordByID(gKeyDB, uniqueId, &index);
+	 f_FirstIdx = DmPositionInCategory(gKeyDB, index, gPrefs.category);
+     }
 
 #if 0
      if (FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &version) == 0
