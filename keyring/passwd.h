@@ -1,4 +1,5 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r" -*-
+ * 
  * $Id$
  * 
  * GNU Keyring -- store passwords securely on a handheld

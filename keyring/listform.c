@@ -103,7 +103,7 @@ static void ListForm_DrawToFit(Char const * name, Int16 x, Int16 y)
     Int16 titleLen, width, titleWidth;
     Int16 charsToDraw;
     Boolean stringFit;
-	
+
     charsToDraw = StrLen(name);
 
     width = f_TableWidth - x;
