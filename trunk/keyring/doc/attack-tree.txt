@@ -1,0 +1,26 @@
+Attack-tree of risks to the security of GNU Keyring
+Copyright 1999 by Martin Pool <mbp@humbug.org.au>
+$Id$
+
+See Bruce Schneier's recent DDJ article discussing this style of
+analysis.
+
+GOAL: User's secrets are stolen from Keyring
+  = Stolen from PC
+    = Attacker gets access to user's PC
+      = Local access
+      | Authorized root access (personal data on work machine)
+      | Break in through network
+    & Attacker can steal data once on PC
+      = Stolen from inside encrypted data
+        = Guess master key
+        | Encryption algorithm is wrongly implemented
+        | DES3 can be broken
+      | Back door to steal from handheld
+  | Stolen from handheld
+    = Stolen while connected
+    | Stolen while not connected
+      = Introduce trojan into handheld
+        = Break into user's PC
+        | Put trojan functionality into a downloaded app
+      | Read over user's shoulder
