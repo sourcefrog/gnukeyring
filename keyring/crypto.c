@@ -32,7 +32,7 @@
 // DES3 functions
 
 
-static const UInt8 noKey[kDES3KeySize];
+// static const UInt8 noKey[kDES3KeySize];
 
 
 #ifndef DISABLE_DES
@@ -41,28 +41,27 @@ static const UInt8 noKey[kDES3KeySize];
  * Decrypt or encrypt a block using the session key, which must already be
  * unlocked.
  */
-static Err DES3_Block(void const *from, void *to, Boolean crypt)
+static Err DES3_Block(void const *from, void *to, Boolean encrypt)
 {
     Err err;
     char other[kDESBlockSize];
-    UInt8 *kp = (UInt8 *) g_Snib->sessKey;
+    UInt8 *kp = encrypt ? g_Snib->sessKey : g_Snib->sessKey + 2*kDESKeySize;
 
     ErrFatalDisplayIf(!kp, "record key unready");
 
-    err = EncDES((UInt8 *) from, kp, to, crypt);
+    err = EncDES((UInt8 *) from, kp, to, encrypt);
     if (err)
         return err;
+    kp += encrypt ? +kDESKeySize : -kDESKeySize;
 
-    err = EncDES((UInt8 *) to, kp + kDESKeySize, other, !crypt);
+    err = EncDES((UInt8 *) to, kp, other, !encrypt);
     if (err)
         return err;
+    kp += encrypt ? +kDESKeySize : -kDESKeySize;
 
-    err = EncDES((UInt8 *) other, kp + kDESKeySize*2, to, crypt);
+    err = EncDES((UInt8 *) other, kp, to, encrypt);
     if (err)
         return err;
-#if 0
-    MemMove(to, from, kDESBlockSize);
-#endif
 
     return 0;
 }

@@ -17,7 +17,8 @@ Changes from 0.11 to 0.13
  * If this is an unstable release of GNU Keyring, then display a
    warning at startup.
 
- * Add in sprinklings of memory validation.
+ * Add in sprinklings of memory validation and generally more robust
+   memory and database handling.
 
  * Add Record/UndoAll menu item
 
