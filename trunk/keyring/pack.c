@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+/* -*- c-file-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
  *
  * $Id$
  * 
@@ -139,7 +139,10 @@ Err KeyDB_CreateNew(UInt16 *idx)
         goto errOut;
     
     MemHandleUnlock(recHandle);
-    if ((err = DmReleaseRecord(gKeyDB, *idx, false))) /* not really dirty */
+    /* XXX: I'm not sure if we should mark the record dirty at this
+     * point or not.  If we do, then it might be sync'd all the way
+     * back to the PC even if it's never used. */
+    if ((err = DmReleaseRecord(gKeyDB, *idx, true)))
         goto errOut;
     
     return 0;
