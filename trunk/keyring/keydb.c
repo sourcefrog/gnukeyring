@@ -72,36 +72,6 @@ Boolean g_ReadOnly;
  * the new key.
  */
 
-Int16 Keys_IdxOffsetReserved(void)
-{
-    if (gPrefs.category == 0 || gPrefs.category == dmAllCategories) 
-	return kNumHiddenRecs;
-    else
-	return 0;
-}
-
-
-
-static Boolean KeyDB_OfferReadOnly(void)
-{
-    return FrmAlert(alertID_OfferReadOnly) == 0;	/* button 0 = ok */
-}
-
-
-
-static void Keyring_SetReadOnlyAcceptable(Boolean val)
-{
-     Int16 size = sizeof val;
-     Boolean useSavedPref = true;
-    
-     PrefSetAppPreferences(kKeyringCreatorID,
-                           prefID_ReadOnlyAccepted,
-                           kAppVersion,
-                           &val, size,
-                           useSavedPref);
-}
-
-
 /*
  * Either check that the user's already said a read-only database is
  * OK, or ask them.
@@ -111,23 +81,19 @@ static Boolean Keyring_AcceptsReadOnly(void)
      Boolean accepted = false;
      Int16 size = sizeof accepted;
      Int16 ret;
-     Boolean useSavedPref = true;
 
      ret = PrefGetAppPreferences(kKeyringCreatorID,
                                  prefID_ReadOnlyAccepted,
                                  &accepted, &size,
-                                 useSavedPref);
+                                 true);
 
      if (((ret == noPreferenceFound)
           || (size != sizeof accepted)
           || !accepted)) {
-          accepted = KeyDB_OfferReadOnly();
-          if (accepted)
-               Keyring_SetReadOnlyAcceptable(accepted);
-          return accepted;
-     } else {
-          return true;
+	 if (FrmAlert(alertID_OfferReadOnly) == 0)
+	     accepted = true;
      }
+     return accepted;
 }
 
 
@@ -323,11 +289,11 @@ static Err KeyDB_InitReadOnly(void)
           return err;
           
      if (ver > kDatabaseVersion) {
-          Keyring_TooNew();
-          return appCancelled;
+	 FrmAlert(TooNewAlert);
+	 return appCancelled;
      } else if (ver != kDatabaseVersion) {
-          FrmAlert(alertID_UpgradeReadOnly);
-          return appCancelled;
+	 FrmAlert(alertID_UpgradeReadOnly);
+	 return appCancelled;
      }
 
      return 0;
@@ -391,38 +357,40 @@ Err KeyDB_Init(void)
           return err;           /* error already reported */
      } else if (err) {
           goto failDB;
-     } else {
-          /* So, we opened a database OK.  Now, is it old, new, or
-             just right? */
-          if ((err = KeyDB_GetVersion(&ver)))
-               goto failDB;
-          if (ver < kDatabaseVersion) {
-               if (Keyring_OfferUpgrade()) {
-                    if ((err = UpgradeDB(ver)))
-                         return err;
-
-                    /* We always mark the database here, because we may
-                     * have converted from an old version of keyring that
-                     * didn't do that. */
-                    if ((err = KeyDB_MarkForBackup()))
-                         goto failDB;
-
-               } else {
-                    return 1;
-               }
-          } else if (ver > kDatabaseVersion) {
-               Keyring_TooNew();
-               return appCancelled;
-          } else {
-	      if ((err = KeyDB_CheckHiddenRecord()))
-		  return err;
-	  }
-
-          /* Next time they get a r/o database they'll have to
-           * reconfirm. */
-          Keyring_SetReadOnlyAcceptable(false);
      }
 
+     /* So, we opened a database OK.  Now, is it old, new, or
+	just right? */
+     if ((err = KeyDB_GetVersion(&ver)))
+	 goto failDB;
+     if (ver < kDatabaseVersion) {
+	 if (g_ReadOnly) {
+	     FrmAlert(alertID_UpgradeReadOnly);
+	     return appCancelled;
+	 }
+
+	 if (FrmAlert(UpgradeAlert) != 0)
+	     return appCancelled;
+
+	 if ((err = UpgradeDB(ver)))
+	     return err;
+	     
+	 /* We always mark the database here, because we may
+	  * have converted from an old version of keyring that
+	  * didn't do that. */
+	 if ((err = KeyDB_MarkForBackup()))
+	     goto failDB;
+     } else if (ver > kDatabaseVersion) {
+	 FrmAlert(TooNewAlert);
+	 return appCancelled;
+     } else {
+	 if ((err = KeyDB_CheckHiddenRecord()))
+	     return err;
+     }
+
+     /* Remember the r/o state, so one doesn't need to reconfirm. */
+     PrefSetAppPreferences(kKeyringCreatorID, prefID_ReadOnlyAccepted,
+                           kAppVersion, &g_ReadOnly, sizeof(g_ReadOnly), true);
      return 0;
 
  failDB:
