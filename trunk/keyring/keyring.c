@@ -27,6 +27,8 @@
 
 KeyringPrefsType gPrefs;
 
+MemHandle handleFontStar;
+
 
 // ======================================================================
 // Application methods
@@ -67,6 +69,9 @@ static Err App_Start(void)
 {
     Err err;
 
+    handleFontStar = DmGetResource('NFNT', StarFont);
+    FntDefineFont(fntStar, (FontPtr)MemHandleLock(handleFontStar));
+
     App_LoadPrefs();
     Gkr_CheckBeta();
 
@@ -92,6 +97,9 @@ static void App_Stop(void)
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
     DmCloseDatabase(gKeyDB);
+
+    MemHandleUnlock(handleFontStar);
+    DmReleaseResource(handleFontStar);
 }
 
 
