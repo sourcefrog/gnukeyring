@@ -23,6 +23,7 @@
 
 #include "includes.h"
 
+
 /* Set Password dialog
  *
  * TODO: Perhaps show a caution if the master password is less than
@@ -53,14 +54,14 @@ Char * SetPasswd_Ask(void)
 	/* if feature not found it is palm latin */
 	encoding = charEncodingPalmLatin;
 
-    /* If encoding is not latin, use default system fonts. */
+    /* Change to Password font if encoding is not latin and 
+     * we use custom fonts. */
     if (gPrefs.useCustomFonts && encoding == charEncodingPalmLatin) {
 	FldSetFont(masterFld, fntPassword);
 	FldSetFont(confirmFld, fntPassword);
     }
-    
+       
     FrmSetFocus(frm, FrmGetObjectIndex(frm, MasterKeyFld)); 
-   
  doDialog:	
     btn = FrmDoDialog(frm);
     if (btn != OkBtn)

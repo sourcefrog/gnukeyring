@@ -94,12 +94,12 @@ void Snib_Eradicate(void)
 	 * but this should never happen anyway.
 	 *
 	 * Also we really want to know when removing keys doesn't
-	 * work as this is safety critical.
+	 * work as this is security critical.
 	 */
 	ErrNonFatalDisplayIf(err, "Can't eradicate key");
     }
 
-    /* Send a update form event to redisplay the lock state, if this
+    /* Send a update form event to redisplay the lock state, if the
      * application's list form is active.
      */
     {
