@@ -185,7 +185,8 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	return true;
 
     case ID_PrefsCmd:
-	PrefsForm_RunChecked();
+	if (Unlock_CheckKey())
+	    PrefsForm_Run();
 	return true;
 
     case CMD_CheckHeapOnChange:
