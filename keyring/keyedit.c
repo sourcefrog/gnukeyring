@@ -34,6 +34,11 @@
 #include "export.h"
 #include "category.h"
 
+/* TODO: Show position and do paging within category
+ *
+ * TODO: Make the default category be set correctly when making a new
+ * record. */
+
 
 /* This keeps an unpacked version of the record currently being
  * edited.  They're periodically sync'd up; e.g. just before saving.
@@ -335,13 +340,13 @@ static void KeyEditForm_OpenRecord(void) {
 
 static void KeyEditForm_Update(int UNUSED(updateCode)) {
     Category_UpdateName(FrmGetActiveForm(), gRecord.category);
+    FrmDrawForm(FrmGetActiveForm());
 }
 
 
 static void KeyEditForm_FormOpen(void) {
     KeyEditForm_OpenRecord();
     KeyEditForm_Update(updateCategory);
-    FrmDrawForm(FrmGetActiveForm());
 }
 
 
@@ -537,7 +542,7 @@ static void KeyEditForm_Page(int offset) {
 
     gKeyRecordIndex += offset;
     KeyEditForm_OpenRecord();
-    FrmDrawForm(FrmGetActiveForm());
+    KeyEditForm_Update(updateCategory);
 }
 
 
@@ -634,6 +639,11 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 	result = true;
 	break;
 
+    case frmUpdateEvent:
+	KeyEditForm_Update(~0);
+	result = true;
+	break;
+
     case frmCloseEvent:
 	KeyEditForm_MaybeSave();
 #ifdef ENABLE_OBLITERATE
@@ -658,9 +668,7 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 	KeyEditForm_Scroll(event);
 	break;
 
-    default:;
+    default:
     }
     return result;
 }
-
-
