@@ -60,6 +60,8 @@
  * indicator.
  *
  * TODO: Perhaps close the list form while we're in the edit form?
+ *
+ * FIXME: Category changes do not seem to stick.
  */
 
 
@@ -91,6 +93,10 @@ UInt16		gKeyRecordIndex = kNoRecord;
 /* Index of the current record within the currently-displayed
  * category. */
 UInt16		gKeyPosition = kNoRecord;
+
+/* Holds the string to be copied into the title.  Must be big enough
+ * to handle the largest possible expansion. */
+Char f_KeyFormTitle[32];
 
 
 // ======================================================================
@@ -140,12 +146,7 @@ UInt16		gKeyPosition = kNoRecord;
 static void KeyEditForm_UpdateTitle(void)
 {
     Char * titleTemplate;
-    static Char * f_KeyFormTitle = 0;
     UInt16 pos, total;
-    UInt16 len;
-
-    if (f_KeyFormTitle)
-        MemPtrFree(f_KeyFormTitle);
 
     if (gKeyRecordIndex != kNoRecord) {
         pos = gKeyPosition + 1;
@@ -153,31 +154,16 @@ static void KeyEditForm_UpdateTitle(void)
         
         titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
         ErrFatalDisplayIf(!titleTemplate, "no titleTemplate");
-        
-        // Calculate length, remembering that we're going to replace
-        // two two-character variables with integers that can be up to
-        // 6 characters long.
-        len = StrLen(titleTemplate) - 4 + 6 + 6 + 1;
 
-        if (!(f_KeyFormTitle = MemPtrNew(len)))
-            goto failOut;
-        
         StrPrintF(f_KeyFormTitle, titleTemplate, pos, total);
         MemPtrUnlock(titleTemplate);
     } else {
         titleTemplate = MemHandleLock(DmGetResource(strRsc, EmptyTitleStr));
-        if (!(f_KeyFormTitle = MemPtrNew(StrLen(titleTemplate) + 1)))
-            goto failOut;
-        
         StrCopy(f_KeyFormTitle, titleTemplate);
         MemPtrUnlock(titleTemplate);    
     }
 
     FrmCopyTitle(f_KeyEditForm, f_KeyFormTitle);
-    return;
-
- failOut:
-    FrmAlert(OutOfMemoryAlert);
     return;
 }
 
@@ -434,6 +420,7 @@ static void KeyEditForm_OpenRecord(void) {
     else {
         KeyEditForm_New();
         KeyDB_CreateNew(&gKeyRecordIndex);
+        Key_SetCategory(gKeyRecordIndex, gPrefs.category);
         /* TODO: If this fails, do something. */
     }
 
@@ -704,10 +691,11 @@ static void KeyEditForm_CategorySelected(void) {
     Boolean categoryChanged;
 
     categoryChanged = Category_Selected(&gRecord.category, false);
-    if (gPrefs.category != dmAllCategories) {
-        gPrefs.category = gRecord.category;
-    }
     if (categoryChanged) {
+        if (gPrefs.category != dmAllCategories) {
+            gPrefs.category = gRecord.category;
+        }
+        Key_SetCategory(gKeyRecordIndex, gRecord.category);
         KeyEditForm_UpdateCategory();
     }
 }
