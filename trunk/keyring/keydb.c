@@ -129,12 +129,15 @@ Err KeyDB_OpenExistingDB(void) {
 
 
 /*
- * Create the reserved records that will contain the encrypted session
- * key and master password check-hash.  We don't populate them yet,
- * but creating them here means that later on we can just count on
- * them existing and being in the right place.
+ * Create the reserved records that will contain the master password
+ * check-hash.  We don't populate the record yet, but creating it here
+ * means that later on we can just count on these records existing and
+ * being in the right place.
  *
  * gKeyDB is open and refers to an empty database when this is called.
+ *
+ * At the moment we use only a single reserved record, but this
+ * function can handle several.
  */
 Err KeyDB_CreateReservedRecords(void)
 {
