@@ -136,7 +136,7 @@ void UI_UnionSet(FormPtr frm, UInt16 const * map, UInt16 value)
 	    break;
 
 	if (map[i] == 0)
-	    FrmHideObject(frm, map[i+1]);
+	    FrmHideObject(frm, FrmGetObjectIndex(frm, map[i+1]));
 	else
 	    CtlSetValue(UI_GetObjectByID(frm, map[i+1]),
 			(map[i] & value) ? true : false);
