@@ -9,6 +9,15 @@
 {
   {\h2 frequently asked questions}
 
+  {\faqentry \faqid=hidekeynames
+   {Is there a way to protect the names so that they aren't display
+    when the database is locked.}
+
+   Put that information in the account field or into the freeform notes.
+   Leave the name field empty.  Or you can use a short unrestricted
+   identifier as name so you can quickly find the record.
+  }
+
   {\faqentry \faqid=downgrade
 
    {I installed version 1.0, but I don't like it.  Can I convert my
@@ -25,7 +34,7 @@
    
    {What do you mean when you say "PalmOS does not have memory
    protection between applications".  Does it mean that if I loose my
-   palm, someone can Hotsynk with a PC and read in a way the Keyring
+   palm, someone can Hotsync with a PC and read in a way the Keyring
    database?}
 
    What that means is that one application installed on the PalmPilot can
@@ -133,6 +142,16 @@
       }
    }  
 
+   {\faqentry \faqid=editrom
+
+      {I used editrom/romeo to strip useless apps out of my ROM, but now
+       keyring doesn't work.}
+
+      Keyring takes encryption routines from the "{\tt MS-CHAP Support}" 
+      database.  Make sure that you don't remove that database.
+   }
 
  \; TODO: Doc bug #116575
 }
+
+

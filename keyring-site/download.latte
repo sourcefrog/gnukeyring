@@ -9,18 +9,22 @@
 \;  {\beta_warning}
 
   {\def \langlist
-    {{en English} {de German} {es Spanish} {sv Swedish}}}
+    {{en English} {de German} {es Spanish}
+\;    Languages in next release...
+\;    {fr French} {it Italian} {ja Japanese} 
+\;    {no Norwegian} {no_NY Norwegian (nynorsk)} 
+\;    {nl Dutch} {pt Portuguese} 
+    {sv Swedish}}}
 
   {\table
     {\foreach \langtuple \langlist
-      {\let {{\langcode  {\car \langtuple}} {\langname {\cadr \langtuple}}}
+      {\let {{\langcode  {\car \langtuple}} {\langname {\cdr \langtuple}}}
         {\tr {\td {\prcfile \langcode}} 
 	{\td \langname PRC binary}}
       }
     }
-    {\tr {\td {\filelink compressed.gif .tar.gz} {\td Tarball of
-    source and all binaries}}}
-    {\tr {\td {\filelink text.gif -news.txt} 
+    {\tr {\td {\filelink compressed.gif .tar.gz} {\td Tarball of source and all binaries}}}
+    {\tr {\td {\filelink text.gif -news.txt.asc} 
 	  {\td Release notes, MD5 checksums and GPG signature}}}
   }
 
@@ -32,7 +36,7 @@
    Install the keyring.prc binary on your handheld.  \Product will
    create a blank database the first time it runs.  \Product ought to
    run on any device with PalmOS 3.0 or later, but please let me know
-   how you go.  I test it on a PalmIII with PalmOS 3.3.
+   how you go.  I test it on a PalmVx with PalmOS 3.5.2.
 
    The current version does not work on PalmOS 2.0, as those versions
    do not contain DES encryption routines.
