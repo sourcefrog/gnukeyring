@@ -57,55 +57,16 @@
       {I'm using GNU Keyring 0.11, and I can't seem to restore my data
        from a backup.  Is there anything I can do to recover it?}
 
+      {\b Yes.}
+
+      Simply {\pagelink \pageid=download download and install} version
+      0.11.2 (or something later).  It should be able to recover all
+      of your data.
+
       This is caused by a bug in PalmOS, which means that the "{\tt
-      SortInfo}" field of a PalmOS database is not restored from backup.
-      0.11 is the first version that uses this field.  Previous and
-      later versions are not affected.  0.11 has been withdrawn from
-      the web site until a workaround is ready.
-
-      This is already in the bug tracking system as {\buglink
-      \bugid=108323}, {\buglink \bugid=106167} and {\buglink
-      \bugid=108332}.  There's no need to report it again.
-
-      Version 0.13 will be able to recover any data made inaccessible
-      by the SortInfo bug.  This should be released during September
-      or October of 2000.
-      
-      There is a workaround that may let you recover your data into an
-      earlier version of the application.  Whether the data is
-      recoverable seems to depend on the version of PalmOS and the
-      backup software you're using.  Category information will
-      unfortunately be lost.  Here's what you have to do:
-
-      {\ol
-
-        {\li You must have a backup of the {\tt Keys-Gtkr.pdb}
-         database from {\em before} you tried to restore it.  Make a
-         second backup in case something goes wrong.
-	 }
-
-        {\li Download and run the {\tt {\a
-         \href=ftp://gnukeyring.sourceforge.net/pub/gnukeyring/fix-eleven.pl
-         fix-eleven.pl}} script.  Pass the name of the old database
-         and the output file, e.g.
-	 
-	 {\blockquote {\pre
-$ ./fix-eleven.pl -d Keys-Gtkr.pdb -o fixed-keys.pdb}}
-
-        {\li Install GNU Keyring 0.9.2 on the handheld.}
-
-	{\li Reinstall the patched database.}
-
+      SortInfo}" field of a PalmOS database is not restored from
+      backup.  0.11.0 and 0.11.1 are the only versions that uses this
+      field.  Previous and later versions are not affected.  
       }
-
-    }
-
-    If you don't have Perl, don't know how to install the packages
-    or have trouble with this procedure, then you can mail your
-    database to me and I will fix it for you.  (Without peeking, I
-    promise! ;-)
-
-    Please let me know if this works or does not work for you.
-    } 
-  } 
+   }  
 }
