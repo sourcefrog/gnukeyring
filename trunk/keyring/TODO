@@ -3,11 +3,6 @@ $Id$
 
 Critical: ------------------------------------------------------------
 
-(1) Lock the database when the timeout expires, even if it's currently
-    showing a record.  Also, make sure changes to the system clock
-    cannot cause the keyring to unlock again.  Also, make sure that
-    the Snib database is overwritten and unlinked when we lock.
-
 Important ------------------------------------------------------------
 
 (2) Don't use private records, because they're deleted when the system
@@ -15,35 +10,12 @@ Important ------------------------------------------------------------
 
     This possibly requires an upgrade to the database format, because
     older versions of the application will miscount if the record is
-    not secret.
-
-(2) Make sure that the snib really is destroyed when the time runs
-    out, even if the clock has been reset.
-
-    One approach is to use the Notification manager, but that's an
-    optional features so it would be better to use something else.  We
-    might also be able to use launch codes: we can watch for 
-
-      sysAppLaunchCmdSystemReset
-      sysAppLaunchCmdSyncNotify
-
-    but there is no power off.  Or, we could look for events:
-
-      appStopEvent
-
-    err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &value);
-
-    If the notification manager is part of the system, the value
-    parameter will be non-zero and the returned error should also be
-    zero (for no error).
-
-    We should perhaps also listen for sysAppLaunchCmdTimeChange, and
-    use it to destroy the snib, and sysAppLaunchCmdSyncNotify, and
-    sysAppLaunchCmdSystemLock.
+    not secret. This change will be done in a later version.
 
 Good -----------------------------------------------------------------
 
-(3) Optionally lock on power off or switching applications.
+(3) Optionally lock on power off or switching applications.  This
+    should be new check boxes in preferences dialog.
 
 (3) Draw the edit form using a table so that the fields can resize,
     like in the address book.
@@ -53,7 +25,8 @@ Good -----------------------------------------------------------------
 
 Nice -----------------------------------------------------------------
 
-(4) Choose fonts
+(4) Choose fonts.  This should be per entry.  Probably requires to
+    change database format, so leave it for a later version.
 
 (4) Database info dialog.
 
@@ -85,8 +58,6 @@ or perhaps don't export them at all.
 
 * Newline in single-line fields should move down one field
 
-* Choose fonts
-
 * Text entry slow?
 
 * Generate button when setting master password?
@@ -96,8 +67,6 @@ or perhaps don't export them at all.
 * Beaming
 
 * Distinguish I from l
-
-* Change back to encrypting using the hash of the password
 
 * Safe way to change password and re-encrypt
 
@@ -118,8 +87,6 @@ probability measure (also probably one byte).  There's also a little
 overhead for each character we emit.  So this is about 10k of data.
 I'm not sure if it's that useful.
 
-* Provide our own RNG.  Gather entropy from events.
-
 * Sound
 
 * Check that when the category is changed, the title updates too
@@ -134,11 +101,6 @@ So we can run on PalmOS2.
 
 Perhaps build a separate version of the app, so that people who have
 OS3 or later don't need to waste memory storing it.
-
-* Optionally check for password when entering the app, rather than when opening a key
-* Relock on power-on
-
-Option in the preferences dialog to do this, I think.
 
 * Attack tree
 Fill it out with more possible attacks.
@@ -259,4 +221,3 @@ Especially out of memory.
 for each record, put a reminder that it should be changed e.g. every N weeks.
 
 * Resize edit form fields when text is entered, like the address book
-
