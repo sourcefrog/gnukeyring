@@ -1,9 +1,8 @@
-# Makefile for the GNU Keyring site
+# Makefile for the Keyring for PalmOS site
 # $Id$
 
-
 pages=index screenshots download thanks plans faq	\
-      history conduits lists contribute
+      history conduits lists contribute building
 
 extra=robots.txt Blatant-Plug-Insert-4-Cheap-Dark.jpg snaps/*.png icons/*.gif
 # cvs_logs=$(addsuffix -log.txt, $(pages))
