@@ -71,7 +71,6 @@ static UnpackedKeyType gRecord;
 
 static void KeyEditForm_Save(void);
 static void KeyEditForm_UpdateScrollbar(void);
-static Boolean KeyEditForm_DeleteKey(Boolean saveBackup);
 static Boolean KeyEditForm_IsDirty(void);
 static void KeyEditForm_MarkClean(void);
 
@@ -81,6 +80,7 @@ static Boolean keyDeleted;
 static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
 static ScrollBarPtr f_NotesScrollBar;
 static FormPtr f_KeyEditForm;
+
 
 // ======================================================================
 // Key edit form
@@ -118,7 +118,12 @@ static FormPtr f_KeyEditForm;
 
 /* Update the form title to reflect the current record.  If this is a
  * new record, it will be something like "New Record".  If it's an
- * existing record, it will be something like "Record 4 of 42". */
+ * existing record, it will be something like "Record 4 of 42".
+ *
+ * - I haven't isolated the next as it is sometimes intermittent: a
+ * bus error results after selecting a record from the list then
+ * pressing Page Up key.  I think it's somewhere in
+ * KeyEditForm_SetTitle(). -- Dell */
 static void KeyEditForm_UpdateTitle(void)
 {
     Char * titleTemplate;
@@ -296,17 +301,27 @@ static void KeyEditForm_Save(void)
     FrmDrawForm(busyForm);
 
     Keys_SaveRecord(&gRecord, &gKeyRecordIndex);
+    Key_SetCategory(gKeyRecordIndex, gRecord.category);
 
     FrmEraseForm(busyForm);
     FrmDeleteForm(busyForm);
 
-    // Reset title because we may have changed position
-    // (but this is not necessary because we're about to leave!)
+    // Reset title because we may have changed position (but this may
+    // not be necessary because we're about to leave!)
+
+    /* - It'll give a bus error after creating a new entry. (My
+       experience shows that a bus error is usually a result of a bad
+       pointer).  The bus error comes from KeyEdit.c, procedure
+       KeyEditForm_Save, last two lines, which in your remarks say are
+       unnecessary.  Removing these two lines eliminates the bus
+       error. */
     KeyEditForm_UpdateTitle();
     FrmSetActiveForm(f_KeyEditForm);
 }
 
 
+/* Update the category popuptrigger to show the current record's
+ * category name. */
 static void KeyEditForm_UpdateCategory(void) {
     Category_UpdateName(f_KeyEditForm, gRecord.category);
 }
@@ -341,7 +356,6 @@ static void Keys_UndoAll(void) {
  */
 static void KeyEditForm_MarkClean(void)
 {
-    gRecord.categoryDirty = false;
     FldSetDirty(f_KeyNameFld, false);
     FldSetDirty(f_PasswdFld, false);
     FldSetDirty(f_AcctFld, false);
@@ -353,11 +367,8 @@ static void KeyEditForm_MarkClean(void)
  * user. */
 static Boolean KeyEditForm_IsDirty(void)
 {
-    if (gRecord.categoryDirty
-        || FldDirty(f_KeyNameFld)
-        || FldDirty(f_PasswdFld)
-        || FldDirty(f_AcctFld)
-        || FldDirty(f_NotesFld))
+    if (FldDirty(f_KeyNameFld) || FldDirty(f_PasswdFld)
+        || FldDirty(f_AcctFld) || FldDirty(f_NotesFld))
      return true;
 
     return false;
@@ -368,7 +379,6 @@ static Boolean KeyEditForm_IsDirty(void)
 static void KeyEditForm_New(void) {
     /* All of the text fields allocate their own memory as they go.
      * The others we have to set up by hand. */
-    gRecord.categoryDirty = false;
     if (gPrefs.category == dmAllCategories)
         gRecord.category = dmUnfiledCategory;
     else
@@ -415,8 +425,37 @@ static void KeyEditForm_FormOpen(void) {
 }
 
 
+static void KeyEditForm_DeleteKey(Boolean saveBackup)
+{
+    Boolean isNewRecord;
+    UnpackedKeyType unpacked;
+    
+    // Unpack and obliterate values so they're not left in memory.
+    KeyEditForm_ToUnpacked(&unpacked);
 
-/* Delete the record if the user is sure that's what they want. */
+    // We set keyDeleted to make sure that we don't try to save this
+    // record as the form closes.
+    keyDeleted = true;
+
+    isNewRecord = (gKeyRecordIndex == kNoRecord);
+
+    if (isNewRecord) {
+        // just quit without saving
+        ;
+    } else if (saveBackup) {
+        DmArchiveRecord(gKeyDB, gKeyRecordIndex);
+    } else {
+        DmDeleteRecord(gKeyDB, gKeyRecordIndex);
+        // Move to the end to make the ordering of the remaining
+        // records simple.
+        DmMoveRecord(gKeyDB, gKeyRecordIndex, DmNumRecords(gKeyDB));
+    }
+}
+
+
+/* Delete the record if the user is sure that's what they want.
+ * Return true if deleted and we should return to the list form,
+ * otherwise false. */
 static Boolean KeyEditForm_MaybeDeleteKey(void) {
     // TODO: Check if the record is empty; if it is delete without
     // seeking confirmation.
@@ -433,35 +472,10 @@ static Boolean KeyEditForm_MaybeDeleteKey(void) {
     if (buttonHit == CancelBtn)
         return false;
 
-    return KeyEditForm_DeleteKey(saveBackup);
-}
-
-
-static Boolean KeyEditForm_DeleteKey(Boolean saveBackup) {
-    Boolean isNewRecord;
-    UnpackedKeyType unpacked;
-    
-    // Unpack and obliterate values so they're not left in memory.
-    KeyEditForm_ToUnpacked(&unpacked);
-
-    keyDeleted = true;
-
-    isNewRecord = (gKeyRecordIndex == kNoRecord);
-
-    if (isNewRecord) {
-        // just quit without saving
-        return true;
-    } else if (saveBackup) {
-        DmArchiveRecord(gKeyDB, gKeyRecordIndex);
-    } else {
-        DmDeleteRecord(gKeyDB, gKeyRecordIndex);
-        // Move to the end
-        DmMoveRecord(gKeyDB, gKeyRecordIndex, DmNumRecords(gKeyDB));
-    }
+    KeyEditForm_DeleteKey(saveBackup);
 
     return true;
 }
-
 
 static void KeyEditForm_Generate(void) {
     FormPtr     frm;
@@ -654,12 +668,15 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
 
 
 static void KeyEditForm_CategorySelected(void) {
-    gRecord.categoryDirty = Category_Selected(&gRecord.category, false);
+    Boolean categoryChanged;
+
+    categoryChanged = Category_Selected(&gRecord.category, false);
     if (gPrefs.category != dmAllCategories) {
         gPrefs.category = gRecord.category;
     }
-    if (gRecord.categoryDirty)
+    if (categoryChanged) {
         KeyEditForm_UpdateCategory();
+    }
 }
 
 
