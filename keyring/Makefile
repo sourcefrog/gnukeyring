@@ -1,7 +1,6 @@
+# GNU Keyring for PalmOS
 # Copyright (C) 1999, 2000 by Martin Pool
 # $Id$
-
-# FIXME: We don't know how to build auto.h to get started!
 
 APP             = keyring
 ICONTEXT        ="Keyring"
@@ -82,7 +81,7 @@ all: $(PRCS)
 
 -include $(DEP)
 
-$(BASE)-%.prc: %.resstamp  $(EXE) $(DEF)
+$(BASE)-%.prc: %.resstamp $(EXE) $(DEF)
 	cd res/$* && $(BUILDPRC) -o ../../$@ ../../$(DEF) ../../$(EXE) *.bin
 	ls -l $@
 
@@ -97,9 +96,14 @@ $(BASE)-%.prc: %.resstamp  $(EXE) $(DEF)
 
 dist: $(DIST_BALL)
 
+tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(DISTFILES)
-	$(TAR) -C .. -czf $(DIST_BALL) $(addprefix $(APP)/,$(DISTFILES))
+	rm -rf $(tmpdir)
+	mkdir -p $(tmpdir)/$(BASE)
+	cp --parents $(DISTFILES) $(tmpdir)/$(BASE)
+	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	ls -l $(DIST_BALL)
+	rm -fr $(tmpdir)
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
@@ -125,11 +129,6 @@ auto.h: en.resstamp
 clean:
 	rm -f *.o $(EXE) *.bin res/*/* *.grc *.prc *.resstamp *.bin *.d *.stamp
 
-sig: $(DIST_SIG)
-
-$(DIST_SIG): $(DIST_BALL)
-	gpg -u 40C90109 -a -b $(DIST_BALL)
-
 tags: TAGS
 TAGS: *.c *.h
 	etags *.c *.h
@@ -142,11 +141,3 @@ ID: .
 
 install: $(EN_PRC)
 	pilot-xfer -i $(EN_PRC)
-
-# this target is really just for my use. It only works on a limited
-# range of machines and is used to produce a list of potentially
-# dead (ie. unused) functions in the code. (tridge)
-finddead: $(OBJ)
-	$(NM) $(OBJ) |grep 'U ' | awk '{print $$2}' | sort -u > nmused.tmp
-	$(NM) $(OBJ) |grep 'T ' | awk '{print $$3}' | sort -u > nmfns.tmp
-	comm -13 nmused.tmp nmfns.tmp
