@@ -1,0 +1,1 @@
+"Save archive copy on PC" will keep the record available on the PC after it is removed from the handheld computer.  Choose this for records which are no longer immediately useful.
