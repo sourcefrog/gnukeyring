@@ -1,0 +1,69 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+GNU Keyring for PalmOS
+
+  Preview release 0.11.1pr1
+  25 September 2000
+
+  http://linuxcare.com.au/projects/gnukeyring/preview/0.11.1pr1/
+
+The point of this release is to fix the bug that prevents restoring
+databases from backup on some versions of PalmOS.
+
+This is a preview release: if you have had to restore from backup and
+are now unable to access your data, then please try this version and
+*send feedback if it works*, so that we can make a general release.
+
+To recover from a backup database:
+
+ 1. Install this version of GNU Keyring
+
+ 2. Restore the Keys-Gtkr database from backup
+
+ 3. Enter the application, and choose "Set Password"
+
+ 4. Write your old password.  Wrong passwords cannot be detected --
+    they will just result in scrambled records.
+
+ 5. Click "OK", then set a new password.
+
+ 6. Use the database as usual.
+
+If you enter the wrong password, restore from backup and try again.
+
+This is not a complete fix for the backup bug, but it will let you
+recover your data.  A proper fix, along with many other improvements,
+is coming shortly in version 0.13.
+
+Other changes in 0.11 compared to 0.9:
+
+ * Allows beaming of the Keyring app without the `a newer version
+   exists' warning, and without overwriting the existing database.
+
+ * Add category support, behaving as in the standard Palm apps.
+
+ * Forward-compatible change to use database version 1, to allow us to
+   use categories.
+
+ * Better error reporting.  Sound in some conditions where it should
+   occur.
+
+MD5 checksums of these files:
+
+2452f4949218db847bcacc3b45f285b3 *keyring-0.11.1pr1-de.prc
+3238c4f8976891d9710b682de5630fd5 *keyring-0.11.1pr1-en.prc
+ad4bc3e8d7a7e9cc8e42ea79d50f5886 *keyring-0.11.1pr1-es.prc
+2070651452dd823c89dfd4a070f8fd4e *keyring-0.11.1pr1.tar.gz
+
+- -- 
+Martin Pool                      mbp@users.sourceforge.net
+GNU Keyring for PalmOS           http://gnukeyring.sourceforge.net/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.3 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+iD8DBQE5z0YiPGPKP6Cz6IsRAro6AJ0axOnI4fdhGXi2DiXHrXnuG3JdAwCcD0zk
+Emdn0aeloZSV1nBUmf0UTgU=
+=zqox
+-----END PGP SIGNATURE-----
