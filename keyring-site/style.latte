@@ -3,7 +3,7 @@
 {\def \style_rcsid
    \"$Id$\"}
 
-{\def \Product {GNU Keyring}}
+{\def \Product {Tightly Bound}}
 
 {\def {\externallink \=href \&rest}
     {\a \href={\href} \rest}
@@ -42,25 +42,18 @@
   {\a \href={doc/\dir} \name}
 }
 
-{\def {\gplstatement}
-  {{\font \size=-1
-  This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the
-License, or (at your option) any later version.
+{\def {\gplstatement} {{\font \size=-1 
 
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the {\externallink
+  \href=http://www.gnu.org/copyleft/gpl.html GNU General Public
+  License} as published by the Free Software Foundation; either
+  version 2 of the License, or (at your option) any later version.
 
-  You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-USA.
-
-  For more details see the file {\externallink
-  \href=http://www.gnu.org/copyleft/gpl.html COPYING}.
+  This program is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
   }}
 }
 
@@ -75,11 +68,11 @@ USA.
   {\rule}
   {\h4 \rest}}
 
-{\def {\warning}
+{\def {\beta_warning}
   {
     {\font \color=#ff0000
     {\b Important:}
-     GNU Keyring is in beta test at the moment, and may have bugs.
+     \Product is in beta test at the moment, and may have bugs.
      Please keep another copy of any unrecoverable data.
     }
   }
@@ -105,20 +98,20 @@ USA.
   {
   {\set! \currentpageid 
      {\or \pageid \pagetitle}}
-  {\head {\title GNU Keyring for PalmOS: {\or \pagetitle \pageid}}
+  {\head {\title \Product: {\or \pagetitle \pageid}}
      {\meta \name=author \content={Martin Pool}}
-     {\meta \name=keywords \content={GNU Keyring for PalmOS securely
-       stores digital secret keys on your PalmOS (PalmPilot, Visor,
-       WorkPad) handheld computer.}}
+     {\meta \name=keywords
+      \content={GNU Keyring, PalmOS, security,
+                secrets, encryption, crypto, triple DES, PalmPilot, Visor,
+                WorkPad, handheld, passwords, pin}}
   }
   {\body \bgcolor=#000000 \text=#dddddd \link=#ff0000 \vlink=#dd0000
          \background=Blatant-Plug-Insert-4-Cheap-Dark.jpg
     {\center
-     {\h1 GNU Keyring for PalmOS}
+     {\h1 \Product}
 
      {\pagelink \pageid=index introduction} |
      {\pagelink screenshots } |
-     {\pagelink license} |
      {\pagelink download} 
      {\br}
      {\pagelink \pageid=contribute how to help } |
@@ -131,9 +124,9 @@ USA.
      {\externallink \href=http://sourceforge.net/projects/gnukeyring/
         sourceforge project } |
      {\pagelink \pageid=lists mailing lists } |
-     {\externallink \href={http://sourceforge.net/news/?group_id=306}
+     {\externallink \href={https://sourceforge.net/news/?group_id=306}
         news } |
-     {\externallink \href={http://sourceforge.net/bugs/?group_id=306}
+     {\externallink \href={https://sourceforge.net/bugs/?group_id=306}
         bugs & suggestions } |
      {\pagelink mirrors}
 
@@ -141,8 +134,6 @@ USA.
      {\rule}
    }
 
-   {\warning}
- 
    {\br} {\br}
    
    \rest
