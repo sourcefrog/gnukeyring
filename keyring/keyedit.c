@@ -54,7 +54,7 @@ static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
 static ControlPtr f_DateTrg;
 static ScrollBarPtr f_NotesScrollBar;
 static FormPtr f_KeyEditForm;
-static Boolean f_lastChangeDirty;
+static Boolean f_dirty;
 
 #define k_NumFields 4
 static FieldPtr f_AllFields[k_NumFields];
@@ -294,8 +294,6 @@ static void Key_SetNewRecordCategory(void)
 	gRecord.category = dmUnfiledCategory;
     else
 	gRecord.category = gPrefs.category;
-    
-    Key_SetCategory(gKeyRecordIndex, gRecord.category);
 }
 
 
@@ -401,7 +399,7 @@ static void KeyEditForm_MarkClean(void)
      for (i = 0; i < k_NumFields; i++) {
           FldSetDirty(f_AllFields[i], false);
      }
-     f_lastChangeDirty = false;
+     f_dirty = false;
 }
 
 
@@ -411,7 +409,7 @@ static Boolean KeyEditForm_IsDirty(void)
 {
      Int16 i;
 
-     if (f_lastChangeDirty)
+     if (f_dirty)
 	 return true;
 
      for (i = 0; i < k_NumFields; i++) {
@@ -703,7 +701,7 @@ static void KeyEditForm_Generate(void)
     FldDrawField(passwdFld);
 
     DateSecondsToDate(TimGetSeconds(), &gRecord.lastChange);
-    f_lastChangeDirty = true;
+    f_dirty = true;
     KeyEditForm_SetDateTrigger();
 }
 
@@ -894,7 +892,7 @@ static void KeyEditForm_ChooseDate(void) {
 	gRecord.lastChange.year = year - 1904;
 	gRecord.lastChange.month = month;
 	gRecord.lastChange.day = day;
-	f_lastChangeDirty = true;
+	f_dirty = true;
 	
 	KeyEditForm_SetDateTrigger();
     }
@@ -903,20 +901,20 @@ static void KeyEditForm_ChooseDate(void) {
 
 static void KeyEditForm_CategorySelected(void)
 {
-     Boolean categoryChanged;
-     
-     if (App_CheckReadOnly())
-          return;
-
-     categoryChanged = Category_Selected(&gRecord.category, false);
-     if (categoryChanged) {
-          if (gPrefs.category != dmAllCategories) {
-               gPrefs.category = gRecord.category;
-          }
-          Key_SetCategory(gKeyRecordIndex, gRecord.category);
-          KeyEditForm_UpdateCategory();
-          KeyEditForm_UpdateTitle();
-     }
+    Boolean categoryChanged;
+    
+    if (App_CheckReadOnly())
+	return;
+    
+    categoryChanged = Category_Selected(&gRecord.category, false);
+    if (categoryChanged) {
+	f_dirty = true;
+	if (gPrefs.category != dmAllCategories) {
+	    gPrefs.category = gRecord.category;
+	}
+	KeyEditForm_UpdateCategory();
+	KeyEditForm_UpdateTitle();
+    }
 }
 
 
