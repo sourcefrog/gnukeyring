@@ -48,6 +48,9 @@
  * TODO: Be more careful about not saving unless actually modified, as
  * this can save a lot of time.  I think we handle all the obvious
  * cases now.
+ *
+ * TODO: Resort the database when editing is finished.  It's probably
+ * simplest not to sort until returning to the list.
  */
 
 
