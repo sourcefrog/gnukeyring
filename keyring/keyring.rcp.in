@@ -20,7 +20,7 @@
 
 #include "resource.h"
 
-VERSION ID 1000 "__VERSION__"
+VERSION ID 1001 "__VERSION__"
 
 FORM ID ListForm AT (0 0 160 160)
 MENUID ListMenuBar

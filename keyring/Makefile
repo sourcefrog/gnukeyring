@@ -5,7 +5,7 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.9.0
+VERSION         = 0.9.1
 
 RCP             = $(APP).rcp
 PRC             = $(APP)-$(VERSION).prc
