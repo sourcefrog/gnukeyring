@@ -24,6 +24,7 @@
   <h1><Product></h1>
   <p><pagelink id="index" name="introduction"> |
      <pagelink id="guide" name="user's guide"> |
+     <pagelink name="crypto"> |
      <pagelink name="download">
      <br>
      <pagelink id="contribute" name="how to help"> |

@@ -36,8 +36,8 @@
 </def>
 
 
-<set sectctr=0>
 <blockdef name=section option="title">
+  <if not sectctr><set sectctr=0 global></if>
   <block name=sect$sectctr global expand><use block noexpand></block>
   <block name=stit$sectctr global expand><use title noexpand></block>
   <inc sectctr>
