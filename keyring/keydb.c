@@ -339,7 +339,35 @@ static Err KeyDB_InitReadOnly(void)
      return 0;
 }
 
+/* Current database version may have problems finding
+ * the hidden records containing hash if some backup
+ * program shuffled it around.  
+ */
+static Err KeyDB_CheckHiddenRecord(void) {
+    UInt16 len = DmNumRecords(gKeyDB);
+    UInt16 i;
+    UInt16 recAttr;
 
+    if (len > 0
+	&& DmRecordInfo(gKeyDB, 0, &recAttr, NULL, NULL) == errNone
+	&& (recAttr & dmRecAttrSecret)) {
+	/* Hidden record is okay */
+	return errNone;
+    }
+
+    for (i = 0; i < len; i++) {
+	if (DmRecordInfo(gKeyDB, i, &recAttr, NULL, NULL) == errNone
+	    && (recAttr & dmRecAttrSecret)) {
+	    /* We found the hash record. Move it to right position. */
+	    DmMoveRecord(gKeyDB, i, 0);
+	    return errNone;
+	}
+    }
+    
+    /* The hidden record is missing.  Ask for password and restore it.
+     */
+    return Upgrade_HandleMissingHash();
+}
 
 /*
  * Get everything going: either open an existing DB (converting if
@@ -391,7 +419,10 @@ Err KeyDB_Init(void)
           } else if (ver > kDatabaseVersion) {
                Keyring_TooNew();
                return appCancelled;
-          }
+          } else {
+	      if ((err = KeyDB_CheckHiddenRecord()))
+		  return err;
+	  }
 
           /* Next time they get a r/o database they'll have to
            * reconfirm. */
