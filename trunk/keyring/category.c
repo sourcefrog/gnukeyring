@@ -59,7 +59,7 @@ Boolean Category_Selected(Int16 *category, Boolean showAll)
     /* We can't simply use CategorySelect as we want to check for password. */
 
     CategoryCreateList (gKeyDB, lst, oldCategory, showAll, true, 1, 
-			categoryDefaultEditCategoryString, true);
+			categoryEditStrID, true);
     newSelection = LstPopupList (lst);
 
     if (newSelection == LstGetNumberOfItems(lst) - 1) {
@@ -76,7 +76,7 @@ Boolean Category_Selected(Int16 *category, Boolean showAll)
 	    *category = CategoryFind
 		(gKeyDB, LstGetSelectionText(lst, newSelection));
     }
-    CategoryFreeList (gKeyDB, lst, showAll, categoryDefaultEditCategoryString);
+    CategoryFreeList (gKeyDB, lst, showAll, categoryEditStrID);
 
     if (*category != oldCategory)
 	categoryEdited = true;
