@@ -436,17 +436,6 @@ static GUI_SECTION void KeyEdit_FreeFields(void) {
 }
 
 /*
- * Frees gRecord and all associated data.  Also overwrites everything
- * with zeros.
- */
-static GUI_SECTION void KeyEdit_FreeRecord(void) {
-    MemWipe(gRecord->plainText, MemPtrSize(gRecord->plainText));
-    MemPtrFree(gRecord->plainText);
-    MemWipe(gRecord, MemPtrSize(gRecord));
-    MemPtrFree(gRecord);
-}
-
-/*
  * Save the record if any fields are dirty, and also update gRecord
  * from the field values.  If the record has been left empty, then
  * delete it rather than saving an empty record.
@@ -566,7 +555,7 @@ GUI_SECTION void KeyEdit_GotoRecord(UInt16 recordIdx)
 	    return;
 	}
 
-	KeyEdit_FreeRecord();
+	Record_Free(gRecord);
 	KeyEdit_FreeFields();
 	if (gKeyRecordIndex != kNoRecord)
 	    DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
@@ -688,7 +677,7 @@ static GUI_SECTION void KeyEdit_FormClose(void)
 	 gRecordKey = NULL;
      }
 
-     KeyEdit_FreeRecord();
+     Record_Free(gRecord);
      KeyEdit_FreeFields();
      if (gKeyRecordIndex != kNoRecord) {
 	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
@@ -863,7 +852,7 @@ static GUI_SECTION Boolean KeyEdit_HandleMenuEvent(EventPtr event)
 	     */
 	    if (gKeyRecordIndex != kNoRecord)
 		DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
-	    KeyEdit_FreeRecord();
+	    Record_Free(gRecord);
 	    KeyEdit_FreeFields();
 	    KeyEdit_FillData();
 	}
@@ -933,6 +922,9 @@ static GUI_SECTION void KeyEdit_PageButton(WinDirectionType dir)
 }
 
 
+static const UInt16 idLinks[] = {
+    0, ID_KeyNameField, AccountField, PasswordField, ID_NotesField, -1
+};
 
 static GUI_SECTION Boolean KeyEdit_Arrow(int dir)
 {
@@ -941,10 +933,6 @@ static GUI_SECTION Boolean KeyEdit_Arrow(int dir)
     UInt16 activeId, nextId;
     UInt16      i;
     
-    static const UInt16 idLinks[] = {
-        0, ID_KeyNameField, AccountField, PasswordField, ID_NotesField, -1
-    };
-
     frm = f_KeyEditForm;
     activeIdx = FrmGetFocus(frm);
     activeId = FrmGetObjectId(frm, activeIdx);
