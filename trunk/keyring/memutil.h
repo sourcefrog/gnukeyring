@@ -19,8 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-MemHandle Mem_StrToHandle(Char * ptr, UInt32 *);
-MemHandle Mem_ReadString(Char * *ptr, UInt32 *);
+MemHandle Mem_ReadString(Char **ptr, Int16 *, Int16 *);
 void Mem_ReadChunk(Char **ptr, UInt32 len, void * dest);
 void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len);
 

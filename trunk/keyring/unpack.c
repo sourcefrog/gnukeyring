@@ -36,34 +36,31 @@
  * representation.  Return true if conversion was successful. */
 void Keys_Unpack(MemHandle record, UnpackedKeyType *u)
 {
-    Char *      recPtr;
-    UInt32      recLen;
-    Int32       nameLen;
+    Int16       remain;
     Char *      ptr;
     Char *      plainBuf;
     Char *      cryptPtr;
     Err         err;
 
-    recPtr = MemHandleLock(record);    
-    recLen = MemHandleSize(record);
+    ptr = MemHandleLock(record);    
+    remain = MemHandleSize(record);
     
-    u->nameHandle = Mem_StrToHandle(recPtr, &nameLen);
-    u->nameLen = nameLen;
+    u->nameHandle = Mem_ReadString(&ptr, &remain, &u->nameLen);
 
-    plainBuf = MemPtrNew(recLen);
+    plainBuf = MemPtrNew(remain);
     ErrFatalDisplayIf(!plainBuf, "Not enough memory to unpack record");
 
-    cryptPtr = recPtr + nameLen + 1;
-    err = DES3_Read(cryptPtr, plainBuf, recLen - u->nameLen - 1);
+    cryptPtr = ptr;
+    err = DES3_Read(cryptPtr, plainBuf, remain);
     if (err) {
         /* TODO: If this failed, indicate to the caller that we couldn't unpack the record. */
-        App_ReportSysError(CryptoErrorAlert, err);
+        UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
     }
 
     ptr = plainBuf;
-    u->acctHandle = Mem_ReadString(&ptr, &u->acctLen);
-    u->passwdHandle = Mem_ReadString(&ptr, &u->passwdLen);
-    u->notesHandle = Mem_ReadString(&ptr, &u->notesLen);
+    u->acctHandle = Mem_ReadString(&ptr, &remain, &u->acctLen);
+    u->passwdHandle = Mem_ReadString(&ptr, &remain, &u->passwdLen);
+    u->notesHandle = Mem_ReadString(&ptr, &remain, &u->notesLen);
 
     MemPtrFree(plainBuf); 
 

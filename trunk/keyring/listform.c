@@ -78,8 +78,6 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
      *
      * Is there no "hidden" bit we can set to avoid all this?
      */
-
-    itemNum += Keys_IdxOffsetReserved();
     
     err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum,
                                  dmSeekForward, gPrefs.category);
@@ -160,7 +158,7 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
     if (!*recPtr) {
         // If there is no name, use the record index instead
         altBuf[0] = '#';
-        StrIToA(altBuf + 1, idx);
+        StrIToA(altBuf + 1, idx - kNumHiddenRecs);
         scrStr = altBuf;
     } else {
         scrStr = recPtr;
@@ -237,8 +235,9 @@ static void ListForm_UpdateScrollBar(void)
  */
 static void ListForm_CountNumListed(void)
 {
-    f_NumListed = DmNumRecordsInCategory(gKeyDB, gPrefs.category) -
-        Keys_IdxOffsetReserved();
+    f_NumListed = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
+    ErrNonFatalDisplayIf(f_NumListed > 30000,
+                         "unreasonable numListed");
 }
 
 
@@ -288,7 +287,7 @@ static Boolean ListForm_TableSelect(EventPtr event)
         /* Map from a position within this category to an overall
          * record index. */
         
-        listIdx = f_FirstIdx + event->data.tblSelect.row + Keys_IdxOffsetReserved();
+        listIdx = f_FirstIdx + event->data.tblSelect.row;
         idx = 0;
         err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
                                      dmSeekForward, gPrefs.category);
@@ -365,10 +364,6 @@ Boolean ListForm_HandleEvent(EventPtr event) {
     case frmOpenEvent:
         ListForm_FormOpen();
         return true;
-
-/*      case lstSelectEvent: */
-/*          result = ListForm_ListSelect(event); */
-/*          break; */
 
     case menuEvent:
         if (!Common_HandleMenuEvent(event))

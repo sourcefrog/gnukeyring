@@ -124,15 +124,14 @@ static void KeyEditForm_UpdateTitle(void)
     Char * titleTemplate;
     static Char * f_KeyFormTitle = 0;
     UInt16 pos, total;
-    UInt16 len, reserved;
+    UInt16 len;
 
     if (f_KeyFormTitle)
         MemPtrFree(f_KeyFormTitle);
 
     if (gKeyPosition != kNoRecord) {
-        reserved = Keys_IdxOffsetReserved();
-        pos = gKeyPosition + 1 - reserved;
-        total = DmNumRecordsInCategory(gKeyDB, gPrefs.category) - reserved;
+        pos = gKeyPosition + 1;
+        total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
         
         titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
         ErrFatalDisplayIf(!titleTemplate, "no titleTemplate");
@@ -553,7 +552,6 @@ static void KeyEditForm_Dragged(EventPtr event) {
 static void KeyEditForm_FlipRecord(WinDirectionType dir)
 {
     UInt16 numRecs;
-    UInt16 reserved;
     Int16 offset = (dir == winDown) ? +1 : -1;
     
     if (gKeyRecordIndex == kNoRecord) {
@@ -565,9 +563,8 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
     KeyEditForm_MaybeSave();
 
     numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
-    reserved = (UInt16) Keys_IdxOffsetReserved();
 
-    if ((gKeyPosition <= reserved  &&  offset == -1)
+    if ((gKeyPosition == 0  &&  offset == -1)
         || (gKeyPosition + offset == numRecs)) {
         /* Bumped into the end */
         SndPlaySystemSound(sndWarning);

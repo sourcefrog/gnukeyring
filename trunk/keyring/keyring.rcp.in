@@ -452,6 +452,17 @@ BEGIN
 END
 
 
+ALERT ID ID_CreateDBAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Error creating keyring database: ^1 (^2)"
+
+	BUTTONS "OK"
+END
+
+
 ALERT ID UpgradeAlert
 CONFIRMATION
 BEGIN

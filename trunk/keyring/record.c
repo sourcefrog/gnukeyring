@@ -101,7 +101,7 @@ void KeyRecord_Reposition(Char * name, UInt16 *idx, UInt16 *position)
     DmRecordInfo(gKeyDB, *idx, &attr, &uniqueID, NULL);
     err = DmDetachRecord(gKeyDB, *idx, &moveHandle);
     if (err) {
-	App_ReportSysError(ID_KeyDatabaseAlert, err);
+	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 	return;
     }
 	
@@ -110,7 +110,7 @@ void KeyRecord_Reposition(Char * name, UInt16 *idx, UInt16 *position)
 
     err = DmAttachRecord(gKeyDB, idx, moveHandle, 0);
     if (err) {
-	App_ReportSysError(ID_KeyDatabaseAlert, err);
+	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 	return;
     }
     DmSetRecordInfo(gKeyDB, *idx, &attr, &uniqueID);

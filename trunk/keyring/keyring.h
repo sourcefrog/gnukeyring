@@ -64,7 +64,16 @@ Boolean Common_HandleMenuEvent(EventPtr event);
 void App_AboutCmd(void);
 void App_SavePrefs(void);
 
+
+/*
+ * Index of the currently-edited record in the whole database, or
+ * kNoRecord if creating a new one.
+ */
 extern UInt16 gKeyRecordIndex;
+
+/*
+ * Position of the currently edited record in the current category.
+ */
 extern UInt16 gKeyPosition;
 
 

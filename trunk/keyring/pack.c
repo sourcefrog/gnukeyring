@@ -44,6 +44,9 @@
  * memory-intensive.
  *
  * TODO: Check record is released before resizing.
+ *
+ * TODO: Better error checking that e.g. we're not running past the
+ * end of the record.  Display an error dialog rather than crashing.
  */
 
 #include <PalmOS.h>
@@ -121,7 +124,8 @@ static MemHandle Keys_PrepareNew(UInt16 *idx, Int16 recLen)
     *idx = dmMaxRecordIndex;
     recHandle = DmNewRecord(gKeyDB, idx, recLen);
     if (!recHandle) {
-	App_ReportSysError(ID_KeyDatabaseAlert, DmGetLastErr());
+	UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),
+                           __FUNCTION__);
 	return NULL;
     }
 
@@ -135,7 +139,8 @@ static MemHandle Keys_PrepareExisting(UInt16 *idx, Int16 recLen)
 
     recHandle = DmResizeRecord(gKeyDB, *idx, recLen);
     if (!recHandle) {
-	App_ReportSysError(ID_KeyDatabaseAlert, DmGetLastErr());
+	UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),
+                           __FUNCTION__);
 	return NULL;
     }
 
@@ -204,6 +209,6 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
 
     err = DmReleaseRecord(gKeyDB, *idx, true);
     if (err)
-	App_ReportSysError(ID_KeyDatabaseAlert, err);
+	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 }
 

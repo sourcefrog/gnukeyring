@@ -36,6 +36,9 @@
 #include "resource.h"
 #include "pwhash.h"
 #include "sesskey.h"
+#include "error.h"
+#include "uiutil.h"
+#include "auto.h"
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
@@ -54,14 +57,17 @@ DmOpenRef       gKeyDB;
  * We encrypt the records not with the master password itself, but
  * rather with a session key stored in record 0 of the database.  The
  * session key is just random noise.  The session key is stored
- * encrypted by the MD5 hash of the master password.
+ * encrypted by the master password.
  *
  * We also need to be able to tell whether the user has entered the
  * right master password, since we want to give them an error message
  * rather than just display random garbage.  Therefore the MD5 hash of
- * the master password is also stored.  (This makes dictionary attacks
- * just a little easier, but they wouldn't be that hard anyhow.)  This
- * goes into record #1.
+ * the master password is also stored.  This goes into record #1.
+ *
+ * Rather than worrying about creating these records when they're
+ * used, we create them with the database so we know they'll never be
+ * used.  These records are marked secret, because that flag is not
+ * otherwise used in this application.
  *
  * Once the session key is set, it is never changed throughout the
  * life of the database.  If the user changes their master password,
@@ -118,8 +124,8 @@ Err KeyDB_CreateCategories(void) {
  */
 void KeyDB_SetPasswd(Char *newPasswd)
 {
-    SessKey_Store(newPasswd);
     PwHash_Store(newPasswd);
+    SessKey_Store(newPasswd);
     Unlock_PrimeTimer();
 }
 
@@ -136,7 +142,7 @@ Err KeyDB_OpenExistingDB(void) {
     // TODO: Give people the option to name the database, or to create
     // it on different cards?
     gKeyDB = DmOpenDatabaseByTypeCreator(kKeyDBType, kKeyringCreatorID,
-				       dmModeReadWrite);
+					 dmModeReadWrite);
     if (!gKeyDB)
 	return DmGetLastErr();
 
@@ -145,6 +151,46 @@ Err KeyDB_OpenExistingDB(void) {
 	return err;
 
     return 0;
+}
+
+
+/*
+ * Create the reserved records that will contain the encrypted session
+ * key and master password check-hash.  We don't populate them yet,
+ * but creating them here means that later on we can just count on
+ * them existing and being in the right place.
+ *
+ * gKeyDB is open and refers to an empty database when this is called.
+ */
+static Err KeyDB_CreateReservedRecords(void)
+{
+    Err err;
+    Int16 i, idx;
+    UInt16 attr;
+    MemHandle recHandle;
+
+    for (i = 0; i <= 1; i++) {
+	idx = i;
+	recHandle = DmNewRecord(gKeyDB, &idx, 1);
+	if (!recHandle) {
+	    err = DmGetLastErr();
+	    goto outErr;
+	}
+	ErrNonFatalDisplayIf(idx != i, __FUNCTION__ " inserted into wrong place");
+
+	if ((err = DmReleaseRecord(gKeyDB, idx, true)))
+	    goto outErr;
+
+	attr = dmRecAttrSecret | dmRecAttrDirty;
+	if ((err = DmSetRecordInfo(gKeyDB, idx, &attr, NULL)))
+	    goto outErr;
+    }
+
+    return 0;
+
+ outErr:
+    UI_ReportSysError2(ID_CreateDBAlert, err, __FUNCTION__);
+    return err;
 }
 
 
@@ -165,19 +211,42 @@ Err KeyDB_CreateDB(void) {
     if ((err = DmCreateDatabase(gKeyDBCardNo, kKeyDBName,
 				kKeyringCreatorID, kKeyDBType,
 				false /* not resource */)))
-	return err;
+	goto outErr;
 
     gKeyDBID = DmFindDatabase(gKeyDBCardNo, kKeyDBName);
-    if (!gKeyDBID) {
-	return DmGetLastErr();
-    }
+    if (!gKeyDBID)
+	goto outFindErr;
 
     if ((err = KeyDB_SetVersion()))
-	return err;
+	goto outErr;
 
-    SessKey_Generate();
+    gKeyDB = DmOpenDatabase(gKeyDBCardNo, gKeyDBID, dmModeReadWrite);
+    if (!gKeyDB)
+	goto outFindErr;
+
+    if ((err = KeyDB_CreateReservedRecords()))
+	return err;
+    
+    if ((err = KeyDB_CreateCategories()))
+	goto outErr;
+    
+    if ((err = SessKey_Generate()))
+	goto outErr;
+
+    if (!SetPasswd_Run())
+	return appCancelled;
+
+    if ((err = KeyDB_MarkForBackup()))
+	goto outErr;
 
     return 0;
+    
+ outFindErr:
+    err = DmGetLastErr();
+    
+ outErr:
+    UI_ReportSysError2(ID_CreateDBAlert, err, __FUNCTION__);
+    return err;
 }
 
 
@@ -210,8 +279,7 @@ Err KeyDB_GetVersion(UInt16 *ver) {
 Int16 Keys_IdxOffsetReserved(void)
 {
     if (gPrefs.category == 0 || gPrefs.category == dmAllCategories) 
-	return 1;
+	return kNumHiddenRecs;
     else
 	return 0;
 }
-
