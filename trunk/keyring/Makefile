@@ -7,7 +7,7 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.13.0pr2
+VERSION         = 0.13.0dev3
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
@@ -32,7 +32,6 @@ EXE		= $(APP)
 
 EN_PRC          = $(BASE)-en.prc
 
-xNM		= m68k-palmos-nm
 CC              = m68k-palmos-gcc
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
@@ -50,9 +49,8 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 DEFINES		= -DPALM_KEYRING
 CFLAGS          = -O3 -Wall -Winline -Wunused -W	\
 		-Wsign-compare -Wstrict-prototypes	\
-		-Wmissing-prototypes			\
-		-Wlarger-than-255 -Wshadow -Wcast-align	\
-		-Wwrite-strings -Winline		\
+		-Wmissing-prototypes -Winline		\
+		-Wlarger-than-256 -Wshadow -Wcast-align	\
 		-finline-functions			\
 		$(DEFINES) $(INCLUDES) -MMD -g
 
