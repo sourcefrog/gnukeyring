@@ -34,6 +34,9 @@
 // =====================================================================
 // List form
 
+/* TODO: Try to avoid calling DmNumRecordsInCategory quite so often:
+ * once we know how many records there are we should remember it!  */
+
 
 static Int16 ListForm_RecordIdx(Int16 itemNum)
 {
