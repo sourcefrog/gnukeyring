@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -40,7 +40,12 @@
 #include "auto.h"
 
 
-/* TODO: Show position and do paging within category */
+/* TODO: Show position and do paging within category -- is this working now?
+ *
+ * TODO: If we can, page down in the notes field before going to the
+ * next record.  Similarly backwards.
+ *
+ * TODO: Be more careful about not saving unless actually modified -- saves time.  */
 
 
 /* This keeps an unpacked version of the record currently being

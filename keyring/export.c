@@ -1,4 +1,4 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -20,7 +20,11 @@
  */
 
 /* FIXME: MemoPad limits memos to 4kb.  We should use that too, and
- * make sure that we never write out more text than can be accepted. */
+ * make sure that we never write out more text than can be accepted.
+ * I think we're safe, because all our edit fields have smaller
+ * lengths.
+ *
+ * TODO: Get rid of the lame attribution at the end.  */
 
 #include <PalmOS.h>
 #include <Password.h>
