@@ -87,7 +87,7 @@ JAVA		= java
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 AESLIBS         = COPYING.AESLib AESLib-SDK/PRC/AESLib.prc
-SSLEAYLIBS      = $(wildcard pilotSSLeay/shlib/DESLib.prc)
+SSLEAYLIBS      = $(wildcard pilotSSLeay/shlib/*.prc)
 SSLEAYINCS      = $(wildcard pilotSSLeay/include/*.h)
 SSLEAY          = $(SSLEAYINCS) $(SSLEAYLIBS)
 SCRIPTS         = script/mkproto.pl
@@ -107,6 +107,7 @@ BASE		= $(APP)-$(VERSION)
 DIST_BALL	= $(BASE).tar.gz
 DIST_ZIP	= $(BASE).zip
 DIST_NEWS	= $(BASE).news
+DIST_SIGS	= $(BASE).sig.zip
 TAR		= tar
 ZIP		= zip
 
@@ -123,9 +124,17 @@ LANGUAGES = en ca da de es fr it ja nl nb nn pt sv pl
 LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it \
           jpJP <ja nlNL <nl noNO <nb ptBR <pt svSE <sv plPL <pl
 
+PILRCOPTS_ja = -Fj
+PILRCOPTS_ru = -Fc
+
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
 RESSTAMPS = $(foreach lang, $(LANGUAGES), $(lang).resstamp)
+DIST_BIN_SIG = $(patsubst %,%.sig,$(DIST_BIN) $(PRCS))
+DIST_BALL_SIG = $(patsubst %,%.sig,$(DIST_BALL))
+SSLEAYLIBS_SIG = $(patsubst %,%.sig,$(SSLEAYLIBS))
+AESLIBS_SIG = $(patsubst %,%.sig,$(AESLIBS))
+SIGS = $(DIST_BIN_SIG) $(DIST_BALL_SIG) $(SSLEAYLIBS_SIG) $(AESLIBS_SIG)
 
 default: $(BASE)-$(DEFAULTLANG).prc
 
@@ -138,7 +147,7 @@ $(RESSTAMPS): %.resstamp: $(BITMAPS) resource.h $(RCP) prondata.o
 	@[ -d res/$* ] || mkdir -p res/$*
 	@-rm -f res/$*/*
 	@-rm -f *.bin
-	$(PILRC) -allowEditID -H auto.h.tmp -q $(shell [ "$*" = ja ] && echo -Fj) -L $* $(RCP) res/$*/ >/dev/null
+	$(PILRC) -allowEditID -H auto.h.tmp -q $(PILRCOPTS_$*) -L $* $(RCP) res/$*/ >/dev/null
 	$(OBJCOPY) -Obinary prondata.o res/$*/PRON03e8.bin
 	@if cmp -s auto.h auto.h.tmp; then rm -f auto.h.tmp; \
 	 else mv auto.h.tmp auto.h; fi
@@ -155,7 +164,8 @@ $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	rm -fr $(tmpdir)
 
-$(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS) $(AESLIBS)
+$(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS) $(AESLIBS) \
+	$(BASE)-%.prc.sig $(SSLEAYLIBS_SIG) $(AESLIBS_SIG)
 	$(ZIP) -jq9 $@ $^
 
 $(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
@@ -163,6 +173,13 @@ $(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
 	@ls -l $(DIST_BIN) $(DIST_BALL)
+
+$(DIST_SIGS): $(SIGS)
+	$(ZIP) -jq9 $@ $^
+
+$(SIGS): %.sig: %
+	rm -f $@
+	gpg --detach-sign $*
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
@@ -185,12 +202,12 @@ $(EXE): $(OBJ) $(APP)-sections.ld ;
 # XXX The java program to build the overlays is still under construction
 # mail me (hoenicke at users.sf.net) if you're interested in the source.
 #
-$(DIST_OVL_ZIP): $(PRCS) $(SSLEAYLIBS) $(AESLIBS)
+$(DIST_ZIP): $(PRCS) $(SSLEAYLIBS) $(AESLIBS)
 	@[ -d ovl ] || mkdir ovl
 	CLASSPATH=script/astroinfo-pdb.jar $(JAVA) \
 	net.sf.astroinfo.pdb.CreateOverlay ovl/$(BASE) \
 	$(LOCALES:<%=$(BASE)-%.prc)
-	$(ZIP) -jq9 $(BASE).zip ovl/* $(SSLEAYLIBS) $(AESLIBS)
+	$(ZIP) -jq9 $(DIST_ZIP) ovl/* $(SSLEAYLIBS) $(AESLIBS)
 
 # We try to avoid touching auto.h, because that will kick off
 # rebuilding a lot of source and it's often not necessary.
