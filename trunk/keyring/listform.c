@@ -44,8 +44,8 @@ static void ListForm_ListDraw(Int16 itemNum,
     Char altBuf[30];
     UInt16 recPos;
 
-    ErrFatalDisplayIf(!gKeyDB, __FUNCTION__ ":!gKeyDB");
-    ErrFatalDisplayIf(itemNum > 100, __FUNCTION__ ":out of range");
+    ErrFatalDisplayIf(!gKeyDB, __FUNCTION__ ": !gKeyDB");
+    ErrFatalDisplayIf(itemNum > 10000, __FUNCTION__ ": unreasonable itemnum");
     
     recPos = DmPositionInCategory(gKeyDB, itemNum, dmAllCategories);
     if (recPos == dmMaxRecordIndex)
