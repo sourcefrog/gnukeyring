@@ -1,0 +1,19 @@
+keyring-link
+------------
+
+This is a prototype desktop interface to the Keyring for PalmOS
+database.  At the moment, the only implemented function is dumping all
+records in text form.
+
+To build this, you will need the libpisock library (sometimes called
+pilot-link-devel), and OpenSSL.  This is tested on Debian `Woody'
+GNU/Linux, but ought to work elsewhere.
+
+To use it, transfer the Keys-Gtkr.PDB file to your PC, and invoke the
+`keyring' app as 
+
+  keyring-link PDBFILE [PASSWORD]
+
+-- 
+Martin
+
