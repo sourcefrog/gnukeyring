@@ -84,14 +84,6 @@ MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len)
     return h;
 }
 
-
-void Mem_ReadChunk(Char * *ptr, UInt32 len, void * dest)
-{
-    MemMove(dest, *ptr, len);
-    *ptr += len;
-}
-
-
 void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len)
 {
     if (h) {

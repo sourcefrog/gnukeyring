@@ -59,7 +59,7 @@ static UInt32 packBodyLen, packRecLen;
  * Calculate and store into packRecLen and packBodyLen the amount of
  * database space this key will use.
  */
-void Keys_CalcPackedSize(UnpackedKeyType const *unpacked)
+static void Keys_CalcPackedSize(UnpackedKeyType const *unpacked)
 {
     packBodyLen = unpacked->acctLen + 1
          + unpacked->passwdLen + 1
@@ -96,8 +96,8 @@ static char *Keys_PackBody(UnpackedKeyType const *u)
  * Encrypt and store an unpacked record into an open and locked
  * database record.
  */
-void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr,
-                      UInt8 *cryptKey)
+static void Keys_WriteRecord(UnpackedKeyType const *unpacked, 
+			     void *recPtr, UInt8 *cryptKey)
 {
     UInt32     off = 0;
     void       *bodyBuf;
