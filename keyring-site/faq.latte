@@ -1,5 +1,6 @@
 {\def {\faqentry \=faqid \name \&rest}
-  {\a \name=\faqid {{\h3 \name {\a \href={\concat # \faqid} {\c-raquo}}} \rest}}
+  {\a \name=\faqid {{\h3 \name {\a \href={\concat # \faqid}
+  {\c-raquo}}} {\ul \rest}}}
 }
 
 {\page 
@@ -9,7 +10,7 @@
   {\h2 frequently asked questions}
 
   {\faqentry \faqid=bad_download
-    { {\buglink \bugid=119744 When I try to install \Product, my
+    { {\buglink \bugid=119744} When I try to install \Product, my
         handheld or PC crashes.  }
       
      You may have suffered an error in downloading GNU Keyring.  If
@@ -22,10 +23,10 @@
      cache, downloading them using a different browser, turning on or
      off your web proxy, or downloading from a different machine.
 
-     If all else fails, {\a \href=http://sourceforge.net/users/mbp/
+     If all else fails, {\a \href=http://sourceforge.net/sendmessage.php?touser=521
      send me mail} and I will email you a copy of the file.  
 
-   } }
+   }
 
   {\faqentry \faqid=check_backup
       {I have begun using Keyring, and am trying to verify that
