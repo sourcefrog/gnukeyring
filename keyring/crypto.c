@@ -27,7 +27,6 @@
 #include "keyring.h"
 #include "crypto.h"
 #include "snib.h"
-#include "transient.h"
 
 // ======================================================================
 // DES3 functions
