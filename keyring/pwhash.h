@@ -22,3 +22,8 @@
 
 Boolean PwHash_Check(Char *guess);
 Err PwHash_Store(Char *newPasswd);
+
+typedef struct {
+     UInt32     salt;
+     UInt8      hash[64];
+} CheckHashType;

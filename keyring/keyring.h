@@ -25,13 +25,13 @@
 #endif	/* !__GNUC__ */
 
 #define kKeyDBType		'Gkyr'
-#define kKeyDBName		"Keys-Gtkr2"
+#define kKeyDBName		"Keys-Gtkr"
 #define kKeyringCreatorID	'Gtkr'
 #define kAppName		"Keyring"
 
 /* The database version we use:
  *
- * v0 had the session key stored in the AppInfo block, and could not
+ * v0 had the checking hash stored in the AppInfo block, and could not
  * support Categories
  *
  * v1 had the session key stored in the SortInfo block, which was a
@@ -47,7 +47,7 @@
 #define kDatabaseVersion	4
 
 /* The app and preferences version */
-#define kAppVersion		132
+#define kAppVersion		10005
 
 #define kLockExpiryPref		0
 #define kGeneralPref		1

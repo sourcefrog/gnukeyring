@@ -44,3 +44,4 @@ enum KeyDB_State KeyDB_Examine(void);
 Boolean KeyDB_Verify(Char const *guess);
 
 Int16 Keys_IdxOffsetReserved(void);
+Err KeyDB_CreateReservedRecords(void);
