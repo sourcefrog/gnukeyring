@@ -15,9 +15,6 @@ APPID           = "Gtkr"
 #C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI
 #export C_INCLUDE_PATH
 
-VERSION         = 1.1pre4
-BUILD_DATE     := $(shell date +'%Y-%m-%d')
-
 RCP             = $(APP).rcp
 RCP_IN          = $(RCP).ja $(RCP).in
 BITMAPS         = keyring-15.xbm keyring-22.xbm lock.xbm unlock.xbm
@@ -25,8 +22,8 @@ RESOURCES	= fontPW.txt fontstar.txt $(BITMAPS)
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
-		  beta.c setpasswd.c pwhash.c snib.c reencrypt.c	\
-		  pack.c unpack.c sort.c secrand.c debug.c
+		  setpasswd.c pwhash.c snib.c reencrypt.c pack.c	\
+		  unpack.c sort.c secrand.c debug.c
 
 HEADERS	        = keyring.h record.h error.h keydb.h listform.h 	\
 		  resource.h crypto.h pwhash.h snib.h includes.h
@@ -62,11 +59,13 @@ AWK		= awk
 # On the other hand -O0 seems to make gcc not treat constants
 # properly. Foo. 
 
-DEFINES		= 
+BUILD_DATE     := $(shell date +'%Y-%m-%d')
+VERSION         = 1.1pre4
+DEFINES		= -DBETA -DkAppVersion=0x1005
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
-		-Wlarger-than-260 -Wshadow -Wcast-align	
-# 		-Wsign-compare
+		-Wlarger-than-260 -Wshadow -Wcast-align
+
 OPTIM		= -O3 -finline-functions -g
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
@@ -163,7 +162,7 @@ auto.h: en.resstamp
 
 clean:
 	rm -f *.o *.d $(EXE) $(RCP) TAGS *.bin *.grc *.prc *.resstamp \
-	prototype.h *.bin *.d .*.stamp auto.h
+	prototype.h *.bin *.d .*.stamp auto.h *~ *.tmp
 	rm -rf res
 
 scrub:	clean
@@ -179,8 +178,10 @@ ID: .
 
 .PHONY: install proto
 
-install: $(EN_PRC)
-	pilot-xfer -i $(EN_PRC)
+install: install-en
+
+install-%: $(APP)-$(VERSION)-%.prc
+	pilot-xfer -i $^
 
 
 MKPROTO_C = $(SRC)
