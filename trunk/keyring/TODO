@@ -1,24 +1,73 @@
 -*- indented-text -*-
 $Id$
 
-(1) Must unlock to set prefs
+Critical: ------------------------------------------------------------
 
 (1) Lock the database when the timeout expires, even if it's currently
     showing a record.  Also, make sure changes to the system clock
     cannot cause the keyring to unlock again.  Also, make sure that
     the Snib database is overwritten and unlinked when we lock.
 
+Important ------------------------------------------------------------
+
 (2) Don't use private records, because they're deleted when the system
     password is reset.
+
+    This possibly requires an upgrade to the database format, because
+    older versions of the application will miscount if the record is
+    not secret.
 
 (2) Make sure that the snib really is destroyed when the time runs
     out, even if the clock has been reset.
 
+    One approach is to use the Notification manager, but that's an
+    optional features so it would be better to use something else.  We
+    might also be able to use launch codes: we can watch for 
+
+      sysAppLaunchCmdSystemReset
+      sysAppLaunchCmdSyncNotify
+
+    but there is no power off.  Or, we could look for events:
+
+      appStopEvent
+
+    err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &value);
+
+    If the notification manager is part of the system, the value
+    parameter will be non-zero and the returned error should also be
+    zero (for no error).
+
+    We should perhaps also listen for sysAppLaunchCmdTimeChange, and
+    use it to destroy the snib, and sysAppLaunchCmdSyncNotify, and
+    sysAppLaunchCmdSystemLock.
+
+Good -----------------------------------------------------------------
+
+(3) Optionally lock on power off or switching applications.
+
+(3) Draw the edit form using a table so that the fields can resize,
+    like in the address book.
+
+(3) Show the last-modified date for the record.  Perhaps prompt to
+    update it so that small modifications don't break anything.
+
+Nice -----------------------------------------------------------------
+
+(4) Choose fonts
+
+(4) Database info dialog.
+
+Possible -------------------------------------------------------------
+
+(5) Nag people to make a backup if they haven't done so for some
+    time.  
+
+    This is only good if the pilot-xfer program resets the backup
+    time when it makes a backup.  I'm not sure if it does.
+
 * Advise use of accented characters as they're much harder to guess.
 
 * Prevent people from choosing no options in the Generate dialog.
-
-* Choose fonts
 
 * Scroll to show newly-inserted items
 
@@ -32,11 +81,7 @@ or perhaps don't export them at all.
 
 * Update pos when changing categories
 
-* Lock on power off/switching apps
-
 * Move to right record on empty record & page down
-
-* No session key
 
 * Newline in single-line fields should move down one field
 

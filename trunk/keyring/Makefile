@@ -69,8 +69,7 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes -Winline		\
 		-Wlarger-than-256 -Wshadow -Wcast-align	
 # 		-Wsign-compare
-OPTIM		= -O3 -finline-functions
-# OPTIM		= -g
+OPTIM		= -O3 -finline-functions -g
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD 
 
 HELP_TXT        = $(wildcard help/*/*.txt)
