@@ -34,6 +34,7 @@ BEGIN
   "@@WrongPassword" = "Password incorrect.  Please try again."
   "@@PasswordMismatch" = "The passwords you entered do not match."
   "@@NotImplemented" = "Sorry, that feature is not implemented yet."
+  "@@langSpecificChars" =  "ä¥©"
 
   "@@GenerateHelp" = "help/en/generate.txt"
   "@@KeyEditHelp" = "help/en/keyedit.txt"
@@ -97,6 +98,7 @@ BEGIN
 
   "Not here yet" = "Noch nicht implementiert"
   "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
+  "@@langSpecificChars" =  "ä¥©"
 
   "^1: System error ^2" =  "^1: Systemfehler ^2"
   "Couldn't launch the Memo Pad" =  "Die Merkzettel Anwendung konnte nicht gestartet werden."
@@ -203,6 +205,7 @@ BEGIN
 
   "Not here yet" = "Vuelva Vd. mañana"
   "@@NotImplemented" = "Esta característica no está implementada aun."
+  "@@langSpecificChars" =  "ä¥©"
 
   "^1: System error ^2" =  "^1: ¡Error! ^2"
   "Couldn't launch the Memo Pad" =  "El block de notas no puede ejecutarse."
@@ -296,6 +299,7 @@ BEGIN
 
   "Not here yet" = "Inte här ännu"
   "@@NotImplemented" = "Denna funktion är inte implementerad ännu."
+  "@@langSpecificChars" =  "ä¥©"
 
   "^1: System error ^2" =  "^1: Systemfel ^2"
   "Couldn't launch the Memo Pad" =  "Kunde inte starta Memo Pad."
@@ -403,6 +407,7 @@ BEGIN
 
   "Not here yet" = "Nog niet geimplementeerd."
   "@@NotImplemented" = "Deze functie is nog niet geimplementeerd."
+  "@@langSpecificChars" =  "ä¥©"
 
   "^1: System error ^2" =  "^1: Systeemfout ^2"
   "Couldn't launch the Memo Pad" =  "Kan de memo applicatie niet starten."
@@ -435,7 +440,7 @@ BEGIN
   "Paste" = "Plakken"
   "Cut" = "Knippen"
   "Select All" = "Alles selecteren"
-  "Key %d of %d" = "Schlüssel %d v. %d"
+  "Key %d of %d" = "Sleutel %d van %d"
   "Copy" = "Kopieren"
   "Keyboard" = "Toetsenbord"
   "New Key" = "Nieuwe sleutel"
@@ -445,8 +450,8 @@ BEGIN
   "Export to Memo" = "Naar Memo exporteren"
   "Delete..." = "Verwijderen..."
 
-  "@@GenerateHelp" = "help/de/generate.txt"
-  "@@KeyEditHelp" = "help/de/keyedit.txt"
+  "@@GenerateHelp" = "help/nl/generate.txt"
+  "@@KeyEditHelp" = "help/nl/keyedit.txt"
 
   "@accel_Undo" = "U"
   "@accel_Cut" = "X"
@@ -504,6 +509,7 @@ BEGIN
 
   "Not here yet" = "Pas encore mis en application"
   "@@NotImplemented" = "Cette function n'est pas encore mis en application."
+  "@@langSpecificChars" =  "ä¥©"
 
   "^1: System error ^2" =  "^1: Erreur système ^2"
   "Couldn't launch the Memo Pad" =  "N'a pas pu lancer le bloc-notes."
@@ -605,6 +611,7 @@ BEGIN
 
   "Not here yet" = "Ikke her enda"
   "@@NotImplemented" = "Denne funksjonen er enda ikke implementert."
+  "@@langSpecificChars" =  "ä¥©"
 
   "^1: System error ^2" =  "^1: Systemfeil ^2"
   "Couldn't launch the Memo Pad" =  "Kunne ikke starte Memo Pad."
@@ -697,6 +704,7 @@ BEGIN
 
   "Not here yet" = "Ikkje her endå"
   "@@NotImplemented" = "Denne funksjonen er endå ikkje implementert."
+  "@@langSpecificChars" =  "ä¥©"
 
   "^1: System error ^2" =  "^1: Systemfeil ^2"
   "Couldn't launch the Memo Pad" =  "Kunne ikkje starte Memo Pad."
@@ -792,6 +800,7 @@ BEGIN
 
   "Not here yet" = "Ainda nao esta aqui"
   "@@NotImplemented" = "Ainda nao implementado"
+  "@@langSpecificChars" =  "ä¥©"
 
   "^1: System error ^2" =  "^1: Error: ^2"
   "Couldn't launch the Memo Pad" =  "Nao pude executar o Memo Pad"
@@ -977,7 +986,7 @@ BEGIN
 	PUSHBUTTON "A-Z" id IncludeUpper at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 PREVTOP 20 auto)
-        PUSHBUTTON "ä¥©" ID ID_IncludeHigh AT (PREVRIGHT+1 PREVTOP 22 AUTO)
+        PUSHBUTTON "@@langSpecificChars" ID ID_IncludeHigh AT (PREVRIGHT+1 PREVTOP 22 AUTO)
 /*        PUSHBUTTON "pronounceable syllables" ID ID_Syllables AT (44 PREVBOTTOM+1 PREVRIGHT-44 AUTO) */
 
 	BUTTON "Generate" id OkBtn at (3 PREVBOTTOM+7 auto auto)
