@@ -84,7 +84,7 @@ UInt32 initsha1[5] =  {
 /* Process 64 bytes of BUFFER, accumulating context into CTX. */
 
 static SHA1_SECTION void
-SHA1_Block_ (const UInt32 *digin, UInt32 *buffer, UInt32 *digout)
+SHA1_Block (const UInt32 *digin, UInt32 *buffer, UInt32 *digout)
 {
     UInt32 W[80];
     UInt32 A = digin[0];
