@@ -34,6 +34,4 @@ void UI_UpdateCategoryName(FormPtr frm, UInt16 category);
 
 void UI_ReportSysError2(UInt16 msgID, Err err, char const *where);
 
-void App_ReportSysError(UInt16 msgID, Err err);
-
 void App_NotImplemented(void);

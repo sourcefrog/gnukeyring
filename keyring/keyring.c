@@ -101,20 +101,15 @@ static Boolean App_TooNew(void) {
 }
 
 
-static Err App_PrepareDB(void) {
+static Err Keyring_PrepareDB(void) {
     Err		err;
     UInt16	ver;
     
     /* If the database doesn't already exist, then we require the user
      * to set their password. */
     err = KeyDB_OpenExistingDB();
-    if (err == dmErrCantFind) {
-	if ((err = KeyDB_CreateDB())
-            || (err = KeyDB_OpenExistingDB())
-	    || (err = KeyDB_CreateCategories()))
-	    goto failDB;
-	if (!SetPasswd_Run())
-	    return 1;
+    if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
+	return err;		/* error already reported */
     } else if (err) {
 	goto failDB;
     } else {
@@ -125,6 +120,13 @@ static Err App_PrepareDB(void) {
 	    if (App_OfferUpgrade()) {
 		if ((err = UpgradeDB(ver)))
 		    return err;
+
+	        /* We always mark the database here, because we may
+		 * have converted from an old version of keyring that
+		 * didn't do that. */
+		if ((err = KeyDB_MarkForBackup()))
+		    goto failDB;
+
 	    } else {
 		return 1;
 	    }
@@ -134,16 +136,10 @@ static Err App_PrepareDB(void) {
 	}
     }
 
-    /* We always mark the database here, because we may have converted
-     * from an old version of keyring that didn't do that. */
-    if ((err = KeyDB_MarkForBackup()))
-	goto failDB;
-
     return 0;
 
-
  failDB:
-    App_ReportSysError(ID_KeyDatabaseAlert, err);
+    UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
     return err;
 }
 
@@ -151,12 +147,14 @@ static Err App_PrepareDB(void) {
 static Err App_Start(void) {
     Err err;
 
+    SysRandom(TimGetTicks() ^ SysRandom(0));
+	
     App_LoadPrefs();
     Gkr_CheckBeta();
     if ((err = Snib_Init()))
 	return err;
 
-    if ((err = App_PrepareDB()))
+    if ((err = Keyring_PrepareDB()))
         return err;
 
     FrmGotoForm(ListForm);

@@ -64,16 +64,30 @@ void Mem_ObliteratePtr(void * ptr OBLIT_USED) {
 /* Return handle of a new chunk containing a copy of the string at
  * SRCPTR, and also put the length of that string in *LEN.  If the string
  * is "", then return null.  The returned length does not include the
- * terminal NUL, but the allocated chunk does have space for it. */
-MemHandle Mem_StrToHandle(Char * srcPtr, UInt32 *len) {
+ * terminal NUL, but the allocated chunk does have space for it.
+ *
+ * Running out before remain should never happen unless there's a bug
+ * in the decryption stuff. */
+static MemHandle Mem_StrToHandle(Char * srcPtr, Int16 *remain, Int16 *len) {
     MemHandle h;
-    void * destPtr;
-    
-    if ((*len = StrLen(srcPtr)) > 0) {    
-	h = MemHandleNew(*len + 1);
+    Char* destPtr;
+    Int16 i;
+
+    if (*remain <= 0)
+        return 0;
+
+    /* Search for up to REMAIN bytes looking for the terminator. */
+    for (i = 0; i < *remain && srcPtr[i]; i++)
+        ;
+    *len = i;
+
+    if (i > 0) {
+	h = MemHandleNew(i + 1);
 	ErrFatalDisplayIf(!h, __FUNCTION__ ": out of memory");
 	destPtr = MemHandleLock(h);
-	StrCopy(destPtr, srcPtr);
+        ErrFatalDisplayIf(!destPtr, __FUNCTION__ ": out of memory");
+        MemMove(destPtr, srcPtr, i);
+	destPtr[i] = '\0';
 	MemHandleUnlock(h);
 	return h;
     } else {
@@ -82,11 +96,21 @@ MemHandle Mem_StrToHandle(Char * srcPtr, UInt32 *len) {
 }
 
 
-MemHandle Mem_ReadString(Char * *ptr, UInt32 * len) {
+/*
+ * PTR points to a pointer pointing to a buffer containing a string,
+ * which runs on for no more than REMAIN bytes.  We copy out the first
+ * NUL-terminated string, return it in a newly-allocated buffer, and
+ * put its length in LEN.  PTR and REMAIN are adjusted to show
+ * the amount remaining.
+ */
+MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len) {
     MemHandle h;
     
-    h = Mem_StrToHandle(*ptr, len);
+    h = Mem_StrToHandle(*ptr, remain, len);
+
     *ptr += *len + 1;
+    *remain -= *len + 1;
+    
     return h;
 }
 

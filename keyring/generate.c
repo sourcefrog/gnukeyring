@@ -166,8 +166,6 @@ static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
     Int16	ri;
     Int16       mask;
 
-    SysRandom(TimGetTicks());
-
     for (i = 0; i < len; i++) {
         /* If we just choose characters at random and then check,
              * then we get too many high ascii characters.  So instead

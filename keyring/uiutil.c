@@ -30,11 +30,6 @@
 // ======================================================================
 // User-interface utilities
 
-void App_ReportSysError(UInt16 msgID, Err err) {
-    UI_ReportSysError2(msgID, err, "None");
-}
-
-
 void UI_ReportSysError2(UInt16 msgID, Err err, char const *where) 
 {
     Char buf[256];

@@ -20,6 +20,26 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
+ * One record in the database contains a salted hash of the password,
+ * which we use to check whether the password is correct or not.  The
+ * initial four bytes are a random salt, which is prepended to the password
+ * before it is hashed:
+ *
+ * HASH = SALT . MD5(SALT . PASSWORD)
+ *
+ * There are two reasons for this: the main one is that we also use
+ * the MD5 hash of the password to encrypt the session key, so we
+ * obviously can't leave it lying around.  The second is that it would
+ * make lookups in a dictionary of MD5 hashes just a little too easy
+ * for anyone who had such a thing.
+ *
+ * The digest is always taken over a 64-byte buffer.  If necessary the
+ * password is truncated.  If the password is shorter then after a
+ * terminating NUL the remainder of the buffer is filled with the
+ * byte 0xFE.
+ */
+
 #include <PalmOS.h>
 
 #include "keyring.h"
@@ -31,8 +51,43 @@
 #include "uiutil.h"
 #include "auto.h"
 
+#define kSaltSize		4 /* bytes */
+#define kMessageBufSize		64
+#define kPwHashSize		(kSaltSize + kMD5HashSize)
+
+
 /*
- * Store the checking-hash of a password into record[kMasterHashRec].
+ * Generate the hash of a password, using specified salt.
+ */
+static Err PwHash_Calculate(UInt8 *digest, UInt32 salt, Char *passwd)
+{
+    Int16		len, n;
+    UInt8		buffer[kMessageBufSize];
+    Err		err;
+
+    /* Generate salt. */
+    MemMove(buffer, &salt, kSaltSize);
+
+    len = StrLen(passwd);
+    n = len + 1 + kSaltSize;
+    if (n > kMessageBufSize)
+	n = kMessageBufSize;
+    MemMove(buffer + kSaltSize, passwd, n - kSaltSize);
+    MemSet(buffer + n, kMessageBufSize - n, 0xFE);
+
+    err = EncDigestMD5(buffer, kMessageBufSize, digest);
+    if (err) {
+	UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
+	return err;
+    }
+
+    return 0;
+}
+
+
+
+/*
+ * Generate new salt, and calculate a checking-hash.  Store this in kMasterHashRec.
  */
 Err PwHash_Store(Char *newPasswd)
 {
@@ -40,26 +95,27 @@ Err PwHash_Store(Char *newPasswd)
     Char		digest[kMD5HashSize];
     MemHandle		recHandle;
     void		*recPtr;
-    Int16		idx;
+    UInt32		salt;
 
-    err = EncDigestMD5(newPasswd, StrLen(newPasswd), digest);
-    if (err) {
-	App_ReportSysError(CryptoErrorAlert, err);
-	return err;
-    }
+    salt = ((UInt32) SysRandom(0)) << 16 | SysRandom(0);
 
-    idx = kMasterHashRec;
-    recHandle = DmNewRecord(gKeyDB, &idx, kMD5HashSize);
+    PwHash_Calculate(digest, salt, newPasswd);
+
+    recHandle = DmResizeRecord(gKeyDB, kMasterHashRec, kPwHashSize);
     if (!recHandle) {
-	App_ReportSysError(ID_KeyDatabaseAlert, DmGetLastErr());
+	err = DmGetLastErr();
+	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 	return err;
     }
 
     recPtr = MemHandleLock(recHandle);
 
-    DmWrite(recPtr, 0, digest, kMD5HashSize);
+    DmWrite(recPtr, 0, &salt, kSaltSize);
+    DmWrite(recPtr, kSaltSize, digest, kMD5HashSize);
 
     MemHandleUnlock(recHandle);
+
+    DmReleaseRecord(gKeyDB, kMasterHashRec, true);
 
     return 0;
 }
@@ -72,26 +128,24 @@ Boolean PwHash_Check(Char *guess)
 {
     Char		digest[kMD5HashSize];
     MemHandle		recHandle;
-    Char		*recPtr;
     Boolean		result;
     Err			err;
-
-    /* Compute the hash of the entered password. */
-    err = EncDigestMD5(guess, StrLen(guess), digest);
-    if (err) {
-	App_ReportSysError(CryptoErrorAlert, err);
-	return false;
-    }
+    void		*recPtr;
+    UInt32		salt;
 
     /* Retrieve the hash record. */
     recHandle = DmQueryRecord(gKeyDB, kMasterHashRec);
     if (!recHandle) {
-	App_ReportSysError(ID_KeyDatabaseAlert, err);
+	err = DmGetLastErr();
+	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 	return false;
     }
     recPtr = MemHandleLock(recHandle);
 
-    result = !MemCmp(digest, recPtr, kMD5HashSize);
+    MemMove(&salt, recPtr, kSaltSize);
+    PwHash_Calculate(digest, salt, guess);
+    result = !MemCmp(digest, recPtr + kSaltSize, kMD5HashSize);
+    
     MemHandleUnlock(recHandle);
 
     return result;

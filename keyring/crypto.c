@@ -32,6 +32,8 @@
 // DES3 functions
 
 
+static const UInt8 noKey[kDES3KeySize];
+
 
 #ifndef DISABLE_DES
 
@@ -43,21 +45,24 @@ static Err DES3_Block(void const *from, void *to, Boolean crypt)
 {
     Err err;
     char other[kDESBlockSize];
-    UInt8 *kp =  (UInt8 *) &g_Snib->sessKey[0];
+    UInt8 *kp = (UInt8 *) g_Snib->sessKey;
 
     ErrFatalDisplayIf(!kp, "record key unready");
-    
+
     err = EncDES((UInt8 *) from, kp, to, crypt);
     if (err)
         return err;
 
-    err = EncDES((UInt8 *) to, kp + kDESKeySize, other, crypt);
+    err = EncDES((UInt8 *) to, kp + kDESKeySize, other, !crypt);
     if (err)
         return err;
 
     err = EncDES((UInt8 *) other, kp + kDESKeySize*2, to, crypt);
     if (err)
         return err;
+#if 0
+    MemMove(to, from, kDESBlockSize);
+#endif
 
     return 0;
 }
@@ -109,14 +114,14 @@ Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len)
 /*
  * Encrypt (or not!) and write out
  */
-void DES3_Write(void *recPtr, UInt32 off,
+Err DES3_Write(void *recPtr, UInt32 off,
                 char const *src, UInt32 len)
 {
-    DmWrite(recPtr, off, src, len);
+    return DmWrite(recPtr, off, src, len);
 }
 
 
-Err DES3_Read(void * from, void * to, UInt32 len, UInt8 const UNUSED(*key))
+Err DES3_Read(void * from, void * to, UInt32 len)
 {
     MemMove(to, from, len);
 

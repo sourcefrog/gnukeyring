@@ -20,6 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-void SessKey_Store(Char *passwd);
-void SessKey_Load(Char *passwd);
-void SessKey_Generate(void);
+Err SessKey_Store(Char *passwd);
+Err SessKey_Load(Char *passwd);
+Err SessKey_Generate(void);

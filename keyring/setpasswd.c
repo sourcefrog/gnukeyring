@@ -37,7 +37,8 @@
 
 
 /* Return true if set, false if cancelled. */
-Boolean SetPasswd_Run(void) {
+Boolean SetPasswd_Run(void)
+{
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm;
     UInt16 	btn;
@@ -87,7 +88,10 @@ Boolean SetPasswd_Run(void) {
     frm = FrmInitForm(BusyEncryptForm);
     FrmDrawForm(frm);
 
+    /* This stores the checking-hash and also reencrypts and stores
+     * the session key. */
     KeyDB_SetPasswd(masterPtr);
+    
     MemPtrFree(masterPtr);
     
     result = true;

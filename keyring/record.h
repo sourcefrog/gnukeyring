@@ -24,7 +24,7 @@
 typedef struct {
     /* Length of corresponding string fields, not including the
      * terminating NUL that is present inside the memory blocks. */
-    UInt32 nameLen, acctLen, passwdLen, notesLen;
+    UInt16 nameLen, acctLen, passwdLen, notesLen;
     
     /* Handles to string values, or 0.
      *

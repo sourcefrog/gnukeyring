@@ -88,7 +88,7 @@ Err UpgradeDB(UInt16 oldVersion) {
 	 * with the hash of the password, and stores the encrypted
 	 * session key in the AppInfo section. */
 	if ((err = Upgrade_From0())) {
-	    App_ReportSysError(UpgradeFailedAlert, err);
+	    UI_ReportSysError2(UpgradeFailedAlert, err, __FUNCTION__);
 	    return err;
 	}
     } else {

@@ -22,6 +22,11 @@
 
 
 /*
+ * Manages session keys stored in hidden records at the start of the
+ * database.
+ */
+
+/*
  * TODO: Generate a genuine random key, and save it encrypted by the
  * user's password.
  */
@@ -36,20 +41,24 @@
 #include "auto.h"
 #include "uiutil.h"
 #include "sesskey.h"
+#include "keydb.h"
 
 
-/*
- * Make up a new session key.  This is called only when creating a new
+/* Make up a new session key.  This is called only when creating a new
  * database -- calling it any other time will make the database
- * unreadable.  It's left in memory in gRecordKey, and can later be saved
- * using SessKey_Store.
- */
-void SessKey_Generate(void)
+ * unreadable.  It's left in memory in the snib database, and can
+ * later be encrypted and written out using SessKey_Store.  */
+Err SessKey_Generate(void)
 {
     UInt8       tmpKey[kDES3KeySize];
+    Int16       i;
+
+    for (i = 0; i < kDES3KeySize; i++)
+        tmpKey[i] = (UInt8) SysRandom(0);
     
-    MemSet(tmpKey, kDES3KeySize, 0);
     Snib_SetSessKey(tmpKey);
+
+    return 0;
 }
 
 
@@ -57,14 +66,61 @@ void SessKey_Generate(void)
  * Load the session key from the main database, decrypt it, and store it in
  * the working database.
  */
-void SessKey_Load(Char *UNUSED(passwd))
+Err SessKey_Load(Char *UNUSED(passwd))
 {
-    SessKey_Generate();         /* stubbed out */
+    MemHandle recHandle;
+    UInt8               *ptr;
+    Err                 err;
+
+    ErrFatalDisplayIf(!g_Snib, __FUNCTION__ ": no snib");
+
+    recHandle = DmQueryRecord(gKeyDB, kSessionKeyRec);
+    if (!recHandle) {
+	err = DmGetLastErr();
+	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	return err;
+    }
+    
+    ptr = MemHandleLock(recHandle);
+    Snib_SetSessKey(ptr);
+    MemHandleUnlock(recHandle);
+#if 0
+    Snib_SetSessKey(noKey);
+    err = 0;
+#endif
+
+    return err;
 }
 
 
-void SessKey_Store(Char *UNUSED(passwd))
+/*
+ * Store SESSKEY encrypted by PASSWD into the reserved database
+ * record.  
+ */
+Err SessKey_Store(Char *UNUSED(passwd))
 {
+    MemHandle recHandle;
+    Err err;
+    void *recPtr;
+    
+    ErrFatalDisplayIf(!g_Snib, __FUNCTION__ ": no snib");
 
+    recHandle = DmResizeRecord(gKeyDB, kSessionKeyRec,
+			       kDES3KeySize);
+    if (!recHandle) {
+	err = DmGetLastErr();
+	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	return err;
+    }
+
+    recPtr = MemHandleLock(recHandle);
+
+    DmWrite(recPtr, 0, g_Snib->sessKey, kDES3KeySize);
+
+    MemHandleUnlock(recHandle);
+
+    DmReleaseRecord(gKeyDB, kSessionKeyRec, true);
+
+    return 0;
 }
 
