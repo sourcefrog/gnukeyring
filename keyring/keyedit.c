@@ -420,9 +420,9 @@ static void KeyEditForm_OpenRecord(void)
     if (gPrefs.category != dmAllCategories)
 	gPrefs.category = gRecord.category;
 
+    KeyEditForm_UpdateAll();
     FrmSetFocus(f_KeyEditForm,
                 FrmGetObjectIndex(f_KeyEditForm, ID_KeyNameField));
-    KeyEditForm_UpdateAll();
 }
 
 
