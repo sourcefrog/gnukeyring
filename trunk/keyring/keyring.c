@@ -107,22 +107,14 @@ static Err CheckGlib(UInt32 creator, char* libname) {
     return sysErrLibNotFound;
 }
 
-static Err CheckLibraries (void)
-{
-    Err error;
-    /* Check if the necessary openssl libraries are installed */
-    if ((error = CheckGlib('CrDS', "DESLib.prc"))
-	|| (error = CheckGlib('CrMD', "MDLib.prc")))
-	return error;
-    return 0;
-}
-
 
 static Err App_Start(void)
 {
     Err err;
 
-    if ((err = CheckLibraries()))
+    /* Check if the necessary openssl libraries are installed */
+    if ((err = CheckGlib('CrDS', "DESLib.prc"))
+	|| (err = CheckGlib('CrMD', "MDLib.prc")))
 	return err;
 
     App_LoadPrefs();
@@ -266,7 +258,6 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 
 static Err CheckROMVersion (void)
 {
-    Err error;
     UInt32 romVersion;
     /* See if we have at least the minimum required version of the 
      * ROM or later.
