@@ -9,20 +9,19 @@
 \;  {\beta_warning}
 
   {\def \langlist
-    {{en English} {de German} {es Spanish}
+    {{en English} {da Danish} {de German} {es Spanish}
     {fr French} {it Italian} {ja Japanese} 
-    {no Norwegian} {no_NY Norwegian (nynorsk)} 
-    {nl Dutch} {pt Portuguese} 
-    {sv Swedish}}}
+    {nb Norwegian (bokmål)} {nn Norwegian (nynorsk)} 
+    {nl Dutch} {pt Portuguese} {sv Swedish}}}
 
   {\table
     {\foreach \langtuple \langlist
       {\let {{\langcode  {\car \langtuple}} {\langname {\cdr \langtuple}}}
         {\tr {\td {\prcfile \langcode}} 
-	{\td \langname PRC binary}}
+	{\td \langname PRC binary + support files}}
       }
     }
-    {\tr {\td {\filelink compressed.gif .zip}} {\td Zip archive of all binaries}}
+\;    {\tr {\td {\filelink compressed.gif .zip}} {\td Zip archive of all binaries}}
     {\tr {\td {\filelink compressed.gif .tar.gz}} {\td Tarball of sources}}
     {\tr {\td {\filelink text.gif .news}} 
 	  {\td Release notes, MD5 checksums and GPG signature}}
