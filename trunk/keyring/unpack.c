@@ -33,18 +33,15 @@
 
 /* Convert from a packed database record into an unpacked in-memory
  * representation.  Return true if conversion was successful. */
-void Keys_Unpack(MemHandle record, UnpackedKeyType *u,
-                 UInt8 const *UNUSED(key))
+void Keys_Unpack(MemHandle record, UnpackedKeyType *u)
 {
     Char *      recPtr;
     UInt32      recLen;
     Int32       nameLen;
     Char *      ptr;
-#if 0
     Char *      plainBuf;
     Char *      cryptPtr;
     Err         err;
-#endif 
 
     recPtr = MemHandleLock(record);    
     recLen = MemHandleSize(record);
@@ -52,28 +49,22 @@ void Keys_Unpack(MemHandle record, UnpackedKeyType *u,
     u->nameHandle = Mem_StrToHandle(recPtr, &nameLen);
     u->nameLen = nameLen;
 
-#if 0
     plainBuf = MemPtrNew(recLen);
     ErrFatalDisplayIf(!plainBuf, "Not enough memory to unpack record");
 
     cryptPtr = recPtr + nameLen + 1;
-    err = DES3_Buf(cryptPtr, plainBuf, recLen - (cryptPtr - recPtr), false,
-                   key);
+    err = DES3_Read(cryptPtr, plainBuf, recLen - u->nameLen - 1);
     if (err) {
         /* TODO: If this failed, indicate to the caller that we couldn't unpack the record. */
         App_ReportSysError(CryptoErrorAlert, err);
     }
 
     ptr = plainBuf;
-
-#endif 0
-    ptr = recPtr + nameLen + 1;
     u->acctHandle = Mem_ReadString(&ptr, &u->acctLen);
     u->passwdHandle = Mem_ReadString(&ptr, &u->passwdLen);
     u->notesHandle = Mem_ReadString(&ptr, &u->notesLen);
 
-    /*     Mem_ReadChunk(&ptr, sizeof(DateType), &u->lastChange); */
-    /*     MemPtrFree(plainBuf); */
+    MemPtrFree(plainBuf); 
 
     MemHandleUnlock(record);
 }

@@ -22,12 +22,10 @@
 
 /* Sizes in bytes */
 #define kDESBlockSize		8
+#define kDESKeySize             8
 #define kDES3BlockSize          16
 #define kMD5HashSize            16
 
-Err DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
-	     UInt8 const *key);
-
-void DES3_Write(void *recPtr, UInt32 off,
-                char const *bodyBuf, UInt32 bodyLen);
+Err DES3_Read(void * from, void * to, UInt32 len);
+Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32);
 

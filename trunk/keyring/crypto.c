@@ -26,9 +26,78 @@
 #include "resource.h"
 #include "keyring.h"
 #include "crypto.h"
+#include "sesskey.h"
 
 // ======================================================================
 // DES3 functions
+
+
+
+#ifndef DISABLE_DES
+
+static Err DES3_Block(void const *from, void *to, Boolean crypt)
+{
+    Err err;
+    char other[kDESBlockSize];
+    
+    err = EncDES((UInt8 *) from, (UInt8 *) gRecordKey, to, crypt);
+    if (err)
+        return err;
+
+    err = EncDES((UInt8 *) to, (UInt8 *) gRecordKey+kDESKeySize, other, !crypt);
+    if (err)
+        return err;
+
+    err = EncDES((UInt8 *) other, (UInt8 *) gRecordKey, to, crypt);
+    if (err)
+        return err;
+
+    return 0;
+}
+
+
+Err DES3_Read(void * from, void * to, UInt32 len)
+{
+    //    Err		err = 0;
+
+    ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
+			 __FUNCTION__ ": not block padded");
+
+    do {
+        DES3_Block(from, to, false);
+
+	to += kDESBlockSize;
+	from += kDESBlockSize;
+	len -= kDESBlockSize;
+    } while (len > 0);
+
+    return 0;
+}
+
+
+Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len)
+{
+    UInt8	third[kDESBlockSize];
+    Err		err = 0;
+
+    ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
+			 __FUNCTION__ ": not block padded");
+
+    do {
+        err = DES3_Block(from, third, true);
+
+        DmWrite(recPtr, off, third, kDESBlockSize);
+
+        off += kDESBlockSize;
+	from += kDESBlockSize;
+	len -= kDESBlockSize;
+    } while (len > 0);
+
+    return 0;
+}
+
+
+#else /* DISABLE_DES */
 
 /*
  * Encrypt (or not!) and write out
@@ -40,44 +109,7 @@ void DES3_Write(void *recPtr, UInt32 off,
 }
 
 
-
-#define DISABLE_DES
-
-#ifndef DISABLE_DES
-Err DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
-	     UInt8 const *key)
-{
-    UInt8	other[kDESBlockSize];
-    Err		err = 0;
-
-    ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
-			 __FUNCTION__ ": not block padded");
-
-    do {
-	err = EncDES(from, (UInt8 *) key, to, encrypt);
-	if (err)
-	    return err;
-
-	err = EncDES(to, (UInt8 *) key+kDESBlockSize, other, !encrypt);
-	if (err)
-	    return err;
-
-	err = EncDES(other, (UInt8 *) key, to, encrypt);
-	if (err)
-	    return err;
-
-	to += kDESBlockSize;
-	from += kDESBlockSize;
-	len -= kDESBlockSize;
-    } while (len > 0);
-
-    return 0;
-}
-
-#else /* DISABLE_DES */
-
-Err DES3_Buf(void * from, void * to, UInt32 len, Boolean UNUSED(encrypt),
-	     UInt8 const UNUSED(*key))
+Err DES3_Read(void * from, void * to, UInt32 len, UInt8 const UNUSED(*key))
 {
     MemMove(to, from, len);
 
