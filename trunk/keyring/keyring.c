@@ -177,6 +177,7 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 
     case CMD_CheckHeapOnChange:
     case CMD_ScrambleOnChange:
+    case CMD_NoDebug:
 	Keyring_ToggleMemDebug(itemId);
 	return true;
 

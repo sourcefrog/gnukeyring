@@ -1155,6 +1155,23 @@ BEGIN
 	BUTTONS "Cancel"
 END
 
+ALERT ID ALERT_DebugError
+ERROR
+BEGIN
+	TITLE "Debug Error"
+
+	MESSAGE "An error occurred in ^2: ^1"
+	BUTTONS "Continue"
+END
+
+
+ALERT ID ALERT_MemDebugSet
+INFORMATION
+BEGIN
+	MESSAGE "MemDebugMode set to ^1"
+	BUTTONS "OK"
+END
+
 
 FORM ID ConfirmDeleteForm AT (2 94 156 64)
 MODAL
@@ -1213,6 +1230,7 @@ BEGIN
 	BEGIN
 		MENUITEM "Check on change" ID CMD_CheckHeapOnChange
 		MENUITEM "Scramble on change" ID CMD_ScrambleOnChange
+		MENUITEM "No debug" ID CMD_NoDebug
 	END
 END
 

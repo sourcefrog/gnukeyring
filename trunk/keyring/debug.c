@@ -29,5 +29,34 @@
  */
 void Keyring_ToggleMemDebug(Int16 itemId)
 {
-	
+    UInt16		mode, mask;
+    Err			err;
+
+    switch (itemId) {
+    case CMD_CheckHeapOnChange:
+	mask = memDebugModeCheckOnChange;
+	break;
+    case CMD_ScrambleOnChange:
+	mask = memDebugModeScrambleOnChange;
+	break;
+    case CMD_NoDebug:
+	mode = 0;
+	goto mode_set;
+    default:
+	/* unknown */
+	return;
+    }
+    
+    mode = MemDebugMode();
+    mode ^= mask;
+    
+    mode_set:
+    
+    if ((err = MemSetDebugMode(mode))) {
+	UI_ReportSysError2(ALERT_DebugError, err, "MemSetDebugMode");
+    } else {
+	Char buf[16];
+	StrIToH(buf, mode);
+	FrmCustomAlert(ALERT_MemDebugSet, buf, NULL, NULL);
+    }	
 }
