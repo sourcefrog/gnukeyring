@@ -12,11 +12,21 @@
 
     {\ul
 
-    {\li Support find functionality, e.g. PalmOS global Find.}
+    {\li Support PalmOS global Find.}
+
+    {\li Support interactive search for a key name on list form.}
+
+    {\li Keyedit form is left on auto off if the timeout has also expired.
+         Code works for all supported PalmOS versions.}
+
+    {\li Use <a href="http://www.isaac.cs.berkeley.edu/pilot/">pilotSSLeay</a>
+         for encryption, which is a bit faster than the PalmOS builtin
+         encryption.  }
+
+    {\li The last-modified-date is back again. }
 
 
     }
-
 
   {\h3 Later versions}
 
@@ -32,21 +42,11 @@
 
     {\li {\buglink \bugid=114373 Import from Memo Pad}}
 
-
     {\li Reminders to change passwords.}
-
-    {\li Automatically update the last-modified-date when the record
-     is changed.}
 
     {\li More national language translations, or translations of these
     web pages.  Volunteers?}
 
-    {\li Provide our own implementation of the encryption and checksum
-       code so that \Product can run on PalmOS 2.0.  Probably we'll use
-       the SSLeay Palm port.}
-
-    {\li Port to {\externallink \href=http://www.pocketlinux.com/
-         PocketLinux}.}
   }
 
   {\h3 Possibilities}
@@ -57,6 +57,8 @@
 
     {\li Import/Export whole categories.}
 
+    {\li Check how \Product can run on PalmOS 2.0 again.}
+
     {\li Provide a {\externallink \href=http://www.gnome.org/ GNOME}
     or Java PC interface.}
 
@@ -65,6 +67,9 @@
     new db.}
    
     {\li Encrypt databases of other applications.}
+
+    {\li Port to {\externallink \href=http://www.pocketlinux.com/
+         PocketLinux}.}
   }
 }
 }
