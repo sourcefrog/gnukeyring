@@ -3,7 +3,7 @@
 # Resource file to be preprocessed.
 #
 # Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
-# Copyright (C) 2002-2003 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
+# Copyright (C) 2002-2004 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
 #
 # $Header$
 
@@ -105,11 +105,11 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 # For a list of ISO language codes, see
 # http://www.loc.gov/standards/iso639-2/englangn.html
 # The codes nn and nb for nynorsk and bokmål are recent additions.
-LANGUAGES = en ca da de es fr it ja nl nb nn pt sv pl ru
+LANGUAGES = en ca da de es fi fr it ja nl nb nn pt sv pl ru
 
-LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it \
-          jpJP <ja nlNL <nl noNO <nb ptBR <pt svSE <sv plPL <pl \
-	  ruRU <ru
+LOCALES = enUS <en caES <ca daDK <da deDE <de esES <es fiFI <fi \
+          frFR <fr itIT <it jaJP <ja nlNL <nl noNO <nb ptBR <pt 
+	  svSE <sv plPL <pl ruRU <ru
 
 PILRCOPTS_ja = -Fj
 PILRCOPTS_ru = -Fc

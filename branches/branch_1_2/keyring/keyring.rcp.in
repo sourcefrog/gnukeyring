@@ -5,6 +5,7 @@
  * Copyright (C) 1999-2001 by Martin Pool <mbp@humbug.org.au>
  * Copyright (C) 2001-2003 by Jochen Hoenicke <hoenicke@users.sf.net>
  * Copyright (C) 2003      by John Kirkland <john_kirkland@users.sf.net>
+ * Translation are copyrighted by their respective authors.
  * 
  * $Id$
  *
@@ -286,7 +287,7 @@ BEGIN
   "Paste" = "Incolla"
   "Cut" = "Taglia"
   "Select All" = "Seleziona tutto"
-  "Key %d of %d" = "Record %d di %d"
+  "Key ^0 of ^1" = "Record ^0 di ^1"
   "Copy" = "Copia"
   "Keyboard" = "Tastiera"
   "New Key" = "Nuovo record"
@@ -1284,6 +1285,124 @@ BEGIN
   "@@accel_Graffiti" = "G"
 END
 
+//
+======================================================================
+// Finnish translation contributed by Kai Käpölä
+
+TRANSLATION "fi"
+BEGIN
+  "Look Up:" = "Etsi:"
+  "New" = "Uusi"
+  "Key ______ of ______" = "Record ______ di ______" 
+  "Name:" = "Nimi:"
+  "Account:" = "Tunnus:"
+  "Password:" = "Salasana:"
+  "Confirm:"  = "Vanhvista:" 
+  "Changed:" = "Muokattu:"
+  "Done" = "Valmis"
+  "Preferences" = "Asetukset"
+  "Stay unlocked for:" = "Lukitusviive:"
+  "No time" = "0 sek."
+  "15 sec" = "15 sek."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+  "Veil password" = "Näytä salasana"
+  "Generate"="Luo"
+
+  "Cancel" = "Peruuta"
+
+  "Set Keyring Password" =  "Aseta pääsalasana"
+
+  "@@choosepassword" = "Syötä uusi pääsalasana:"
+
+  "Generate Password" = "Luo salasana"
+  "@@generate1" = "Luo uusi satunnainen "
+  "@@generate2" = "salasana:"
+
+  "Length:" = "Pituus:"
+  "Include:" = "Includi:"
+  "Generate" = "Luo"
+
+  "Unlock" =  "Avaa"
+
+  "Enter your password:" = "Syötä salasana:"
+
+  "Encrypting..." = "Salaa..."
+  "Decrypting..." = "Purkaa..."
+
+  "@@OutOfMemory" =  "Muisti loppui."
+  "Password" = "Salasana"
+  "@@WrongPassword" = "Salasana ei kelpaa. Yritä uudelleen."
+  "@@PasswordMismatch" =  "Syötetyt salasanat eivät täsmää"
+  "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "äännettävä"
+
+  "Not here yet" = "Toimintoa ei ole vielä toteutettu."
+  "@@NotImplemented" = "Toimintoa ei ole vielä toteutettu."
+  "@@NotEnoughFeatures" = "Keyringin tämä versio vaatii ^1."
+
+  "@@CouldntLaunchMemo" = "MemoPadin käynnistys ei onnistu."
+
+  "Delete Key" = "Poista tiedot"
+  "Delete current key record?" = "Poistetaanko nykyinen avain?"
+
+  "@@BetaVersion"
+   = "Tämä on Keyringin betaversio, jossa voi olla toimintavirheitä.
+Muista varmuuskopioida tärkeät tietosi!"
+
+  "This is free software.  No warranty." = "Tämä on ilmainen ja vapaa
+ohjelma. Ei takuuta!" 
+
+  "Released under the GNU GPL v2." = "Julkaistu lisenssit GNU GPL v2
+alaisuudessa." 
+
+  "Save archive copy on PC" = "Tallenna kopio PC:n"
+
+  "Database" = "Tietokanta"
+  "Set Password..." = "Aseta salasana..."
+  "Options" = "Optiot"
+  "Tips" = "Vinkit"
+  "Edit" = "Muokkaa"
+
+  "Preferences..." =  "Asetukset..."
+  "About..." =  "Tiedot..."
+
+  "Undo" = "Peru"
+  "Undo All" = "Peru kaikki"
+  "Graffiti Help" = "Graffiti:n apu"
+  "Paste" = "Liitä"
+  "Cut" = "Leikkaa"
+  "Select All" = "Valitse kaikki"
+  "Key ^0 of ^1" = "Tieto ^0 / ^1"
+  "Copy" = "Kopio"
+  "Keyboard" = "Näppäimistö"
+  "New Key" = "Uusi tieto"
+
+  "Key" =  "Tieto"
+  "Generate Password..." = "Luo salasana..."
+  "Export to Memo" = "Lähetä MemoPadiin"
+  "Delete..." = "Poista..."
+
+  "@@GenerateHelp" = "help/fi/generate.txt"
+  "@@KeyEditHelp" = "help/fi/keyedit.txt"
+  "@@SetPasswdHelp" = "Pääsalasana suojaa kaikkia tietojasi, eikä
+ilman sitä pääse käsiksi tietoihin. Mikäli unohdat sen, et voi
+mitenkään käyttää tietoja."
+
+  "There is no data to export." = "Ei ole tietoja lähetettäväksi."
+
+  "Unfiled" = "Luokittelematon"
+  "Phone" = "Puhelin"
+  "Banking" = "Pankki"
+
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "V"
+  "@@accel_SelectAll" = "S"
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
+END
 
 #include "resource.h"
 
