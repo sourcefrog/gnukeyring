@@ -285,6 +285,7 @@ Err Upgrade_ConvertRecords(DmOpenRef oldDB, char *passwd) {
     UInt8       keyMD5sum[kMD5HashSize];
     Err         err;
     UInt16      attr;
+    UInt32      uniqueID;
 
     newRecordKey = MemPtrNew(sizeof(CryptoKey));
     if (!newRecordKey)
@@ -301,7 +302,7 @@ Err Upgrade_ConvertRecords(DmOpenRef oldDB, char *passwd) {
 
     err = 0;
     for (idx = 0; idx < numRecs; idx++) {
-	err = DmRecordInfo(oldDB, idx, &attr, NULL, NULL);
+	err = DmRecordInfo(oldDB, idx, &attr, &uniqueID, NULL);
 	if (err)
 	    break;
 	if (attr & (dmRecAttrDelete | dmRecAttrSecret))
@@ -317,6 +318,7 @@ Err Upgrade_ConvertRecords(DmOpenRef oldDB, char *passwd) {
 	unpacked.unpacked.category = attr & dmRecAttrCategoryMask;
 
 	KeyDB_CreateNew(&newIdx);
+	DmSetRecordInfo(gKeyDB, newIdx, &attr, &uniqueID);
 	Record_SaveRecord(&unpacked.unpacked, newIdx, newRecordKey);
 	MemWipe(unpacked.unpacked.plainText, 
 		MemPtrSize(unpacked.unpacked.plainText));
