@@ -1,7 +1,0 @@
-// build-prc definition file for GNU Keyring
-// $Id$
-
-application { "Keyring" Gtkr backup }
-
-
- 
