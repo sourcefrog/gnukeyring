@@ -653,7 +653,7 @@ END
 // ======================================================================
 // Norwegian (nynorsk) translation by Andreas-Johann Ulvestad <aj@nlc.no>
 
-TRANSLATION "ny_NO"
+TRANSLATION "ny"
 BEGIN
   "New" = "Ny"
   "Key ______ of ______" = "Nøkkel ______ av ______" 
