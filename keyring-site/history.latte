@@ -4,7 +4,54 @@
 {
   {\h2 release history} 
 
+      
   {\dl
+
+    {\dt {\externallink
+	  \href=\"https://sourceforge.net/project/shownotes.php?release_id=\"
+	  1.0}}
+
+    {\dd 
+
+  {\ul
+   {\li Fix the {\buglink \bugid=106167 backup and restore bug} in
+   0.11.0, and recover all data made inaccessible.  }
+
+   {\li Fix data bugs {\buglink \bugid=100727}, {\buglink
+   \bugid=109425}, {\buglink \bugid=101473}, and others.  Rewrite the
+   database layer, and use PalmOS debugging features.}
+
+   {\li Display a warning about beta status at startup}
+
+   {\li If the version of PalmOS does not have the necessary features
+   then display an apology rather than just crashing.}
+
+   {\li Change database format again, with the master password hash
+        stored in hidden records.}
+
+   {\li For records with no public name, show them in the list by
+   their index number rather than a unique hex string.}
+
+   {\li Discard empty records.}
+
+   {\li Add an {\buglink \bugid=113358 Edit/Undo All feature}.}
+
+   {\li Show homepage URL in the About box.}
+
+   {\li Lock timeout is independent of the handheld being 
+     switched off or of switching to other applications.} 
+
+   {\li Generated passwords can contain writable non-ASCII
+    characters. }
+
+   {\li Key list form now uses a PalmOS Table control and looks much
+    nicer.}
+
+   {\li In the Edit form, the up/down buttons scroll the Notes field
+    if possible, or otherwise flip through the records.}
+  }
+   }
+
    {\dt {\externallink
    \href=\"https://sourceforge.net/project/shownotes.php?release_id=12604\"
    0.11.2 }}
@@ -51,9 +98,6 @@
 	  Changed to using 
           {\externallink 
 	   \href=http://www.palmos.com/dev/tech/tools/gcc/ prc-tools-2.0}.
-
-	  From here on, release will be done using Linux-style
-	  numbering for stable (even) and unstable (odd) releases.
 
 	  Added the `Export to Memo' feature.
 
