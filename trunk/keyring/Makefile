@@ -43,7 +43,7 @@ CFLAGS          = -O2 -Wall -Werror -Winline -Wunused -W \
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
-DOCS		= HACKING COPYING BUGS TODO TESTS \
+DOCS		= COPYING doc/HACKING doc/BUGS doc/TODO doc/TESTS \
 		  doc/break.html doc/find.html doc/index.html \
 		  doc/memo-import-export.html doc/security.html \
 		  doc/attack-tree.txt doc/description.txt \

@@ -72,6 +72,7 @@ void App_SavePrefs(void);
 
 extern DmOpenRef gKeyDB;
 extern UInt16 gKeyRecordIndex;
+extern UInt16 gKeyPosition;
 extern UInt8 gRecordKey[kPasswdHashSize];
 extern KeyringPrefsType gPrefs;
 

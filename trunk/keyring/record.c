@@ -84,7 +84,7 @@ static Int16 KeyDB_CompareRecords(void * rec1, void * rec2,
 
 
 
-void KeyRecord_Reposition(Char * name, UInt16 *idx)
+void KeyRecord_Reposition(Char * name, UInt16 *idx, UInt16 *position)
 {
     UInt16 	attr;
     UInt32 	uniqueID;
@@ -107,6 +107,8 @@ void KeyRecord_Reposition(Char * name, UInt16 *idx)
 	return;
     }
     DmSetRecordInfo(gKeyDB, *idx, &attr, &uniqueID);
+
+    *position = DmPositionInCategory(gKeyDB, *idx, gPrefs.category);
 }
 
 
@@ -299,6 +301,8 @@ void KeyRecord_SaveNew(UnpackedKeyType const *unpacked, Char const *name) {
 	App_ReportSysError(KeyDatabaseAlert, err);
 
     KeyRecord_SetCategory(idx, unpacked->category);
+
+    gKeyPosition = DmPositionInCategory(gKeyDB, idx, gPrefs.category);
 }
 
 

@@ -123,9 +123,9 @@ static void KeyEditForm_SetTitle(FormPtr frm) {
     if (gKeyFormTitle)
 	MemPtrFree(gKeyFormTitle);
 
-    if (gKeyRecordIndex != kNoRecord) {
-	pos = gKeyRecordIndex + 1;
-	total = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
+    if (gKeyPosition != kNoRecord) {
+	pos = gKeyPosition + 1;
+	total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
 	
 	titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
 	ErrFatalDisplayIf(!titleTemplate, "no titleTemplate");
@@ -135,20 +135,26 @@ static void KeyEditForm_SetTitle(FormPtr frm) {
 	// 6 characters long.
 	len = StrLen(titleTemplate) - 4 + 6 + 6 + 1;
 
-	gKeyFormTitle = MemPtrNew(len);
-	ErrFatalDisplayIf(!gKeyFormTitle, "couldn't allocate memory for title");
+	if (!(gKeyFormTitle = MemPtrNew(len)))
+	    goto failOut;
 	
 	StrPrintF(gKeyFormTitle, titleTemplate, pos, total);
 	MemPtrUnlock(titleTemplate);
     } else {
 	titleTemplate = MemHandleLock(DmGetResource(strRsc, EmptyTitleStr));
-	gKeyFormTitle = MemPtrNew(StrLen(titleTemplate) + 1);
-	ErrFatalDisplayIf(!gKeyFormTitle, "couldn't allocate memory for title");
+	if (!(gKeyFormTitle = MemPtrNew(StrLen(titleTemplate) + 1)))
+	    goto failOut;
+	
 	StrCopy(gKeyFormTitle, titleTemplate);
 	MemPtrUnlock(titleTemplate);	
     }
 
     FrmCopyTitle(frm, gKeyFormTitle);
+    return;
+
+ failOut:
+    FrmAlert(OutOfMemoryAlert);
+    return;
 }
 
 
@@ -257,7 +263,7 @@ static void KeyEditForm_Save(FormPtr frm) {
 	KeyRecord_SaveNew(&gRecord, name);
     } else {
 	KeyRecord_Update(&gRecord, gKeyRecordIndex);
-	KeyRecord_Reposition(name, &gKeyRecordIndex);
+	KeyRecord_Reposition(name, &gKeyRecordIndex, &gKeyPosition);
     }
 
     if (name)
@@ -430,9 +436,9 @@ static Boolean KeyEditForm_DeleteKey(Boolean saveBackup) {
     if (isNewRecord) {
 	// just quit without saving
 	return true;
-    } else if (saveBackup)
+    } else if (saveBackup) {
 	DmArchiveRecord(gKeyDB, gKeyRecordIndex);
-    else {
+    } else {
 	DmDeleteRecord(gKeyDB, gKeyRecordIndex);
 	// Move to the end
 	DmMoveRecord(gKeyDB, gKeyRecordIndex, DmNumRecords(gKeyDB));
@@ -534,20 +540,28 @@ static void KeyEditForm_Scroll(EventPtr event) {
 static void KeyEditForm_Page(int offset) {
     UInt16 numRecs;
 
-    if (gKeyRecordIndex == kNoRecord)
+    if (gKeyRecordIndex == kNoRecord) {
+	/* You can't page while you're editing a new record. */
+	SndPlaySystemSound(sndWarning);
 	return;
+    }
     
     KeyEditForm_MaybeSave();
 
-    /* TODO: Seek in this category! */
+    numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
 
-    numRecs = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
-
-    if ((gKeyRecordIndex == 0  &&  offset == -1)
-	|| (gKeyRecordIndex + offset == numRecs))
+    if ((gKeyPosition == 0  &&  offset == -1)
+	|| (gKeyPosition + offset == numRecs)) {
+	/* Bumped into the end */
+	SndPlaySystemSound(sndWarning);
 	return;
+    }
 
-    gKeyRecordIndex += offset;
+    gKeyPosition += offset;
+    gKeyRecordIndex = 0;
+    DmSeekRecordInCategory(gKeyDB, &gKeyRecordIndex, gKeyPosition,
+			   dmSeekForward, gPrefs.category);
+    
     KeyEditForm_OpenRecord();
     KeyEditForm_Update(updateCategory);
 }

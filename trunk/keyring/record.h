@@ -52,7 +52,7 @@ void KeyRecord_Update(UnpackedKeyType const *unpacked, UInt16 idx);
 void * KeyRecord_Pack(UnpackedKeyType const *u,
 		      UInt8 const *key);
 void UnpackedKey_Free(UnpackedKeyPtr u);
-void KeyRecord_Reposition(Char * name, UInt16 * idx);
+void KeyRecord_Reposition(Char * name, UInt16 * idx, UInt16 *position);
 
 void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
 		      UInt8 const *key);
