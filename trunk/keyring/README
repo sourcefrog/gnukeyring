@@ -1,7 +1,7 @@
 Keyring for PalmOS
 
 Copyright 1999-2002 by Martin Pool
-Copyright 2001-2003 by Jochen Hoenicke
+Copyright 2001-2005 by Jochen Hoenicke
 
   http://gnukeyring.sourceforge.net/
 
@@ -9,18 +9,12 @@ PRERELEASE INFORMATION
 
 This is a prerelease of keyring and it may contain bugs that destroy
 the database or even require a hard reset.  So update your backup,
-before installing this.
+before installing this.  And keep a backup of the Keys-Gtkr.pdb file
+in a seperate place in case you want to downgrade back to 1.2.2 later.
 
-On the positive side, this prerelease will live happily with
-keyring-1.2.2 without interfering.  It uses a different database and
-different creator IDs.  I also hadn't any hard resets or database
-corruption with this program.
-
-Upgrading your keyring-1.2.2 database is not yet supported.  And I
-can't promise that later versions of keyring will understand the new
-database.  So use it just for testing and keep important passwords
-with keyring-1.2.2.
-
+If you choose "No" as Cipher you do not get any encryption.  This
+option is there only for test purposes, it will be removed in the
+final release.
 
 GENERAL INFORMATION
 
@@ -33,24 +27,26 @@ Keyring is Free Software, so you can inspect it to satisfy
 yourself of its security, modify it to meet your needs, and share it
 with your friends.
 
-Records are encrypted using the well-trusted DES3 algorithm on a
-master password.  For your convenience, the keyring can stay unlocked
-for a time after you enter your master password.  You can configure
-this behaviour through the "Preferences" command.  Keyring
+Records are encrypted using either triple DES or AES algorithms.  Both
+are cryptographically well investigated algorithm and no major flaws
+are known.  The encryption key is generated from the master password
+in a secure way (PBKDF2).  For your convenience, the keyring can stay
+unlocked for a time after you enter your master password.  You can
+configure this behaviour through the "Preferences" command.  Keyring
 attempts to overwrite memory containing sensitive data after use.
 
 When you need to set a password, Keyring can generate a random
 password of specified length, optionally including letters, numbers or
-symbols.  Alternatively you can set "pronounceable", which will generate
-a vaguely pronounceable lower-case password of the appropriate length.
-Note that this produces a less secure password than the same length password
-generated from random lower-case letters; however it does conform to the
-FIPS 181 Automated Password Generator Standard (see fips181.txt).
+symbols.  Alternatively you can set "pronounceable", which will
+generate a vaguely pronounceable lower-case password of the
+appropriate length.  Note that this produces a less secure password
+than the same length password generated from random lower-case
+letters; however it does conform to the FIPS 181 Automated Password
+Generator Standard (see fips181.txt).
 
 For more details, see
 
   http://gnukeyring.sourceforge.net/
-
 
 This distribution includes files from AESLib for AES encryption. 
 See COPYING.AESLib for license terms.

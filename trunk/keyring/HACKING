@@ -115,6 +115,14 @@ at least if the password is stronger than 64 bits.  On the other hand
 InitialVector contains 8 random bytes to make it unlikely that the same
 IV will ever be used to encrypt a different record.
 
+An attacker can read the KeyHash.  Following attacks are possible:
+ * Brute Forcing the MasterKey.  This is now much more infeasible
+   because of the 1000 SHA-1 hashes that need to be calculated per try.
+ * Brute Forcing the Snib.  Infeasible because the snib contains
+   128 bit of randomness.
+ * Reversing MD5.  This is commonly thought to be infeasible.
+ * Dictionary attacks can't work because of the salt.
+
 =====================================================================
 Database format -- Version 0-4
 
@@ -227,9 +235,7 @@ and have to use database manager functions to write out to the
 database, rather than just writing into a buffer.  This is harmless.
 
 
-Future Plans:
-
-In the current scheme I can see several disadvantages: Every record is
+In this scheme I can see several disadvantages: Every record is
 encrypted with the same key so one may notice in the encrypted data
 when two fields have the same account name.  Secondly the MD5 hash is
 very fast and may lead to a brute force password attack.  The
@@ -237,29 +243,6 @@ encryption key doesn't depend on a salt.  If someone steals the
 encryption key (from the snib) he can read every database with the
 same master key.  And last but not least one cannot check from the
 snib whether it matches the key database.
-
-To solve all these issues I want to change to this key scheme:
-
-Snib          = MD5(... MD5(MD5(MasterKey ; Salt) ; Salt ; MasterKey)
-                    ... ; Salt ; MasterKey) [ iterated 1000 times ]
-KeyHash       = Salt ; MD5(Snib ; Salt)
-EncryptionKey = MD5(Snib)
-
-Keyring only needs the Snib to check KeyHash or to encrypt a record.
-Every records gets another key and the snib is dependent on the salt.
-
-Also we should change from des-ecb to des-cbc.
-
-An attacker can read the KeyHash.  Following attacks are possible:
- * Brute Forcing the MasterKey.  This is now much more infeasible
-   because of the 1000 MD5 hashes that need to be calculated per try.
- * Brute Forcing the Snib.  Infeasible because the snib contains
-   128 bit of randomness.
- * Reversing MD5.  This is commonly thought to be infeasible.
- * Dictionary attacks can't work because of the salt.
- * There may be problems due to the regularity of the iteration of the
-   MD5 hash.  I believe there are no problems, though.
-
 
 
 ----------------------------------------------------------------------
