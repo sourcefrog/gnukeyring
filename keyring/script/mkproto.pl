@@ -91,7 +91,13 @@ while (<>)
 	$inif--;
     }
 
-    next if $_ =~ /^\#/ || ($inifactive < $inif);
+    next if $inifactive < $inif;
+
+    if ($_ =~ /^\#/)  {
+	# skip directives
+	$_ = <> while ($_ =~ /\\$/);
+	next;
+    }
 
     while ($_) {
 	if ($incomment) {
