@@ -838,17 +838,20 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
 
 
 static void KeyEditForm_CategorySelected(void) {
-    Boolean categoryChanged;
+     Boolean categoryChanged;
+     
+/*       if (App_CheckReadOnly()) */
+/*            return; */
 
-    categoryChanged = Category_Selected(&gRecord.category, false);
-    if (categoryChanged) {
-        if (gPrefs.category != dmAllCategories) {
-            gPrefs.category = gRecord.category;
-        }
-        Key_SetCategory(gKeyRecordIndex, gRecord.category);
-        KeyEditForm_UpdateCategory();
-        KeyEditForm_UpdateTitle();
-    }
+     categoryChanged = Category_Selected(&gRecord.category, false);
+     if (categoryChanged) {
+          if (gPrefs.category != dmAllCategories) {
+               gPrefs.category = gRecord.category;
+          }
+          Key_SetCategory(gKeyRecordIndex, gRecord.category);
+          KeyEditForm_UpdateCategory();
+          KeyEditForm_UpdateTitle();
+     }
 }
 
 

@@ -179,11 +179,20 @@ static MemHandle Keys_PrepareExisting(UInt16 *idx, Int16 recLen)
 
 void Key_SetCategory(UInt16 idx, UInt16 category)
 {
-    UInt16 attr;
+     UInt16 attr;
+     Err err;
+     
+     if ((err = DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL)))
+          goto fail;
+     
+     attr = (attr & ~dmRecAttrCategoryMask) | category;
+     if ((err = DmSetRecordInfo(gKeyDB, idx, &attr, NULL)))
+          goto fail;
 
-    DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL);
-    attr = (attr & ~dmRecAttrCategoryMask) | category;
-    DmSetRecordInfo(gKeyDB, idx, &attr, NULL);
+     return;
+     
+ fail:
+     UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 }
 
 

@@ -106,6 +106,49 @@ static Boolean KeyDB_OfferReadOnly(void)
 
 
 
+static void Keyring_SetReadOnlyAcceptable(Boolean val)
+{
+     Int16 size = sizeof val;
+     Boolean useSavedPref = true;
+    
+     PrefSetAppPreferences(kKeyringCreatorID,
+                           prefID_ReadOnlyAccepted,
+                           kAppVersion,
+                           &val, size,
+                           useSavedPref);
+}
+
+
+/*
+ * Either check that the user's already said a read-only database is
+ * OK, or ask them.
+ */
+static Boolean Keyring_AcceptsReadOnly(void)
+{
+     Boolean accepted = false;
+     Int16 size = sizeof accepted;
+     Int16 ret;
+     Boolean useSavedPref = true;
+
+     ret = PrefGetAppPreferences(kKeyringCreatorID,
+                                 prefID_ReadOnlyAccepted,
+                                 &accepted, &size,
+                                 useSavedPref);
+
+     if (((ret == noPreferenceFound)
+          || (size != sizeof accepted)
+          || !accepted)) {
+          accepted = KeyDB_OfferReadOnly();
+          if (accepted)
+               Keyring_SetReadOnlyAcceptable(accepted);
+          return accepted;
+     } else {
+          return true;
+     }
+}
+
+
+
 /*
  * Try to open an existing key database.
  * 
@@ -276,6 +319,32 @@ static Err KeyDB_CreateDB(void) {
 
 
 
+static Err KeyDB_InitReadOnly(void)
+{
+     Err err;
+     Int16 ver;
+     
+     if (!Keyring_AcceptsReadOnly())
+          return appCancelled;
+
+     if ((err = KeyDB_OpenReadOnly()))
+          return err;
+          
+     if ((err = KeyDB_GetVersion(&ver)))
+          return err;
+          
+     if (ver > kDatabaseVersion) {
+          Keyring_TooNew();
+          return appCancelled;
+     } else if (ver != kDatabaseVersion) {
+          FrmAlert(alertID_UpgradeReadOnly);
+          return appCancelled;
+     }
+
+     return 0;
+}
+
+
 
 /*
  * Get everything going: either open an existing DB (converting if
@@ -295,24 +364,12 @@ Err KeyDB_Init(void)
       * complain that we can't upgrade it. */
 
      if (err == dmErrReadOnly || err == dmErrROMBased) {
-          if (!KeyDB_OfferReadOnly())
-               return appCancelled;
-
-          if ((err = KeyDB_OpenReadOnly()))
-               goto failDB;
-          
-          if ((err = KeyDB_GetVersion(&ver)))
-               goto failDB;
-          
-          if (ver > kDatabaseVersion) {
-               Keyring_TooNew();
-               return appCancelled;
-          } else if (ver != kDatabaseVersion) {
-               FrmAlert(alertID_UpgradeReadOnly);
-               return appCancelled;
+          if ((err = KeyDB_InitReadOnly())) {
+               if (err == appCancelled)
+                    return err;
+               else
+                    goto failDB;
           }
-
-          /* OK! */
      } else if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
           return err;           /* error already reported */
      } else if (err) {
@@ -339,6 +396,10 @@ Err KeyDB_Init(void)
                Keyring_TooNew();
                return appCancelled;
           }
+
+          /* Next time they get a r/o database they'll have to
+           * reconfirm. */
+          Keyring_SetReadOnlyAcceptable(false);
      }
 
      return 0;
