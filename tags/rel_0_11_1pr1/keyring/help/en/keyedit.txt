@@ -1,0 +1,3 @@
+Generate Password: Make up a new random password fitting certain criteria.
+
+Export to Memo: Save all information from this key to a new unfiled memo.
