@@ -72,8 +72,6 @@ WARN	        = -Wall -Winline -Wunused -W	\
 OPTIM		= -O3 -finline-functions -g
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
-$(OBJ): $(HEADERS)
-
 HELP_TXT        = $(wildcard help/*/*.txt)
 
 DOCS		= HACKING TODO TESTS 
@@ -189,4 +187,7 @@ prototype.h: script/mkproto.awk $(MKPROTO_C)
 	echo Installing new prototype.h; \
 	mv prototype.h.new prototype.h; \
 	fi
+
+
+$(OBJ): $(HEADERS)
 
