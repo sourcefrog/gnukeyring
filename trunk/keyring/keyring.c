@@ -94,10 +94,36 @@ void App_ReleaseFonts(void)
 }
 
 
+static Err CheckGlib(UInt32 creator, char* libname) {
+    DmOpenRef libdb;
+
+    if ((libdb = DmOpenDatabaseByTypeCreator('GLib', creator, 
+					     dmModeReadOnly))) {
+	DmCloseDatabase(libdb);
+	return 0;
+    }
+
+    FrmCustomAlert(NotEnoughFeaturesAlert, libname, NULL, NULL);
+    return sysErrLibNotFound;
+}
+
+static Err CheckLibraries (void)
+{
+    Err error;
+    /* Check if the necessary openssl libraries are installed */
+    if ((error = CheckGlib('CrDS', "DESLib.prc"))
+	|| (error = CheckGlib('CrMD', "MDLib.prc")))
+	return error;
+    return 0;
+}
+
 
 static Err App_Start(void)
 {
     Err err;
+
+    if ((err = CheckLibraries()))
+	return err;
 
     App_LoadPrefs();
 
@@ -238,20 +264,7 @@ Boolean Common_HandleMenuEvent(EventPtr event)
     return false;
 }
 
-static Err CheckGlib(UInt32 creator, char* libname) {
-    DmOpenRef libdb;
-
-    if ((libdb = DmOpenDatabaseByTypeCreator('GLib', creator, 
-					     dmModeReadOnly))) {
-	DmCloseDatabase(libdb);
-	return 0;
-    }
-
-    FrmCustomAlert(NotEnoughFeaturesAlert, libname, NULL, NULL);
-    return sysErrLibNotFound;
-}
-
-static Err CheckRequiredComponents (void)
+static Err CheckROMVersion (void)
 {
     Err error;
     UInt32 romVersion;
@@ -271,10 +284,6 @@ static Err CheckRequiredComponents (void)
 	return sysErrRomIncompatible;
     }
 
-    /* Check if the necessary openssl libraries are installed */
-    if ((error = CheckGlib('CrDS', "DESLib.prc"))
-	|| (error = CheckGlib('CrMD', "MDLib.prc")))
-	return error;
     return 0;
 }
 
@@ -286,7 +295,7 @@ UInt32 PilotMain(UInt16 launchCode,
     struct EventType keyev;
     Err err = 0;
 
-    if ((err = CheckRequiredComponents()))
+    if ((err = CheckROMVersion()))
 	return err;
 
 #ifdef NOTIFY_SLEEP_HANDLER
