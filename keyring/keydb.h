@@ -20,7 +20,7 @@
  */
 
 void KeyDB_SaveNewRecord(UnpackedKeyType const *unpacked, Char const *name);
-void KeyDB_UpdateRecord(UnpackedKeyType const *unpacked, UInt idx);
+void KeyDB_UpdateRecord(UnpackedKeyType const *unpacked, UInt16 idx);
 void KeyDB_CreateAppInfo(void);
 void KeyDB_SetPasswd(Char const *newPasswd);
 
@@ -30,11 +30,11 @@ Err KeyDB_MarkForBackup(DmOpenRef dbp);
 
 Boolean KeyDB_IsInitRequired(void);
 Boolean KeyDB_Verify(Char const *guess);
-void KeyDB_RepositionRecord(CharPtr name, UIntPtr idx);
+void KeyDB_RepositionRecord(Char * name, UInt16 * idx);
 #ifdef REALLY_OBLITERATE
 void UnpackedKey_Obliterate(UnpackedKeyPtr u);
 #endif /* REALLY_OBLITERATE */
 
 
-void KeyRecord_Unpack(VoidHand record, UnpackedKeyType *u,
-		      Byte const *key);
+void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
+		      UInt8 const *key);

@@ -1,4 +1,4 @@
-# Copyright 1999 by Martin Pool
+# Copyright (C) 1999, 2000 by Martin Pool
 # $Id$
 
 APP             = keyring
@@ -10,21 +10,26 @@ VERSION         = 0.9.0
 RCP             = $(APP).rcp
 PRC             = $(APP)-$(VERSION).prc
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
-		  crypto.c passwd.c uiutil.c generate.c prefs.c
+		  crypto.c passwd.c uiutil.c generate.c prefs.c \
+		  export.c
 DEP             = $(subst .c,.d,$(SRC))
 OBJ		= $(subst .c,.o,$(SRC))
-GRC             = $(APP).grc
+#GRC             = $(APP).grc
 BIN             = $(APP).bin
+DEF		= $(APP).def
+EXE		= $(APP)
 
-NM		= m68k-palmos-coff-nm
-CC              = m68k-palmos-coff-gcc
+NM		= m68k-palmos-nm
+CC              = m68k-palmos-gcc
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
-OBJRES          = m68k-palmos-coff-obj-res
+# OBJRES          = m68k-palmos-obj-res
 BUILDPRC        = build-prc
 
 HELP_TXT	= delete-confirm.txt generate-help.txt preferences-help.txt
-BITMAPS         = keyring-15.bmp keyring-22.bmp philosophical-gnu-tiny-bw.bmp
+BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
+
+SDK		= /usr/local/palmdev/sdk3.5
 
 # Note: 
 # Turning on debugger support (-g) costs about 100 bytes
@@ -32,7 +37,9 @@ BITMAPS         = keyring-15.bmp keyring-22.bmp philosophical-gnu-tiny-bw.bmp
 # Empirically the smallest executables come from -O2, which makes sense
 # because it is defined to be the greatest amount of optimization that
 # does not involve size-speed tradeoffs.
-CFLAGS          = -O2 -Wall -Werror -Winline -W $(DEFINES) $(INCLUDES) -MMD -g
+
+CFLAGS          = -O2 -Wall -Werror -Winline -Wno-unused -W \
+		  $(DEFINES) $(INCLUDES) -MMD -g
 
 TOP_DOCS	= HACKING COPYING BUGS TODO TESTS 
 DOCS		= $(TOP_DOCS) \
@@ -54,12 +61,12 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 
 all: $(DOCS) $(PRC) 
 
-include $(DEP)
+include .dependencies
 
 PRC: $(PRC)
 
-$(PRC):       grc.stamp  bin.stamp
-	$(BUILDPRC) $(PRC) $(ICONTEXT) $(APPID) *.grc res/*.bin $(LINKFILES) 
+$(PRC):   $(EXE) $(DEF)      bin.stamp
+	$(BUILDPRC) -o $(PRC) $(DEF) $(EXE) *.bin 
 	ls -l *.prc
 
 dist: $(DIST_BALL)
@@ -74,17 +81,17 @@ $(DIST_BALL): $(DISTFILES)
 	sed $(SED_SUBST) $@.in > $@
 
 
-grc.stamp:    $(APP) ;
-	$(OBJRES) $(APP)
-	touch $@
+#grc.stamp:    $(APP) ;
+#	$(OBJRES) $(APP)
+#	touch $@
 
-$(APP):       $(SRC:.c=.o) ;
-	$(CC) $(CFLAGS) $^ -o $@
+$(EXE):       $(SRC:.c=.o) ;
+	$(CC) $(CFLAGS) $^ -o $(EXE)
 
 bin.stamp:    $(RCP) $(BITMAPS) resource.h $(HELP_TEXT)
 	[ -d res ] || mkdir res
-	rm -f res/*.bin
-	$(PILRC) -q $(RCP) res/
+	-rm *.bin
+	$(PILRC) -q $(RCP) 
 	touch $@
 
 %.o %.d: %.c ;
@@ -94,7 +101,7 @@ depend dep: ;
 	$(CC) -M $(SRC) > .dependencies
 
 clean:
-	rm -rf *.o $(APP) *.bin *.grc *.prc *.stamp res/*.bin *.d *.stamp
+	rm -rf *.o $(EXE) *.bin *.grc *.prc *.stamp *.bin *.d *.stamp
 
 .PHONY: install
 
@@ -118,7 +125,7 @@ count:
 	@cat *.[ch] *.rcp Makefile|wc -l
 
 tags: TAGS
-TAGS:	
+TAGS: *.c *.h
 	etags *.c *.h
 
 # for the GNU id-tools package: 

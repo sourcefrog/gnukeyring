@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-void DES3_Buf(VoidPtr from, VoidPtr to, ULong len, Boolean encrypt,
-	      Byte const *key);
+void DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
+	      UInt8 const *key);
 

@@ -27,6 +27,6 @@ void Unlock_ObliterateKey(void);
 Boolean UnlockForm_HandleEvent(EventPtr event);
 Boolean UnlockForm_Run(void);
 Boolean Unlock_CheckTimeout(void);
-void Unlock_SetExpiry(ULong newExpiry);
+void Unlock_SetExpiry(UInt32 newExpiry);
 void Unlock_Reset(void);
 void Unlock_PrimeTimer(void);

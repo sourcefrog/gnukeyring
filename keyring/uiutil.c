@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -30,7 +30,7 @@
 // User-interface utilities
 FieldPtr UI_GetFocusObjectPtr(void) {
     FormPtr frm;
-    Word focus;
+    UInt16 focus;
     FormObjectKind objType;
 	
     frm = FrmGetActiveForm();
@@ -47,7 +47,7 @@ FieldPtr UI_GetFocusObjectPtr(void) {
 }
 
 
-VoidPtr UI_ObjectFromActiveForm(Word objectID)
+void * UI_ObjectFromActiveForm(UInt16 objectID)
 {
     FormPtr currentForm = FrmGetActiveForm();
     return FrmGetObjectPtr(currentForm, 
@@ -55,17 +55,17 @@ VoidPtr UI_ObjectFromActiveForm(Word objectID)
 }
 
 
-VoidPtr UI_GetObjectByID(FormPtr frm, Word objectID) {
+void * UI_GetObjectByID(FormPtr frm, UInt16 objectID) {
     return FrmGetObjectPtr(frm,
 			   FrmGetObjectIndex(frm, objectID));
 }
 
 
-int UI_ScanForFirst(FormPtr frm, Word const * map) {
-    Int i;
+int UI_ScanForFirst(FormPtr frm, UInt16 const * map) {
+    Int16 i;
 
     for (i = 0; ; i += 2) {
-	if (map[i] == (Word) -1)
+	if (map[i] == (UInt16) -1)
 	    break;
 	
 	if (CtlGetValue(UI_GetObjectByID(frm, map[i+1]))) {
@@ -77,11 +77,11 @@ int UI_ScanForFirst(FormPtr frm, Word const * map) {
 }
 
 
-void UI_ScanAndSet(FormPtr frm, Word const *map, Word value) {
-    Int i;
+void UI_ScanAndSet(FormPtr frm, UInt16 const *map, UInt16 value) {
+    Int16 i;
 
     for (i = 0; ; i += 2) {
-	if (map[i] == (Word) -1)
+	if (map[i] == (UInt16) -1)
 	    break;
 
 	if (map[i] == value)
@@ -90,11 +90,11 @@ void UI_ScanAndSet(FormPtr frm, Word const *map, Word value) {
 }
 
 
-int UI_ScanUnion(FormPtr frm, Word const * map) {
-    Int i, result = 0;
+int UI_ScanUnion(FormPtr frm, UInt16 const * map) {
+    Int16 i, result = 0;
 
     for (i = 0; ; i += 2) {
-	if (map[i] == (Word) -1)
+	if (map[i] == (UInt16) -1)
 	    break;
 	
 	if (CtlGetValue(UI_GetObjectByID(frm, map[i+1])))
@@ -106,11 +106,11 @@ int UI_ScanUnion(FormPtr frm, Word const * map) {
 
 
 
-void UI_UnionSet(FormPtr frm, Word const * map, Word value) {
-    Int i;
+void UI_UnionSet(FormPtr frm, UInt16 const * map, UInt16 value) {
+    Int16 i;
 
     for (i = 0; ; i += 2) {
-	if (map[i] == (Word) -1)
+	if (map[i] == (UInt16) -1)
 	    break;
 
 	CtlSetValue(UI_GetObjectByID(frm, map[i+1]),

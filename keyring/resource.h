@@ -23,6 +23,7 @@
 #define BusyEncryptForm			1015
 #define BusyDecryptForm			1016
 #define GenerateForm			1017
+#define MemoDatabaseErrorAlert		1018
 
 #define ListMenuBar			1100
 #define KeyEditMenuBar			1101
@@ -81,6 +82,7 @@
 #define SetPasswdCmd			1306
 #define PrefsCmd			1307
 #define GenerateCmd			1308
+#define ExportMemoCmd			1309
 
 #define EditCopy			1400
 #define EditCut				1401

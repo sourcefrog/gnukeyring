@@ -1,0 +1,7 @@
+// build-prc definition file for GNU Tiny Keyring
+// $Id$
+
+application { "Keyring" Gtkr }
+
+
+ 

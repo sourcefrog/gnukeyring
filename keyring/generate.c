@@ -1,8 +1,8 @@
-/* -*- moe: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /* This file looks after generating random passwords on request. */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -38,7 +38,7 @@ enum includes {
     kPunct = 8
 };
 
-static const Int lenMap[] = {
+static const Int16 lenMap[] = {
     4,	Length4Push,
     6,	Length6Push,
     8,	Length8Push,
@@ -48,7 +48,7 @@ static const Int lenMap[] = {
     -1
 };
 
-static const Int includeMap[] = {
+static const Int16 includeMap[] = {
     kLower, IncludeLower,
     kUpper, IncludeUpper,
     kDigits, IncludeDigits,
@@ -59,13 +59,13 @@ static const Int includeMap[] = {
 
 /* Return the user's saved preferences for password generation, or
  * otherwise the defaults. */
-static void Generate_LoadOrDefault(IntPtr plen,
-				   IntPtr pclasses) 
+static void Generate_LoadOrDefault(Int16 * plen,
+				   Int16 * pclasses) 
 {
-    Int data[2];
-    SWord version;
-    const Word expectedSize = 2 * sizeof(Int);
-    Word size = expectedSize;
+    Int16 data[2];
+    Int16 version;
+    const UInt16 expectedSize = 2 * sizeof(Int16);
+    UInt16 size = expectedSize;
     
     version = PrefGetAppPreferences(kKeyringCreatorID,
 				    kGeneratePref,
@@ -87,20 +87,20 @@ static void Generate_LoadOrDefault(IntPtr plen,
 
 
 /* Save the user's preference for password generation. */
-static void Generate_Save(Int len, Int classes) {
-    Int data[2] = {len, classes};
+static void Generate_Save(Int16 len, Int16 classes) {
+    Int16 data[2] = {len, classes};
 
     PrefSetAppPreferences(kKeyringCreatorID,
 			  kGeneratePref,
 			  kKeyringVersion,
 			  data,
-			  2*sizeof(Int),
+			  2*sizeof(Int16),
 			  true);
 }
 
 
 static void Generate_Init(FormPtr frm) {
-    Int len, classes;
+    Int16 len, classes;
     
     Generate_LoadOrDefault(&len, &classes);
 
@@ -109,10 +109,10 @@ static void Generate_Init(FormPtr frm) {
 }
 
 
-static void Generate_Garbage(CharPtr ptr, Int flags, Int len) {
-    Int 	i;
+static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
+    Int16 	i;
     Char	ch;
-    Int		ri;
+    Int16		ri;
 
     for (i = 0; i < len; i++) {
 	while (true) {
@@ -141,10 +141,10 @@ static void Generate_Garbage(CharPtr ptr, Int flags, Int len) {
 }
 
 
-static VoidHand Generate_MakePassword(FormPtr frm) {
-    Int		reqLength, reqFlags;
-    VoidHand	h;
-    CharPtr	ptr;
+static MemHandle Generate_MakePassword(FormPtr frm) {
+    Int16		reqLength, reqFlags;
+    MemHandle	h;
+    Char *	ptr;
 
     reqLength = UI_ScanForFirst(frm, lenMap);
     if (reqLength <= 0  ||  reqLength > 2000) {
@@ -168,10 +168,10 @@ static VoidHand Generate_MakePassword(FormPtr frm) {
     return h;
 }
 
-VoidHand Generate_Run(void) {
+MemHandle Generate_Run(void) {
     FormPtr 	prevFrm, frm;
-    Int		btn;
-    VoidHand	result;
+    Int16		btn;
+    MemHandle	result;
 
     prevFrm = FrmGetActiveForm();
     frm = FrmInitForm(GenerateForm);

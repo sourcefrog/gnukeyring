@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -36,9 +36,9 @@
 
 /* Scribble over all memory allocated to a handle.  It's OK to pass a null
  * handle */
-void Mem_ObliterateHandle(VoidHand h OBLIT_USED) {
+void Mem_ObliterateHandle(MemHandle h OBLIT_USED) {
 #if REALLY_OBLITERATE
-    CharPtr ptr;
+    Char * ptr;
 
     if (!h)
 	return;
@@ -51,13 +51,13 @@ void Mem_ObliterateHandle(VoidHand h OBLIT_USED) {
 }
 
 
-void Mem_ObliteratePtr(VoidPtr ptr OBLIT_USED) {
+void Mem_ObliteratePtr(void * ptr OBLIT_USED) {
 #if REALLY_OBLITERATE
-    ULong size = MemPtrSize(ptr);
+    UInt32 size = MemPtrSize(ptr);
     if (!size)
 	return;
     MemSet(ptr, size-1, 'X');
-    ((CharPtr) ptr)[size-1] = '\0';
+    ((Char *) ptr)[size-1] = '\0';
 #endif /* REALLY_OBLITERATE */
 }
 
@@ -66,9 +66,9 @@ void Mem_ObliteratePtr(VoidPtr ptr OBLIT_USED) {
  * SRCPTR, and also put the length of that string in *LEN.  If the string
  * is "", then return null.  The returned length does not include the
  * terminal NUL, but the allocated chunk does have space for it. */
-VoidHand Mem_StrToHandle(CharPtr srcPtr, ULong *len) {
-    VoidHand h;
-    VoidPtr destPtr;
+MemHandle Mem_StrToHandle(Char * srcPtr, UInt32 *len) {
+    MemHandle h;
+    void * destPtr;
     
     if ((*len = StrLen(srcPtr)) > 0) {    
 	h = MemHandleNew(*len + 1);
@@ -83,8 +83,8 @@ VoidHand Mem_StrToHandle(CharPtr srcPtr, ULong *len) {
 }
 
 
-VoidHand Mem_ReadString(CharPtr *ptr, ULongPtr len) {
-    VoidHand h;
+MemHandle Mem_ReadString(Char * *ptr, UInt32 * len) {
+    MemHandle h;
     
     h = Mem_StrToHandle(*ptr, len);
     *ptr += *len + 1;
@@ -92,15 +92,15 @@ VoidHand Mem_ReadString(CharPtr *ptr, ULongPtr len) {
 }
 
 
-void Mem_ReadChunk(CharPtr *ptr, ULong len, VoidPtr dest) {
+void Mem_ReadChunk(Char * *ptr, UInt32 len, void * dest) {
     MemMove(dest, *ptr, len);
     *ptr += len;
 }
 
 
-void DB_WriteStringFromHandle(CharPtr dest, ULong *off, VoidHand h, ULong len) {
+void DB_WriteStringFromHandle(Char * dest, UInt32 *off, MemHandle h, UInt32 len) {
     if (h) {
-	CharPtr p = MemHandleLock(h);
+	Char * p = MemHandleLock(h);
 	DmWrite(dest, *off, p, len);
 	*off += len;
 	MemHandleUnlock(h);
@@ -111,10 +111,10 @@ void DB_WriteStringFromHandle(CharPtr dest, ULong *off, VoidHand h, ULong len) {
 }
 
 
-void Mem_CopyFromHandle(CharPtr *dest, VoidHand h, ULong len)
+void Mem_CopyFromHandle(Char * *dest, MemHandle h, UInt32 len)
 {
     if (h) {
-	CharPtr p = MemHandleLock(h);
+	Char * p = MemHandleLock(h);
 	MemMove(*dest, p, len);
 	*dest += len;
 	MemHandleUnlock(h);
@@ -125,26 +125,26 @@ void Mem_CopyFromHandle(CharPtr *dest, VoidHand h, ULong len)
 }
 
 
-Word DB_ReadWord(CharPtr *ptr) {
-    return *((Word *) ptr)++;
+UInt16 DB_ReadWord(Char * *ptr) {
+    return *((UInt16 *) ptr)++;
 }
 
 
-ULong DB_ReadULong(CharPtr *ptr) {
-    return *((ULong *) ptr)++;
+UInt32 DB_ReadUInt32(Char * *ptr) {
+    return *((UInt32 *) ptr)++;
 }
 
 
 /* Read a field value from *PTR, which is a pointer into a read-only
  * database record.  PTR advances over the read value.  If the string
  * is empty, the field keeps using it default buffer. */
-void Mem_ReadStringIntoField(CharPtr *recPtr, FormPtr frm, Word id) {
-    VoidHand tmpHandle;
-    ULong recLen;
+void Mem_ReadStringIntoField(Char * *recPtr, FormPtr frm, UInt16 id) {
+    MemHandle tmpHandle;
+    UInt32 recLen;
     FieldPtr fld;
     
     tmpHandle = Mem_StrToHandle(*recPtr, &recLen);
     *recPtr += recLen + 1;
     fld = FrmGetObjectPtr(frm, FrmGetObjectIndex(frm, id));
-    FldSetTextHandle(fld, (Handle) tmpHandle);
+    FldSetTextHandle(fld, (MemHandle) tmpHandle);
 }

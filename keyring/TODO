@@ -1,6 +1,12 @@
 -*- outline -*- 
 
 * Optionally check for password when entering the app, rather than when opening a key. 
+
+* Password persists
+
+Keep the cypher key in memory in a database marked not-for-backup.  Is
+this sufficiently secure?
+
 * Use PHP for the index page?
 
 Include e.g. a file listing, so that we can avoid repeating the

@@ -1,5 +1,7 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
- * 
+ *
+ * $Id$
+ *
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool
  *
@@ -18,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -31,7 +33,7 @@
 #include "memutil.h"
 
 
-static ULong		gExpiry;
+static UInt32		gExpiry;
 
 // ======================================================================
 // Unlock form
@@ -45,7 +47,7 @@ static void Unlock_SetKey(Char const *passwd) {
     if (!passwd)
 	passwd = "";
 
-    err = EncDigestMD5((VoidPtr) passwd, StrLen(passwd), gRecordKey);
+    err = EncDigestMD5((void *) passwd, StrLen(passwd), gRecordKey);
     if (err)
 	App_ReportSysError(__FUNCTION__, err);
 }
@@ -67,11 +69,11 @@ void Unlock_PrimeTimer(void) {
 
 
 Boolean UnlockForm_Run() {
-    Word 	result;
+    UInt16 	result;
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(UnlockForm);
-    CharPtr 	entry;
-    Word 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
+    Char * 	entry;
+    UInt16 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
     FieldPtr 	entryFld = FrmGetObjectPtr(frm, entryIdx);
     Boolean 	done, correct;
 
@@ -97,7 +99,7 @@ Boolean UnlockForm_Run() {
 	} 
     } while (!done);
 
-    Mem_ObliterateHandle((VoidHand) FldGetTextHandle(entryFld));
+    Mem_ObliterateHandle((MemHandle) FldGetTextHandle(entryFld));
     FrmDeleteForm(frm);
     FrmSetActiveForm(prevFrm);
 
@@ -107,7 +109,7 @@ Boolean UnlockForm_Run() {
 
 /* Check whether a previously entered password is still valid. */
 Boolean Unlock_CheckTimeout() {
-    ULong now = TimGetSeconds();
+    UInt32 now = TimGetSeconds();
 
     if (now > gExpiry) {
 #ifdef REALLY_OBLITERATE
@@ -135,10 +137,10 @@ Boolean Unlock_CheckTimeout() {
 Boolean SetPasswd_Run(void) {
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm;
-    Word 	btn;
+    UInt16 	btn;
     Boolean 	match, result=false;
     FieldPtr 	masterFld, confirmFld;
-    CharPtr	masterPtr, confirmPtr;
+    Char *masterPtr, *confirmPtr;
 
     frm = FrmInitForm(SetPasswdForm);
     FrmSetActiveForm(frm);
