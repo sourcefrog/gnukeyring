@@ -19,13 +19,14 @@
 
   {\h2 introduction}
 
-  GNU Keyring lets you securely store digital secret keys on your
-  PalmOS (PalmPilot, Visor, WorkPad) handheld computer.  Many people
-  use Keyring to store
+  \Product lets you securely store digital secret keys on your PalmOS
+  (PalmPilot, Visor, WorkPad) handheld computer.  Many people use
+  \Product to store
 
   {\ul
     {\li Computer account passwords}
     {\li Credit card numbers}
+    {\li Confidential memos or diary entries}
     {\li GnuPG or PGP passphrases}
     {\li SKey one-time-pads}
     {\li Phone banking keywords}
@@ -41,9 +42,14 @@
     {\li Export records to the Memo Pad}
   }
 
+  This product was previously known as "GNU Keyring for PalmOS".  It's
+  been renamed because the Free Software Foundation now has a policy
+  that GNU software should not primarily run on non-free platforms
+  such as PalmOS.
+
   {\h2 user's guide}
 
-GNU Keyring stores records called "keys", each of which can contain 
+\Product stores records called "keys", each of which can contain 
 
 {\ul 
   {\li A non-secret name for the key}
@@ -70,7 +76,7 @@ application.  This seems necessary for security, to make sure that the
 encryption key is not kept unencrypted in memory and out of the
 program's control.
 
-When you need to set a password, GNU Keyring can generate a random
+When you need to set a password, \Product can generate a random
 password of specified length, optionally including letters, numbers or
 symbols.  Use the "Generate Password" command in the key edit form to
 do this.
@@ -95,7 +101,7 @@ present in your version of PalmOS.
 In general, Palm application databases are not protected on the
 Hotsync PC, even if they contain private records.  Confidential data
 therefore is visible to anyone who can read that file on the PC.
-However, GNU Keyring encrypts all data except when it is actually
+However, \Product encrypts all data except when it is actually
 being edited.
 
 The master password is not stored in the database.  Instead, an
@@ -113,9 +119,7 @@ checked against entered values.
     PalmOS does not have memory protection between applications: a
     hostile application or PC-based conduit could read information
     from inside the Keyring database.  Keeping records encrypted
-    provides some protection, but it is far from impossible.  GNU
-    Keyring attempts to overwrite memory containing sensitive data
-    after use, but this only gives partial protection.
+    provides some protection, but it is far from impossible.
 
     The PalmOS pseudorandom number generator is used to generate
     random passwords; it may be predictable.

@@ -2,7 +2,7 @@
 # $Id$
 
 
-pages=index license screenshots download mirrors thanks plans faq	\
+pages=index screenshots download mirrors thanks plans faq	\
       history conduits lists contribute
 
 latte_pages=$(addsuffix .latte, $(pages))
