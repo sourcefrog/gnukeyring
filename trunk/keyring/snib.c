@@ -228,11 +228,23 @@ void Snib_SetExpiry(UInt32 newTime)
  * This is called as the keyring is unlocked, so that we always have
  * the hash available in the future for convenient access.
  */
-void Snib_StoreFromPasswd(Char const *passwd)
+Err Snib_StoreFromPasswd(Char *passwd)
 {
     UInt8 hash[kMD5HashSize];
+    Err err;
+    Int16 len;
 
-    
+    len = StrLen(passwd);
+
+    err = EncDigestMD5(passwd, len, hash);
+    if (err) {
+         UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
+         return err;
+    }
+
+    Snib_StorePasswdHash(hash);
+
+    return 0;
 }
 
 
@@ -240,7 +252,7 @@ void Snib_StoreFromPasswd(Char const *passwd)
  * Store the record key (hash of master password) for use later in
  * this session.
  */
-void Snib_StorePasswdHash(UInt8 const *newHash)
+void Snib_StorePasswdHash(UInt8 *newHash)
 {
     Err		err;
     
