@@ -20,12 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-Boolean PwHash_Check(Char *guess);
-Err PwHash_Store(Char *newPasswd);
-
-/* XXX: Oops!  MD5 digest is really only 16 bytes long!  We should use
-   kMD5HashSize instead.  */
-
 typedef struct {
      UInt32     salt;
      UInt8      hash[kMD5HashSize];

@@ -40,12 +40,3 @@ typedef struct {
 } UnpackedKeyType;
 
 typedef UnpackedKeyType *UnpackedKeyPtr;
-
-void UnpackedKey_Free(UnpackedKeyPtr u);
-void KeyRecord_Reposition(Char * name, UInt16 * idx, UInt16 *position);
-
-void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
-		      UInt8 const *key);
-
-
-Err KeyRecord_GetCategory(Int16 idx, UInt16 *category);

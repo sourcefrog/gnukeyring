@@ -20,20 +20,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
-/* gRecordKey contains a DES3-EDE key that will be used to encrypt and
+/* The Snib contains a DES3-EDE key that will be used to encrypt and
  * decrypt the records.  It's read out of the hidden record when the
- * user's password is entered, but is lost again on exiting the
- * application.
- *
- * Eventually we will store this in a database marked not-for-backup,
- * so that people will be able to switch apps without needing to log
- * in again.  But we don't do that yet. */
-
-Err Snib_Init(void);
-
-void Snib_StoreRecordKey(UInt8 *newHash);
-Boolean Snib_RetrieveKey(UInt8* keyHash);
+ * user's password is entered, and is stored in a special place.
+ */
 
 /*
  * There is only one record in this database, and it contains this
@@ -43,5 +33,3 @@ typedef struct {
     UInt32    expiryTime;
     UInt8     recordKey[k2DESKeySize];
 } SnibStruct, *SnibPtr;
-
-void Snib_Eradicate(void);

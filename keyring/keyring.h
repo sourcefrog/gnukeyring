@@ -72,11 +72,6 @@ typedef struct {
 
 typedef KeyringPrefsType *KeyringPrefsPtr;
 
-Boolean Common_HandleMenuEvent(EventPtr event);
-
-void App_AboutCmd(void);
-void App_SavePrefs(void);
-
 /*
  * All current preferences.  Read in at application startup, and
  * written out when they change.
