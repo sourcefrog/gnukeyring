@@ -33,3 +33,4 @@
 #include "record.h"
 #include "snib.h"
 #include "prototype.h"
+#include "pronounce.h"
