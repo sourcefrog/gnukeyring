@@ -32,9 +32,14 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// $Id$
 
 #import <AppKit/AppKit.h>
 
+/*!
+ * @class AboutController
+ * @abstract NSWindowController subclass that controls the about panel.
+ */
 @interface AboutController : NSWindowController {
     IBOutlet NSImageView *icon;
     IBOutlet NSTextField *version;
@@ -42,6 +47,12 @@
     IBOutlet NSTextView  *blurb;
 }
 
+/*!
+ * @method hiliteAndActivateURLs:
+ * @abstract Customize an NSTextView so that clicking embedded URLs launches a
+ *           web browser.
+ * @param textView The NSTextView to customize.
+ */
 - (void)hiliteAndActivateURLs:(NSTextView*)textView;
 
 @end
