@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "java"; -*-
  *
- * $Id$
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,15 @@ void UI_ReportSysError2(UInt16 msgID, Err err, char const *where)
 }
 
 
-void App_NotImplemented(void) {
+void App_NotImplemented(void)
+{
     FrmAlert(ID_NotImplementedAlert);
 }
 
 
 
-FieldPtr UI_GetFocusObjectPtr(void) {
+FieldPtr UI_GetFocusObjectPtr(void)
+{
     FormPtr frm;
     UInt16 focus;
     FormObjectKind objType;
@@ -75,13 +77,15 @@ void * UI_ObjectFromActiveForm(UInt16 objectID)
 }
 
 
-void * UI_GetObjectByID(FormPtr frm, UInt16 objectID) {
+void * UI_GetObjectByID(FormPtr frm, UInt16 objectID)
+{
     return FrmGetObjectPtr(frm,
 			   FrmGetObjectIndex(frm, objectID));
 }
 
 
-int UI_ScanForFirst(FormPtr frm, UInt16 const * map) {
+int UI_ScanForFirst(FormPtr frm, UInt16 const * map)
+{
     Int16 i;
 
     for (i = 0; ; i += 2) {
@@ -97,7 +101,8 @@ int UI_ScanForFirst(FormPtr frm, UInt16 const * map) {
 }
 
 
-void UI_ScanAndSet(FormPtr frm, UInt16 const *map, UInt16 value) {
+void UI_ScanAndSet(FormPtr frm, UInt16 const *map, UInt16 value)
+{
     Int16 i;
 
     for (i = 0; ; i += 2) {
@@ -110,7 +115,8 @@ void UI_ScanAndSet(FormPtr frm, UInt16 const *map, UInt16 value) {
 }
 
 
-int UI_ScanUnion(FormPtr frm, UInt16 const * map) {
+int UI_ScanUnion(FormPtr frm, UInt16 const * map)
+{
     Int16 i, result = 0;
 
     for (i = 0; ; i += 2) {
@@ -126,7 +132,8 @@ int UI_ScanUnion(FormPtr frm, UInt16 const * map) {
 
 
 
-void UI_UnionSet(FormPtr frm, UInt16 const * map, UInt16 value) {
+void UI_UnionSet(FormPtr frm, UInt16 const * map, UInt16 value)
+{
     Int16 i;
 
     for (i = 0; ; i += 2) {

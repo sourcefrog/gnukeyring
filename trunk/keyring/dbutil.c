@@ -1,8 +1,9 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
- * $Id$
+/* -*- mode: c; c-indentation-style: "java"; -*-
+ *
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,8 @@
  * If the handle is NULL, then if the length is 1 a NUL is written and if the
  * length is zero nothing is written.  Anything else is invalid.
  */
-void DB_WriteStringFromHandle(void *dest, UInt32 *off, MemHandle h, UInt32 len) {
+void DB_WriteStringFromHandle(void *dest, UInt32 *off, MemHandle h, UInt32 len)
+{
     if (h) {
 	Char * p = MemHandleLock(h);
 	DmWrite(dest, *off, p, len);
@@ -54,7 +56,8 @@ void DB_WriteStringFromHandle(void *dest, UInt32 *off, MemHandle h, UInt32 len) 
  * Write a string into a database record, and update a position pointer.
  * The NUL is not included.
  */
-void DB_WriteString(void *dest, UInt32 *off, Char const *str) {
+void DB_WriteString(void *dest, UInt32 *off, Char const *str)
+{
     UInt16 len;
 
     len = StrLen(str);

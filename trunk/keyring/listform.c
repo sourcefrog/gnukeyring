@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "java"; -*-
  *
  * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +281,8 @@ static void ListForm_Update(void)
 }
 
 
-static void ListForm_FormOpen(void) {
+static void ListForm_FormOpen(void)
+{
     RectangleType r;
        
     f_ListForm = FrmGetActiveForm();
@@ -317,7 +318,8 @@ static Boolean ListForm_TableSelect(EventPtr event)
 }
 
 
-static void ListForm_NewKey(void) {
+static void ListForm_NewKey(void)
+{
      KeyEditForm_GotoRecord(kNoRecord);
 }
 
@@ -325,7 +327,8 @@ static void ListForm_NewKey(void) {
 /*
  * Scroll if possible.  Update table and scrollbar.
  */
-static void ListForm_Scroll(Int16 newPos) {
+static void ListForm_Scroll(Int16 newPos)
+{
      if (newPos > f_NumListed - f_ScreenRows)
           newPos = f_NumListed - f_ScreenRows;
      if (newPos < 0)
@@ -339,13 +342,15 @@ static void ListForm_Scroll(Int16 newPos) {
 }
 
 
-static void ListForm_ScrollRepeat(EventPtr event) {
+static void ListForm_ScrollRepeat(EventPtr event)
+{
     int new = event->data.sclRepeat.newValue;
     ListForm_Scroll(new);
 }
 
 
-static void ListForm_ScrollPage(WinDirectionType dir) {
+static void ListForm_ScrollPage(WinDirectionType dir)
+{
     Int16 newPos = f_FirstIdx +
         ((dir == winDown) ? +f_ScreenRows : -f_ScreenRows);
     ListForm_Scroll(newPos);
@@ -362,7 +367,8 @@ static void ListForm_CategoryTrigger(void)
 }
 
 
-Boolean ListForm_HandleEvent(EventPtr event) {
+Boolean ListForm_HandleEvent(EventPtr event)
+{
     Boolean result = false;
     
     switch (event->eType) {
