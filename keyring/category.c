@@ -1,4 +1,4 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -33,6 +33,9 @@
 static Char		categoryName[dmCategoryLength];
 
 
+/*
+ * Update a popuptrigger to show a new category name.
+ */
 void Category_UpdateName(FormPtr frm, UInt16 category) {
     ControlPtr		ctl;
     

@@ -32,8 +32,10 @@
 #include "keydb.h"
 #include "uiutil.h"
 
-// ======================================================================
-// Set password
+/* Set Password dialog
+ *
+ * TODO: Perhaps show a caution if the master password is less than
+ * (say) five characters.  */
 
 
 /* Return true if set, false if cancelled. */

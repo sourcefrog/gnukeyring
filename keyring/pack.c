@@ -148,12 +148,12 @@ static MemHandle Keys_PrepareExisting(UInt16 *idx, Int16 recLen)
 }
 
 
-static void Keys_SaveCategory(UInt16 idx, UnpackedKeyType const *u)
+void Key_SetCategory(UInt16 idx, UInt16 category)
 {
     UInt16 attr;
 
     DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL);
-    attr = (attr & ~dmRecAttrCategoryMask) | u->category;
+    attr = (attr & ~dmRecAttrCategoryMask) | category;
     DmSetRecordInfo(gKeyDB, idx, &attr, NULL);
 }
 
@@ -176,7 +176,6 @@ static void Keys_SaveCategory(UInt16 idx, UnpackedKeyType const *u)
  *   one block at a time, encrypt and write into the database
  *   release temporary buffer
  * unlock record
- * set record category
  * set record position
  */
 void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
@@ -204,8 +203,6 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
     recPtr = MemHandleLock(recHandle);
     Keys_WriteRecord(unpacked, recPtr);
     MemHandleUnlock(recHandle);
-
-    Keys_SaveCategory(*idx, unpacked);
 
     err = DmReleaseRecord(gKeyDB, *idx, true);
     if (err)
