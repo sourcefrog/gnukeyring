@@ -1374,6 +1374,9 @@ BEGIN
 END
 
 
+STRING ID TitleTemplateStr "Key ^0 of ^1"
+STRING ID EmptyTitleStr "New Key"
+
 FORM ID KeyEditForm AT (0 0 160 160)
 MENUID KeyEditMenuBar
 BEGIN
@@ -1885,7 +1888,11 @@ BEGIN
 	BITMAP "keyring-32-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 1
 	BITMAP "keyring-64-8.ppm" BPP 8 DENSITY 2
 END
-SMALLICON "keyring-15-1.pbm"
+SMALLICONFAMILYEX
+BEGIN
+	BITMAP "keyring-15-1.pbm" BPP 1
+	BITMAP "keyring-15-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 1
+END
 BITMAPFAMILYEX ID KeyBitmap
 COMPRESS
 BEGIN
@@ -1898,8 +1905,6 @@ BITMAP ID UnlockBitmap "unlock.xbm"
 
 STRING ID KeyringFindStr "Keyring"
 
-STRING ID TitleTemplateStr "Key ^0 of ^1"
-STRING ID EmptyTitleStr "New Key"
 STRING ID ChangeDateStr "Change Date"
 STRING ID ErrCheckingROM  "Error checking ROM version: ^1"
 
