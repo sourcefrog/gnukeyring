@@ -4,9 +4,9 @@
 <file template="keyring.htt">
 
 
-<set cur_ver="1.2.2">
-<def name="zipentry"  option="code lang">
-  <dlentry icon="binary.gif" 
+<set cur_ver="1.2.3">
+<def name="zipentry"  option="code lang sig">
+  <dlentry icon="compressed.gif" 
            file="keyring-${cur_ver}-${code}.zip" 
            desc="${lang} PRC binary + support files">
 </def>
@@ -19,6 +19,7 @@
 
   <table>
     <zipentry code="en" lang="English">
+    <zipentry code="ca" lang="Catalan">
     <zipentry code="da" lang="Danish">
     <zipentry code="de" lang="German">
     <zipentry code="es" lang="Spanish">
@@ -28,14 +29,15 @@
     <zipentry code="nb" lang="Norwegian (Bokmål)">
     <zipentry code="nn" lang="Norwegian (nynorsk)">
     <zipentry code="nl" lang="Dutch">
+    <zipentry code="pl" lang="Polish">
     <zipentry code="pt" lang="Portuguese">
     <zipentry code="sv" lang="Swedish">
     <!--- dlentry  icon="compressed.gif" file="keyring-${cur_ver}.zip" 
 	      desc="Zip archive of all binaries"--->
+    <dlentry  icon="compressed.gif" file="keyring-${cur_ver}.sig.zip" 
+	      desc="Cryptographic signatures for all files">
     <dlentry  icon="compressed.gif" file="keyring-${cur_ver}.tar.gz" 
 	      desc="Tar-ball of sources">
-    <dlentry  icon="text.gif" file="keyring-${cur_ver}.news" 
-	      desc="Release notes, MD5 checksums and GPG signature">
   </table>
 
   Older versions are available from the 
