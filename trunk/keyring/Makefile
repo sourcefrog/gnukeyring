@@ -8,7 +8,7 @@ APP             = keyring
 ICONTEXT        ="GNU Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 1.1dev1
+VERSION         = 1.0+3
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
@@ -96,7 +96,7 @@ all: $(PRCS)
 
 -include $(DEP)
 
-$(BASE)-%.prc: %.resstamp $(EXE) $(DEF)
+$(BASE)-%.prc: %.resstamp $(EXE)
 	cd res/$* && $(BUILDPRC) -o ../../$@ ../../$(DEF) ../../$(EXE) *.bin
 	ls -l $@
 
