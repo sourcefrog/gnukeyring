@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,17 @@
 #include "memutil.h"
 #include "callback.h"
 
+#ifndef REALLY_OBLITERATE
+#  define OBLIT_USED __attribute__((unused))
+#endif /* !REALLY_OBLITERATE */
+
 // ======================================================================
 // Memory management routines
 
 /* Scribble over all memory allocated to a handle.  It's OK to pass a null
  * handle */
-void Mem_ObliterateHandle(VoidHand h) {
+void Mem_ObliterateHandle(VoidHand h OBLIT_USED) {
+#if REALLY_OBLITERATE
     CharPtr ptr;
 
     if (!h)
@@ -42,15 +47,18 @@ void Mem_ObliterateHandle(VoidHand h) {
     Mem_ObliteratePtr(ptr);
    
     MemHandleUnlock(h);
+#endif /* REALLY_OBLITERATE */
 }
 
 
-void Mem_ObliteratePtr(VoidPtr ptr) {
+void Mem_ObliteratePtr(VoidPtr ptr OBLIT_USED) {
+#if REALLY_OBLITERATE
     ULong size = MemPtrSize(ptr);
     if (!size)
 	return;
     MemSet(ptr, size-1, 'X');
     ((CharPtr) ptr)[size-1] = '\0';
+#endif /* REALLY_OBLITERATE */
 }
 
 
