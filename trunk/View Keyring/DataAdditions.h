@@ -32,18 +32,73 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// $Id$
 
 #import <Foundation/Foundation.h>
 
+/*!
+ * @category NSData(DataAdditions)
+ * @abstract NSData enhancements useful for dealing with PalmOS-derived data.
+ *           Also enhancements to perform simple cryptographic tasks.
+ */
 @interface NSData (DataAdditions)
 
+/*!
+ * @method palmString:
+ * @abstract Extracts a given range of bytes from the data and convert them
+ *           into an NSString.
+ * @param r NSRange describing bytes to extract and convert. No trailing NUL is
+ *          required in the data.
+ * @result An NSString (not auto-released)
+ */
 - (NSString *)palmString: (NSRange)r;
+
+/*!
+ * @method palmCString:
+ * @abstract Extracts a NUL-terminated range of bytes from the data and convert
+ *           them into an NSString.
+ * @param offset Offset to first byte to extract and convert. A trailing NUL is
+ *          required in the data.
+ * @result An NSString (not auto-released)
+ */
 - (NSString *)palmCString: (unsigned)offset;
+
+/*!
+ * @method networkLong:
+ * @abstract Returns 4 bytes from the data in network byte order
+ * @param offset Offset to first byte in network long.
+ * @result 32-bit integer.
+ */
 - (unsigned)networkLong: (unsigned)offset;
+
+/*!
+ * @method networkShort:
+ * @abstract Returns 2 bytes from the data in network byte order
+ * @param offset Offset to first byte in network short.
+ * @result 16-bit integer.
+ */
 - (unsigned short)networkShort: (unsigned)offset;
+
+/*!
+ * @method networkByte:
+ * @abstract Returns a single byte from the data
+ * @param offset Offset to byte.
+ * @result Byte as integer
+ */
 - (int)networkByte: (unsigned)offset;
 
+/*!
+ * @method MD5:
+ * @abstract Compute MD5 hash of entire data
+ * @result Hashed data.
+ */
 - (NSData *)MD5;
+
+/*!
+ * @method decryptDES_EDE_CBCwithKey1:key2:key3:
+ * @abstract Decrypt using 3-key Triple-DES in ECB mode.
+ * @result Decrypted data
+ */
 - (NSData *)decryptDES_EDE_CBCwithKey1: (NSData *)k1
                                   key2: (NSData *)k2
                                   key3: (NSData *)k3;

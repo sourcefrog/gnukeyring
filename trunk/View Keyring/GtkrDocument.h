@@ -32,11 +32,16 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-
+// $Id$
 
 #import <Cocoa/Cocoa.h>
 #import "Keyring.h"
 
+/*!
+ * @class GtkrDocument
+ * @abstract An NSDocument subclass representing an instance of a Keyring
+ *           for PalmOS backup file.
+ */
 @interface GtkrDocument : NSDocument
 {
     Keyring *keyring;
@@ -55,15 +60,72 @@
     IBOutlet NSSecureTextField *enteredPassword;
 }
 
+/*!
+ * @method lockDatabase:
+ * @abstract Action method which locks an unlocked database.
+ * @param sender The object sending the action.
+ */
 - (IBAction)lockDatabase: (id)sender;
+
+/*!
+ * @method unlockDatabase:
+ * @abstract Action method which unlocks a locked database.
+ * @discussion Prompts for a password.
+ * @param sender The object sending the action.
+ */
 - (IBAction)unlockDatabase: (id)sender;
+
+/*!
+ * @method changeCategory:
+ * @abstract Action method which changes the category according to the
+ *           category popup menu.
+ * @param sender The object sending the action.
+ */
 - (IBAction)changeCategory: (id)sender;
+
+/*!
+ * @method clickNameTable:
+ * @abstract Action method which simulates a click in the name table.
+ * @discussion Mainly used to refresh the display.
+ * @param sender The object sending the action.
+ */
 - (IBAction)clickNameTable: (id)sender;
+
+/*!
+ * @method endPasswordWindow:
+ * @abstract Action method which ends the password entering sheet.
+ * @param sender The object sending the action.
+ */
 - (IBAction)endPasswordWindow: (id)sender;
+
+/*!
+ * @method updateUI
+ * @abstract Action method which updates all the changeable bits of the UI.
+ */
 - (void)updateUI;
 
 // Data source methods
+
+/*!
+ * @method numberOfRowsInTableView:
+ * @abstract Data source delegate method.
+ * @discussion Returns the number of keys in the current category.
+ * @param aTableView The table containing the key names.
+ * @result The number of keys in the current category.
+ */
+
 - (int)numberOfRowsInTableView: (NSTableView *)aTableView;
+
+/*!
+ * @method tableView:objectValueForTableColumn:row:
+ * @abstract Data source delegate method.
+ * @param aTableView The table view (ignored).
+ * @param aTableColumn The table view's column (ignored).
+ * @param rowIndex The displayed row in the table to return.
+ * @discussion Returns the key name for the given row. The true key index
+ *              is calculated from rowIndex, and depends on the selected
+ *              category.
+ */
 - (id)tableView: (NSTableView *)aTableView
 objectValueForTableColumn: (NSTableColumn *)aTableColumn
             row: (int)rowIndex;

@@ -32,18 +32,35 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// $Id$
 
 #import <Foundation/Foundation.h>
 
 @class PrefsController;
 @class AboutController;
 
+/*!
+ * @class AppController
+ * @abstract A class which controls the controllers for the various other
+ *           non-document panels (eg Preferences and About)
+ */
 @interface AppController : NSObject {
     PrefsController *prefsController;
     AboutController *aboutController;
 }
 
+/*!
+ * @method showPrefsPanel:
+ * @abstract Action method which shows the preferences panel.
+ * @param sender The object sending the action.
+ */
 - (IBAction)showPrefsPanel: (id)sender;
+
+/*!
+ * @method showAboutPanel:
+ * @abstract Action method which shows the about panel.
+ * @param sender The object sending the action.
+ */
 - (IBAction)showAboutPanel: (id)sender;
 
 @end

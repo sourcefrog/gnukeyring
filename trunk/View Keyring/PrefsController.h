@@ -32,19 +32,68 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// $Id$
 
 #import <Cocoa/Cocoa.h>
 
+/*!
+* @const GtkrShowZeroDatesKey
+ * @abstract NSUserDefaults key representing the "0 date" display behaviour.
+ * @discussion The Keyring "record updated" field can sometimes be 0, which
+ *             represents a date of 1 Jan 1904. This preference will
+ *             suppress the display of those dates.
+ */
 extern NSString *GtkrShowZeroDatesKey;
+
+/*!
+ * @const GtkrTextIsJapaneseKey
+ * @abstract NSUserDefaults key representing the Palm character set
+ *           being used.
+ * @discussion There's no way to determine algorithmically if the keyring
+ *             database contains text encoded in Palm's Western encoding or
+ *             Japanese encoding; this preference lets the user decide.
+ */
+extern NSString *GtkrTextIsJapaneseKey;
+
+/*!
+ * @const GtkrDateFormatChanged
+ * @abstract Notification that "0 date" display behaviour has changed.
+ * @discussion The Keyring "record updated" field can sometimes be 0, which
+ *             represents a date of 1 Jan 1904. This notification is used
+ *             to redisplay the record updated field.
+ */
 extern NSString *GtkrDateFormatChanged;
+
+/*!
+ * @const GtkrTextFormatChanged
+ * @abstract Notification that the character set is changing between Western
+ *           and Japanese.
+ */
 extern NSString *GtkrTextFormatChanged;
 
+/*!
+ * @class PrefsController
+ * @abstract NSWindowController subclass that controls the preferences panel.
+ */
 @interface PrefsController : NSWindowController {
     IBOutlet NSButton *showZeroDates;
     IBOutlet NSButton *textIsJapanese;
 }
 
+/*!
+ * @method changeZeroDates:
+ * @abstract Action which notifies observers that the way to display certain
+ *           dates has changed.
+ * @param sender The object sending the action.
+ */
 - (IBAction)changeZeroDates: (id)sender;
+
+/*!
+ * @method changeTextFormat:
+ * @abstract Action which notifies observers that the character set used
+ *           in the keyring has changed.
+ * @param sender The object sending the action.
+ */
 - (IBAction)changeTextFormat: (id)sender;
 
 @end
