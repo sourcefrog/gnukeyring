@@ -84,6 +84,7 @@ TOP_DIST	= COPYING README INSTALL
 
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
 DIST_ZIP	= $(APP)-$(VERSION).zip
+DIST_NEWS	= $(APP)-$(VERSION).news
 TAR		= tar
 ZIP		= zip
 
@@ -117,18 +118,27 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
 
-dist: $(DIST_BALL) $(DIST_ZIP)
+dist: $(DIST_BALL) $(DIST_ZIP) $(DIST_NEWS)
+	ls -l $(APP)-$(VERSION)*
 
 tmpdir:=$(shell echo _build.$$$$)
-$(DIST_BALL) $(DIST_ZIP): $(SRC_DIST) $(TOP_DIST)
+$(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 	rm -rf $(tmpdir)
 	mkdir -p $(tmpdir)/$(BASE)
 	cp --parents $(SRC_DIST) $(tmpdir)/$(BASE)
 	cp $(TOP_DIST) $(tmpdir)/$(BASE)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
-	cd $(tmpdir) && $(ZIP) -rq9 ../$(DIST_ZIP) $(BASE)
-	@ls -l $(DIST_BALL) $(DIST_ZIP)
+	@ls -l $(DIST_BALL)
 	rm -fr $(tmpdir)
+
+$(DIST_ZIP): $(PRCS) $(TOP_DIST)
+	$(ZIP) -rq9 $(DIST_ZIP) $(TOP_DIST) $(PRCS)
+	@ls -l $(DIST_ZIP)
+
+$(DIST_NEWS): NEWS $(DIST_BALL) $(DIST_ZIP) $(PRCS)
+	(cat NEWS ; md5sum $(DIST_BALL) $(DIST_ZIP) $(PRCS) ) > NEWS.tmp
+	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
+	rm -f NEWS.tmp
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
