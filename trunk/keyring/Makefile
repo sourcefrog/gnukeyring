@@ -24,7 +24,7 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
 		  setpasswd.c pwhash.c snib.c reencrypt.c pack.c	\
-		  unpack.c sort.c secrand.c
+		  unpack.c sort.c secrand.c search.c
 
 HEADERS	        = keyring.h record.h error.h keydb.h listform.h 	\
 		  resource.h crypto.h pwhash.h snib.h includes.h
