@@ -78,3 +78,6 @@ extern KeyringPrefsType gPrefs;
 enum updateCodes {
     updateCategory = 1
 };
+
+extern Boolean gEditFormActive;
+extern Boolean gSleeping;

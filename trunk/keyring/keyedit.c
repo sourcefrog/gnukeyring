@@ -51,7 +51,6 @@ static void KeyEditForm_GetFields(void);
 
 static Boolean f_keyDiscarded;
 static Boolean f_keyCommitted;
-static Boolean f_editFormActive;
 
 // If the form is active, all these are valid.
 static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
@@ -439,7 +438,7 @@ static void KeyEditForm_OpenRecord(void)
 void KeyEditForm_GotoRecord(UInt16 recordIdx)
 {
     /* If we are active, commit the current record. */
-    if (f_editFormActive)
+    if (gEditFormActive)
 	KeyEditForm_Commit();
 
     /* Unlock or return immediately. 
@@ -452,7 +451,7 @@ void KeyEditForm_GotoRecord(UInt16 recordIdx)
 
     gKeyRecordIndex = recordIdx;
 
-    if (f_editFormActive)
+    if (gEditFormActive)
 	KeyEditForm_OpenRecord();
     else
         FrmGotoForm(KeyEditForm);
@@ -517,7 +516,7 @@ static void KeyEditForm_FormOpen(void)
 {
     UInt32      version;
 
-    f_editFormActive = true;
+    gEditFormActive = true;
     
     /* NotifyRegister is not present in 3.0.  We need to check for
      * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
@@ -578,7 +577,7 @@ static void Edit_FormClose(void)
 			      sysNotifySleepRequestEvent,
 			      sysNotifyNormalPriority);
      }
-     f_editFormActive = false;
+     gEditFormActive = false;
 }
 
 
