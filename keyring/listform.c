@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -40,8 +40,8 @@
 
 static Int16 ListForm_RecordIdx(Int16 itemNum)
 {
-    Int16	idx = 0;
-    Err		err;
+    Int16       idx = 0;
+    Err         err;
 
     /* FIXME: We need to skip the first few reserved records, but that
      * depends on the category: if it is zero (if that's their
@@ -58,18 +58,18 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
     itemNum += Keys_IdxOffsetReserved();
     
     err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum,
-				 dmSeekForward, gPrefs.category);
+                                 dmSeekForward, gPrefs.category);
 
     if (err != errNone) {
-	return -1;
+        return -1;
     } 
 
     return idx;
 }
 
 static void ListForm_ListDraw(Int16 itemNum,
-			      RectanglePtr bounds,
-			      Char * UNUSED(*data))
+                              RectanglePtr bounds,
+                              Char * UNUSED(*data))
 {
     /* We keep deleted records at the end, so the first N records will
      * be ones we can draw. */
@@ -77,39 +77,39 @@ static void ListForm_ListDraw(Int16 itemNum,
     /* This could be faster if we remembered the current position and
      * stepped forward to the next.  However it's not worth optimizing
      * since it will likely change to be a table in the future. */
-    MemHandle	rec = 0;
+    MemHandle   rec = 0;
     Char       *recPtr = 0, *scrStr;
-    UInt16	len;
-    Char	altBuf[10];
-    Int16	idx;
+    UInt16      len;
+    Char        altBuf[10];
+    Int16       idx;
 
     ErrFatalDisplayIf(itemNum > 10000, __FUNCTION__ ": unreasonable itemnum");
 
     idx = ListForm_RecordIdx(itemNum);
     if (idx == -1) {
-    	scrStr = "<err>";
-	goto draw;
+        scrStr = "<err>";
+        goto draw;
     }
 
     rec = DmQueryRecord(gKeyDB, idx);
     if (!rec) {
-	scrStr = "<no-record>";
-	goto draw;
+        scrStr = "<no-record>";
+        goto draw;
     }
     
     recPtr = MemHandleLock(rec);
     if (!recPtr) {
-	scrStr = "<no-ptr>";
-	goto draw;
+        scrStr = "<no-ptr>";
+        goto draw;
     }
     
     if (!*recPtr) {
-	// If there is no name, use the record index instead
-	altBuf[0] = '#';
-	StrIToA(altBuf + 1, idx);
-	scrStr = altBuf;
+        // If there is no name, use the record index instead
+        altBuf[0] = '#';
+        StrIToA(altBuf + 1, idx);
+        scrStr = altBuf;
     } else {
-	scrStr = recPtr;
+        scrStr = recPtr;
     }
 
  draw:
@@ -117,7 +117,7 @@ static void ListForm_ListDraw(Int16 itemNum,
     WinDrawChars(scrStr, len, bounds->topLeft.x, bounds->topLeft.y);
     
     if (recPtr)
-	MemHandleUnlock(rec);
+        MemHandleUnlock(rec);
 }
 
 
@@ -134,16 +134,16 @@ static void ListForm_FormOpen(void) {
  */
 static Int16 ListForm_GetNumListed(void) {
     return DmNumRecordsInCategory(gKeyDB, gPrefs.category) -
-	Keys_IdxOffsetReserved();
+        Keys_IdxOffsetReserved();
 }
 
 
 static Boolean ListForm_Update(int updateCode) {
-    FormPtr		frm;
-    ListPtr		list;
-    UInt16		numRows;
-    ScrollBarPtr 	scl;
-    UInt16 		top, visRows, max;
+    FormPtr             frm;
+    ListPtr             list;
+    UInt16              numRows;
+    ScrollBarPtr        scl;
+    UInt16              top, visRows, max;
 
     frm = FrmGetActiveForm();
     list = (ListPtr) UI_GetObjectByID(frm, KeysList);
@@ -156,12 +156,12 @@ static Boolean ListForm_Update(int updateCode) {
     
     // Select most-recently-used record, if any.
     if (gKeyPosition >= numRows) {
-	gKeyPosition = gKeyRecordIndex = kNoRecord;
-	top = 0;
+        gKeyPosition = gKeyRecordIndex = kNoRecord;
+        top = 0;
     } else {
-	LstSetSelection(list, gKeyPosition);
-	LstMakeItemVisible(list, gKeyPosition);
-	top = list->topItem;
+        LstSetSelection(list, gKeyPosition);
+        LstMakeItemVisible(list, gKeyPosition);
+        top = list->topItem;
     }
 
     // Connect the scrollbar to the list.  The list cannot change
@@ -175,8 +175,8 @@ static Boolean ListForm_Update(int updateCode) {
     SclSetScrollBar(scl, top, 0, max, visRows);
 
     if (updateCode & updateCategory) {
-	// Set up the category name in the trigger
-	Category_UpdateName(frm, gPrefs.category);
+        // Set up the category name in the trigger
+        Category_UpdateName(frm, gPrefs.category);
     }
 
     FrmDrawForm(frm);
@@ -186,22 +186,22 @@ static Boolean ListForm_Update(int updateCode) {
 
 
 static Boolean ListForm_ListSelect(EventPtr event) {
-    Int16	listIdx, idx;
-    Err		err;
+    Int16       listIdx, idx;
+    Err         err;
     if (event->data.lstSelect.listID != KeysList)
-	return false;
+        return false;
 
     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
-	/* Map from a position within this category to an overall
-	 * record index. */
-	listIdx = event->data.lstSelect.selection
-	     + Keys_IdxOffsetReserved();
-	idx = 0;
-	err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
-				     dmSeekForward, gPrefs.category);
-	gKeyRecordIndex = idx;
-	gKeyPosition = listIdx;
-	FrmGotoForm(KeyEditForm);
+        /* Map from a position within this category to an overall
+         * record index. */
+        listIdx = event->data.lstSelect.selection
+             + Keys_IdxOffsetReserved();
+        idx = 0;
+        err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
+                                     dmSeekForward, gPrefs.category);
+        gKeyRecordIndex = idx;
+        gKeyPosition = listIdx;
+        FrmGotoForm(KeyEditForm);
     }
     return true;
 }
@@ -210,7 +210,7 @@ static Boolean ListForm_ListSelect(EventPtr event) {
 static void ListForm_NewKey(void) {
     gKeyRecordIndex = gKeyPosition = kNoRecord;
     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
-	FrmGotoForm(KeyEditForm);
+        FrmGotoForm(KeyEditForm);
     }
 }
 
@@ -245,40 +245,40 @@ Boolean ListForm_HandleEvent(EventPtr event) {
     
     switch (event->eType) {
     case ctlSelectEvent:
-	switch (event->data.ctlSelect.controlID) {
-	case NewKeyBtn:
-	    ListForm_NewKey();
-	    result = true;
-	    break;
+        switch (event->data.ctlSelect.controlID) {
+        case NewKeyBtn:
+            ListForm_NewKey();
+            result = true;
+            break;
 
-	case CategoryTrigger:
-	    Category_Selected(&gPrefs.category, true);
-	    break;
-	}
-	break;
+        case CategoryTrigger:
+            Category_Selected(&gPrefs.category, true);
+            break;
+        }
+        break;
 
     case frmOpenEvent:
-	ListForm_FormOpen();
-	result = true;
-	break;
+        ListForm_FormOpen();
+        result = true;
+        break;
 
     case frmUpdateEvent:
-	result = ListForm_Update(event->data.frmUpdate.updateCode);
-	break;
+        result = ListForm_Update(event->data.frmUpdate.updateCode);
+        break;
 
     case lstSelectEvent:
-	result = ListForm_ListSelect(event);
-	break;
+        result = ListForm_ListSelect(event);
+        break;
 
     case menuEvent:
-	if (!Common_HandleMenuEvent(event))
-	    App_NotImplemented();
-	result = true;
-	break;
+        if (!Common_HandleMenuEvent(event))
+            App_NotImplemented();
+        result = true;
+        break;
 
     case sclRepeatEvent:
-	ListForm_ScrollRepeat(event);
-	break;
+        ListForm_ScrollRepeat(event);
+        break;
 
     case keyDownEvent:
         if (event->data.keyDown.chr == pageUpChr) {
@@ -292,7 +292,7 @@ Boolean ListForm_HandleEvent(EventPtr event) {
         break;
 
     default:
-	;	
+        ;       
     }
 
     return result;
