@@ -27,18 +27,7 @@
  * TODO: Is it possible we could be overflowing the stack?
  */
 
-#include <PalmOS.h>
-
-#include "keyring.h"
-#include "memutil.h"
-#include "record.h"
-#include "keydb.h"
-#include "crypto.h"
-#include "passwd.h"
-#include "resource.h"
-#include "snib.h"
-#include "uiutil.h"
-#include "auto.h"
+#include "includes.h"
 
 
 void UnpackedKey_Free(UnpackedKeyPtr u)

@@ -20,16 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
-
-#include "keyring.h"
-#include "resource.h"
-#include "category.h"
-#include "uiutil.h"
-#include "keydb.h"
-#include "auto.h"
+#include "includes.h"
 
 static Char		categoryName[dmCategoryLength];
 

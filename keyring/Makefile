@@ -23,17 +23,14 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
 		  beta.c setpasswd.c pwhash.c snib.c reencrypt.c	\
-		  pack.c unpack.c sort.c secrand.c
+		  pack.c unpack.c sort.c secrand.c debug.c
 
-HEADERS	      = dbutil.h generate.h keyring.h passwd.h record.h	\
-		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
-		resource.h util.h crypto.h export.h keyedit.h		\
+HEADERS	      = keyring.h passwd.h record.h				\
+		upgrade.h error.h keydb.h listform.h prefs.h		\
+		resource.h util.h crypto.h keyedit.h			\
 		memutil.h pwhash.h uiutil.h snib.h pack.h unpack.h	\
-		reencrypt.h sort.h secrand.h
+		reencrypt.h sort.h secrand.h prototype.h
 
-# 		  libdes/des_enc.c
-
-DEP             = $(subst .c,.d,$(SRC))
 OBJ		= $(subst .c,.o,$(SRC))
 BIN             = $(APP).bin
 DEF		= $(APP).def
@@ -73,7 +70,9 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wlarger-than-260 -Wshadow -Wcast-align	
 # 		-Wsign-compare
 OPTIM		= -O3 -finline-functions -g
-CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD
+CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
+
+$(OBJ): $(HEADERS)
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
@@ -105,20 +104,19 @@ default: $(BASE)-en.prc
 
 all: $(PRCS) 
 
--include $(DEP)
-
 $(BASE)-%.prc: %.resstamp $(EXE)
 	cd res/$* && $(BUILDPRC) ../../$@ 'Keyring' Gtkr ../../$(EXE) *.bin
 	ls -l $@
 
 %.resstamp: $(BITMAPS) resource.h 
 %.resstamp: $(RCP)
-	[ -d res/$* ] || mkdir -p res/$*
-	-rm -f res/$*/*
-	-rm -f *.bin
-	$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/
-	cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
-	touch $@
+	@echo Building resources for $*
+	@[ -d res/$* ] || mkdir -p res/$*
+	@-rm -f res/$*/*
+	@-rm -f *.bin
+	@$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/
+	@cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
+	@touch $@
 
 dist: $(DIST_BALL) $(DIST_ZIP)
 
@@ -152,10 +150,12 @@ auto.h: en.resstamp
 	$(CC) $(CFLAGS) -S $< 
 
 %.o: %.c auto.h
-	$(CC) $(CFLAGS) -c $< -o $*.o
+	@echo Compiling $*.c
+	@$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
-	rm -f *.o $(EXE) *.bin res/*/* *.grc *.prc *.resstamp *.bin *.d *.stamp
+	rm -f *.o *.d $(EXE) *.bin res/*/* *.grc *.prc *.resstamp \
+	prototype.h *.bin *.d *.stamp 
 
 tags: TAGS
 TAGS: *.c *.h
@@ -179,10 +179,10 @@ proto: prototype.h
 	@[ -f $@ ] || touch $@
 
 prototype.h: script/mkproto.awk $(MKPROTO_C)
-	echo Checking prototype.h
-	$(AWK) -f script/mkproto.awk $(MKPROTO_C) \
+	@echo Checking prototype.h
+	@$(AWK) -f script/mkproto.awk $(MKPROTO_C) \
 		>prototype.h.new
-	if test -f prototype.h && cmp -s prototype.h.new prototype.h; \
+	@if test -f prototype.h && cmp -s prototype.h.new prototype.h; \
 	then rm -f prototype.h.new; \
 	echo No changes to prototypes; \
 	else \

@@ -29,16 +29,7 @@
  * we would have to do a custom event loop, rather than calling
  * FrmDoDialog.  */
 
-#include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
-
-#include "resource.h"
-#include "keyring.h"
-#include "generate.h"
-#include "uiutil.h"
-#include "auto.h"
-#include "secrand.h"
+#include "includes.h"
 
 enum includes {
     kLower = 1,
@@ -143,7 +134,8 @@ static void Generate_LoadOrDefault(GeneratePrefsPtr prefs)
 
 
 /* Save the user's preference for password generation. */
-static void Generate_Save(GeneratePrefsPtr prefs) {
+static void Generate_Save(GeneratePrefsPtr prefs)
+{
     PrefSetAppPreferences(kKeyringCreatorID,
 			  kGeneratePref,
 			  kAppVersion,
@@ -153,7 +145,8 @@ static void Generate_Save(GeneratePrefsPtr prefs) {
 }
 
 
-static void Generate_Init(FormPtr frm) {
+static void Generate_Init(FormPtr frm)
+{
     GeneratePrefsType prefs;
     
     Generate_LoadOrDefault(&prefs);
@@ -166,7 +159,8 @@ static void Generate_Init(FormPtr frm) {
 /*
  * FLAGS is a mask of allowed character classes from classMap.
  */
-static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
+static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len)
+{
     Int16 	i;
     Char	ch;
 
@@ -185,7 +179,8 @@ static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
 }
 
 
-static MemHandle Generate_MakePassword(FormPtr frm) {
+static MemHandle Generate_MakePassword(FormPtr frm)
+{
     GeneratePrefsType prefs;
     MemHandle	h;
     Char *	ptr;
@@ -216,7 +211,8 @@ static MemHandle Generate_MakePassword(FormPtr frm) {
 }
 
 
-MemHandle Generate_Run(void) {
+MemHandle Generate_Run(void)
+{
     FormPtr 	prevFrm, frm;
     Int16		btn;
     MemHandle	result;

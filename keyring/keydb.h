@@ -3,7 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,24 +22,9 @@
 
 extern Int16 gKeyDBCardNo;
 extern LocalID gKeyDBID;
+extern Boolean g_ReadOnly;
 extern DmOpenRef gKeyDB;
 
 
 #define kMasterHashRec 0
 #define kNumHiddenRecs 1
-
-Err KeyDB_CreateCategories(void);
-
-Err KeyDB_CreateRingInfo(void);
-void KeyDB_SetPasswd(UInt8 *oldKey, Char *newPasswd);
-Err KeyDB_CreateReservedRecords(void);
-Err KeyDB_SetVersion(void);
-
-enum KeyDB_State KeyDB_Examine(void);
-Boolean KeyDB_Verify(Char const *guess);
-
-Int16 Keys_IdxOffsetReserved(void);
-
-extern Boolean g_ReadOnly;
-     
-Err KeyDB_Init(void);

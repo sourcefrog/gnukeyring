@@ -3,7 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
-
-#include "resource.h"
-#include "keyring.h"
-#include "crypto.h"
-#include "snib.h"
+#include "includes.h"
 
 // ======================================================================
 // DES3 functions
@@ -113,7 +106,7 @@ Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len,
 /*
  * Encrypt (or not!) and write out
  */
-Err DES3_Write(void *recPtr, UInt32 off,
+ Err DES3_Write(void *recPtr, UInt32 off,
                char const *src, UInt32 len,
                UInt8 *UNUSED(key))
 {
@@ -121,7 +114,7 @@ Err DES3_Write(void *recPtr, UInt32 off,
 }
 
 
-Err DES3_Read(void * from, void * to, UInt32 len)
+ Err DES3_Read(void * from, void * to, UInt32 len)
 {
     MemMove(to, from, len);
 

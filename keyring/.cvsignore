@@ -20,5 +20,6 @@ keyring-*.tar.gz
 keyring-*.tar.gz.asc
 keyring-*.zip
 keyring.rcp
+prototype.h
 removed
 res

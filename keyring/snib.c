@@ -20,15 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-
-#include "keyring.h"
-#include "memutil.h"
-#include "crypto.h"
-#include "resource.h"
-#include "snib.h"
-#include "auto.h"
-#include "uiutil.h"
+#include "includes.h"
 
 /*
  * The snib database holds working values which have to persist even
@@ -77,7 +69,7 @@ Err Snib_Init(void)
  * the main code segment and must not use global variables.
  * It shouldn't do any time consuming things.
  */
-void Snib_Eradicate()
+void Snib_Eradicate(void)
 {
     Err err;
     SnibPtr snib;

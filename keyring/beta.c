@@ -4,7 +4,7 @@
  * 
  * Keyring -- store passwords securely on a handheld
  *
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-
-#include "resource.h"
-#include "keyring.h"
-#include "beta.h"
+#include "includes.h"
 
 /* True if this is a stable rather than a beta release of the app */
 #define kAppStableVers 0
