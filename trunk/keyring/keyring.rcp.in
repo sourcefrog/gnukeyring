@@ -350,7 +350,7 @@ BEGIN
 END
 
 
-FORM ID ID_PrefsForm AT (2 93 156 63)
+FORM ID ID_PrefsForm AT (2 96 156 62)
 MODAL
 BEGIN
 	TITLE "Preferences"
