@@ -15,7 +15,7 @@ APPID           = "Gtkr"
 #C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI
 #export C_INCLUDE_PATH
 
-VERSION         = 1.1pre3
+VERSION         = 1.1pre4
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
