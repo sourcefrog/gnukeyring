@@ -187,6 +187,17 @@ BEGIN
 END
 
 
+ALERT ID OutOfMemoryAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+ 	MESSAGE "Not enough dynamic memory to proceed.  Sorry."
+	
+	BUTTONS "OK"
+END
+
+
 ALERT ID WrongKeyAlert
 ERROR
 BEGIN

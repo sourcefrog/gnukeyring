@@ -92,23 +92,26 @@ static void UnpackedKey_Free(UnpackedKeyPtr u) {
 
 
 /* Convert from a packed database record into an unpacked in-memory
- * representation. */
+ * representation.  Return true if conversion was successful. */
 void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
 		      UInt8 const *key)
 {
-    Char *	recPtr = MemHandleLock(record);
+    Char *	recPtr;
     Char *	plainBuf;
     Char *	cryptPtr;
     UInt32	recLen;
     Char *	ptr;
     Int32	nameLen;
+
+    recPtr = MemHandleLock(record);
+    
+    recLen = MemHandleSize(record);
+    plainBuf = MemPtrNew(recLen);
+    ErrFatalDisplayIf(!plainBuf, "Not enough memory to unpack record");
     
     u->nameHandle = Mem_StrToHandle(recPtr, &nameLen);
     u->nameLen = nameLen;
 
-    recLen = MemHandleSize(record);
-    plainBuf = MemPtrNew(recLen);
-    ErrFatalDisplayIf(!plainBuf, __FUNCTION__ ": couldn't allocate plainBuf");
     cryptPtr = recPtr + nameLen + 1;
     DES3_Buf(cryptPtr, plainBuf, recLen - (cryptPtr - recPtr), false,
 	     key);
@@ -122,7 +125,8 @@ void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
     u->lastChangeDirty = false;
 
     MemPtrFree(plainBuf);
-    
+
+ outUnlock:
     MemHandleUnlock(record);
 }
 
@@ -130,7 +134,7 @@ void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
 /* Convert from an unpacked in-memory representation into the packed
  * form written into the database. */
 static void * KeyRecord_Pack(UnpackedKeyType const *u,
-			      UInt8 const *key)
+			     UInt8 const *key)
 {
     int		dateLen;
     Char *	ptr; // Moves through buffer filling with data
@@ -140,7 +144,7 @@ static void * KeyRecord_Pack(UnpackedKeyType const *u,
     
     recLen = KeyRecord_CalcPackedLength(u);
     buf = MemPtrNew(recLen);
-    ErrFatalDisplayIf(!buf, __FUNCTION__ ": new encBuf");
+    ErrFatalDisplayIf(!buf, "Not enough dynamic memory to encode record");
     ptr = buf;
 
     Mem_CopyFromHandle(&ptr, u->nameHandle, u->nameLen+1);
@@ -322,6 +326,15 @@ static void KeyDB_Reencrypt(Char const *newPasswd) {
 	// Read into a temporary unpacked buffer
 	KeyRecord_Unpack(fromRec, &unpacked, gRecordKey);
 	
+	/* XXX: It would be REALLY BAD if this failed: we've changed the encryption
+	 * on some record, but not others.  This will mean the
+	 * user can't decrypt some of them.  We need a systematic
+	 * way around this.
+	 *
+	 * Probably a good way is to not use the key to really
+	 * encrypt the records, but rather an invariant session
+	 * key.  */
+	
 	// Pack and encrypt using the new key
 	toPtr = KeyRecord_Pack(&unpacked, newRecordKey);
 	ErrNonFatalDisplayIf(!toPtr, "!toPtr");
@@ -339,8 +352,10 @@ static void KeyDB_Reencrypt(Char const *newPasswd) {
 	MemHandleUnlock(fromRec);
 	MemPtrFree(toPtr);
 
-	DmReleaseRecord(gKeyDB, idx, true); // dirty
 	UnpackedKey_Free(&unpacked);
+
+    releaseRecord:
+	DmReleaseRecord(gKeyDB, idx, true); // dirty
     }
 
     // Finally, make the new unlock hash the currently active one

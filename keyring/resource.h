@@ -24,6 +24,7 @@
 #define BusyDecryptForm			1016
 #define GenerateForm			1017
 #define MemoDatabaseErrorAlert		1018
+#define OutOfMemoryAlert		1019
 
 #define ListMenuBar			1100
 #define KeyEditMenuBar			1101
