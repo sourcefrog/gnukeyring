@@ -40,7 +40,7 @@ KrCatInfoType:
 SaltHashType:
   UInt8    salt[8];
   UInt16   iter;
-  UInt16   cipher;
+  UInt16   cipher;     /* 0: None, 1: DES-EDE3, 2: AES128, 3: AES256 */
   UInt8    hash[8];
 
 #if VERSION > 5
@@ -84,26 +84,30 @@ Crypto information:
 For deriving the encryption key from the password, we use the
 algorithm described in the PKCS #5 (RFC 2898) standard.
 
-Snib          = PBKDF2(Password, Salt, Iter)
+Snib          = des_odd_parity(PBKDF2(Password, Salt, Iter, keylen))
 EncryptionKey = Snib
 KeyHash       = first64bits(SHA1(Snib ; Salt))
-InitialVector = random 8 bytes.
+InitialVector = random 8 bytes (stored in record).
 
-Encryption is done with DES-EDE3-CBC  (or AES-CBC)
+Encryption is done with DES-EDE3-CBC or AES-CBC.  keylen is 16 byte
+for aes, 24 byte for des and 32 byte for AES-256.  des_odd_parity is
+only called for DES keys (this removes 24 bits).
 
 Reasoning:
 
-The Snib is generated from the password string in standard way. The
-iteration count (Iter) is used to make brute-force attacks difficult.
-It is chosen by the user to compromise between speed and security.
-The Snib is all you need to encrypt database and check for
-correctness.  Because the snib also depends on the salt and because it
-doesn't give away the Masterkey, getting the snib doesn't allow to
-encrypt another database with the same MasterKey.
+The Snib is generated from the password string in standard way (this
+makes it easier to write a conduit). The iteration count (Iter) is
+used to make brute-force attacks difficult.  It is chosen by the user
+to compromise between speed and security as the default value (2500
+for openssl) is much too slow on a m68k based palm.  The Snib is all
+you need to encrypt database and check for correctness.  Because the
+snib also depends on the salt and because it doesn't give away the
+master password, getting the snib doesn't allow to encrypt another
+database with the same password.
 
 The KeyHash is stored in the data base.  Therefore it must be a secure
 hash and should use the salt to prevent dictionary attacks.  While the
-key has 168 bits, the KeyHash only has 64 bits.  This makes it
+key has 128/168/256 bits, the KeyHash only has 64 bits.  This makes it
 impossible to reconstruct the key by brute-force reversal of the hash,
 at least if the password is stronger than 64 bits.  On the other hand
 64 bits are enough to detect mistyped passwords.
