@@ -64,7 +64,6 @@ static void Generate_LoadOrDefault(Int16 * plen,
 				   Int16 * pclasses) 
 {
     Int16 data[2];
-    Int16 version;
     const Int16 expectedSize = 2 * sizeof(Int16);
     Int16 size = expectedSize;
     Int16 gotSize;
