@@ -23,7 +23,7 @@
 /* Sizes in bytes */
 #define kDESBlockSize		8
 #define kDESKeySize             8
-#define kDES3BlockSize          16
+#define kDES3KeySize            24
 #define kMD5HashSize            16
 
 Err DES3_Read(void * from, void * to, UInt32 len);
