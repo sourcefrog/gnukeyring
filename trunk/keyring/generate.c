@@ -163,24 +163,23 @@ static void Generate_Init(FormPtr frm) {
 }
 
 
+/*
+ * FLAGS is a mask of allowed character classes from classMap.
+ */
 static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
     Int16 	i;
     Char	ch;
     Int16	ri;
-    Int16       mask;
 
     for (i = 0; i < len; i++) {
-        /* If we just choose characters at random and then check,
-             * then we get too many high ascii characters.  So instead
-             * we apply a random mask. */
-        do {
-            mask = includeMap[(SysRandom(0) % 5) * 2];
-        } while (!(mask & flags));
+        /* We used to first choose a class of character, but that
+         * tends to generate too many digits.  So instead we pick any
+         * character and see if it's included.  */
         
         do {
             ri = SysRandom(0);
             ch = (ri >> 8) ^ ri;
-        } while (!(classMap[(UInt8) ch] & mask));
+        } while (!(classMap[(UInt8) ch] & flags));
 	
 	ptr[i] = ch;
     }
