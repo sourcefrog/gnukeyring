@@ -28,6 +28,7 @@
 KeyringPrefsType gPrefs;
 
 MemHandle handleFontStar;
+MemHandle handleFontPW;
 
 
 // ======================================================================
@@ -71,6 +72,8 @@ static Err App_Start(void)
 
     handleFontStar = DmGetResource('NFNT', StarFont);
     FntDefineFont(fntStar, (FontPtr)MemHandleLock(handleFontStar));
+    handleFontPW = DmGetResource('NFNT', PasswordFont);
+    FntDefineFont(fntPassword, (FontPtr)MemHandleLock(handleFontPW));
 
     App_LoadPrefs();
     Gkr_CheckBeta();

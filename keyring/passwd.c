@@ -68,7 +68,7 @@ static Boolean UnlockForm_HandleEvent(EventPtr event)
     if (event->eType == ctlSelectEvent
 	&& event->data.ctlSelect.controlID == VeilPasswordCheck) {
 	FldSetFont(UI_GetObjectByID(FrmGetActiveForm(), MasterKeyFld), 
-		   event->data.ctlSelect.on ? fntStar : stdFont);
+		   event->data.ctlSelect.on ? fntStar : fntPassword);
 	return true;
     }
     return false;
@@ -94,7 +94,7 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 
     do { 
         f_entryFld = FrmGetObjectPtr(frm, entryIdx);
-	FldSetFont(f_entryFld, veil ? fntStar : stdFont);
+	FldSetFont(f_entryFld, veil ? fntStar : fntPassword);
 
 	FrmSetFocus(frm, entryIdx);
 	result = FrmDoDialog(frm);

@@ -20,6 +20,8 @@ BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
 RCP_IN          = $(RCP).ja $(RCP).in
+BITMAPS         = keyring-15.xbm keyring-22.xbm lock.xbm unlock.xbm
+RESOURCES	= fontPW.txt fontstar.txt $(BITMAPS)
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
@@ -44,8 +46,6 @@ PILRC           = pilrc
 TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
 AWK		= awk
-
-BITMAPS         = keyring-15.xbm keyring-22.xbm 
 
 # Note: 
 # Turning on debugger support (-g) costs about 100 bytes
@@ -78,7 +78,7 @@ HELP_TXT        = $(wildcard help/*/*.txt)
 
 DOCS		= HACKING TODO TESTS 
 
-SRC_DIST        = $(RCP_IN) Makefile $(BITMAPS) \
+SRC_DIST        = $(RCP_IN) Makefile $(RESOURCES) \
 		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
 		  $(HELP_TXT)
 
@@ -133,7 +133,7 @@ $(DIST_BALL) $(DIST_ZIP): $(SRC_DIST) $(TOP_DIST)
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
-$(RCP): $(RCP_IN) Makefile
+$(RCP): $(RCP_IN) Makefile $(RESOURCES)
 	@rm -f $@
 	(echo '// ******DYNAMICALLY GENERATED DO NOT EDIT********'; \
 	 sed $(SED_SUBST) $(RCP_IN)) > $@
@@ -186,7 +186,7 @@ proto: .proto.stamp
 	echo Installing new prototype.h; \
 	mv prototype.h.new prototype.h; \
 	fi
-	@[ -f $@ ] || touch $@
+	@touch $@
 
 
 $(OBJ): $(HEADERS)
