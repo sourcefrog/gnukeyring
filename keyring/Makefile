@@ -46,12 +46,13 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 # does not involve size-speed tradeoffs.
 
 DEFINES		= -DPALM_KEYRING
-CFLAGS          = -O3 -Wall -Winline -Wunused -W	\
+WARN	        = -Wall -Winline -Wunused -W	\
 		-Wsign-compare -Wstrict-prototypes	\
 		-Wmissing-prototypes -Winline		\
-		-Wlarger-than-256 -Wshadow -Wcast-align	\
-		-finline-functions			\
-		$(DEFINES) $(INCLUDES) -MMD -g
+		-Wlarger-than-256 -Wshadow -Wcast-align	
+# OPTIM		= -O3 -finline-functions
+OPTIM		= -O0 -g
+CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD 
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
