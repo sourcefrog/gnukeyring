@@ -75,7 +75,6 @@
     NSRange searchRange = NSMakeRange(0, [string length]);
     NSRange foundRange;
 
-    [textStorage beginEditing];
     do {
         // We assume that all URLs start with http://
         foundRange = [string rangeOfString: @"http://"
@@ -99,7 +98,7 @@
 
             // The URL could also end at the end of the text.
             // The next line fixes it in case it does
-            if (endOfURLRange.location == 0)
+            if (endOfURLRange.length == 0)
                 endOfURLRange.location = [string length] - 1;
 
             // Set foundRange's length to the length of the URL
@@ -121,7 +120,6 @@
 
     } while (foundRange.length != 0); // repeat the do block until it no longer finds anything
 
-    [textStorage endEditing];
 }
 
 - (BOOL)textView:(NSTextView*)textView
