@@ -558,6 +558,191 @@ BEGIN
   "@accel_Graffiti" = "G"
 END
 
+// ======================================================================
+// Norwegian (bokmål) translation by Andreas-Johann Ulvestad <aj@nlc.no>
+
+TRANSLATION "no"
+BEGIN
+  "New" = "Ny"
+  "Key ______ of ______" = "Nøkkel ______ av ______" 
+  "Name:" = "Navn:"
+  "Account:" = "Konto:"
+  "Password:" = "Passord:"
+  "Confirm:"  = "Bekreft:" 
+  "Changed:" = "Endret:"
+  "Done" = "Ferdig"
+  "Preferences" = "Instillinger"
+  "Stay unlocked for:" = "Behold ulåst:"
+  "No time" = "0 sek."
+  "15 sec" = "15 sek."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+
+  "Cancel" = "Avbryt"
+
+  "Set Keyring Password" =  "Sett nøkkelringpassord"
+
+  "@@choosepassword" = "Velg et passord:"
+
+  "Generate Password" = "Generer passord"
+  "@@generate1" = "Generer et nytt "
+  "@@generate2" = "passord:"
+
+  "Length:" = "Lengde:"
+  "Include:" = "Inkluder:"
+  "Generate" = "Generer"
+
+  "Unlock" =  "Lås opp"
+
+  "Enter your password:" = "Skriv inn passordet ditt:"
+
+  "Encrypting..." = "Krypterer..."
+  "Decrypting..." = "Dekrypterer..."
+
+  "@@OutOfMemory" =  "For lite dynamisk minne for å fortsette."
+  "@@WrongPassword" = "Feil passord, prøv igjen."
+  "@@PasswordMismatch" =  "Passordene stemmer ikke sammen, prøv igjen."
+
+  "Not here yet" = "Ikke her enda"
+  "@@NotImplemented" = "Denne funksjonen er enda ikke implementert."
+
+  "^1: System error ^2" =  "^1: Systemfeil ^2"
+  "Couldn't launch the Memo Pad" =  "Kunne ikke starte Memo Pad."
+
+  "Delete Key" = "Slett nøkkel"
+  "Delete current key record?" = "Slett den aktuelle nøkkelen?"
+  "Save archive copy on PC" = "Lagre en arkivkopi på PC"
+
+  "Database" = "Database"
+  "Set Password..." = "Sett passord..."
+  "Options" = "Alternativer"
+  "Edit" = "Redigere"
+
+  "Preferences..." =  "Instillinger..."
+  "About..." =  "Om Keyring"
+
+  "Undo" = "Angre"
+  "Graffiti Help" = "Graffiti-hjelp"
+  "Paste" = "Lim inn"
+  "Cut" = "Klipp ut"
+  "Select All" = "Velg alle"
+  "Key %d of %d" = "Nøkkel %d av %d"
+  "Copy" = "Kopier"
+  "Keyboard" = "Tastatur"
+  "New Key" = "Ny nøkkel"
+
+  "Record" =  "Post"
+  "Generate Password..." = "Generer passord..."
+  "Export to Memo" = "Lagre som Memo"
+  "Delete..." = "Slett..."
+
+  "@@GenerateHelp" = "help/no/generate.txt"
+  "@@KeyEditHelp" = "help/no/keyedit.txt"
+
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S" 
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
+END
+
+// ======================================================================
+// Norwegian (nynorsk) translation by Andreas-Johann Ulvestad <aj@nlc.no>
+
+TRANSLATION "no_NY"
+BEGIN
+  "New" = "Ny"
+  "Key ______ of ______" = "Nøkkel ______ av ______" 
+  "Name:" = "Navn:"
+  "Account:" = "Konto:"
+  "Password:" = "Passord:"
+  "Confirm:"  = "Bekreft:" 
+  "Changed:" = "Endra:"
+  "Done" = "Ferdig"
+  "Preferences" = "Instillinger"
+  "Stay unlocked for:" = "Behald ulåst:"
+  "No time" = "0 sek."
+  "15 sec" = "15 sek."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+
+  "Cancel" = "Avbryt"
+
+  "Set Keyring Password" =  "Sett nykelringpassord"
+
+  "@@choosepassword" = "Velj eit passord:"
+
+  "Generate Password" = "Generer passord"
+  "@@generate1" = "Generer eit nytt "
+  "@@generate2" = "passord:"
+
+  "Length:" = "Lengde:"
+  "Include:" = "Inkluder:"
+  "Generate" = "Generer"
+
+  "Unlock" =  "Lås opp"
+
+  "Enter your password:" = "Skriv inn ditt passord:"
+
+  "Encrypting..." = "Krypterer..."
+  "Decrypting..." = "Dekrypterer..."
+
+  "@@OutOfMemory" =  "For lite dynamisk minne for å fortsette."
+  "@@WrongPassword" = "Feil passord, prøv igjen."
+  "@@PasswordMismatch" =  "Passorda stemmer ikkje saman, prøv igjen."
+
+  "Not here yet" = "Ikkje her endå"
+  "@@NotImplemented" = "Denne funksjonen er endå ikkje implementert."
+
+  "^1: System error ^2" =  "^1: Systemfeil ^2"
+  "Couldn't launch the Memo Pad" =  "Kunne ikkje starte Memo Pad."
+
+  "Delete Key" = "Slett nykel"
+  "Delete current key record?" = "Slett den aktuelle nyklen?"
+  "Save archive copy on PC" = "Lagre ein arkivkopi på PC"
+
+  "Database" = "Database"
+  "Set Password..." = "Sett passord..."
+  "Options" = "Alternativ"
+  "Edit" = "Redigere"
+
+  "Preferences..." =  "Instillingar..."
+  "About..." =  "Om Keyring"
+
+  "Undo" = "Angre"
+  "Graffiti Help" = "Graffiti-hjelp"
+  "Paste" = "Lim inn"
+  "Cut" = "Klipp ut"
+  "Select All" = "Velj alle"
+  "Key %d of %d" = "Nykel %d av %d"
+  "Copy" = "Kopier"
+  "Keyboard" = "Tastatur"
+  "New Key" = "Ny nykel"
+
+  "Record" =  "Post"
+  "Generate Password..." = "Generer passord..."
+  "Export to Memo" = "Lagre som Memo"
+  "Delete..." = "Slett..."
+
+  "@@GenerateHelp" = "help/no_NY/generate.txt"
+  "@@KeyEditHelp" = "help/no_NY/keyedit.txt"
+
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S" 
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
+END
+
+
 #include "resource.h"
 
 VERSION ID 1000 "__VERSION__"
