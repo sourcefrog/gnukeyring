@@ -9,6 +9,7 @@
 .dependencies
 ChangeLog
 ID
+auto.h
 bin
 bin.stamp
 grc.stamp
@@ -17,4 +18,3 @@ keyring
 keyring-*.tar.gz
 keyring-*.tar.gz.asc
 keyring.rcp
-res
