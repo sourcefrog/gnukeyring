@@ -704,7 +704,7 @@ END
 // Norwegian (bokmål) translation by Andreas-Johann Ulvestad <aj@nlc.no>
 // and Kjetil Wiekhorst Jørgensen (zarhan)
 
-TRANSLATION "no"
+TRANSLATION "nb"
 BEGIN
   "New" = "Ny"
   "Key ______ of ______" = "Nøkkel ______ av ______" 
@@ -788,8 +788,8 @@ BEGIN
   "Export to Memo" = "Lagre som Memo"
   "Delete..." = "Slett..."
 
-  "@@GenerateHelp" = "help/no/generate.txt"
-  "@@KeyEditHelp" = "help/no/keyedit.txt"
+  "@@GenerateHelp" = "help/nb/generate.txt"
+  "@@KeyEditHelp" = "help/nb/keyedit.txt"
   "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "Unfiled" = "Ingen kategori"
@@ -812,7 +812,7 @@ END
 // ======================================================================
 // Norwegian (nynorsk) translation by Andreas-Johann Ulvestad <aj@nlc.no>
 
-TRANSLATION "no_NY"
+TRANSLATION "nn"
 BEGIN
   "New" = "Ny"
   "Key ______ of ______" = "Nøkkel ______ av ______" 
@@ -891,8 +891,8 @@ BEGIN
   "Export to Memo" = "Lagre som Memo"
   "Delete..." = "Slett..."
 
-  "@@GenerateHelp" = "help/no_NY/generate.txt"
-  "@@KeyEditHelp" = "help/no_NY/keyedit.txt"
+  "@@GenerateHelp" = "help/nn/generate.txt"
+  "@@KeyEditHelp" = "help/nn/keyedit.txt"
   "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   /* These may not be right for this translation.  If they're wrong, please
