@@ -232,9 +232,7 @@ static Err RomVersionCompatible (void)
 
     // See if we have at least the minimum required version of the ROM or later.
     FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
-    FtrGet(sysFtrCreator, sysFtrNumEncryption, &encryption);
-    if (romVersion < sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0)
-	|| (encryption & sysFtrNumEncryptionMaskDES) == 0) {
+    if (romVersion < sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0)) {
 	FrmAlert(NotEnoughFeaturesAlert);
 	
 	// Pilot 1.0 will continuously relaunch this app unless we switch to 
