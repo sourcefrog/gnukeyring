@@ -1,0 +1,5 @@
+Genera password imposta la password di questo record a un valore casuale.
+
+La lunghezza è il numero di caratteri della nuova password
+
+Includi specifica quali caratteri sono consentiti per la password. Almeno una classe deve essere inclusa.
