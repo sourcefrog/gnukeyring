@@ -85,11 +85,6 @@ void KeyDB_Reencrypt(CryptoKey oldRecordKey, Char const *newPasswd)
         MemHandleUnlock(recHand);
         Keys_SaveRecord(&unpacked, idx, newRecordKey);
 
-	if (!DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL)) {
-	    attr |= dmRecAttrBusy;
-	    DmSetRecordInfo(gKeyDB, idx, &attr, NULL);
-	}
-
 	err = DmReleaseRecord(gKeyDB, idx, true);
 	ErrFatalDisplayIf(err, "DmReleaseRecord");
 

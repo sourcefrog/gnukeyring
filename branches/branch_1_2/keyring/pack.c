@@ -155,7 +155,7 @@ void Key_SetCategory(UInt16 idx, UInt16 category)
      if ((err = DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL)))
           goto fail;
      
-     attr = (attr & ~dmRecAttrCategoryMask) | dmRecAttrBusy | category;
+     attr = (attr & ~dmRecAttrCategoryMask) | category;
      if ((err = DmSetRecordInfo(gKeyDB, idx, &attr, NULL)))
           goto fail;
 
