@@ -9,7 +9,7 @@
                       "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
- <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
  <title><use title></title>
  <meta name="author" content="Martin Pool">
  <meta name="author" content="Jochen Hoenicke">
@@ -25,10 +25,11 @@
   <p><pagelink id="index" name="introduction"> |
      <pagelink id="guide" name="user's guide"> |
      <pagelink name="crypto"> |
-     <pagelink name="download">
+     <pagelink name="download"> |
+     <pagelink name="conduits">
      <br>
      <pagelink id="contribute" name="how to help"> |
-     <pagelink name="conduits"> |
+     <pagelink name="thanks"> |
      <pagelink name="faq"> |
      <pagelink id="history" name="changelog"> |
      <pagelink id="building" name="building from source">
@@ -38,7 +39,8 @@
      <br>
      <pagelink id="lists" name="mailinglists"> |
      <externallink href="https://sourceforge.net/tracker/?group_id=306&amp;atid=100306" name="bugs"> |
-     <externallink href="https://sourceforge.net/tracker/?atid=350306&amp;group_id=306&amp;func=browse" name="suggestions">
+     <externallink href="https://sourceforge.net/tracker/?atid=350306&amp;group_id=306&amp;func=browse" name="suggestions"> |
+     <externallink href="https://sourceforge.net/tracker/?atid=300306&amp;group_id=306&amp;func=browse" name="code contribution">
      <br>
      <externallink href="https://sourceforge.net/projects/gnukeyring/" name="sourceforge project"> |
      <externallink href="http://freshmeat.net/projects/gnukeyring" name="freshmeat record">
