@@ -28,8 +28,8 @@
 
 APP             = keyring
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 2.0-pre3
-DEFINES		= -DBETA -DkAppVersion=0x1993
+VERSION         = 2.0-pre4
+DEFINES		= -DBETA -DkAppVersion=0x1994
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-384 -Wshadow -Wcast-align
@@ -82,7 +82,7 @@ PERL		= perl
 JAVA		= java
 
 HELP_TXT        = $(wildcard help/*/*.txt)
-AESLIBS         = COPYING.AESLib AESLib-SDK/PRC/AESLib.prc
+AESLIBS         = AESLib-SDK/PRC/AESLib.prc
 SSLEAYLIBS      = $(wildcard pilotSSLeay/shlib/*.prc)
 SSLEAYINCS      = $(wildcard pilotSSLeay/include/*.h)
 SSLEAY          = $(SSLEAYINCS) $(SSLEAYLIBS)
@@ -97,7 +97,7 @@ SRC_DIST        = $(RCP_IN) Makefile $(RESOURCES) \
 		  $(HELP_TXT) $(SCRIPTS) prondata.c \
 		  $(SSLEAY) $(AESLIBS)
 
-TOP_DIST	= COPYING README INSTALL NEWS
+TOP_DIST	= COPYING COPYING.AESLib README INSTALL NEWS
 
 BASE		= $(APP)-$(VERSION)
 DIST_BALL	= $(BASE).tar.gz
