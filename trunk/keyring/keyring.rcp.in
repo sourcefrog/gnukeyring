@@ -291,8 +291,8 @@ BEGIN
   "Decrypting..." = "Dekrypterar..."
 
   "@@OutOfMemory" =  "För lite dynamiskt minne för att fortsätta."
-  "@@WrongPassword" = "Felaktigt lösenord. Försök igen."
-  "@@PasswordMismatch" =  "Lösenorden stämmer inte överens. Försök igen."
+  "@@WrongPassword" = "Felaktigt lösenord.  Försök igen."
+  "@@PasswordMismatch" =  "Lösenorden stämmer inte överens.  Försök igen."
 
   "Not here yet" = "Inte här ännu"
   "@@NotImplemented" = "Denna funktion är inte implementerad ännu."
@@ -304,15 +304,24 @@ BEGIN
   "Delete current key record?" = "Ta bort den aktuella nyckeln?"
   "Save archive copy on PC" = "Spara arkivkopia på PC"
 
+  "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+   = "Detta är en betaversion av GNU Keyring.  Den kan ha buggar.  Spara kopior av all data du inte kan återhämta."
+
+  "This is free software.  No warranty." = "Detta är fri programvara.  Inga garantier." 
+
+  "Released under the GNU GPL v2." = "Släppt under GNU GPL v2."
+
   "Database" = "Databas"
   "Set Password..." = "Sätt lösenord..."
   "Options" = "Alternativ"
+  /* "Tips" = "Tips" */
   "Edit" = "Redigera"
 
   "Preferences..." =  "Inställningar..."
   "About..." =  "Om Keyring"
 
   "Undo" = "Ångra"
+  "Undo All" = "Ångra alla"
   "Graffiti Help" = "Graffiti-hjälp"
   "Paste" = "Klistra in"
   "Cut" = "Klipp ut"
@@ -329,6 +338,12 @@ BEGIN
 
   "@@GenerateHelp" = "help/sv/generate.txt"
   "@@KeyEditHelp" = "help/sv/keyedit.txt"
+
+  "Unfiled" = "Oarkiverad"
+  "Banking" = "Bank"
+  "Computer" = "Dator"
+  "Phone" = "Telefon"
+  "Web" = "Webb"
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
