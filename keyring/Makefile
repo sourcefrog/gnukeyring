@@ -67,7 +67,7 @@ AWK		= awk
 
 DEFINES		= 
 WARN	        = -Wall -Winline -Wunused -W	\
-		-Wstrict-prototypes -Wmissing-prototypes -Winline		\
+		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align	
 # 		-Wsign-compare
 OPTIM		= -O3 -finline-functions -g
@@ -96,7 +96,8 @@ BASE		= $(APP)-$(VERSION)
 
 # For a list of ISO language codes, see
 # http://www.unicode.org/unicode/onlinedat/languages.html
-LANGUAGES = en de fr es it ja no ny nl pt sv 
+# I'm not sure about nynorsk
+LANGUAGES = en de fr es it ja no no_NY nl pt sv 
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
