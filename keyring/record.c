@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "java"; -*-
  *
- * $Id$
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,8 @@
 #include "auto.h"
 
 
-void UnpackedKey_Free(UnpackedKeyPtr u) {
+void UnpackedKey_Free(UnpackedKeyPtr u)
+{
     if (u->nameHandle)
 	MemHandleFree(u->nameHandle);
     if (u->acctHandle)
@@ -57,7 +58,8 @@ void UnpackedKey_Free(UnpackedKeyPtr u) {
 
 
 
-Err KeyRecord_GetCategory(Int16 idx, UInt16 *category) {
+Err KeyRecord_GetCategory(Int16 idx, UInt16 *category)
+{
     UInt16		attr;
     Err			err;
 

@@ -1,10 +1,10 @@
-/* -*- c-file-style: "k&r" -*-
+/* -*- c-file-style: "java" -*-
  *
- * $Id$
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
  *
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,11 +43,15 @@
  */
 
 
-static void Gkr_BetaWarning(void) {
+static void Gkr_BetaWarning(void)
+{
     FrmAlert(BetaAlert);
 }
 
-void Gkr_CheckBeta(void) {
+
+
+void Gkr_CheckBeta(void)
+{
     Int16 lastVers = 0;
     Int16 size = sizeof lastVers;
     Int16 ret;

@@ -1208,6 +1208,12 @@ BEGIN
 		MENUITEM "Preferences..." ID ID_PrefsCmd
 		MENUITEM "About..." ID AboutCmd
 	END
+
+	PULLDOWN "Ø"
+	BEGIN
+		MENUITEM "Check on change" ID CMD_CheckHeapOnChange
+		MENUITEM "Scramble on change" ID CMD_ScrambleOnChange
+	END
 END
 
 
