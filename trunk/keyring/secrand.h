@@ -1,6 +1,6 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "java"; -*-
  *
- * $Id$
+ * $Header$
  * 
  * GNU Keyring -- store passwords securely on a handheld
  * Copyright (C) 2001 Jochen Hoencike <jochen@gnu.org>

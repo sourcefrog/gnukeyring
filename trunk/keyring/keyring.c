@@ -1,9 +1,9 @@
-/* -*- c-file-style: "bsd"; -*-
+/* -*- c-file-style: "java"; -*-
  *
- * $Id$
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,6 @@
 #include "auto.h"
 #include "uiutil.h"
 
-/* TODO: Call MemSetDebugMode!!  Let people turn this on and off at
- * runtime through some kind of magic keystroke. */
-
 // ======================================================================
 // Globals
 
@@ -73,7 +70,8 @@ static void App_LoadPrefs(void) {
 }
 
 
-void App_SavePrefs(void) {
+void App_SavePrefs(void)
+{
     PrefSetAppPreferences(kKeyringCreatorID,
 			  kGeneralPref,
 			  kAppVersion,
@@ -84,7 +82,8 @@ void App_SavePrefs(void) {
 
 
 
-static Err App_Start(void) {
+static Err App_Start(void)
+{
     Err err;
 
     App_LoadPrefs();
@@ -105,7 +104,8 @@ static Err App_Start(void) {
 }
 
 
-static void App_Stop(void) {
+static void App_Stop(void)
+{
     App_SavePrefs();
     Secrand_Close();
     FrmCloseAllForms();
@@ -153,11 +153,6 @@ static void App_EventLoop(void)
     UInt16			error;
 	
     do {
-#ifdef MEM_CHECK
-	MemHeapCheck(0);
-	MemHeapCheck(1);
-#endif
-
 	EvtGetEvent(&event, (Int32) evtWaitForever);
 	Secrand_AddEventRandomness(&event);
 	
@@ -169,7 +164,8 @@ static void App_EventLoop(void)
 }
 
 
-void App_AboutCmd(void) {
+void App_AboutCmd(void)
+{
     FormPtr prevFrm = FrmGetActiveForm();
     FormPtr frm = FrmInitForm(AboutForm);
 
@@ -196,6 +192,11 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 
     case ID_PrefsCmd:
 	PrefsForm_RunChecked();
+	return true;
+
+    case CMD_CheckHeapOnChange:
+    case CMD_ScrambleOnChange:
+	Keyring_ToggleMemDebug(itemId);
 	return true;
 
     case SetPasswdCmd:
@@ -279,10 +280,6 @@ UInt32 PilotMain(UInt16 launchCode,
 	    return err;
 
 	err = App_Start();
-#ifdef MEM_CHECK
-	MemHeapCheck(0);
-	MemHeapCheck(1);
-#endif
 	if (!err) {
 	    App_EventLoop();
 	    App_Stop();

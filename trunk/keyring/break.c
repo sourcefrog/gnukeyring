@@ -1,9 +1,9 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
- * $Id$
+/* -*- mode: c; c-indentation-style: "java"; c-basic-offset: 4 -*-
+ * $Header$
  * 
  * break.c -- Crack open encrypted keyrings
  *
- * Copyright (C) 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 2000 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

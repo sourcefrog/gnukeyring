@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "java"; -*-
  *
- * $Id$
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,8 @@
  *
  * Running out before remain should never happen unless there's a bug
  * in the decryption stuff. */
-static MemHandle Mem_StrToHandle(Char * srcPtr, Int16 *remain, Int16 *len) {
+static MemHandle Mem_StrToHandle(Char * srcPtr, Int16 *remain, Int16 *len)
+{
     MemHandle h;
     Char* destPtr;
     Int16 i;
@@ -76,7 +77,8 @@ static MemHandle Mem_StrToHandle(Char * srcPtr, Int16 *remain, Int16 *len) {
  * put its length in LEN.  PTR and REMAIN are adjusted to show
  * the amount remaining.
  */
-MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len) {
+MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len)
+{
     MemHandle h;
 
     if (*remain <= 0) {
@@ -94,7 +96,8 @@ MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len) {
 }
 
 
-void Mem_ReadChunk(Char * *ptr, UInt32 len, void * dest) {
+void Mem_ReadChunk(Char * *ptr, UInt32 len, void * dest)
+{
     MemMove(dest, *ptr, len);
     *ptr += len;
 }

@@ -4,7 +4,7 @@
 #
 # Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
 #
-# $Id$
+# $Header$
 
 APP             = keyring
 ICONTEXT        = "Keyring"
@@ -25,7 +25,7 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  beta.c setpasswd.c pwhash.c snib.c reencrypt.c	\
 		  pack.c unpack.c sort.c secrand.c
 
-HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
+HEADERS	      = dbutil.h generate.h keyring.h passwd.h record.h	\
 		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
 		resource.h util.h crypto.h export.h keyedit.h		\
 		memutil.h pwhash.h uiutil.h snib.h pack.h unpack.h	\
@@ -45,6 +45,7 @@ CC              = m68k-palmos-gcc
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
+AWK		= awk
 
 BITMAPS         = keyring-15.xbm keyring-22.xbm 
 
@@ -72,8 +73,7 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wlarger-than-260 -Wshadow -Wcast-align	
 # 		-Wsign-compare
 OPTIM		= -O3 -finline-functions -g
-CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD \
-		-DMEM_CHECK
+CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
@@ -169,3 +169,24 @@ ID: .
 
 install: $(EN_PRC)
 	pilot-xfer -i $(EN_PRC)
+
+
+MKPROTO_C = $(SRC)
+
+proto: prototype.h
+
+.proto.stamp: prototype.h
+	@[ -f $@ ] || touch $@
+
+prototype.h: script/mkproto.awk $(MKPROTO_C)
+	echo Checking prototype.h
+	$(AWK) -f script/mkproto.awk $(MKPROTO_C) \
+		>prototype.h.new
+	if test -f prototype.h && cmp -s prototype.h.new prototype.h; \
+	then rm -f prototype.h.new; \
+	echo No changes to prototypes; \
+	else \
+	echo Installing new prototype.h; \
+	mv prototype.h.new prototype.h; \
+	fi
+

@@ -1,8 +1,8 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- mode: c; c-indentation-style: "java"; c-basic-offset: 4 -*-
  *
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@users.sourceforge.net>
  *
- * $Id$
+ * $Header$
  *
  * Keyring for PalmOS
  */

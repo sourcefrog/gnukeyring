@@ -1,8 +1,8 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
- * $Id$
+/* -*- mode: c; c-indentation-style: "java"; c-basic-offset: 4 -*-
+ * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
