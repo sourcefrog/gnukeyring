@@ -8,6 +8,7 @@
  */
 
 #define fntStar				 128
+#define fntPassword			 129
 
 #define ListForm			1000
 #define KeyEditForm			1001
@@ -47,6 +48,7 @@
 #define UnlockBitmap                    1108
 
 #define StarFont			1150
+#define PasswordFont			1151
 
 #define DoneBtn				1202
 #define CountDownTrigger		1204
