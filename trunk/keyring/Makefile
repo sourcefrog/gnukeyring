@@ -95,7 +95,7 @@ BASE		= $(APP)-$(VERSION)
 
 # For a list of ISO language codes, see
 # http://www.unicode.org/unicode/onlinedat/languages.html
-LANGUAGES = en de es sv
+LANGUAGES = en de es nl sv
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
