@@ -1,8 +1,8 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 typedef struct {
     /* Length of corresponding string fields, not including the
      * terminating NUL that is present inside the memory blocks. */
-    UInt16 nameLen, acctLen, passwdLen, notesLen;
+    UInt32 nameLen, acctLen, passwdLen, notesLen;
     
     /* Handles to string values, or 0.
      *
@@ -38,11 +38,19 @@ typedef struct {
     /* Date password was last changed. */
     DateType lastChange;
 
+    /* Last change date has been modified? */
+    Boolean lastChangeDirty;
+
+    Boolean categoryDirty;
     UInt16 category;
 } UnpackedKeyType;
 
 typedef UnpackedKeyType *UnpackedKeyPtr;
 
+void KeyRecord_SaveNew(UnpackedKeyType const *unpacked, Char const *name);
+void KeyRecord_Update(UnpackedKeyType const *unpacked, UInt16 idx);
+void * KeyRecord_Pack(UnpackedKeyType const *u,
+		      UInt8 const *key);
 void UnpackedKey_Free(UnpackedKeyPtr u);
 void KeyRecord_Reposition(Char * name, UInt16 * idx, UInt16 *position);
 

@@ -1,9 +1,9 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  *
  * $Id$
  *
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,66 +30,69 @@
 #include "passwd.h"
 #include "uiutil.h"
 #include "memutil.h"
-#include "pwhash.h"
-#include "crypto.h"
-#include "sesskey.h"
-#include "snib.h"
+
+
+static UInt32		gExpiry;
 
 // ======================================================================
 // Unlock form
 
-/*
- * TODO: Show only the most-recently-entered character.  Perhaps
- * we need a custom widget to do this?
- */
+
+/* Store the hash of an entered correct password for later use in
+ * decoding records. */
+static void Unlock_SetKey(Char const *passwd) {
+    Err		err;
+
+    if (!passwd)
+	passwd = "";
+
+    err = EncDigestMD5((void *) passwd, StrLen(passwd), gRecordKey);
+    if (err)
+	App_ReportSysError(CryptoErrorAlert, err);
+}
 
 
-static FieldPtr    f_entryFld;
+#ifdef REALLY_OBLITERATE
+static void Unlock_ObliterateKey(void) {
+    MemSet(gRecordKey, kPasswdHashSize, 'x');
+}
+#endif
+
+
+void Unlock_Reset(void) {
+  gExpiry = 0;
+}
 
 
 void Unlock_PrimeTimer(void) {
-    Snib_SetExpiry(TimGetSeconds() + gPrefs.timeoutSecs);
+    gExpiry = TimGetSeconds() + gPrefs.timeoutSecs;
 }
 
 
-static void UnlockForm_SelAll(void) {
-    /* We'd like to select the entire contents of the form every time
-     * it's shown, but FldSetSelection seems not to work so well if
-     * the form is not displayed.  Is FldSetSelection incompatible
-     * with FrmDoDialog? */
-
-/*      Int16 len = FldGetTextLength(f_entryFld); */
-/*      if (len) */
-/*          FldSetSelection(f_entryFld, 0, len); */
-}
-
-
-Boolean UnlockForm_Run(void) {
+Boolean UnlockForm_Run() {
     UInt16 	result;
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(UnlockForm);
     Char * 	entry;
     UInt16 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
+    FieldPtr 	entryFld = FrmGetObjectPtr(frm, entryIdx);
     Boolean 	done, correct;
 
     do { 
-        f_entryFld = FrmGetObjectPtr(frm, entryIdx);
-
 	FrmSetFocus(frm, entryIdx);
 	result = FrmDoDialog(frm);
 
 	if (result == UnlockBtn) {
-	    entry = FldGetTextPtr(f_entryFld);
+	    entry = FldGetTextPtr(entryFld);
 	    if (!entry)
 		entry = "";
-	    done = correct = PwHash_Check(entry);
+	    done = correct = KeyDB_Verify(entry);
 
 	    if (correct) {
 		Unlock_PrimeTimer();
-                SessKey_Load(entry);
+		Unlock_SetKey(entry);
 	    } else {
 		FrmAlert(WrongKeyAlert);
-                UnlockForm_SelAll();
 	    }
 	} else {
 	    done = true;
@@ -97,6 +100,7 @@ Boolean UnlockForm_Run(void) {
 	} 
     } while (!done);
 
+    Mem_ObliterateHandle((MemHandle) FldGetTextHandle(entryFld));
     FrmDeleteForm(frm);
     FrmSetActiveForm(prevFrm);
 
@@ -108,14 +112,93 @@ Boolean UnlockForm_Run(void) {
 Boolean Unlock_CheckTimeout() {
     UInt32 now = TimGetSeconds();
 
-    if (now > g_Snib->expiryTime) {
+    if (now > gExpiry) {
+#ifdef REALLY_OBLITERATE
+	Unlock_ObliterateKey();
+#endif
 	return false;
     }
 
     // If the timeout is too far in the future, then adjust it: this
     // makes it work OK if e.g. the clock has changed.
-    if (now + gPrefs.timeoutSecs < g_Snib->expiryTime)
-	Snib_SetExpiry(now + gPrefs.timeoutSecs);
+    if (now + gPrefs.timeoutSecs < gExpiry)
+	gExpiry = now + gPrefs.timeoutSecs;
 
     return true;
 }
+
+
+
+
+// ======================================================================
+// Set password
+
+
+/* Return true if set, false if cancelled. */
+Boolean SetPasswd_Run(void) {
+    FormPtr 	prevFrm = FrmGetActiveForm();
+    FormPtr	frm;
+    UInt16 	btn;
+    Boolean 	match, result=false;
+    FieldPtr 	masterFld, confirmFld;
+    Char *masterPtr, *confirmPtr;
+
+    frm = FrmInitForm(SetPasswdForm);
+    FrmSetActiveForm(frm);
+    masterFld = UI_GetObjectByID(frm, MasterKeyFld);
+    confirmFld = UI_GetObjectByID(frm, ConfirmFld); 
+    FrmSetFocus(frm, FrmGetObjectIndex(frm, MasterKeyFld)); 
+   
+ doDialog:	
+    btn = FrmDoDialog(frm);
+    if (btn != OkBtn)
+	goto leave;
+
+    masterPtr = FldGetTextPtr(masterFld);
+    if (!masterPtr) masterPtr = "";
+    
+    confirmPtr = FldGetTextPtr(confirmFld);
+    if (!confirmPtr) confirmPtr = "";
+    
+    match = !StrCompare(masterPtr, confirmPtr);
+    if (!match) {
+	FrmAlert(PasswdMismatchAlert);
+	goto doDialog;
+    }
+
+    // TODO: Instead of copying, pull the handle out of the field and
+    // give it a null handle.  Also do this to the confirm field.
+    // When we're done with both of them, scribble over them and then
+    // free the handles.  This is not completely safe but it should
+    // help.  We could improve the odds by preallocating the handles
+    // to be bigger than any password the user could enter.
+
+    // We need to keep a copy of the password, because the field
+    // object containing it will be freed before we finish with it.
+    masterPtr = MemPtrNew(StrLen(confirmPtr) + 1);
+    ErrFatalDisplayIf(!masterPtr, __FUNCTION__ " out of memory");
+    StrCopy(masterPtr, confirmPtr);
+
+    // May as well release confirm form to free up memory
+    FrmDeleteForm(frm);
+    
+    frm = FrmInitForm(BusyEncryptForm);
+    FrmDrawForm(frm);
+
+    KeyDB_SetPasswd(masterPtr);
+#ifdef REALLY_OBLITERATE
+    Mem_ObliteratePtr(masterPtr);
+#endif /* REALLY_OBLITERATE */
+    MemPtrFree(masterPtr);
+    result = true;
+
+    FrmEraseForm(frm);
+
+ leave:
+    FrmDeleteForm(frm);
+    if (prevFrm)
+	FrmSetActiveForm(prevFrm);
+    return result;
+}
+
+

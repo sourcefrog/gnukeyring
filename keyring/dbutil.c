@@ -1,8 +1,8 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,6 @@
 #include "keyring.h"
 #include "dbutil.h"
 
-/*
- * LEN is the length of the string.  If you want the terminating NUL
- * included, then it must be included in the length.
- *
- * If the handle is NULL, then if the length is 1 a NUL is written and if the
- * length is zero nothing is written.  Anything else is invalid.
- */
 void DB_WriteStringFromHandle(void *dest, UInt32 *off, MemHandle h, UInt32 len) {
     if (h) {
 	Char * p = MemHandleLock(h);
@@ -40,20 +33,13 @@ void DB_WriteStringFromHandle(void *dest, UInt32 *off, MemHandle h, UInt32 len) 
 	*off += len;
 	MemHandleUnlock(h);
     } else {
-        ErrNonFatalDisplayIf(len != 1 && len != 0,
-                             "bogus length in " __FUNCTION__);
-        if (len) {
-            DmWrite(dest, *off, "", 1);
-            (*off)++;
-        }
+	DmWrite(dest, *off, "", 1);
+	(*off)++;
     }
 }
 
 
-/*
- * Write a string into a database record, and update a position pointer.
- * The NUL is not included.
- */
+/* Write a string into a database record, and update a position pointer. */
 void DB_WriteString(void *dest, UInt32 *off, Char const *str) {
     UInt16 len;
 

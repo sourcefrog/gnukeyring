@@ -3,7 +3,7 @@
  * 
  * break.c -- Crack open encrypted keyrings
  *
- * Copyright (C) 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

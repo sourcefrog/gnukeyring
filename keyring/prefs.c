@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,13 @@
 #include "keydb.h"
 #include "uiutil.h"
 #include "prefs.h"
-#include "auto.h"
 
 // ======================================================================
 // Preferences
 
 void PrefsForm_Run(void) {
     FormPtr 	prevFrm = FrmGetActiveForm();
-    FormPtr	frm = FrmInitForm(ID_PrefsForm);
+    FormPtr	frm = FrmInitForm(PrefsForm);
     UInt16	btn;
     Int16		chosen;
     

@@ -2,8 +2,8 @@
  *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/*
- * TODO: Check that the terminating NULs in the strings are accounted
- * for correctly.
- *
- * TODO: Is it possible we could be overflowing the stack?
- */
+/* TODO: Check that the terminating NULs in the strings are accounted
+ * for correctly. */
 
 #include <PalmOS.h>
 #include <Password.h>
@@ -38,9 +34,6 @@
 #include "crypto.h"
 #include "passwd.h"
 #include "resource.h"
-#include "snib.h"
-#include "uiutil.h"
-#include "auto.h"
 
 static Int16 KeyDB_CompareRecords(void * rec1, void * rec2, Int16 other,
 			 SortRecordInfoPtr info1,
@@ -101,7 +94,7 @@ void KeyRecord_Reposition(Char * name, UInt16 *idx, UInt16 *position)
     DmRecordInfo(gKeyDB, *idx, &attr, &uniqueID, NULL);
     err = DmDetachRecord(gKeyDB, *idx, &moveHandle);
     if (err) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	App_ReportSysError(KeyDatabaseAlert, err);
 	return;
     }
 	
@@ -110,13 +103,48 @@ void KeyRecord_Reposition(Char * name, UInt16 *idx, UInt16 *position)
 
     err = DmAttachRecord(gKeyDB, idx, moveHandle, 0);
     if (err) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	App_ReportSysError(KeyDatabaseAlert, err);
 	return;
     }
     DmSetRecordInfo(gKeyDB, *idx, &attr, &uniqueID);
 
     *position = DmPositionInCategory(gKeyDB, *idx, gPrefs.category);
 }
+
+
+/* Calculate the size a record will occupy when it is packed. */
+static UInt32 KeyRecord_CalcPackedLength(UnpackedKeyType const *unpacked)
+{
+    UInt32 plainSize = unpacked->nameLen + 1;
+    UInt32 encSize = unpacked->acctLen + 1
+	+ unpacked->passwdLen + 1
+	+ unpacked->notesLen + 1
+	+ sizeof(UInt32);		/* date */
+
+    /* All the fields except for the name are encrypted into DES
+     * 8-byte blocks, so we have to round up to the next full block
+     * size. */
+    if (encSize & (kBlockSize-1))
+	encSize = (encSize & ~(kBlockSize-1)) + kBlockSize;
+
+    return encSize + plainSize;
+}
+
+
+#ifdef REALLY_OBLITERATE
+/* Scribble over all text in memory referenced by the unpacked
+ * structure, so that unencrypted information is not left in
+ * memory. */
+void UnpackedKey_Obliterate(UnpackedKeyPtr u) {
+    Mem_ObliterateHandle(u->nameHandle);
+    Mem_ObliterateHandle(u->acctHandle);
+    Mem_ObliterateHandle(u->passwdHandle);
+    Mem_ObliterateHandle(u->notesHandle);
+    u->lastChange.year = 0;
+    u->lastChange.month = 0;
+    u->lastChange.day = 0;
+}
+#endif /* REALLY_OBLITERATE */
 
 
 void UnpackedKey_Free(UnpackedKeyPtr u) {
@@ -134,7 +162,88 @@ void UnpackedKey_Free(UnpackedKeyPtr u) {
 }
 
 
-#if 0
+/* Convert from a packed database record into an unpacked in-memory
+ * representation.  Return true if conversion was successful. */
+void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
+		      UInt8 const *key)
+{
+    Char *	recPtr;
+    Char *	plainBuf;
+    Char *	cryptPtr;
+    UInt32	recLen;
+    Char *	ptr;
+    Int32	nameLen;
+    Err		err;
+
+    recPtr = MemHandleLock(record);
+    
+    recLen = MemHandleSize(record);
+    plainBuf = MemPtrNew(recLen);
+    ErrFatalDisplayIf(!plainBuf, "Not enough memory to unpack record");
+    
+    u->nameHandle = Mem_StrToHandle(recPtr, &nameLen);
+    u->nameLen = nameLen;
+
+    cryptPtr = recPtr + nameLen + 1;
+    err = DES3_Buf(cryptPtr, plainBuf, recLen - (cryptPtr - recPtr), false,
+		   key);
+    if (err) {
+	/* TODO: If this failed, indicate to the caller that we couldn't unpack the record. */
+	App_ReportSysError(CryptoErrorAlert, err);
+    }
+
+    ptr = plainBuf;
+
+    u->acctHandle = Mem_ReadString(&ptr, &u->acctLen);
+    u->passwdHandle = Mem_ReadString(&ptr, &u->passwdLen);
+    u->notesHandle = Mem_ReadString(&ptr, &u->notesLen);
+    Mem_ReadChunk(&ptr, sizeof(DateType), &u->lastChange);
+    u->lastChangeDirty = false;
+
+    MemPtrFree(plainBuf);
+    MemHandleUnlock(record);
+}
+
+
+/* Convert from an unpacked in-memory representation into the packed
+ * form written into the database. */
+void * KeyRecord_Pack(UnpackedKeyType const *u,
+			     UInt8 const *key)
+{
+    int		dateLen;
+    Char *	ptr; // Moves through buffer filling with data
+    Char *     startCrypt;     // Start of data that should be enc.
+    Char *     buf; // Start of buffer
+    UInt32	recLen;
+    Err		err;
+    
+    recLen = KeyRecord_CalcPackedLength(u);
+    buf = MemPtrNew(recLen);
+    ErrFatalDisplayIf(!buf, "Not enough dynamic memory to encode record");
+    ptr = buf;
+
+    Mem_CopyFromHandle(&ptr, u->nameHandle, u->nameLen+1);
+    startCrypt = ptr;
+
+    Mem_CopyFromHandle(&ptr, u->acctHandle, u->acctLen+1);
+    Mem_CopyFromHandle(&ptr, u->passwdHandle, u->passwdLen+1);
+    Mem_CopyFromHandle(&ptr, u->notesHandle, u->notesLen+1);
+
+    dateLen = sizeof(DateType);
+    MemMove(ptr, (void *) &u->lastChange, dateLen);
+    ptr += dateLen;
+
+    if ((err = DES3_Buf(startCrypt, startCrypt, recLen - (startCrypt-buf), true,
+			key))) {
+	/* TODO: If this failed, indicate to the caller that we
+	 * couldn't pack the record. */
+	App_ReportSysError(CryptoErrorAlert, err);
+    }
+	    
+    return buf;
+}
+
+
 static Err KeyRecord_SetCategory(Int16 idx, UInt16 category) {
     UInt16		attr;
     Err			err;
@@ -147,7 +256,6 @@ static Err KeyRecord_SetCategory(Int16 idx, UInt16 category) {
 
     return DmSetRecordInfo(gKeyDB, idx, &attr, 0);
 }
-#endif
 
 
 Err KeyRecord_GetCategory(Int16 idx, UInt16 *category) {
@@ -161,3 +269,68 @@ Err KeyRecord_GetCategory(Int16 idx, UInt16 *category) {
 
     return 0;
 }
+
+
+void KeyRecord_SaveNew(UnpackedKeyType const *unpacked, Char const *name) {
+    MemHandle	record;
+    Int16		idx;
+    UInt32	recLen;
+    Err		err;
+    void        *encBuf, *recPtr;
+    
+    // TODO: If empty, don't save
+    encBuf = KeyRecord_Pack(unpacked, gRecordKey);
+    recLen = MemPtrSize(encBuf);
+    
+    idx = DmFindSortPosition(gKeyDB, (Char *) name, 0,
+			     KeyDB_CompareRecords, 0);
+    record = DmNewRecord(gKeyDB, &idx, recLen);
+    if (!record) {
+	App_ReportSysError(KeyDatabaseAlert, DmGetLastErr());
+	return;
+    }
+    gKeyRecordIndex = idx;
+    
+    recPtr = MemHandleLock(record);
+    DmWrite(recPtr, 0, encBuf, recLen);
+    MemHandleUnlock(record);
+    MemPtrFree(encBuf);
+
+    err = DmReleaseRecord(gKeyDB, idx, true); // dirty
+    if (err)
+	App_ReportSysError(KeyDatabaseAlert, err);
+
+    KeyRecord_SetCategory(idx, unpacked->category);
+
+    gKeyPosition = DmPositionInCategory(gKeyDB, idx, gPrefs.category);
+}
+
+
+void KeyRecord_Update(UnpackedKeyType const *unpacked,
+		      UInt16 idx)
+{
+    MemHandle	record;
+    UInt32	recLen;
+    void *encBuf, *recPtr;
+    Err		err;
+
+    encBuf = KeyRecord_Pack(unpacked, gRecordKey);
+    recLen = MemPtrSize(encBuf);
+    
+    record = DmResizeRecord(gKeyDB, idx, recLen);
+    if (!record) {
+	App_ReportSysError(KeyDatabaseAlert, DmGetLastErr());
+	MemPtrFree(encBuf);
+	return;
+    }
+
+    recPtr = MemHandleLock(record);
+    DmWrite(recPtr, 0, encBuf, recLen);
+    MemPtrFree(encBuf);
+    
+    if ((err = DmReleaseRecord(gKeyDB, idx, true)))
+	App_ReportSysError(KeyDatabaseAlert, err);
+
+    KeyRecord_SetCategory(idx, unpacked->category);
+}
+

@@ -1,6 +1,6 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  *
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 by Martin Pool
  *
  * $Id$
  *
@@ -19,6 +19,7 @@
 #define SetPasswdForm			1010
 #define ConfirmPasswdForm		1011
 #define PasswdMismatchAlert		1012
+#define PrefsForm			1013
 #define InitForm			1014
 #define BusyEncryptForm			1015
 #define BusyDecryptForm			1016
@@ -27,12 +28,11 @@
 #define OutOfMemoryAlert		1019
 #define CouldntLaunchMemoAlert		1020
 #define CryptoErrorAlert		1021
+#define KeyDatabaseAlert		1022
 #define UpgradeAlert			1023
 #define TooNewAlert			1024
 #define CantUpgradeAlert		1025
 #define UpgradeFailedAlert		1026
-#define NotEnoughFeaturesAlert          1027
-#define BetaAlert                       1028
 
 #define ListMenuBar			1100
 #define KeyEditMenuBar			1101
@@ -40,9 +40,11 @@
 #define KeyringBitmap			1103
 #define NoteBitmap			1104
 #define FieldsBitmap			1105
-#define KeyBitmap                       1106
 
+#define KeysList			1200
+#define KeyNameField			1201
 #define DoneBtn				1202
+#define KeysListScrollBar		1203
 #define CountDownTrigger		1204
 #define LockBtn				1205
 #define UnlockBtn			1206
@@ -60,6 +62,7 @@
 #define SumBtn				1218
 #define OkBtn				1219
 #define SaveArchiveCheck		1220
+#define NotesField			1221
 #define NotesScrollbar			1222
 #define TitleTemplateStr		1223
 #define EmptyTitleStr			1224
@@ -90,6 +93,7 @@
 #define SecurityCmd			1304
 #define DeleteKeyCmd			1305
 #define SetPasswdCmd			1306
+#define PrefsCmd			1307
 #define GenerateCmd			1308
 #define ExportMemoCmd			1309
 #define HelpCmd				1310
@@ -101,10 +105,7 @@
 #define EditSelectAll			1404
 
 #define GenerateHelp			1502
+#define PreferencesHelp			1503
 #define KeyEditHelp			1504
-#define SetPasswdHelp                   1505
-
-#define ErrCheckingROM                  1600
 
 #define CategoryRsrc			2000
-
