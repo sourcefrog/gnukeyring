@@ -43,9 +43,7 @@
 #define FieldsBitmap			1105
 #define KeyBitmap                       1106
 
-#define KeysList			1200
 #define DoneBtn				1202
-#define KeysListScrollBar		1203
 #define CountDownTrigger		1204
 #define LockBtn				1205
 #define UnlockBtn			1206

@@ -45,7 +45,8 @@
  * TODO: If we can, page down in the notes field before going to the
  * next record.  Similarly backwards.
  *
- * TODO: Be more careful about not saving unless actually modified -- saves time.  */
+ * TODO: Be more careful about not saving unless actually modified --
+ * saves time.  */
 
 
 /* This keeps an unpacked version of the record currently being
@@ -295,7 +296,7 @@ static void KeyEditForm_Save(void)
 }
 
 
-static void KeyEditForm_Update(int UNUSED(updateCode)) {
+static void KeyEditForm_UpdateCategory(void) {
     Category_UpdateName(f_KeyEditForm, gRecord.category);
     FrmDrawForm(f_KeyEditForm);
 }
@@ -312,7 +313,8 @@ static void Keys_UndoAll(void) {
     } else {
         KeyEditForm_Load(f_KeyEditForm);
     }
-    KeyEditForm_Update(updateCategory);
+    /* TODO: Put the category back to what it was when we entered. */
+    KeyEditForm_UpdateCategory();
     FrmDrawForm(f_KeyEditForm);
 }
 
@@ -389,7 +391,7 @@ static void KeyEditForm_GetFields(FormPtr frm) {
 static void KeyEditForm_FormOpen(void) {
     KeyEditForm_GetFields(FrmGetActiveForm());
     KeyEditForm_OpenRecord();
-    KeyEditForm_Update(updateCategory);
+    KeyEditForm_UpdateCategory();
 }
 
 
@@ -552,7 +554,6 @@ static void KeyEditForm_Page(int offset) {
                            dmSeekForward, gPrefs.category);
     
     KeyEditForm_OpenRecord();
-    KeyEditForm_Update(updateCategory);
 }
 
 
@@ -615,6 +616,8 @@ static void KeyEditForm_CategorySelected(void) {
     if (gPrefs.category != dmAllCategories) {
         gPrefs.category = gRecord.category;
     }
+    if (gRecord.categoryDirty)
+        KeyEditForm_UpdateCategory();
 }
 
 
@@ -630,8 +633,7 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
             break;
         case CategoryTrigger:
             KeyEditForm_CategorySelected();
-            result = true;
-            break;
+            return true;
         }
         break;
 
@@ -644,11 +646,6 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 
     case frmOpenEvent:
         KeyEditForm_FormOpen();
-        result = true;
-        break;
-
-    case frmUpdateEvent:
-        KeyEditForm_Update(~0);
         result = true;
         break;
 
