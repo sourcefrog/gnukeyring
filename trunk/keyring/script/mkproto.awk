@@ -74,7 +74,7 @@ END {
     gotstart = 1;
   }
   
-  if ($0 ~ /^U?Int(8|16|32|64)/) {
+  if ($0 ~ /^U?Int(8|16|32|64)|Char/) {
     gotstart = 1;
   }
   
