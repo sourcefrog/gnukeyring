@@ -42,7 +42,9 @@
   {\a \href={doc/\dir} \name}
 }
 
-    
+{\def {\anchor \=id}
+  {\a \name=\id {\a \href={\concat # \id} {\c-raquo}}}}
+  
 {\def {\centerquote \=attrib \=attriblink \&rest}
   {\table \align=center \width=50% \border=0 {\tr {\td
     \rest
@@ -158,7 +160,7 @@
    {\font \size=-2
     {\rule}
 
-    Copyright {\c-copy} 1999, 2000 by {\externallink
+    Copyright {\c-copy} 1999, 2000, 2001 by {\externallink
       \href={http://linuxcare.com.au/people/mbp/} Martin Pool}.
     {\br}
     {\a \href={\concat
