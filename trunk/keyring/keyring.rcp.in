@@ -224,13 +224,15 @@ BEGIN
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
 
-  "@accel_Undo" = ""
-  "@accel_Cut" = ""
-  "@accel_Copy" = "" 
-  "@accel_Paste" = ""
-  "@accel_SelectAll" = ""
-  "@accel_Keyboard" = ""
-  "@accel_Graffiti" = ""
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S" 
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
 END
 
 // ======================================================================
@@ -314,14 +316,15 @@ BEGIN
   "@@GenerateHelp" = "help/sv/generate.txt"
   "@@KeyEditHelp" = "help/sv/keyedit.txt"
 
-
-  "@accel_Undo" = ""
-  "@accel_Cut" = ""
-  "@accel_Copy" = "" 
-  "@accel_Paste" = ""
-  "@accel_SelectAll" = ""
-  "@accel_Keyboard" = ""
-  "@accel_Graffiti" = ""
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S" 
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
 END
 
 #include "resource.h"
