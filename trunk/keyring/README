@@ -1,8 +1,28 @@
 Keyring for PalmOS
 
-Copyright 1999-2002 The GNU Keyring Sourceforge Team
+Copyright 1999-2002 by Martin Pool
+Copyright 2001-2003 by Jochen Hoenicke
 
   http://gnukeyring.sourceforge.net/
+
+PRERELEASE INFORMATION
+
+This is a prerelease of keyring and it may contain bugs that destroy
+the database or even require a hard reset.  So update your backup,
+before installing this.
+
+On the positive side, this prerelease will live happily with
+keyring-1.2.2 without interfering.  It uses a different database and
+different creator IDs.  I also hadn't any hard resets or database
+corruption with this program.
+
+Upgrading your keyring-1.2.2 database is not yet supported.  And I
+can't promise that later versions of keyring will understand the new
+database.  So use it just for testing and keep important passwords
+with keyring-1.2.2.
+
+
+GENERAL INFORMATION
 
 Keyring lets you securely store secret keys and confidential
 information on a PalmOS handheld computer.  This information might

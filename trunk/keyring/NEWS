@@ -1,6 +1,7 @@
-Keyring for PalmOS 1.2
+Keyring for PalmOS 2.0 prerelease
 
-Copyright 1999-2002 The GNU Keyring Sourceforge Team
+Copyright 1999-2002 by Martin Pool
+Copyright 2001-2003 by Jochen Hoenicke
 
   http://gnukeyring.sourceforge.net/
 
@@ -14,37 +15,31 @@ Keyring is Free Software, so you can inspect it to satisfy yourself of
 its security, modify it to meet your needs, and share it with your
 friends.
 
-Records are encrypted using the well-trusted DES3 algorithm on a
-master password.  For your convenience, the keyring can stay unlocked
-for a time after you enter your master password.
+Records are encrypted using the well-trusted DES3-CBC algorithm or the
+new AES-CBC standard algorithm on a master password.  For your
+convenience, the keyring can stay unlocked for a time after you enter
+your master password.
 
 When you need to set a password, Keyring can generate a random
 password of specified length, optionally including letters, numbers or
 symbols.
 
-Changes from 1.1:
+Changes from 1.2:
 
- * Support PalmOS global Find.
+ * New crypto format.  New algorithms DES3-CBC and AES-CBC.
+ * Use PBKDF2 for key generation.  This is a bit slower, to make brute
+   force attacks more difficult.
 
- * Support pronounceable passwords conforming to the FIPS 181
-   Automated Password Generator Standard
+ * New record format, allowing to store more than the standard fields
+   later.
 
- * Support interactive search for a key name on list form.
+ * Make name/account/password fields scrollable to support long passwords.
 
- * Keyedit form is left on auto off if the timeout has also expired.
-   Code works for all supported PalmOS versions.
+ * Generate Hex passwords.
 
- * Use pilotSSLeay for encryption, which is a bit faster than 
-   the PalmOS builtin encryption.  The binaries from
-   pilotSSLeay are included.
-
- * The last-modified-date is back again.
-
- * Support larger notes, up to 32000 characters.
 
 Files may be downloaded from:
 
-  https://sourceforge.net/project/showfiles.php?group_id=306
+  http://gnukeyring.sourceforge.net/prerelease.html
 
-MD5 checksums (binary mode):
 
