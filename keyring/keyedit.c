@@ -35,6 +35,9 @@
 #include "category.h"
 #include "crypto.h"
 #include "sesskey.h"
+#include "pack.h"
+#include "unpack.h"
+
 
 /* TODO: Show position and do paging within category
  *
@@ -173,6 +176,7 @@ static void KeyEditForm_ToUnpacked(FormPtr frm, UnpackedKeyType *u) {
     // date is stored in the struct when it is edited
 }
 
+
 static void KeyEditForm_Done(void) {
     FrmGotoForm(ListForm);
 }
@@ -208,7 +212,7 @@ static void KeyEditForm_Load(FormPtr frm) {
     busyForm = FrmInitForm(BusyDecryptForm);
     FrmDrawForm(busyForm);
 
-    KeyRecord_Unpack(record, &gRecord, gRecordKey);
+    Keys_Unpack(record, &gRecord, gRecordKey);
     MemHandleUnlock(record);
     KeyRecord_GetCategory(gKeyRecordIndex, &gRecord.category);
 
@@ -250,33 +254,19 @@ static void KeyEditForm_MaybeSave(void) {
 
 
 /* Save values from the field into the database, after taking them
- * through an unpacked struct into encrypted form.
+ * through an unpacked struct into encrypted form.  The fields must
+ * already be in gRecord.
  *
  * Note that we're not *necessarily* leaving the form or even the
  * record at this point: pressing the Page buttons saves the record
  * too. */
 static void KeyEditForm_Save(FormPtr frm) {
     FormPtr busyForm;
-    Char * name;
 
     busyForm = FrmInitForm(BusyEncryptForm);
     FrmDrawForm(busyForm);
 
-    // Pull out name to use in resorting
-    if (gRecord.nameHandle)
-	name = MemHandleLock(gRecord.nameHandle);
-    else
-	name = 0;
-
-    if (gKeyRecordIndex == kNoRecord) {
-	KeyRecord_SaveNew(&gRecord, name);
-    } else {
-	KeyRecord_Update(&gRecord, gKeyRecordIndex);
-	KeyRecord_Reposition(name, &gKeyRecordIndex, &gKeyPosition);
-    }
-
-    if (name)
-	MemPtrUnlock(name);				 
+    Keys_SaveRecord(&gRecord, &gKeyRecordIndex);
 
     FrmEraseForm(busyForm);
     FrmDeleteForm(busyForm);
@@ -636,9 +626,6 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 
     case frmCloseEvent:
 	KeyEditForm_MaybeSave();
-#ifdef ENABLE_OBLITERATE
-	UnpackedKey_Obliterate(&gRecord);
-#endif
 	result = false;
 	break;
 

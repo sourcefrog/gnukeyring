@@ -11,13 +11,14 @@ RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
-		  beta.c setpasswd.c pwhash.c sesskey.c memdebug.c
+		  beta.c setpasswd.c pwhash.c sesskey.c memdebug.c	\
+		  pack.c unpack.c
 
 HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
 		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
 		resource.h						\
 		util.h crypto.h export.h keyedit.h memutil.h		\
-		pwhash.h uiutil.h sesskey.h memdebug.h
+		pwhash.h uiutil.h sesskey.h memdebug.h pack.h unpack.h
 
 # 		  libdes/des_enc.c
 

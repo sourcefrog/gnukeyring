@@ -48,6 +48,8 @@
 #define kGeneratePref		2
 #define kLastVersionPref        3
 
+#define kMaxRecords             2000
+
 #define kNoRecord		((UInt16) -1)
 
 typedef struct {
