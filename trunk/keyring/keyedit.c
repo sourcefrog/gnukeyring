@@ -102,14 +102,15 @@ static void KeyEditForm_SetTitle(FormPtr frm) {
     Char * titleTemplate;
     static Char * gKeyFormTitle = 0;
     UInt16 pos, total;
-    UInt16 len;
+    UInt16 len, reserved;
 
     if (gKeyFormTitle)
 	MemPtrFree(gKeyFormTitle);
 
     if (gKeyPosition != kNoRecord) {
-	pos = gKeyPosition + 1;
-	total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
+        reserved = Keys_IdxOffsetReserved();
+	pos = gKeyPosition + 1 - reserved;
+	total = DmNumRecordsInCategory(gKeyDB, gPrefs.category) - reserved;
 	
 	titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
 	ErrFatalDisplayIf(!titleTemplate, "no titleTemplate");
@@ -502,6 +503,7 @@ static void KeyEditForm_Scroll(EventPtr event) {
 
 static void KeyEditForm_Page(int offset) {
     UInt16 numRecs;
+    UInt16 reserved;
 
     if (gKeyRecordIndex == kNoRecord) {
 	/* You can't page while you're editing a new record. */
@@ -512,8 +514,9 @@ static void KeyEditForm_Page(int offset) {
     KeyEditForm_MaybeSave();
 
     numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
+    reserved = (UInt16) Keys_IdxOffsetReserved();
 
-    if ((gKeyPosition == 0  &&  offset == -1)
+    if ((gKeyPosition <= reserved  &&  offset == -1)
 	|| (gKeyPosition + offset == numRecs)) {
 	/* Bumped into the end */
 	SndPlaySystemSound(sndWarning);

@@ -193,3 +193,13 @@ Err KeyDB_GetVersion(UInt16 *ver) {
 			  0, 0, 0, 0,
 			  0, 0, 0, 0);
 }
+
+
+Int16 Keys_IdxOffsetReserved(void)
+{
+    if (gPrefs.category == 0 || gPrefs.category == dmAllCategories) 
+	return 1;
+    else
+	return 0;
+}
+

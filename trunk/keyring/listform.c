@@ -29,6 +29,7 @@
 #include "passwd.h"
 #include "category.h"
 #include "listform.h"
+#include "keydb.h"
 
 // =====================================================================
 // List form
@@ -50,6 +51,9 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
      *
      * Is there no "hidden" bit we can set to avoid all this?
      */
+
+    itemNum += Keys_IdxOffsetReserved();
+    
     err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum,
 				 dmSeekForward, gPrefs.category);
 
@@ -120,6 +124,17 @@ static void ListForm_FormOpen(void) {
 }
 
 
+/*
+ * Return the number of listed records, taking into account the
+ * current category and omitting the records reserved for the master
+ * password hash and the encrypted session key.
+ */
+static Int16 ListForm_GetNumListed(void) {
+    return DmNumRecordsInCategory(gKeyDB, gPrefs.category) -
+	Keys_IdxOffsetReserved();
+}
+
+
 static Boolean ListForm_Update(int updateCode) {
     FormPtr		frm;
     ListPtr		list;
@@ -129,7 +144,7 @@ static Boolean ListForm_Update(int updateCode) {
 
     frm = FrmGetActiveForm();
     list = (ListPtr) UI_GetObjectByID(frm, KeysList);
-    numRows = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
+    numRows = ListForm_GetNumListed();
     
     LstSetListChoices(list, 0, numRows);
     LstSetDrawFunction(list, ListForm_ListDraw);
@@ -176,7 +191,8 @@ static Boolean ListForm_ListSelect(EventPtr event) {
     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
 	/* Map from a position within this category to an overall
 	 * record index. */
-	listIdx = event->data.lstSelect.selection;
+	listIdx = event->data.lstSelect.selection
+	     + Keys_IdxOffsetReserved();
 	idx = 0;
 	err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
 				     dmSeekForward, gPrefs.category);
