@@ -70,19 +70,22 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
 
-OPTIM		= -O2 -finline-functions -g
+OPTIM		= -O2 -finline-functions -g -mdebug-labels
 INCLUDES        = -IpilotSSLeay/include
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
 HELP_TXT        = $(wildcard help/*/*.txt)
+SSLEAYLIBS      = $(wildcard pilotSSLeay/shlib/*.prc)
+SSLEAYINCS      = $(wildcard pilotSSLeay/include/*.h)
+SSLEAY          = $(SSLEAYINCS) $(SSLEAYLIBS)
 SCRIPTS         = script/mkproto.awk
 
 DOCS		= HACKING TODO TESTS 
 
 SRC_DIST        = $(RCP_IN) Makefile $(RESOURCES) \
 		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
-		  $(HELP_TXT) $(SCRIPTS)
+		  $(HELP_TXT) $(SCRIPTS) $(PILOTSSLEAY)
 
 TOP_DIST	= COPYING README INSTALL NEWS
 
@@ -103,6 +106,7 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 LANGUAGES = en de fr es it ja nl no no_NY pt sv 
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
+DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
 
 default: $(BASE)-en.prc
 
@@ -121,7 +125,7 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
 
-dist: $(DIST_BALL) $(DIST_ZIP) $(DIST_NEWS)
+dist: $(DIST_BALL) $(DIST_BIN) $(DIST_NEWS)
 
 tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
@@ -132,14 +136,17 @@ $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	rm -fr $(tmpdir)
 
-$(DIST_ZIP): $(PRCS) $(TOP_DIST)
-	$(ZIP) -rq9 $(DIST_ZIP) $(TOP_DIST) $(PRCS)
+$(DIST_ZIP): $(TOP_DIST) $(PRCS) $(SSLEAYLIBS)
+	$(ZIP) -jq9 $@ $^
 
-$(DIST_NEWS): NEWS $(PRCS) $(DIST_ZIP) $(DIST_BALL)
-	(cat NEWS ; md5sum $(PRCS) $(DIST_ZIP) $(DIST_BALL);echo ) > NEWS.tmp
+$(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS)
+	$(ZIP) -jq9 $@ $^
+
+$(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
+	(cat NEWS ; md5sum $(DIST_BIN) $(DIST_BALL);echo ) > NEWS.tmp
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
-	@ls -l $(PRCS) $(DIST_ZIP) $(DIST_BALL)
+	@ls -l $(DIST_BIN) $(DIST_BALL)
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
