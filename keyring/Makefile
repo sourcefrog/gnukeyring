@@ -1,3 +1,4 @@
+# GNU Keyring for PalmOS
 # Copyright (C) 1999, 2000 by Martin Pool
 # $Id$
 
@@ -5,24 +6,28 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.11.0
+VERSION         = 0.11.1dev1
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
 		  crypto.c passwd.c uiutil.c generate.c prefs.c \
 		  export.c dbutil.c upgrade.c record.c category.c
+
+HEADERS = category.h crypto.h dbutil.h error.h export.h generate.h	\
+keydb.h keyedit.h keyring.h listform.h memutil.h passwd.h prefs.h	\
+record.h resource.h uiutil.h upgrade.h util.h
+
 DEP             = $(subst .c,.d,$(SRC))
 OBJ		= $(subst .c,.o,$(SRC))
-#GRC             = $(APP).grc
 BIN             = $(APP).bin
 DEF		= $(APP).def
 EXE		= $(APP)
 
-NM		= m68k-palmos-nm
+EN_PRC          = $(BASE)-en.prc
+
 CC              = m68k-palmos-gcc
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
-# OBJRES          = m68k-palmos-obj-res
 BUILDPRC        = build-prc
 
 BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
@@ -34,24 +39,21 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
 # because it is defined to be the greatest amount of optimization that
 # does not involve size-speed tradeoffs.
 
-# -Wconversion
-
-CFLAGS          = -O2 -Wall -Werror -Winline -Wunused -W \
-		   -Wsign-compare -Wstrict-prototypes \
-		  -Wmissing-prototypes \
-		  $(DEFINES) $(INCLUDES) -MMD -g
+DEFINES		= -DPALM_KEYRING
+CFLAGS          = -O3 -Wall -Winline -Wunused -W	\
+		-Wsign-compare -Wstrict-prototypes	\
+		-Wmissing-prototypes -Winline		\
+		-Wlarger-than-256 -Wshadow -Wcast-align	\
+		-finline-functions			\
+		$(DEFINES) $(INCLUDES) -MMD -g
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
-DOCS		= COPYING doc/HACKING doc/BUGS doc/TODO doc/TESTS \
-		  doc/break.html doc/find.html doc/index.html \
-		  doc/memo-import-export.html doc/security.html \
-		  doc/attack-tree.txt doc/description.txt \
-		  doc/Blatant-Plug-Insert-4-Cheap.jpg \
-		  doc/keyring.css $(wildcard doc/snaps/*.png)
+DOCS		= COPYING HACKING TODO TESTS 
+# The web site is now maintained separately
 
 DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
-		  $(DOCS) $(wildcard *.c *.h) $(DEF) \
+		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
 		  $(HELP_TXT)
 
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
@@ -63,17 +65,28 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 
 BASE		= $(APP)-$(VERSION)
 
-LANGUAGES = en de
+LANGUAGES = en de es
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
-all: $(DOCS) $(PRCS) 
+default: $(BASE)-en.prc
 
-include $(DEP)
+all: $(PRCS) 
+
+-include $(DEP)
 
 $(BASE)-%.prc: %.resstamp $(EXE) $(DEF)
 	cd res/$* && $(BUILDPRC) -o ../../$@ ../../$(DEF) ../../$(EXE) *.bin
 	ls -l $@
+
+%.resstamp: $(BITMAPS) resource.h 
+%.resstamp: $(RCP)
+	[ -d res/$* ] || mkdir -p res/$*
+	-rm -f res/$*/*
+	-rm -f *.bin
+	$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/
+	cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
+	touch $@
 
 dist: $(DIST_BALL)
 
@@ -81,43 +94,29 @@ $(DIST_BALL): $(DISTFILES)
 	$(TAR) -C .. -czf $(DIST_BALL) $(addprefix $(APP)/,$(DISTFILES))
 	ls -l $(DIST_BALL)
 
+# I hate accidentally editing the generated file, so the chmod 
+# tries to discourage it
 $(RCP): $(RCP).in Makefile
+	rm -f $@
 	(echo '// ******DYNAMICALLY GENERATED DO NOT EDIT********'; \
 	 sed $(SED_SUBST) $@.in) > $@
+	chmod -w $@
 
 $(EXE):       $(SRC:.c=.o) ;
 	$(CC) $(CFLAGS) $^ -o $(EXE)
 
-%.resstamp: $(RCP) $(BITMAPS) resource.h 
-	[ -d res/$* ] || mkdir -p res/$*
-	-rm -f res/$*/*
-	-rm -f *.bin
-	$(PILRC) -q -L $* $(RCP) res/$*/
-	touch $@
+# We try to avoid touching auto.h, because that will kick off
+# rebuilding a lot of source and it's often not necessary.
+auto.h: en.resstamp
 
-%.o %.d: %.c ;
+%.s: %.c
+	$(CC) $(CFLAGS) -S $< 
+
+%.o: %.c auto.h
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
-depend: $(DEP)
-
 clean:
-	rm -rf *.o $(EXE) *.bin res/*/* *.grc *.prc *.stamp *.bin *.d *.stamp
-
-# Only useful for the maintainer
-.PHONY: _upload
-hosting_dir = gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
-upload_doc: 
-	cd doc && rsync --recursive --times -e ssh -v $(hosting_dir) 
-
-sig: $(DIST_SIG)
-
-$(DIST_SIG): $(DIST_BALL)
-	gpg -u 40C90109 -a -b $(DIST_BALL)
-
-# TODO: Also upload the release to the SourceForge download area
-
-count: 
-	@cat *.[ch] *.rcp Makefile|wc -l
+	rm -f *.o $(EXE) *.bin res/*/* *.grc *.prc *.resstamp *.bin *.d *.stamp
 
 tags: TAGS
 TAGS: *.c *.h
@@ -126,6 +125,11 @@ TAGS: *.c *.h
 # for the GNU id-tools package: 
 ID: .
 	mkid
+
+.PHONY: install
+
+install: $(EN_PRC)
+	pilot-xfer -i $(EN_PRC)
 
 # this target is really just for my use. It only works on a limited
 # range of machines and is used to produce a list of potentially

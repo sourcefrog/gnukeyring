@@ -9,8 +9,10 @@
 .dependencies
 ChangeLog
 ID
+auto.h
 bin
 bin.stamp
+en.resstamp
 grc.stamp
 index.html
 keyring
