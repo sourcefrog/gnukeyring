@@ -1,4 +1,5 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
  * Tightly Bound -- store passwords securely on a handheld
@@ -22,6 +23,3 @@
 MemHandle Mem_ReadString(Char **ptr, Int16 *, Int16 *);
 void Mem_ReadChunk(Char **ptr, UInt32 len, void * dest);
 void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len);
-
-void Mem_ObliteratePtr(void * p);
-void Mem_ObliterateHandle(MemHandle h);
