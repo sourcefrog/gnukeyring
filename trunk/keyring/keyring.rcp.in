@@ -219,7 +219,7 @@ BEGIN
   "Not here yet" = "Noch nicht implementiert"
   "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
   "@@langSpecificChars" =  "䥩"
-  "@@pronounceable" = "pronounceable"
+  "@@pronounceable" = "aussprechbar"
 
   "@@CouldntLaunchMemo" =  "Die Merkzettel Anwendung konnte nicht gestartet werden."
 
@@ -1070,7 +1070,7 @@ BEGIN
 	SELECTORTRIGGER "1/4/99" ID DateTrigger AT (47 PREVBOTTOM+1 40 AUTO)
 		LEFTANCHOR
 
-        LABEL "Changed:" AUTOID AT (RIGHT@PREVLEFT-5 PREVTOP)
+        LABEL "Changed:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP)
 
 	FIELD ID ID_NotesField AT (0 PREVBOTTOM+2 152 77) USABLE
 		UNDERLINED AUTOSHIFT MULTIPLELINES MAXCHARS 32760 
