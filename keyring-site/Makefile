@@ -1,23 +1,33 @@
 # Makefile for the Keyring for PalmOS site
 # $Header$
 
-pages=index screenshots download thanks plans faq	\
+pages=index guide download thanks plans faq	\
       history conduits lists contribute building
 
 extra=robots.txt style.css snaps/*.png icons/*.gif
-# cvs_logs=$(addsuffix -log.txt, $(pages))
 
-include latte.mk
+htp_libs=htp.def keyring.htt
+
+htp_pages=$(addsuffix .htp, $(pages))
+html_pages=$(addsuffix .html, $(pages))
 
 site_files=$(html_pages) $(extra)
 
-$(site_files): style.latte
+all:
+
+.PHONY: htp_clean htp_all
+htp_clean:
+	rm -f $(html_pages)
+
+%.html: %.htp $(htp_libs)
+	htp -quiet -nodepend $< $@
+
+
+$(site_files): $(htp_libs)
 
 sites=gnukeyring.sourceforge.net:/home/groups/g/gn/gnukeyring/htdocs
 
-latte_libs=style.latte
-
-all: latte_all
+all: $(html_pages)
 
 upload: $(site_files)
 	for i in $(sites); do \
