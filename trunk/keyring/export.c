@@ -21,11 +21,13 @@
  */
 
 /*
- * FIXME: MemoPad limits memos to 4kb.  We should use that too, and
- * make sure that we never write out more text than can be accepted.
- * I think we're safe, because all our edit fields have smaller
- * lengths.
+ * Export to Memo Pad function.
  *
+ * Memo Pad records are limited to 4kB.  Since all our fields have
+ * limits than sum to less than that we should always be OK.
+ */
+
+/*
  * FIXME: - Selecting a record to export to memo results in
  * "...possible memory leak...". The only time in my limited Palm
  * programming I ran into this was because all forms weren't closed
@@ -49,9 +51,14 @@
 #include "dbutil.h"
 #include "export.h"
 
-#define kMaxExport (16<<10)
+/*
+ * Maximum length of record supported by the Memo Pad application
+ *
+#define kMaxExport (4<<10)
 
-
+/*
+ * Database constants to access the built-in Memo Pad.
+ */
 #define kMemoType 'DATA'
 #define kApplType 'appl'
 #define kMemoCreator 'memo'
@@ -63,9 +70,11 @@ static void Export_Failure(void)
 }
 
 
-/* Convert a record to text form, and return a pointer to a
- * newly-allocated buffer containing it.  The caller should free the
- * buffer after use.  Returns 0 if unsuccessful. */
+/*
+ * Write the exported form of an unpacked record into a pre-allocated
+ * space in a memo record.  Returns the number of bytes written, which
+ * will be the new length of the memo record.
+ */
 static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 			       void *memoRecord)
 {
@@ -100,7 +109,10 @@ static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 }
 
 
-/* Write out a text buffer as a new memo. */
+/*
+ * Create a new memo to hold an exported record, and return a locked pointer
+ * thereto.
+ */
 static void* Export_CreateMemo(DmOpenRef *dbp, Int16 *pidx, LocalID *memoDbID,
 			       UInt16 *memoDbCard)
 {    
@@ -141,6 +153,9 @@ static void* Export_CreateMemo(DmOpenRef *dbp, Int16 *pidx, LocalID *memoDbID,
 
 
 
+/*
+ * Finish off the memo record: resize, unlock, and commit.
+ */
 static Int16 Export_Finish(DmOpenRef dbp, Int16 idx, Int16 size, void *recPtr)
 {
     Boolean	dirty = true;
@@ -148,7 +163,9 @@ static Int16 Export_Finish(DmOpenRef dbp, Int16 idx, Int16 size, void *recPtr)
     MemPtrUnlock(recPtr);
     DmReleaseRecord(dbp, idx, dirty);
 
-    if (!(DmResizeRecord(dbp, idx, size))) {	
+    if (!(DmResizeRecord(dbp, idx, size))) {
+         /* XXX: Perhaps we should do this before releasing the
+          * record?  I don't think it matters. */
 	return 0;
     }
     
@@ -186,7 +203,9 @@ static int Export_JumpToMemo(LocalID memoDbID, UInt16 memoDbCard, Int16 idx) {
     params->recordNum = idx;
         
     /* Give ownership of the PBP to the operating system, so that it
-     * is not freed when we exit.  */
+     * is not freed when we exit.
+     *
+     * Who does free it in this case?  Are we sure it won't leak? */
     err = MemPtrSetOwner(params, 0);
     if (err) {
 	FrmAlert(CouldntLaunchMemoAlert);
