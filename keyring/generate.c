@@ -26,8 +26,6 @@
  * TODO: Generate pronouncable text
  *
  * TODO: Prevent people from choosing no options.
- *
- * TODO: Strong randomness.
  */
 
 #include <PalmOS.h>
@@ -39,6 +37,7 @@
 #include "generate.h"
 #include "uiutil.h"
 #include "auto.h"
+#include "secrand.h"
 
 enum includes {
     kLower = 1,
@@ -169,7 +168,6 @@ static void Generate_Init(FormPtr frm) {
 static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
     Int16 	i;
     Char	ch;
-    Int16	ri;
 
     for (i = 0; i < len; i++) {
         /* We used to first choose a class of character, but that
@@ -177,8 +175,7 @@ static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
          * character and see if it's included.  */
         
         do {
-            ri = SysRandom(0);
-            ch = (ri >> 8) ^ ri;
+            ch = (Char) Secrand_GetBits(8);
         } while (!(classMap[(UInt8) ch] & flags));
 	
 	ptr[i] = ch;

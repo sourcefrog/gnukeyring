@@ -34,6 +34,7 @@
 
 #include "prefs.h"
 #include "snib.h"
+#include "secrand.h"
 #include "listform.h"
 #include "error.h"
 #include "beta.h"
@@ -86,8 +87,6 @@ void App_SavePrefs(void) {
 static Err App_Start(void) {
     Err err;
 
-    SysRandom(TimGetTicks() ^ SysRandom(0));
-	
     App_LoadPrefs();
     Gkr_CheckBeta();
 
@@ -99,6 +98,7 @@ static Err App_Start(void) {
         return err;
     }
 
+    Secrand_Init();
     FrmGotoForm(ListForm);
     
     /* TODO: Make more sure that we don't leave the Snib open */
@@ -110,6 +110,7 @@ static Err App_Start(void) {
 static void App_Stop(void) {
     /* TODO: Make more sure that we don't leave the Snib open */
     App_SavePrefs();
+    Secrand_Close();
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
 #ifdef ENABLE_OBLITERATE
@@ -165,6 +166,7 @@ static void App_EventLoop(void)
 #endif
 
 	EvtGetEvent(&event, (Int32) evtWaitForever);
+	Secrand_AddEventRandomness(&event);
 	
 	if (!SysHandleEvent(&event))
 	    if (!MenuHandleEvent(0, &event, &error))

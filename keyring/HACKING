@@ -236,19 +236,6 @@ Since the records we're encrypting will be relatively small and since
 code simplicity is somewhat important it seems OK to use DES-EDE3-ECB
 (as SSLeay and OpenSSL call it).
 
-----------------------------------------------------------------------
-Randomness:
-
-"Practice random acts..." 
-
-Quite possibly the PalmOS SysRandom function is not unpredictable
-enough to keep everything safe.  Therefore perhaps at some point we
-should implement our own hashed entropy pool.
-
-There's some discussion in Schneier of the right way to implement
-this: the Linux entropy device seems like a good start.
-
-
 
 ----------------------------------------------------------------------
 Versioning
