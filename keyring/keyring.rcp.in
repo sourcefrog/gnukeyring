@@ -356,6 +356,107 @@ BEGIN
   "@accel_Graffiti" = "G"
 END
 
+// ======================================================================
+// Dutch translation contributed by Jeroen Vloothuis <jvloothuis@wanadoo.nl>
+
+TRANSLATION "nl"
+BEGIN
+  "New" = "Nieuw"
+  "Key ______ of ______" = "Sleutel ______ van ______" 
+  "Name:" = "Naam:"
+  "Account:" = "Account:"
+  "Password:" = "Wachtwoord:"
+  "Confirm:"  = "Bevestigen:" 
+  "Changed:" = "Verandert:"
+  "Done" = "Klaar"
+  "Preferences" = "Instellingen"
+  "Stay unlocked for:" = "Blijf ontsloten voor:"
+  "No time" = "Geen tijd"
+  "15 sec" = "15 Sec."
+  "60 sec" = "1 Min."
+  "5 min" = "5 Min."
+
+  "Cancel" = "Afbreken"
+
+  "Set Keyring Password" =  "Stel Keyring Paswoord In"
+
+  "@@choosepassword" = "Voor het keyring wachtwoord in:"
+
+  "Generate Password" = "Passwort Generieren"
+  "@@generate1" = "Genereer een nieuw random "
+  "@@generate2" = "wachtwoord:"
+
+  "Length:" = "Lengte:"
+  "Include:" = "Opnemen:"
+  "Generate" = "Genereren"
+
+  "Unlock" =  "Ontsleutelen"
+
+  "Enter your password:" = "Voor je wachtwoord in:"
+
+  "Encrypting..." = "Versleutelen..."
+  "Decrypting..." = "Ontsleutelen..."
+
+  "@@OutOfMemory" =  "Te kort dynamisch geheugen."
+  "@@WrongPassword" = "Wachtwoord fout.  Probeer het nog eens."
+  "@@PasswordMismatch" =  "De wachtwoorden komen niet met elkaar overeen."
+
+  "Not here yet" = "Nog niet geimplementeerd."
+  "@@NotImplemented" = "Deze functie is nog niet geimplementeerd."
+
+  "^1: System error ^2" =  "^1: Systeemfout ^2"
+  "Couldn't launch the Memo Pad" =  "Kan de memo applicatie niet starten."
+
+  "Delete Key" = "Sleutel verwijderen"
+  "Delete current key record?" = "Actuele sleutel verwijderen?"
+  "Save archive copy on PC" = "Bewaar een kopie op de PC"
+
+  "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+   = "Dit is een beta test versie van GNU Keyring. Het is mogelijk dat het bugs bevat. Maak alstublieft een kopie van onmisbare gegevens."
+
+  "This is free software.  No warranty." = "Gratis software. Geen garantie." 
+
+  "Released under the GNU GPL v2." = "Uitgegeven onder de GNU GPL v2." 
+
+  "Save archive copy on PC" = "Archiefkopie op de PC opslaan"
+
+  "Database" = "Databank"
+  "Set Password..." = "Wachtwoord instellen..."
+  "Options" = "Opties"
+  "Tips" = "Tips"
+  "Edit" = "Wijzigen"
+
+  "Preferences..." =  "Instellingen..."
+  "About..." =  "Info..."
+
+  "Undo" = "Ongedaan maken"
+  "Undo All" = "Alles ongedaan maken"
+  "Graffiti Help" = "Graffiti Hulp"
+  "Paste" = "Plakken"
+  "Cut" = "Knippen"
+  "Select All" = "Alles selecteren"
+  "Key %d of %d" = "Schlüssel %d v. %d"
+  "Copy" = "Kopieren"
+  "Keyboard" = "Toetsenbord"
+  "New Key" = "Nieuwe sleutel"
+
+  "Record" =  "Record"
+  "Generate Password..." = "Genereer Wachtwoord..."
+  "Export to Memo" = "Naar Memo exporteren"
+  "Delete..." = "Verwijderen..."
+
+  "@@GenerateHelp" = "help/de/generate.txt"
+  "@@KeyEditHelp" = "help/de/keyedit.txt"
+
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "V"
+  "@accel_SelectAll" = "A"
+  "@accel_Keyboard" = "T"
+  "@accel_Graffiti" = "G"
+END
+
 #include "resource.h"
 
 VERSION ID 1000 "__VERSION__"
