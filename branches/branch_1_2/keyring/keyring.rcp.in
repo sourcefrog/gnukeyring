@@ -756,27 +756,31 @@ END
 
 TRANSLATION "fr"
 BEGIN
+  "Keyring for PalmOS" = "Keyring pour PalmOS"
+
   "New" = "Nouv."
   "Look Up:" = "Trouver :"
   "Key ______ of ______" = "Clef ______ de ______"
   "Key ^0 of ^1" = "Clef ^0 de ^1"
   "Name:" = "Nom:"
   "Account:" = "Compte:" 
-  "Password" = "Mot de passe"
-  "Password:" = "Mot de passe:"
+  "Password" = "Passe"
+  "Password:" = "Passe:"
   "Confirm:" = "Confirmez:"
   "Changed:" = "Changé:"
   "Done" = "Fini"
   "Preferences" = "Préférences"
   "Stay unlocked for:" = "Restez déverrouillé pendant :"
-  "No time" = "pas de délai"
+  "No time" = "Sans délai"
   "15 sec" = "15 sec."
   "60 sec" = "60 sec."
   "5 min" = "5 min."
+  "Use Keyring fonts" = "Utiliser les fontes Keyring"
+  "Veil password" = "Cacher le mot de passe"
 
   "Cancel" = "Annuler"
   "Set Keyring Password" = "Changer son mot de passe"
-  "@@choosepassword" = "Choisissez un mot de passe, s'il vous plait:"
+  "@@choosepassword" = "Choisissez un mot de passe :"
   "Generate Password" = "Générer un Mot de Passe"
   "@@generate1" = "Un nouveau mot de passe "
   "@@generate2" = "Générer :"
@@ -811,7 +815,7 @@ BEGIN
   "@@BetaVersion"
    = "Ceci est une version pilote d'essai de Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de toutes données importantes."
 
-  "This is free software.  No warranty." = "Ce logiciel est gratuit et libre de droits. Il n'y a aucune garantie."
+  "This is free software.  No warranty." = "Gratuit et libre de droits."
 
   "Released under the GNU GPL v2." = "Disponible sous licence GNU GPL v2." 
 
@@ -838,9 +842,12 @@ BEGIN
 
   "Options" = "Options"
   "Preferences..." =  "Préférences..."
+  "Tips..." = "Astuces..."
   "About..." =  "A propos..."
 
   "New Key" = "Nouvelle clé"
+
+  "Unfiled" = "Non classé"
 
   "@@GenerateHelp" = "help/fr/generate.txt"
   "@@KeyEditHelp" = "help/fr/keyedit.txt"
