@@ -134,11 +134,6 @@ Err KeyDB_CreateNew(UInt16 *idx)
         goto errOut;
     
     MemHandleUnlock(recHandle);
-    /* XXX: I'm not sure if we should mark the record dirty at this
-     * point or not.  If we do, then it might be sync'd all the way
-     * back to the PC even if it's never used. */
-    if ((err = DmReleaseRecord(gKeyDB, *idx, true)))
-        goto errOut;
     
     return 0;
     
@@ -150,11 +145,11 @@ Err KeyDB_CreateNew(UInt16 *idx)
 }
 
 
-static MemHandle Keys_PrepareExisting(UInt16 *idx, Int16 recLen)
+static MemHandle Keys_PrepareExisting(UInt16 idx, Int16 recLen)
 {
     MemHandle	recHandle;
 
-    recHandle = DmResizeRecord(gKeyDB, *idx, recLen);
+    recHandle = DmResizeRecord(gKeyDB, idx, recLen);
     if (!recHandle) {
 	UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),
                            __FUNCTION__);
@@ -201,7 +196,7 @@ void Key_SetCategory(UInt16 idx, UInt16 category)
  * unlock record
  * set record position
  */
-void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx, 
+void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx, 
 		     UInt8 *recordKey)
 {
     MemHandle recHandle;
@@ -212,10 +207,10 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx,
     ErrFatalDisplayIf(packRecLen > 8000,
 		      __FUNCTION__ ": immoderate packRecLen"); /* paranoia */
 
-    ErrNonFatalDisplayIf(*idx == kNoRecord,
+    ErrNonFatalDisplayIf(idx == kNoRecord,
                          __FUNCTION__ ": no record to save");
     
-    ErrFatalDisplayIf(*idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
+    ErrFatalDisplayIf(idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
     recHandle = Keys_PrepareExisting(idx, packRecLen);
     if (!recHandle)
 	return;
@@ -224,7 +219,7 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx,
     Keys_WriteRecord(unpacked, recPtr, recordKey);
     MemHandleUnlock(recHandle);
 
-    err = DmReleaseRecord(gKeyDB, *idx, true);
+    err = DmReleaseRecord(gKeyDB, idx, true);
     if (err)
 	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 }

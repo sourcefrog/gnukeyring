@@ -95,6 +95,8 @@ Err PwHash_Store(Char *newPasswd)
 	return err;
     }
 
+    recHandle = DmGetRecord(gKeyDB, kMasterHashRec);
+
     recPtr = MemHandleLock(recHandle);
 
     DmWrite(recPtr, 0, &salt, kSaltSize);
