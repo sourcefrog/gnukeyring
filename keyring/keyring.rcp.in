@@ -1379,7 +1379,7 @@ ERROR
 BEGIN
 	TITLE "Not Enough Features"
 
-	MESSAGE "This version of Keyring requires PalmOS 3.0 features and cannot run here."
+	MESSAGE "This version of Keyring requires PalmOS 3.0 and the DES encryption feature (MS-Chap support).  It cannot run here."
 
 	BUTTONS "OK"
 END
