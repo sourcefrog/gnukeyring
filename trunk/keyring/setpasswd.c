@@ -41,12 +41,24 @@ Char * SetPasswd_Ask(void)
     FieldPtr 	masterFld, confirmFld;
     MemHandle   handle;
     MemPtr      result = NULL;
+    UInt32      encoding;
     Char *masterPtr, *confirmPtr;
 
     frm = FrmInitForm(SetPasswdForm);
     FrmSetActiveForm(frm);
     masterFld = UI_GetObjectByID(frm, MasterKeyFld);
     confirmFld = UI_GetObjectByID(frm, ConfirmFld); 
+
+    if (FtrGet(sysFtrCreator, sysFtrNumEncoding, &encoding))
+	/* if feature not found it is palm latin */
+	encoding = charEncodingPalmLatin;
+
+    /* If encoding is not latin, use default system fonts. */
+    if (encoding == charEncodingPalmLatin) {
+	FldSetFont(masterFld, fntPassword);
+	FldSetFont(confirmFld, fntPassword);
+    }
+    
     FrmSetFocus(frm, FrmGetObjectIndex(frm, MasterKeyFld)); 
    
  doDialog:	

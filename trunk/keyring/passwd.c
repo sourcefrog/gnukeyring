@@ -25,12 +25,32 @@
 // ======================================================================
 // Unlock form
 
+static void UnlockForm_SetFont(FormPtr frm, Boolean veil) {
+    FontID font;
+    if (veil) {
+	font = fntStar;
+    } else {
+	UInt32 encoding;
+	if (FtrGet(sysFtrCreator, sysFtrNumEncoding, &encoding))
+	    /* if feature not found it is palm latin */
+	    encoding = charEncodingPalmLatin;
+
+	/* If encoding is not latin, use default fonts. */
+	if (encoding != charEncodingPalmLatin)
+	    font = stdFont;
+	else
+	    font = fntPassword;
+    }
+    FldSetFont(UI_GetObjectByID(frm, MasterKeyFld), font);
+}
+
+
+
 static Boolean UnlockForm_HandleEvent(EventPtr event)
 {
     if (event->eType == ctlSelectEvent
 	&& event->data.ctlSelect.controlID == VeilPasswordCheck) {
-	FldSetFont(UI_GetObjectByID(FrmGetActiveForm(), MasterKeyFld), 
-		   event->data.ctlSelect.on ? fntStar : fntPassword);
+	UnlockForm_SetFont(FrmGetActiveForm(), event->data.ctlSelect.on);
 	return true;
     }
     return false;
@@ -51,9 +71,7 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 			  &veil, &size, true);
 
     CtlSetValue(UI_GetObjectByID(frm, VeilPasswordCheck), veil);
-    FldSetFont(UI_GetObjectByID(frm, MasterKeyFld), 
-	       veil ? fntStar : fntPassword);
-
+    UnlockForm_SetFont(frm, veil);
     FrmSetEventHandler(frm, UnlockForm_HandleEvent);
 
     do { 

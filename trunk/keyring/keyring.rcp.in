@@ -1039,12 +1039,12 @@ BEGIN
 	LABEL "Name:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
 
 	FIELD ID AccountField AT (47 PREVBOTTOM 110 AUTO) USABLE
-		UNDERLINED MAXCHARS 50 FONT fntPassword
+		UNDERLINED MAXCHARS 50
 
 	LABEL "Account:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
 
 	FIELD PasswordField AT (47 PREVBOTTOM 110 AUTO) USABLE 
-		UNDERLINED MAXCHARS 50 FONT fntPassword
+		UNDERLINED MAXCHARS 50
 
 	LABEL "Password:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
 
@@ -1098,13 +1098,13 @@ BEGIN
 		autoid at (prevleft PREVBOTTOM+2) font 1
 
 	field id MasterKeyFld at (65 prevtop 85 15)
-		underlined maxchars 40 font fntPassword
+		underlined maxchars 40
 
 	label "Confirm:" 
 		autoid at (5 prevbottom) font 1
 
 	field id ConfirmFld at (65 prevtop 85 15)
-		underlined maxchars 40 font fntPassword
+		underlined maxchars 40
 
 	button "OK" OkBtn at (5 prevbottom+4 auto auto)
 	button "Cancel" CancelBtn at (prevright+5 prevtop auto auto)
