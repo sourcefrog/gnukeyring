@@ -225,7 +225,7 @@ implemented properly.  As far as I can see, if it's returning the same
 results it must be the genuine DES algorithm.
 
 So, it looks like our only option is DES-ECB: we could build something
-stronger, but then GNU Keyring would not be exportable from the US,
+stronger, but then Keyring would not be exportable from the US,
 and I'd like to have that if it's at all possible. 
 
 The PalmOS function only encrypts one block at a time, so we need to

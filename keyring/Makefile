@@ -9,9 +9,9 @@ ICONTEXT        = "Keyring"
 APPID           = "Gtkr"
 
 # XXX: You may have to edit this to match your SDK installation
-PALM_BASE       = /usr/local/include/palmos3.5
-C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI
-export C_INCLUDE_PATH
+#PALM_BASE       = /usr/local/include/palmos3.5
+#C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI
+#export C_INCLUDE_PATH
 
 VERSION         = 1.1pre1
 BUILD_DATE     := $(shell date +'%Y-%m-%d')

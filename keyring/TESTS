@@ -1,4 +1,4 @@
-Test-cases for GNU Keyring
+Test-cases for Keyring
 $Id$
 
 Running through all of these tests ought to cover most of the code in
