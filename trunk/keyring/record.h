@@ -36,9 +36,6 @@ typedef struct {
      * rather than pointers. */
     MemHandle nameHandle, acctHandle, passwdHandle, notesHandle;
 
-    /* Date password was last changed. */
-    DateType lastChange;
-
     UInt16 category;
 } UnpackedKeyType;
 

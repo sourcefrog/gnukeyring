@@ -74,9 +74,8 @@ static UInt32 packBodyLen, packRecLen;
 static void Keys_CalcPackedSize(UnpackedKeyType const *unpacked)
 {
     packBodyLen = unpacked->acctLen + 1
-	+ unpacked->passwdLen + 1
-	+ unpacked->notesLen + 1
-	+ sizeof(UInt32);		/* date */
+         + unpacked->passwdLen + 1
+         + unpacked->notesLen + 1;
 
     if (packBodyLen & (kDESBlockSize-1))
 	packBodyLen = (packBodyLen & ~(kDESBlockSize-1)) + kDESBlockSize;
