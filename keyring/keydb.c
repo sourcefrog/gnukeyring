@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
  *
  * $Id$
  * 
@@ -34,11 +34,10 @@
 #include "record.h"
 #include "passwd.h"
 #include "resource.h"
+#include "pwhash.h"
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
-
-static Err KeyDB_OpenRingInfo(KeyringInfoPtr *);
 
 /* ======================================================================
  * Key database
@@ -66,45 +65,6 @@ static Err KeyDB_OpenRingInfo(KeyringInfoPtr *);
  * get under PalmOS.  It would be a bad thing if e.g. the system
  * crashed while we were changing it, and the session key was lost. */
 
-static void KeyDB_HashNewPasswd(Char const *newPasswd,
-				KeyringInfoPtr ai)
-{
-    Char msgBuf[64];
-    Char * ptr;
-    Err err;
-    
-    ai->passwdSalt = ((UInt32) SysRandom(0) << 16L) | SysRandom(0);
-
-    MemSet(msgBuf, 64, 0);
-    ptr = msgBuf;
-    MemMove(ptr, &ai->passwdSalt, sizeof(Int32));
-    ptr += sizeof(Int32);
-    StrNCopy(ptr, newPasswd, 64 - 1 - sizeof(Int32));
-
-    err = EncDigestMD5(msgBuf, 64, ai->passwdHash);
-    if (err)
-	App_ReportSysError(CryptoErrorAlert, err);
-}
-
-
-static Boolean KeyDB_CheckPasswdHash(Char const *guess, KeyringInfoPtr ki) {
-    Char msgBuf[64];
-    UInt8 guessHash[kPasswdHashSize];
-    Char * ptr;
-    Err err;
-    
-    MemSet(msgBuf, 64, 0);
-    ptr = msgBuf;
-    MemMove(ptr, &ki->passwdSalt, sizeof(Int32));
-    ptr += sizeof(Int32);
-    StrNCopy(ptr, guess, 64 - 1 - sizeof(Int32));
-
-    err = EncDigestMD5(msgBuf, 64, guessHash);
-    if (err)
-	App_ReportSysError(CryptoErrorAlert, err);
-
-    return !MemCmp(guessHash, &ki->passwdHash[0], kPasswdHashSize);
-}
 
 
 /*
@@ -166,144 +126,15 @@ Err KeyDB_CreateCategories(void) {
 }
 
 
-/* Store the checking-hash of a password into the database info. */
-static Err KeyDB_StorePasswdHash(Char const *newPasswd) {
-    KeyringInfoPtr	dbPtr;
-    KeyringInfoType		kiBuf;
-    Err			err;
-
-    if ((err = KeyDB_OpenRingInfo(&dbPtr)))
-	return err;
-    
-    MemSet(&kiBuf, sizeof(kiBuf), 0);
-    kiBuf.appInfoVersion = kAppVersion;	/* no longer checked, here for compatibility */
-    KeyDB_HashNewPasswd(newPasswd, &kiBuf);
-    DmWrite(dbPtr, 0, (void *) &kiBuf, sizeof(kiBuf));
-    MemPtrUnlock(dbPtr);
-
-    return 0;
-}
-
-
-/* Called after setting the password: walks through the database
- * changing the encryption of each record to suit the new key.
- *
- * This method must be called with the old unlock hash still
- * present in memory. */
-/* XXX: It would be REALLY BAD if this failed: we've changed the encryption
- * on some record, but not others.  This will mean the
- * user can't decrypt some of them.  We need a systematic
- * way around this.
- *
- * Probably a good way is to not use the key to really encrypt the
- * records, but rather an invariant session key.  */
-static void KeyDB_Reencrypt(Char const *newPasswd) {
-    /* We read each record into memory, decrypt it using the old
-     * unlock hash, then encrypt it using the new hash and write it
-     * back. */
-    UInt16 	numRecs = DmNumRecords(gKeyDB);
-    UInt16 	idx;
-    MemHandle 	fromRec;
-    void	*recPtr, *toPtr;
-    UInt16	attr;
-    Err		err;
-    UnpackedKeyType	unpacked;
-    UInt32		recLen;
-    UInt8		newRecordKey[kPasswdHashSize];
-
-    err = EncDigestMD5((void *) newPasswd,
-		       StrLen(newPasswd),
-		       newRecordKey);
-    if (err)
-	App_ReportSysError(CryptoErrorAlert, err);
-
-    for (idx = 0; idx < numRecs; idx++) {
-	// Skip deleted records.  Handling of archived records is a
-	// bit of an open question, because we'll still want to be
-	// able to decrypt them on the PC.  (If we can ever do
-	// that...)
-	err = DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL);
-	ErrFatalDisplayIf(err, "DmRecordInfo");
-	if (attr & (dmRecAttrDelete | dmRecAttrSecret))
-	    continue;
-
-	// Open read-only and read in to memory
-	fromRec = DmQueryRecord(gKeyDB, idx);
-	ErrFatalDisplayIf(!fromRec, "couldn't query record");
-
-	// Read into a temporary unpacked buffer
-	KeyRecord_Unpack(fromRec, &unpacked, gRecordKey);
-	
-	// Pack and encrypt using the new key
-	toPtr = KeyRecord_Pack(&unpacked, newRecordKey);
-	ErrNonFatalDisplayIf(!toPtr, "!toPtr");
-
-	// Now resize record to fit packed size	
-	recLen = MemPtrSize(toPtr);
-	ErrNonFatalDisplayIf(!recLen, "!recLen");
-
-	fromRec = DmResizeRecord(gKeyDB, idx, recLen);
-	ErrNonFatalDisplayIf(!fromRec, "resize failed");
-
-	recPtr = MemHandleLock(fromRec);
-	ErrNonFatalDisplayIf(!recPtr, "!recPtr");
-	DmWrite(recPtr, 0, toPtr, recLen);
-	MemHandleUnlock(fromRec);
-	MemPtrFree(toPtr);
-
-	UnpackedKey_Free(&unpacked);
-
-	DmReleaseRecord(gKeyDB, idx, true); // dirty
-    }
-
-    // Finally, make the new unlock hash the currently active one
-    MemMove(gRecordKey, newRecordKey, kPasswdHashSize);
-}
-
-
-void KeyDB_SetPasswd(Char const *newPasswd) {
-    KeyDB_Reencrypt(newPasswd);
-    KeyDB_StorePasswdHash(newPasswd);
+/*
+ * Set the master password for the database.  This is called after the
+ * user has entered a new password and it has been properly checked.
+ */
+void KeyDB_SetPasswd(Char *newPasswd)
+{
+    PwHash_Store(newPasswd);
+/*      KeyDB_Reencrypt(newPasswd); */
     Unlock_PrimeTimer();
-}
-
-
-
-
-
-/* Return locked pointer to keyring info; or null if there is no
- * keyring info present.  The pointer is into the database, so it
- * can't be written directly, only through DmWrite and friends. */
-Err KeyDB_OpenRingInfo(KeyringInfoPtr *pp) {
-    LocalID		kiID;
-    Err			err;
-
-    *pp = 0;
-
-    err = DmDatabaseInfo(gKeyDBCardNo, gKeyDBID,
-			 NULL, NULL, NULL, NULL, NULL,
-			 NULL, NULL, 0, &kiID, NULL, NULL);
-    if (err)
-	return err;
-
-    if (!kiID)
-	return 0;
-
-    *pp = (KeyringInfoPtr) MemLocalIDToLockedPtr(kiID, gKeyDBCardNo);
-
-    return 0;
-}
-
-
-Boolean KeyDB_Verify(Char const *guess) {
-    KeyringInfoPtr	ptr;
-    Boolean    		result;
-    Err			err;
-
-    err = KeyDB_OpenRingInfo(&ptr);
-    result = KeyDB_CheckPasswdHash(guess, ptr);
-    MemPtrUnlock(ptr);
-    return result;
 }
 
 
@@ -380,4 +211,3 @@ Err KeyDB_GetVersion(UInt16 *ver) {
 			  0, 0, 0, 0,
 			  0, 0, 0, 0);
 }
-
