@@ -72,7 +72,7 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
 
-OPTIM		= -O2 -finline-functions -g -mdebug-labels
+OPTIM		= -O2 -g -mdebug-labels
 INCLUDES        = -IpilotSSLeay/include
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
