@@ -200,17 +200,25 @@ static void KeyEditForm_Done(void)
 }
 
 
-static Err KeyEditForm_Sleep(SysNotifyParamType UNUSED(*np)) {
-    /* Close all form and erase screen */
-    FrmCloseAllForms();
+static Err KeyEditForm_Sleep(SysNotifyParamType *np) {
+    Err err;
+    UInt16 cardNo;
+    LocalID dbID;
+    DmSearchStateType dss;
 
-    /* Enqueue event to switch to main form, this won't be
-     * processed before power on.
-     */
-    FrmGotoForm(ListForm);
+    /* Defer sleeping */
+    ((SleepEventParamType *) (np->notifyDetailsP))->deferSleep++;
+
+    /* First enqueue events to restart application */
+    err = DmGetNextDatabaseByTypeCreator(true, &dss,
+                                         sysFileTApplication,
+                                         kKeyringCreatorID,
+                                         true, &cardNo, &dbID);
+    ErrNonFatalDisplayIf(err != errNone,"Failed to launch application!");
+    SysUIAppSwitch(cardNo, dbID, kKeyringResumeSleepLaunch, NULL);
+
     return 0;
 }
-
 
 /*
  * Fill in the current KeyEdit form with data from the record
@@ -222,7 +230,6 @@ static void KeyEditForm_Load(void)
     MemHandle   record = 0;
     Char *      recPtr;
     FormPtr     busyForm;
-    UInt32      version;
 
     // Open r/o
     record = DmQueryRecord(gKeyDB, gKeyRecordIndex);
@@ -243,19 +250,6 @@ static void KeyEditForm_Load(void)
     FrmSetActiveForm(f_KeyEditForm);
 
     KeyEditForm_FromUnpacked();
-
-    /* NotifyRegister is not present in 3.0.  We need to check for
-     * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
-     * call this.  It might be better to set an alarm to lock after
-     * the specified time instead.
-     *
-     * POSE doesn't seem to send this notification on wakeup, so you
-     * can't test this in the simulator. */
-    
-    if (FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &version) == 0
-	&& version)
-	 SysNotifyRegister(gKeyDBCardNo, gKeyDBID, sysNotifySleepRequestEvent,
-			   KeyEditForm_Sleep, sysNotifyNormalPriority, NULL);
 }
 
 
@@ -473,10 +467,22 @@ static void Edit_PrepareFields(void)
 
 static void KeyEditForm_FormOpen(void)
 {
-     f_needsSort = false;
-     KeyEditForm_GetFields();
-     Edit_PrepareFields();
-     KeyEditForm_OpenRecord();
+    UInt32      version;
+    /* NotifyRegister is not present in 3.0.  We need to check for
+     * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
+     * call this.  It might be better to set an alarm to lock after
+     * the specified time instead.  Maybe we could reuse the snib
+     * alarm.
+     */
+    if (FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &version) == 0
+	&& version)
+	 SysNotifyRegister(gKeyDBCardNo, gKeyDBID, sysNotifySleepRequestEvent,
+			   KeyEditForm_Sleep, sysNotifyNormalPriority, NULL);
+    
+    f_needsSort = false;
+    KeyEditForm_GetFields();
+    Edit_PrepareFields();
+    KeyEditForm_OpenRecord();
 }
 
 

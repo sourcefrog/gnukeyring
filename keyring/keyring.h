@@ -58,6 +58,9 @@
 #define prefID_ReadOnlyAccepted 4
 #define prefID_VeilPassword     5
 
+#define kKeyringResumeSleepLaunch sysAppLaunchCmdCustomBase
+
+
 #define kMaxRecords             2000
 
 #define kNoRecord		((UInt16) -1)
