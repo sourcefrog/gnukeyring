@@ -105,6 +105,7 @@ static void App_Stop(void)
 {
     App_SavePrefs();
     Secrand_Close();
+    FrmSaveAllForms ();
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
     DmCloseDatabase(gKeyDB);
@@ -160,9 +161,13 @@ static void App_EventLoop(void)
 
 	if (event.eType == keyDownEvent) {
 	    if (event.data.keyDown.chr == vchrAutoOff
-		|| event.data.keyDown.chr == vchrPowerOff) {
+		|| event.data.keyDown.chr == vchrPowerOff
+		|| event.data.keyDown.chr == vchrLock) {
 		gSleeping = true;
-		if (gEditFormActive && Snib_GetSnib(false) == NULL) {
+		if (gEditFormActive && 
+		    (event.data.keyDown.chr == vchrLock
+		     || Snib_GetSnib(false) == NULL)) {
+		    FrmSaveAllForms();
 		    FrmCloseAllForms();
 		    FrmGotoForm(ListForm);
 		}
@@ -254,6 +259,7 @@ UInt32 PilotMain(UInt16 launchCode,
     if ((err = RomVersionCompatible()))
 	return err;
 
+#if 0
     if (launchCode == kKeyringResumeSleepLaunch) {
 	/* We were relaunched by the sleep notify handler.
 	 * Enqueue event to resume sleeping 
@@ -267,6 +273,7 @@ UInt32 PilotMain(UInt16 launchCode,
 	/* Set launch code to normal */
 	launchCode = sysAppLaunchCmdNormalLaunch;
     }
+#endif
 
     switch (launchCode)
     {
@@ -301,8 +308,15 @@ UInt32 PilotMain(UInt16 launchCode,
 	    }
 	}
 	break;
-	
+
+    case sysAppLaunchCmdSystemLock:
     case sysAppLaunchCmdTimeChange:	    
+	/* Lock application on System Lock or when someone manipulates
+	 * the time.
+	 */
+	Snib_Eradicate ();
+	break;
+	
     case sysAppLaunchCmdAlarmTriggered:	    
 
 	/* This is the expiry alarm, or the time changed */
@@ -318,10 +332,11 @@ UInt32 PilotMain(UInt16 launchCode,
 	    EvtAddEventToQueue(&keyev);
 	}
 	break;
-    }
 
-    /* TODO: We should handle: sysAppLaunchCmdSaveData,
-     * sysAppLaunchCmdSystemLock, ... */
+    case sysAppLaunchCmdSaveData:
+        FrmSaveAllForms ();
+        break;
+    }
 
     return err;
 }
