@@ -4,9 +4,26 @@
 {
   {\h2 download}
 
-  {\a \href={http://sourceforge.net/project/showfiles.php?group_id=306}
-   Download the .prc file or source tarball from SourceForge}.  From
-   0.9 onwards there are versions in English, German, and Spanish.
+  {\def \langlist
+    {{en English} {de German} {es Spanish} {sv Swedish}}}
+
+  {\table
+    {\foreach \langtuple \langlist
+      {\let {{\langcode  {\car \langtuple}} {\langname {\cadr \langtuple}}}
+        {\tr {\td {\prcfile \langcode}} 
+	{\td \langname PRC binary}}
+      }
+    }
+    {\tr {\td {\filelink compressed.gif .tar.gz} {\td Tarball of
+    source and all binaries}}}
+    {\tr {\td {\filelink text.gif -news.txt} 
+	  {\td Release notes, MD5 checksums and GPG signature}}}
+  }
+
+  Older versions are available from the 
+  {\a
+  \href={http://sourceforge.net/project/showfiles.php?group_id=306}
+    SourceForge download site}.
 
    Install the keyring.prc binary on your handheld.  GNU
    Keyring will create a blank database the first time it

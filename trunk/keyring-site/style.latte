@@ -76,7 +76,7 @@ USA.
   {
     {\font \color=#ff0000
     {\b Important:}
-     GNU Keyring is in beta test at the moment.  It probably has bugs.
+     GNU Keyring is in beta test at the moment, and may have bugs.
      Please keep another copy of any unrecoverable data.
     }
   }
@@ -166,6 +166,23 @@ USA.
  }
 }
 } 
+
+{\def \cur_ver 0.11.2}
+
+{\def {\filelink \icon \namepart} 
+  {\let {{\filename {\concat keyring- \cur_ver \namepart}}}
+    {\a
+     \href={\concat http://download.sourceforge.net/gnukeyring/ \filename} 
+      {\img \src={icons/\icon} \border=0} {\tt \filename}
+    }
+  }
+}
+
+{\def {\prcfile \langcode}
+  {\filelink binary.gif {\concat -\langcode.prc }}
+}
+
+
 
 \; Local variables:
 \; indent-tabs-mode: nil
