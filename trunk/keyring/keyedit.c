@@ -326,6 +326,7 @@ static void KeyEditForm_UpdateAll(void)
     KeyEditForm_GetFields();
     KeyEditForm_UpdateCategory();
     KeyEditForm_UpdateTitle();
+    KeyEditForm_UpdateScrollbar();
     FrmDrawForm(f_KeyEditForm);
 }
 
