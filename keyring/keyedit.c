@@ -543,6 +543,22 @@ static void KeyEditForm_Generate(void) {
 }
 
 
+/*
+ * Export if possible.
+ */
+static void Edit_MaybeExport(void)
+{
+     if (KeyEditForm_IsEmpty()) {
+          FrmAlert(alertID_ExportEmpty);
+          return;
+     }
+     
+     /* As a side effect, write into gRecord. */
+     KeyEditForm_Commit();
+     ExportKey(&gRecord);
+}
+
+
 static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
     switch (event->data.menu.itemID) {
     case HelpCmd:
@@ -559,9 +575,7 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
         return true;
 
     case ExportMemoCmd:
-        /* As a side effect, write into gRecord. */
-        KeyEditForm_Commit();
-        ExportKey(&gRecord);
+         Edit_MaybeExport();
         return true;
 
     case ID_UndoAllCmd:
