@@ -29,7 +29,8 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 GLIBDEF         = ssl-md.def ssl-des.def
 
 HEADERS	        = keyring.h record.h error.h \
-		  resource.h crypto.h pwhash.h snib.h includes.h
+		  resource.h crypto.h pwhash.h snib.h includes.h        \
+		  pronounce.h
 
 OBJ		= $(subst .c,.o,$(SRC)) $(subst .def,-stubs.o,$(GLIBDEF))
 BIN             = $(APP).bin

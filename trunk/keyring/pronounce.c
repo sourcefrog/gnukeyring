@@ -11,7 +11,6 @@ to be OK.
 */
 
 #include "includes.h"
-#include <string.h>
 
 #define RULE_SIZE             (sizeof(rules)/sizeof(struct unit))
 #define IS_FLAG(flag)         (digram[last_unit]][unit] & (flag))
