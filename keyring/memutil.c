@@ -52,7 +52,6 @@ static MemHandle Mem_StrToHandle(Char * srcPtr, Int16 *remain, Int16 *len)
 	h = MemHandleNew(i + 1);
 	ErrFatalDisplayIf(!h, __FUNCTION__ ": out of memory");
 	destPtr = MemHandleLock(h);
-        ErrFatalDisplayIf(!destPtr, __FUNCTION__ ": out of memory");
         MemMove(destPtr, srcPtr, i);
 	destPtr[i] = '\0';
 	MemHandleUnlock(h);
@@ -74,11 +73,8 @@ MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len)
 {
     MemHandle h;
 
-    if (*remain <= 0) {
-        FrmCustomAlert(ID_KeyDatabaseAlert,
-                       "record underflow", __FUNCTION__, "");
+    if (*remain < 0)
         return NULL;
-    }
     
     h = Mem_StrToHandle(*ptr, remain, len);
 

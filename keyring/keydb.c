@@ -70,13 +70,7 @@ Boolean g_ReadOnly;
  * When the user changes their password, we have to walk through the
  * database, decrypt each record with the old key, and re-encrypt with
  * the new key.
- *
- * NOTE: This scheme is not implemented in the current codebase,
- * because 0.13 up to dev3 digressed towards using an
- * independently-generated session key.  But it will be correct for
- * the final 0.13 release, and is almost correct for previous versions
- * except that the data was stored in AppInfo or SortInfo rather than
- * in record 0. */
+ */
 
 Int16 Keys_IdxOffsetReserved(void)
 {
