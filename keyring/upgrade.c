@@ -32,6 +32,11 @@
 #include "error.h"
 #include "resource.h"
 
+/*
+ * TODO: In the future, when converting the database, write out to a new database
+ * so that if something goes wrong we won't be lost.
+ */
+
 
 static void UpgradeDB_Failed(int oldVersion) {
     char oldVer[8];
