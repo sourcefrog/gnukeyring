@@ -101,6 +101,11 @@ static Err Keyring_PrepareDB(void) {
     /* If the database doesn't already exist, then we require the user
      * to set their password. */
     err = KeyDB_OpenExistingDB();
+    
+    /* TODO: Check for dmErrReadOnly, dmErrROMBased and offer to open
+     * the database read only.  If so, and the version is old, then
+     * complain that we can't upgrade it. */
+    
     if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
 	return err;		/* error already reported */
     } else if (err) {
