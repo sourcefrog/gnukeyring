@@ -118,7 +118,7 @@ MD5 hash of the password and a random 32-bit salt is stored and
 checked against entered values.
 
     The master password is also used to generate a record encryption key.
-    The 128-byte MD5 hash of the master password is spilt into two
+    The 128-bit MD5 hash of the master password is spilt into two
     64-bit keys, {\em K1} and {\em K2}.  (DES ignores the top bit of
     each byte, so the key has 112 effective unknown bits.) These are
     used to generate record data encrypted as {\em Enc(K1, Dec(K2,
