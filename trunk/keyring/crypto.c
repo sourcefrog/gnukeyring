@@ -28,18 +28,18 @@
 
 #ifndef DISABLE_DES
 
-
-Err DES3_Read(void * from, void * to, UInt32 len, UInt8 *cryptKey)
+void CryptoPrepareKey(UInt8 *rawKey, CryptoKey cryptKey)
 {
-    des_key_schedule ks1, ks2;
+    des_set_key(rawKey, cryptKey[0]);
+    des_set_key(rawKey + DES_KEY_SZ, cryptKey[1]);
+}
 
+Err CryptoRead(void * from, void * to, UInt32 len, CryptoKey cryptKey)
+{
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
-    des_set_key((char*)cryptKey, ks1);
-    des_set_key((char*)cryptKey + DES_KEY_SZ, ks2);
-
     do {
-	des_ecb2_encrypt(from, to, ks1, ks2, false);
+	des_ecb2_encrypt(from, to, cryptKey[0], cryptKey[1], false);
 
 	to += kDESBlockSize;
 	from += kDESBlockSize;
@@ -50,19 +50,14 @@ Err DES3_Read(void * from, void * to, UInt32 len, UInt8 *cryptKey)
 }
 
 
-Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len,
-               UInt8 *cryptKey)
+Err CryptoWrite(void *recPtr, UInt32 off, char const *from, UInt32 len,
+		CryptoKey cryptKey)
 {
     UInt8	third[kDESBlockSize];
-    des_key_schedule ks1, ks2;
-
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
-    des_set_key(cryptKey, ks1);
-    des_set_key(cryptKey + DES_KEY_SZ, ks2);
-
     do {
-	des_ecb2_encrypt(from, third, ks1, ks2, true);
+	des_ecb2_encrypt(from, third, cryptKey[0], cryptKey[1], true);
 
         DmWrite(recPtr, off, third, kDESBlockSize);
 
@@ -74,24 +69,28 @@ Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len,
     return 0;
 }
 
-
 #else /* DISABLE_DES */
+
+void CryptoPrepareKey(UInt8 *UNUSED(rawKey), CryptoKey UNUSED(cryptKey))
+{
+}
 
 /*
  * Encrypt (or not!) and write out
  */
- Err DES3_Write(void *recPtr, UInt32 off,
-               char const *src, UInt32 len,
-               UInt8 *UNUSED(key))
+Err CryptoWrite(void *recPtr, UInt32 off,
+		char const *src, UInt32 len,
+		CryptoKey UNUSED(key))
 {
     return DmWrite(recPtr, off, src, len);
 }
 
 
- Err DES3_Read(void * from, void * to, UInt32 len)
+Err CryptoRead(void * from, void * to, UInt32 len, CryptoKey UNUSED(key))
 {
     MemMove(to, from, len);
 
     return 0;
 }
 #endif /* DISABLE_DES */
+

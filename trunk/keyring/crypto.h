@@ -27,3 +27,4 @@
 #define k2DESKeySize            16
 #define kMD5HashSize            16
 
+typedef des_key_schedule CryptoKey[2];

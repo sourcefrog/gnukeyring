@@ -369,7 +369,6 @@ static void Secrand_ExtractEntropy(UInt8 buf[HASH_BUFFER_SIZE])
 {
     UInt32 tmp[kMD5HashSize/4];
     Char *digest = (Char *)tmp;
-    Err err;
     UInt16 i;
 
     Secrand_AddTickRandomness();

@@ -99,7 +99,7 @@ static char *Keys_PackBody(UnpackedKeyType const *u)
  * database record.
  */
 static void Keys_WriteRecord(UnpackedKeyType const *unpacked, 
-			     void *recPtr, UInt8 *cryptKey)
+			     void *recPtr, CryptoKey cryptKey)
 {
     UInt32     off = 0;
     void       *bodyBuf;
@@ -107,7 +107,7 @@ static void Keys_WriteRecord(UnpackedKeyType const *unpacked,
     DB_WriteStringFromHandle(recPtr, &off, unpacked->nameHandle,
                              unpacked->nameLen + 1); /* NUL */
     bodyBuf = Keys_PackBody(unpacked);
-    DES3_Write(recPtr, off, bodyBuf, packBodyLen, cryptKey);
+    CryptoWrite(recPtr, off, bodyBuf, packBodyLen, cryptKey);
     MemPtrFree(bodyBuf);
 }
 
@@ -183,7 +183,7 @@ void Key_SetCategory(UInt16 idx, UInt16 category)
  * set record position
  */
 void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx, 
-		     UInt8 *recordKey)
+		     CryptoKey recordKey)
 {
     MemHandle recHandle;
     void	*recPtr;

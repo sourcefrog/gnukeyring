@@ -228,7 +228,6 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 static Err RomVersionCompatible (void)
 {
     UInt32 romVersion;
-    UInt32 encryption = 0;
 
     // See if we have at least the minimum required version of the ROM or later.
     FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
@@ -284,7 +283,8 @@ UInt32 PilotMain(UInt16 launchCode,
 	break;
 
     case sysAppLaunchCmdFind:
-	Search((FindParamsPtr) cmdPBP);
+	Search((FindParamsPtr) cmdPBP, 
+	       launchFlags & sysAppLaunchFlagNewGlobals);
 	break;
 
     case sysAppLaunchCmdGoTo:

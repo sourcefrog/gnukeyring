@@ -22,7 +22,7 @@
 
 #include "includes.h"
 
-void Search(FindParamsPtr findParams)
+void Search(FindParamsPtr findParams, Boolean hasGlobals)
 {
     DmOpenRef keyDB;
     Boolean done;
@@ -35,8 +35,8 @@ void Search(FindParamsPtr findParams)
     LocalID dbID;
     Int16 cardNo;
     RectangleType r;
-    Boolean hasSnib;
-    UInt8 encryptionKey[k2DESKeySize];
+    Boolean hasSnib = false;
+    CryptoKey encryptionKey;
     Int16 matchField;
 
     findParams->more = true;
@@ -56,7 +56,16 @@ void Search(FindParamsPtr findParams)
     if (done)
 	return;
 
-    hasSnib = Snib_RetrieveKey(encryptionKey);
+    if (hasGlobals) {
+	/* Without globals we can't decrypt the database, because GLib
+	 * libraries (such as DES) currently need globals to work.
+	 * This bug is already reported to prc-tools...
+	 *
+	 * So we only allow searching the full database when the find
+	 * dialog was invoked within keyring.
+	 */
+	hasSnib = Snib_RetrieveKey(encryptionKey);
+    }
     recordNum = findParams->recordNum;
 
     while (true)

@@ -43,7 +43,7 @@
  * We do have to also include archived records, as they must be
  * accessible on the PC.
  */
-void KeyDB_Reencrypt(UInt8 *oldRecordKey, Char const *newPasswd)
+void KeyDB_Reencrypt(CryptoKey oldRecordKey, Char const *newPasswd)
 {
     /* We read each record into memory, decrypt it using the old
      * unlock hash, then encrypt it using the new hash and write it
@@ -55,9 +55,12 @@ void KeyDB_Reencrypt(UInt8 *oldRecordKey, Char const *newPasswd)
     UInt16	attr;
     Err		err;
     UnpackedKeyType	unpacked;
-    UInt8		newRecordKey[kMD5HashSize];
+    UInt8	keyMD5sum[kMD5HashSize];
+    CryptoKey	newRecordKey;
 
-    MD5((void *) newPasswd, StrLen(newPasswd), newRecordKey);
+    MD5((void *) newPasswd, StrLen(newPasswd), keyMD5sum);
+    CryptoPrepareKey(keyMD5sum, newRecordKey);
+    MemSet(keyMD5sum, sizeof(keyMD5sum), 0);
 
     for (idx = kNumHiddenRecs; idx < numRecs; idx++) {
 	// Skip deleted records.  Handling of archived records is a
@@ -85,9 +88,6 @@ void KeyDB_Reencrypt(UInt8 *oldRecordKey, Char const *newPasswd)
 
 	UnpackedKey_Free(&unpacked);
     }
-
-    // Finally, make the new unlock hash the currently active one
-    Snib_StoreRecordKey(newRecordKey);
     MemSet(newRecordKey, sizeof(newRecordKey), 0);
 }
 

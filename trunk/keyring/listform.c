@@ -139,11 +139,9 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
 static void ListForm_DrawLockBitmap(void) {
     MemHandle bmpH;
     BitmapPtr bmpP;
-    UInt8 dummy[k2DESKeySize];
     Boolean locked;
 
-    locked = !Snib_RetrieveKey(dummy);
-    MemSet(dummy, sizeof(dummy), 0);
+    locked = !Snib_RetrieveKey(NULL);
 
     bmpH = (MemHandle) DmGetResource
         (bitmapRsc, locked ? LockBitmap : UnlockBitmap);

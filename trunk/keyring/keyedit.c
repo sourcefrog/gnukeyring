@@ -58,7 +58,7 @@ static Boolean f_lastChangeDirty;
 
 #define k_NumFields 4
 static FieldPtr f_AllFields[k_NumFields];
-static UInt8 gRecordKey[k2DESKeySize];
+static CryptoKey gRecordKey;
 
 /* Index of the current record in the database as a whole. */
 static UInt16 gKeyRecordIndex = kNoRecord;

@@ -56,7 +56,7 @@ static Boolean UnlockForm_HandleEvent(EventPtr event)
     return false;
 }
 
-static Boolean UnlockForm_Run(UInt8 *keyHash) {
+static Boolean UnlockForm_Run(CryptoKey cryptoKey) {
     UInt16 	result;
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(UnlockForm);
@@ -65,6 +65,7 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
     Boolean	veil = true;
     Int16	size = sizeof(veil);
     Int16       len;
+    UInt8       keyHash[kMD5HashSize];
 
     PrefGetAppPreferences(kKeyringCreatorID, prefID_VeilPassword,
 			  &veil, &size, true);
@@ -89,6 +90,9 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 		MD5(entry, len, keyHash);
 		MemSet(entry, len, ' ');
 		Snib_StoreRecordKey(keyHash);
+		if (cryptoKey)
+		    CryptoPrepareKey(keyHash, cryptoKey);
+		MemSet(keyHash, sizeof(keyHash), 0);
 	    } else {
 		FrmAlert(WrongKeyAlert);
 	    }
@@ -109,7 +113,7 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 
 /* Get the encryption key, or return false if the user declined to
  * enter the master password. */
-Boolean Unlock_GetKey(Boolean askAlways, UInt8 *key)
+Boolean Unlock_GetKey(Boolean askAlways, CryptoKey key)
 {
     /* First try to get the cached key */
     if (!askAlways && Snib_RetrieveKey(key))
@@ -119,11 +123,9 @@ Boolean Unlock_GetKey(Boolean askAlways, UInt8 *key)
 
 Boolean Unlock_CheckKey(void)
 {
-     UInt8    dummy[k2DESKeySize];
      Boolean  result;
 
-     result = Unlock_GetKey(false, dummy);
-     MemSet(dummy, k2DESKeySize, 0);
+     result = Unlock_GetKey(false, NULL);
      return result;
 }
 
