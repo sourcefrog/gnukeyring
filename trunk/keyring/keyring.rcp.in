@@ -541,7 +541,9 @@ BEGIN
 	LABEL "GNU Keyring __VERSION__" AUTOID AT (CENTER 50) FONT 1
   	LABEL "Copyright 1999, 2000 by Martin Pool" AUTOID AT (CENTER PREVBOTTOM+4)
 	LABEL "This is free software.  No warranty." AUTOID AT (CENTER PREVBOTTOM) 
-	LABEL "http://gnukeyring.sourceforge.net/" AUTOID AT (CENTER PREVBOTTOM)
+	LABEL "Released under the GNU GPL v2." AUTOID AT (CENTER PREVBOTTOM) 
+
+	LABEL "http://gnukeyring.sourceforge.net/" AUTOID AT (CENTER PREVBOTTOM+2)
 
 	BUTTON "OK" AUTOID AT (CENTER 139 30 12)
 END
@@ -605,7 +607,7 @@ STRING ID ErrCheckingROM  "Error checking ROM version: ^1"
 // Help messages
 string id GenerateHelp file "@@GenerateHelp"
 string id PreferencesHelp file "@@PreferencesHelp"
-string id KeyEditHelp file "@@KeyEditHelp"
+STRING ID KeyEditHelp FILE "@@KeyEditHelp"
 
 STRING ID SetPasswdHelp "@@SetPasswdHelp"
 
