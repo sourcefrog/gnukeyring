@@ -1,4 +1,4 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  *
  * $Id$
  *
@@ -69,11 +69,11 @@ void Unlock_PrimeTimer(void) {
 }
 
 
-Boolean UnlockForm_Run() {
+Boolean UnlockForm_Run(void) {
     UInt16 	result;
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(UnlockForm);
-    Char * 	entry;
+    Char const *entry;
     UInt16 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
     FieldPtr 	entryFld = FrmGetObjectPtr(frm, entryIdx);
     Boolean 	done, correct;
@@ -141,7 +141,7 @@ Boolean SetPasswd_Run(void) {
     UInt16 	btn;
     Boolean 	match, result=false;
     FieldPtr 	masterFld, confirmFld;
-    Char *masterPtr, *confirmPtr;
+    Char       *masterPtr, *confirmPtr;
 
     frm = FrmInitForm(SetPasswdForm);
     FrmSetActiveForm(frm);
@@ -177,7 +177,7 @@ Boolean SetPasswd_Run(void) {
     // object containing it will be freed before we finish with it.
     masterPtr = MemPtrNew(StrLen(confirmPtr) + 1);
     ErrFatalDisplayIf(!masterPtr, __FUNCTION__ " out of memory");
-    StrCopy(masterPtr, confirmPtr);
+    StrCopy(masterPtr, (Char *) confirmPtr);
 
     // May as well release confirm form to free up memory
     FrmDeleteForm(frm);
