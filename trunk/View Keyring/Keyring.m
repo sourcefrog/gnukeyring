@@ -32,6 +32,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+// $Id$
 
 #import "Keyring.h"
 #import "PDB.h"
@@ -179,7 +180,7 @@
         day = (packeddate >> 0) & 0x0f;   // 1-31
 // map month=0 and date=0 to Jan 1.
         date = [NSCalendarDate dateWithYear: year + 1904
-                                      month: month ? month: 1
+                                      month: month ? month : 1
                                         day: day ? day : 1
                                        hour: 0
                                      minute: 0
