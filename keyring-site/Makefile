@@ -2,7 +2,8 @@
 # $Id$
 
 
-pages=index license screenshots download mirrors thanks plans faq history
+pages=index license screenshots download mirrors thanks plans faq	\
+      history conduits
 
 latte_pages=$(addsuffix .latte, $(pages))
 html_pages=$(addsuffix .html, $(pages))
