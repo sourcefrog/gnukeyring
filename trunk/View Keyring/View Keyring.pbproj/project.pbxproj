@@ -207,6 +207,7 @@
 				F5450DAE02CA52AF017D0FEF,
 				F5450DAF02CA52AF017D0FEF,
 				67D3C0A40417DED400095AE4,
+				67953B0D041CE90B00199361,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -287,6 +288,10 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>View Keyring</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>View Keyring Help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>View Keyring Help</string>
 	<key>CFBundleIconFile</key>
 	<string>Keyring.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -340,6 +345,7 @@
 				F5123F360397FB2401A8010A,
 				F5CC86A503A0978701A8010A,
 				67D3C0A30417DEB000095AE4,
+				67953B10041CE90B00199361,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,6 +429,28 @@
 //672
 //673
 //674
+		67953B0D041CE90B00199361 = {
+			children = (
+				67953B0E041CE90B00199361,
+			);
+			isa = PBXVariantGroup;
+			name = "View Keyring Help";
+			path = "";
+			refType = 4;
+		};
+		67953B0E041CE90B00199361 = {
+			includeInIndex = 1;
+			isa = PBXFolderReference;
+			name = English;
+			path = "English.lproj/View Keyring Help";
+			refType = 4;
+		};
+		67953B10041CE90B00199361 = {
+			fileRef = 67953B0D041CE90B00199361;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		67D3C0A20417DEB000095AE4 = {
 			isa = PBXFileReference;
 			path = Keyring.icns;
