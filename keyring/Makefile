@@ -8,6 +8,11 @@ APP             = keyring
 ICONTEXT        ="GNU Keyring"
 APPID           = "Gtkr"
 
+# XXX: You may have to edit this to match your SDK installation
+PALM_BASE       = /usr/local/include/palmos3.5
+C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI
+export C_INCLUDE_PATH
+
 VERSION         = 1.0+5
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
@@ -61,9 +66,10 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 
 DEFINES		= 
 WARN	        = -Wall -Winline -Wunused -W	\
-		-Wsign-compare -Wstrict-prototypes	\
+ -Wstrict-prototypes	\
 		-Wmissing-prototypes -Winline		\
 		-Wlarger-than-256 -Wshadow -Wcast-align	
+# 		-Wsign-compare
 OPTIM		= -O3 -finline-functions
 # OPTIM		= -g
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD 
@@ -99,7 +105,7 @@ all: $(PRCS)
 -include $(DEP)
 
 $(BASE)-%.prc: %.resstamp $(EXE)
-	cd res/$* && $(BUILDPRC) -o ../../$@ ../../$(DEF) ../../$(EXE) *.bin
+	cd res/$* && $(BUILDPRC) ../../$@ 'Keyring' Gtkr ../../$(EXE) *.bin
 	ls -l $@
 
 %.resstamp: $(BITMAPS) resource.h 
