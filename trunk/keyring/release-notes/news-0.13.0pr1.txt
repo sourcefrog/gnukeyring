@@ -1,4 +1,10 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
 GNU Keyring 0.13.0 preview release 1
+
+  2000-09-13
+  ftp://gnukeyring.sourceforge.net/pub/gnukeyring/preview/
 
 This is a PREVIEW version of GNU Keyring 0.13, which includes a major
 rewrite of the database layers to fix the `resizing record', `chunk
@@ -42,5 +48,14 @@ b2b9bf7d498436a0101a024a51a8afe4  keyring-0.13.0pr1-de.prc
 0a909f777e32d73686a00a2bd7e04daf  keyring-0.13.0pr1-en.prc
 57f184863bcc87015691736335168a44  keyring-0.13.0pr1-es.prc
 
---
-Martin Pool
+- --
+Martin Pool <mbp@users.sourceforge.net>
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.2 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+iD8DBQE5v291PGPKP6Cz6IsRAvxgAKCw2ZXv2rsdp/hKoqzADvSUXtdafgCfYcKD
+i3PFaQr3QEmAVaDaOH4+Nuc=
+=4rXE
+-----END PGP SIGNATURE-----
