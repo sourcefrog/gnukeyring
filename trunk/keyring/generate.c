@@ -3,7 +3,7 @@
  * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,9 @@
 /*
  * TODO: Generate pronouncable text
  *
- * TODO: Prevent people from choosing no options.
- */
+ * TODO: Prevent people from choosing no options.  To do that, I think
+ * we would have to do a custom event loop, rather than calling
+ * FrmDoDialog.  */
 
 #include <PalmOS.h>
 #include <Password.h>

@@ -5,6 +5,18 @@ Running through all of these tests ought to cover most of the code in
 Keyring.  Please add more tests when you think of them or when you add
 code.
 
+> Change preferences
+
+ > Try to change while locked -- should get the password dialog
+
+   > Enter wrong password -- should be denied
+
+   > Enter right password -- should get preferences dialog
+
+ > Change while unlocked -- get preferences dialog directly
+
+ > Cancel changes -- should not stick
+
 > Create a new record
 
  > Make various record fields empty
