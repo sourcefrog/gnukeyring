@@ -159,8 +159,9 @@ static Boolean ListForm_Update(int updateCode) {
         gKeyPosition = gKeyRecordIndex = kNoRecord;
         top = 0;
     } else {
-        LstSetSelection(list, gKeyPosition);
-        LstMakeItemVisible(list, gKeyPosition);
+        Int16 listItem = gKeyPosition - Keys_IdxOffsetReserved();
+        LstSetSelection(list, listItem);
+        LstMakeItemVisible(list, listItem);
         top = list->topItem;
     }
 
