@@ -5,7 +5,7 @@
 
 <section title="conduits">
 
-  <p>The database can be backed up using the normal Hotsync mechanism.
+  <p>The database can be backed up using the normal HotSync mechanism.
   You should see a file called <tt>Keys-Gtkr.pdb</tt> on your PC, which
   contains the encrypted keyring.
 
@@ -15,7 +15,7 @@
   respective author.
 
   <ul>
-   <li><a href="&quot;http://sourceforge.net/sendmessage.php?touser=160221&quot;">Stefan Wundrak</a> wrote a <a href="&quot;http://www.wundrak.de/keyring/&quot;">viewer for Windows</a>.</li>
+   <li><a href="http://sourceforge.net/sendmessage.php?touser=160221">Stefan Wundrak</a> wrote a <a href="http://www.wundrak.de/keyring/">viewer for Windows</a>.</li>
 
    <li>Chris Ridd wrote a viewer for MacOS X (coming soon)</li>
 
