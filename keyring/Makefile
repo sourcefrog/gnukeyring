@@ -1,9 +1,11 @@
-# Tightly Bound
-# Copyright (C) 1999, 2000 by Martin Pool
+# GNU Keyring
+#
+# Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+#
 # $Id$
 
 APP             = keyring
-ICONTEXT        ="No Peeking"
+ICONTEXT        ="GNU Keyring"
 APPID           = "Gtkr"
 
 VERSION         = 1.0dev7
