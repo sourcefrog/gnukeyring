@@ -375,7 +375,7 @@ CONFIRMATION
 BEGIN
 	TITLE "Upgrade Database?"
 
-	MESSAGE "This database is from a previous version of Keyring.  Convert it to the new format?"
+	MESSAGE "This database is from a previous version of Keyring.  Convert it to the new format?  (Please make a backup before doing this.)"
 
 	BUTTONS "Convert" "Cancel"
 END

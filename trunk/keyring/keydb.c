@@ -228,7 +228,6 @@ static void KeyDB_Reencrypt(Char const *newPasswd) {
 
 	UnpackedKey_Free(&unpacked);
 
-    releaseRecord:
 	DmReleaseRecord(gKeyDB, idx, true); // dirty
     }
 
@@ -332,7 +331,7 @@ Err KeyDB_CreateDB(void) {
 }
 
 
-Err KeyDB_MarkForBackup(DmOpenRef dbp) {
+Err KeyDB_MarkForBackup(void) {
     UInt16 attr;
     
     // Set the backup bit.  It seems that without this the Windows

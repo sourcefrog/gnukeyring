@@ -45,41 +45,51 @@ static void ListForm_ListDraw(Int16 itemNum,
      * since it will likely change to be a table in the future. */
     MemHandle rec = 0;
     Char * recPtr = 0, *scrStr;
-    UInt16 len;
+    UInt16	len;
     Char altBuf[30];
     UInt16 idx;
+    Err		err;
 
     ErrFatalDisplayIf(!gKeyDB, __FUNCTION__ ": !gKeyDB");
     ErrFatalDisplayIf(itemNum > 10000, __FUNCTION__ ": unreasonable itemnum");
-    
-    idx = DmPositionInCategory(gKeyDB, itemNum, gPrefs.category);
-    if (idx == dmMaxRecordIndex)
-	return;
+
+    idx = 0;
+    err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum,
+				 dmSeekForward, gPrefs.category);
+    if (err != errNone) {
+	scrStr = "<err>";
+	goto draw;
+    } 
 
     rec = DmQueryRecord(gKeyDB, idx);
+	
     if (!rec) {
 	scrStr = "<no-record>";
-    } else { 
-	recPtr = MemHandleLock(rec);
-	if (!recPtr) {
-	    scrStr = "<no-ptr>";
-	} else {
-	    if (!*recPtr) {
-		// If there is no name, use the uniqueid instead
-		UInt32 uniqueID;
+	goto draw;
+    }
+    
+    recPtr = MemHandleLock(rec);
+    if (!recPtr) {
+	scrStr = "<no-ptr>";
+	goto draw;
+    }
+    
+    if (!*recPtr) {
+	// If there is no name, use the uniqueid instead
+	UInt32 uniqueID;
 	
-		DmRecordInfo(gKeyDB, idx, 0, &uniqueID, 0);
-		altBuf[0] = 23;		// shortcut symbol
-		StrIToH(altBuf + 1, uniqueID);
-		scrStr = altBuf;
-	    } else
-		scrStr = recPtr;
-	}
+	DmRecordInfo(gKeyDB, idx, 0, &uniqueID, 0);
+	altBuf[0] = 23;		// shortcut symbol
+	StrIToH(altBuf + 1, uniqueID);
+	scrStr = altBuf;
+    } else {
+	scrStr = recPtr;
     }
 
+ draw:
     len = StrLen(scrStr);
     WinDrawChars(scrStr, len, bounds->topLeft.x, bounds->topLeft.y);
-
+    
     if (recPtr)
 	MemHandleUnlock(rec);
 }

@@ -109,28 +109,3 @@ void Mem_CopyFromHandle(Char * *dest, MemHandle h, UInt32 len)
 	*dest += 1;
     }
 }
-
-
-static UInt16 DB_ReadWord(Char * *ptr) {
-    return *((UInt16 *) ptr)++;
-}
-
-
-static UInt32 DB_ReadUInt32(Char * *ptr) {
-    return *((UInt32 *) ptr)++;
-}
-
-
-/* Read a field value from *PTR, which is a pointer into a read-only
- * database record.  PTR advances over the read value.  If the string
- * is empty, the field keeps using it default buffer. */
-static void Mem_ReadStringIntoField(Char * *recPtr, FormPtr frm, UInt16 id) {
-    MemHandle tmpHandle;
-    UInt32 recLen;
-    FieldPtr fld;
-    
-    tmpHandle = Mem_StrToHandle(*recPtr, &recLen);
-    *recPtr += recLen + 1;
-    fld = FrmGetObjectPtr(frm, FrmGetObjectIndex(frm, id));
-    FldSetTextHandle(fld, (MemHandle) tmpHandle);
-}
