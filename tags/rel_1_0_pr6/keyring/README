@@ -1,0 +1,27 @@
+Tightly Bound
+Copyright (C) 2000 by Martin Pool
+$Id$
+
+Tightly Bound lets you securely store secret keys and confidential
+information on a PalmOS handheld computer.  This information might
+include: computer account passwords, credit card numbers, GnuPG or PGP
+passphrases, SKey one-time-pads, or phone banking keywords.
+
+Tightly Bound is Free Software, so you can inspect it to satisfy
+yourself of its security, modify it to meet your needs, and share it
+with your friends.
+
+Records are encrypted using the well-trusted DES3 algorithm on a
+master password.  For your convenience, the keyring can stay unlocked
+for a time after you enter your master password.  You can configure
+this behaviour through the "Preferences" command.  Tightly Bound
+attempts to overwrite memory containing sensitive data after use.
+
+When you need to set a password, Tightly Bound can generate a random
+password of specified length, optionally including letters, numbers or
+symbols. 
+
+For more details, see
+
+  http://gnukeyring.sourceforge.net/
+

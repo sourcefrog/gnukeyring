@@ -1,0 +1,60 @@
+* (0.5.0b) Can't unlock after changing password, switching apps, and
+  then coming back.  Reports wrong password.  
+
+However, using the same password for a long time is OK, whether you
+switch apps or not.  In fact, switching apps is not critical: that
+just provokes Keyring into checking your password and it doesn't
+match. 
+
+Why is the initial password accepted but not the password after a
+change?  We call SetPasswd_Run in both cases.
+
+The old password is not accepted either.  Neither does it work to set
+the new password to the same value as the old password.
+
+It can't be that the new password is just not being written to the
+database: in that case we would expect the old password still to work.  
+
+Perhaps the keyring info is being partly updated but damaged?
+
+There is now a SourceForge bug about this, which suggests that it only
+happens with passwords over two characters in length.  That's not
+true.  
+
+Hypothesis: the problem does not arise if there are no records
+present.  This seems to be true.  So, what would be different between
+the two situations? 
+
+    void KeyDB_SetPasswd(Char const *newPasswd) {
+        KeyDB_Reencrypt(newPasswd);
+        KeyDB_StorePasswdHash(newPasswd);
+        Unlock_PrimeTimer();
+    }
+    
+So, perhaps something is breaking in Reencrypt?  Its basic structure
+seems OK (well, of course).
+
+If we run with re-encryption turned off in KeyDB_SetPasswd, then
+things work fine except that as expected the records are displayed as
+garbage.  So probably the bug is in that routine.
+
+Could it be corrupting the database somehow?  (Let's hope not!)  Could
+it instead be scribbling over the in-memory copy of the new password?
+Perhaps there is a stack overrun, perhaps it writes into that buffer?
+
+Note that this function is not just failing to do its job: if that was
+the case we'd expect the new password to be accepted but to produce
+garbage output.  Instead, it's actively damaging either the password,
+the keyring info or something else.
+
+Using gdb with the stub installed, we see that after calling
+KeyDB_Reencrypt, newPasswd points to the same place but has been
+overwritten to include text coincidentally the same as a field from a
+record.  In fact it seems when there is a single record the password
+is fairly reliably set to the value of the first nonempty field in
+that record. 
+
+It turned out that way up in SetPasswd_Run (see keyring.c 1.35) we
+were freeing the form, but still using pointers to buffers within it.
+These buffers had been freed and were later reallocated and written
+over.
