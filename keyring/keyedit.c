@@ -57,15 +57,16 @@
 static UnpackedKeyType gRecord;
 
 static void KeyEditForm_Save(FormPtr frm);
-static Boolean KeyEditForm_IsDirty(FormPtr);
 static void KeyEditForm_UpdateScrollbar(void);
 static void KeyEditForm_Page(int offset);
 static Boolean KeyEditForm_DeleteKey(Boolean saveBackup);
+static Boolean KeyEditForm_IsDirty(void);
 
 static Boolean keyDeleted;
 
 // If the form is active, all these are valid.
-static FieldPtr f_NotesFld, f_KeyNameFld;
+static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
+static ScrollBarPtr f_NotesScrollBar;
 static FormPtr f_KeyEditForm;
 
 // ======================================================================
@@ -151,13 +152,11 @@ static void KeyEditForm_SetTitle(FormPtr frm) {
 
 
 static void KeyEditForm_FromUnpacked(FormPtr frm, UnpackedKeyType *u) {
+    ErrFatalDisplayIf(frm != f_KeyEditForm, "fraudulent FormPtr");
     FldSetTextHandle(f_KeyNameFld, (MemHandle) u->nameHandle);
-    FldSetTextHandle(UI_GetObjectByID(frm, AccountField),
-                     (MemHandle) u->acctHandle);
-    FldSetTextHandle(UI_GetObjectByID(frm, PasswordField),
-                     (MemHandle) u->passwdHandle);
-    FldSetTextHandle(UI_GetObjectByID(frm, ID_NotesField),
-                     (MemHandle) u->notesHandle);
+    FldSetTextHandle(f_AcctFld, (MemHandle) u->acctHandle);
+    FldSetTextHandle(f_PasswdFld, (MemHandle) u->passwdHandle);
+    FldSetTextHandle(f_NotesFld, (MemHandle) u->notesHandle);
 }
 
 
@@ -166,21 +165,23 @@ static void KeyEditForm_FromUnpacked(FormPtr frm, UnpackedKeyType *u) {
  */
 static void KeyEditForm_Clear(void) {
     FldDelete(f_KeyNameFld, 0, (UInt16) -1);
+    FldDelete(f_AcctFld, 0, (UInt16) -1);
+    FldDelete(f_PasswdFld, 0, (UInt16) -1);
     FldDelete(f_NotesFld, 0, (UInt16) -1);
 }
 
 
-static void KeyEditForm_ToUnpacked(FormPtr frm, UnpackedKeyType *u) {
+static void KeyEditForm_ToUnpacked(UnpackedKeyType *u) {
     FieldPtr fld;
 
     u->nameHandle = (MemHandle) FldGetTextHandle(f_KeyNameFld);
     u->nameLen = FldGetTextLength(f_KeyNameFld);
     
-    fld = UI_GetObjectByID(frm, AccountField);
+    fld = f_AcctFld;
     u->acctHandle = (MemHandle) FldGetTextHandle(fld);
     u->acctLen = FldGetTextLength(fld);
     
-    fld = UI_GetObjectByID(frm, PasswordField);
+    fld = f_PasswdFld;
     u->passwdHandle = (MemHandle) FldGetTextHandle(fld);
     u->passwdLen = FldGetTextLength(fld);
     
@@ -258,9 +259,9 @@ static void KeyEditForm_MaybeSave(void) {
         return;
     
     // TODO: Delete record if all fields empty?
-    KeyEditForm_ToUnpacked(f_KeyEditForm, &gRecord);
+    KeyEditForm_ToUnpacked(&gRecord);
 
-    if (KeyEditForm_IsDirty(f_KeyEditForm))
+    if (KeyEditForm_IsDirty())
         KeyEditForm_Save(f_KeyEditForm);
 }
 
@@ -314,25 +315,14 @@ static void Keys_UndoAll(void) {
 
 /* Check if any fields are dirty, i.e. have been modified by the
  * user. */
-static Boolean KeyEditForm_IsDirty(FormPtr frm) {
-    FieldPtr fld;
-
-    if (gRecord.categoryDirty)
-        return true;
-
-    if (FldDirty(f_KeyNameFld))
-        return true;
-    
-    fld = UI_GetObjectByID(frm, AccountField);
-    if (FldDirty(fld))
-        return true;
-    
-    fld = UI_GetObjectByID(frm, PasswordField);
-    if (FldDirty(fld))
-        return true;
-    
-    if (FldDirty(f_NotesFld))
-        return true;
+static Boolean KeyEditForm_IsDirty(void)
+{
+    if (gRecord.categoryDirty
+        || FldDirty(f_KeyNameFld)
+        || FldDirty(f_PasswdFld)
+        || FldDirty(f_AcctFld)
+        || FldDirty(f_NotesFld))
+     return true;
 
     return false;
 }
@@ -374,6 +364,9 @@ static void KeyEditForm_GetFields(FormPtr frm) {
     f_KeyEditForm = frm;
     f_KeyNameFld = UI_GetObjectByID(frm, ID_KeyNameField),
     f_NotesFld = UI_GetObjectByID(frm, ID_NotesField);
+    f_AcctFld = UI_GetObjectByID(frm, AccountField);
+    f_PasswdFld = UI_GetObjectByID(frm, PasswordField);
+    f_NotesScrollBar = UI_GetObjectByID(frm, NotesScrollbar);
 }
 
 
@@ -408,14 +401,10 @@ static Boolean KeyEditForm_MaybeDeleteKey(void) {
 
 static Boolean KeyEditForm_DeleteKey(Boolean saveBackup) {
     Boolean isNewRecord;
-    FormPtr frm = f_KeyEditForm;
     UnpackedKeyType unpacked;
     
     // Unpack and obliterate values so they're not left in memory.
-    KeyEditForm_ToUnpacked(frm, &unpacked);
-#ifdef ENABLE_OBLITERATE
-    UnpackedKey_Obliterate(&unpacked);
-#endif
+    KeyEditForm_ToUnpacked(&unpacked);
 
     keyDeleted = true;
 
@@ -476,7 +465,7 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
         ExportKey(&gRecord);
         return true;
 
-    case EditUndoAll:
+    case ID_UndoAllCmd:
         Keys_UndoAll();
         return true;
         
@@ -488,9 +477,6 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
 
 static void KeyEditForm_UpdateScrollbar(void) {
     UInt16 textHeight, fieldHeight, maxValue, scrollPos;
-    ScrollBarPtr bar;
-
-    bar = UI_ObjectFromActiveForm(NotesScrollbar);
 
     FldGetScrollValues(f_NotesFld, &scrollPos, &textHeight, &fieldHeight);
 
@@ -501,17 +487,14 @@ static void KeyEditForm_UpdateScrollbar(void) {
     else
         maxValue = 0;
 
-    SclSetScrollBar(bar, scrollPos, 0, maxValue, fieldHeight-1);
+    SclSetScrollBar(f_NotesScrollBar, scrollPos, 0, maxValue, fieldHeight-1);
 }
 
 
 static void KeyEditForm_Scroll(EventPtr event) {
-    ScrollBarPtr scl;
     Int32 lines;
     WinDirectionType direction;
     
-    scl = UI_ObjectFromActiveForm(NotesScrollbar);
-
     lines = event->data.sclExit.newValue - event->data.sclExit.value;
 
     if (lines < 0) {
