@@ -253,7 +253,7 @@ static Err CheckGlib(UInt32 creator, char* libname) {
 
 static Err CheckRequiredComponents (void)
 {
-    Err err;
+    Err error;
     UInt32 romVersion;
     /* See if we have at least the minimum required version of the 
      * ROM or later.
@@ -272,9 +272,9 @@ static Err CheckRequiredComponents (void)
     }
 
     /* Check if the necessary openssl libraries are installed */
-    if ((err = CheckGlib('CrDS', "DESLib.prc"))
-	|| (err = CheckGlib('CrMD', "MDLib.prc")))
-	return err;
+    if ((error = CheckGlib('CrDS', "DESLib.prc"))
+	|| (error = CheckGlib('CrMD', "MDLib.prc")))
+	return error;
     return 0;
 }
 
@@ -317,7 +317,8 @@ UInt32 PilotMain(UInt16 launchCode,
 
     case sysAppLaunchCmdFind:
 	Search((FindParamsPtr) cmdPBP, 
-	       launchFlags & sysAppLaunchFlagNewGlobals);
+	       launchFlags & (sysAppLaunchFlagNewGlobals 
+			      | sysAppLaunchFlagSubCall));
 	break;
 
     case sysAppLaunchCmdGoTo:
