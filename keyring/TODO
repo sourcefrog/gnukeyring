@@ -146,6 +146,10 @@ Especially out of memory.
 
 * Store a password hint
 
+* Reminder to change the password
+
+for each record, put a reminder that it should be changed e.g. every N weeks.
+
 * Resize edit form fields when text is entered, like the address book
 
 DONE Should say "Palm Pilot" 
