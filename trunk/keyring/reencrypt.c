@@ -38,6 +38,13 @@
 #include "unpack.h"
 #include "reencrypt.h"
 
+/*
+ * TODO: Instead of unpacking and re-packing, just convert each
+ * encrypted block in place.  There's a little complication to skip
+ * the public name, but it's otherwise probably simpler and certainly
+ * quicker.
+ */
+
 
 /*
  * Walk through the database, and for each record decrypt it using the
