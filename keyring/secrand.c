@@ -22,8 +22,8 @@
 
 /* Parts of this code are taken from the linux random device driver:
  * 
- * Copyright Theodore Ts'o, 1994, 1995, 1996, 1997, 1998, 1999.  All
- * rights reserved.
+ * Copyright Theodore Ts'o, 1994, 1995, 1996, 1997, 1998.  All rights
+ * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,8 +143,8 @@
 /*
  * Configuration information
  */
+#define ROTATE_PARANOIA
 
-#define USE_SHA
 #define POOLWORDS 64    /* Power of 2 - note that this is 32-bit words */
 #define POOLBITS (POOLWORDS*32)
 
@@ -208,28 +208,9 @@
 #error No primitive polynomial available for chosen POOLWORDS
 #endif
 
-
-#ifdef USE_SHA
-
-#define HASH_INIT initsha1
-#define HASH_BUFFER_SIZE (kSHA1HashSize / 2)
-#define HASH_L_DIGEST_SIZE (kSHA1HashSize / 4)
-#define HASH_L_BLOCK_SIZE  (kSHA1BlockSize / 4)
-#define HASH_TRANSFORM SHA1_Block
-
-#else /* !USE_SHA - Use MD5 */
-
-#define HASH_INIT initmd5
-#define HASH_BUFFER_SIZE (kMD5HashSize / 2)
-#define HASH_L_DIGEST_SIZE (kMD5HashSize / 4)
-#define HASH_L_BLOCK_SIZE  (kMD5BlockSize / 4)
-#define HASH_TRANSFORM MD5_Block
-
-#endif
-
 /*
  * For the purposes of better mixing, we use the CRC-32 polynomial as
- * well to make a twisted Generalized Feedback Shift Register
+ * well to make a twisted Generalized Feedback Shift Reigster
  *
  * (See M. Matsumoto & Y. Kurita, 1992.  Twisted GFSR generators.  ACM
  * Transactions on Modeling and Computer Simulation 2(3):179-194.
@@ -262,7 +243,7 @@
  * modulo the generator polymnomial.  Now, for random primitive polynomials,
  * this is a universal class of hash functions, meaning that the chance
  * of a collision is limited by the attacker's knowledge of the generator
- * polynomial, so if it is chosen at random, an attacker can never force
+ * polynomail, so if it is chosen at random, an attacker can never force
  * a collision.  Here, we use a fixed polynomial, but we *can* assume that
  * ###--> it is unknown to the processes generating the input entropy. <-###
  * Because of this important property, this is a good, collision-resistant
@@ -272,7 +253,9 @@
 /* There is actually only one of these, globally. */
 typedef struct {
 	unsigned add_ptr;
+#ifdef ROTATE_PARANOIA	
 	int input_rotate;
+#endif
 	UInt32 pool[POOLWORDS];
 } Secrand_BucketType;
 
@@ -301,21 +284,17 @@ static void Secrand_AddEntropyWords(UInt32 *p, Int16 count)
     j = g_RandomState.input_rotate;
     while (count-- > 0) {
 	UInt32 x = *p++;
-	x = (x << j) | (x >> (32 - j));
-
 	i = MASK(i - 1);
 	
-	/*
-	 * Normally, we add 14 bits of rotation to the pool.
-	 * At the beginning of the pool, add an extra 7 bits
-	 * rotation, so that successive passes spread the
-	 * input bits across the pool evenly.
-	 */
-	j += 14;
-	if (i)
+#ifdef ROTATE_PARANOIA
+	j += 7;
+	if (!i)
 	    j += 7;
 	j &= 31;
 	
+	x = (x << j) | (x >> (32 - j));
+#endif
+
 	/*
 	 * XOR in the various taps.  Even though logically, we compute
 	 * x and then compute y, we read in y then x order because most
@@ -329,7 +308,6 @@ static void Secrand_AddEntropyWords(UInt32 *p, Int16 count)
 	x ^= g_RandomState.pool[MASK(i+TAP3)];
 	x ^= g_RandomState.pool[MASK(i+TAP4)];
 	x ^= g_RandomState.pool[MASK(i+TAP5)];
-	x ^= g_RandomState.pool[i];
 	g_RandomState.pool[i]  = (x >> 3) ^ twist_table[x & 7];
     }
     g_RandomState.add_ptr = i;
@@ -381,47 +359,43 @@ void Secrand_AddEventRandomness(EventType *ev)
     Secrand_AddEntropyWords(rand, sizeof(EventType) / sizeof(UInt32));
 }
 
+#define HASH_BUFFER_SIZE (kMD5HashSize / 2)
+
 /*
  * This function extracts randomness from the "entropy pool", and
  * returns it in a buffer.
  */
 static void Secrand_ExtractEntropy(UInt8 buf[HASH_BUFFER_SIZE])
 {
-    UInt32 digest[HASH_L_DIGEST_SIZE];
-    UInt32 *pool;
-    UInt16 i, x;
+    UInt32 tmp[kMD5HashSize/4];
+    Char *digest = (Char *)tmp;
+    UInt16 i;
 
-    /*
-     * As we hash the pool, we mix intermediate values of
-     * the hash back into the pool.  This eliminates
-     * backtracking attacks (where the attacker knows
-     * the state of the pool plus the current outputs, and
-     * attempts to find previous outputs), unless the hash
-     * function can be inverted.
-     */
     Secrand_AddTickRandomness();
-
-    pool = g_RandomState.pool;
-    x = 0;
-    MemMove(digest, HASH_INIT, sizeof(digest));
-    while (pool < g_RandomState.pool + POOLWORDS) {
-	HASH_TRANSFORM(digest, pool, digest);
-	Secrand_AddEntropyWords(&digest[x % HASH_L_DIGEST_SIZE], 1);
-	pool += HASH_L_BLOCK_SIZE;
-	x += 2;
-    }
+    MD5((UInt8 *)g_RandomState.pool, POOLWORDS * 4, digest);
 
     /*
-     * In case the hash function has some recognizable
-     * output pattern, we fold it in half.
+     * The following code does two separate things that happen
+     * to both work two words at a time, so are convenient
+     * to do together.
+     *
+     * First, this feeds the output back into the pool so
+     * that the next call will return different results.
+     * Any perturbation of the pool's state would do, even
+     * changing one bit, but this mixes the pool nicely.
+     *
+     * Second, this folds the output in half to hide the data
+     * fed back into the pool from the user and further mask
+     * any patterns in the hash output.  (The exact folding
+     * pattern is not important; the one used here is quick.)
      */
-    for (i = 0; i < HASH_L_DIGEST_SIZE / 2; i++)
-	digest[i] ^= digest[i + HASH_L_DIGEST_SIZE / 2];
-    MemMove(buf, digest, HASH_BUFFER_SIZE);
+    Secrand_AddEntropyWords(tmp, kMD5HashSize / sizeof(UInt32));
+    for (i = 0; i < HASH_BUFFER_SIZE; i++)
+	buf[i] = digest[i] ^ digest[i + HASH_BUFFER_SIZE];
 }
 
 /*
- * This function is exported.  It returns 8 bits of
+ * This function is exported.  It returns an 8 bits of
  * strong random bits, suitable for password generation etc.
  */
 UInt8 Secrand_GetByte(void)

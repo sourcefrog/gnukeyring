@@ -23,11 +23,6 @@
 
 #include "includes.h"
 
-typedef struct {
-    Char salt[4];
-    Char hash[16];
-} CheckHashType;
-
 /*
  * TODO: In the future, when converting the database, write out to a
  * new database so that if something goes wrong we won't be lost.
@@ -35,7 +30,7 @@ typedef struct {
  * TODO: Upgrade to v3 from v1.
  */
 
-static UPGRADE_SECTION void UpgradeDB_Failed(int oldVersion)
+static void UpgradeDB_Failed(int oldVersion)
 {
     char oldVer[8];
     StrIToA(oldVer, oldVersion);
@@ -44,7 +39,7 @@ static UPGRADE_SECTION void UpgradeDB_Failed(int oldVersion)
 
 
 
-static UPGRADE_SECTION Err Upgrade_MoveToHash(LocalID id)
+static Err Upgrade_MoveToHash(LocalID id)
 {
      UInt16       pos = 0;
      UInt8        *hashPtr;
@@ -88,7 +83,7 @@ static UPGRADE_SECTION Err Upgrade_MoveToHash(LocalID id)
 
 
 
-static UPGRADE_SECTION Err Upgrade_From0(void)
+static Err Upgrade_From0(void)
 {
     /* Move the AppInfo block to the SortInfo block */
     LocalID             appInfoID;
@@ -113,7 +108,7 @@ static UPGRADE_SECTION Err Upgrade_From0(void)
 	return err;
     
     FrmAlert(ID_CategoriesMissing);
-    if ((err = KeyDB_CreateAppInfo()))
+    if ((err = KeyDB_CreateCategories()))
 	return err;
 
     return 0;
@@ -125,45 +120,21 @@ static UPGRADE_SECTION Err Upgrade_From0(void)
  * and explain that the user should reset their password.  Return true
  * if access should be allowed, false to abort. 
  */
-UPGRADE_SECTION Err Upgrade_HandleMissingHash(void)
+Err Upgrade_HandleMissingHash(void)
 {
-    Char         *newPasswd;
-    FormPtr      frm, oldFrm;
-    CryptoKey    newRecordKey;
-    SaltHashType salthash;
-    UInt16       cipher, iter;
-    Err          err;
-    
-    if (FrmAlert(alertID_PasswordHashMissing) != 0)   /* 0 = "OK" */
-	return appCancelled;
-    
-    newPasswd = SetPasswd_Ask(&cipher, &iter);
-    if (newPasswd == NULL)
-	return appCancelled;
-    
-    KeyDB_CreateReservedRecords();
+     Char       *newPasswd;
 
-    oldFrm = FrmGetActiveForm();
-    frm = FrmInitForm(BusyEncryptForm);
-    FrmSetActiveForm(frm);
-    FrmDrawForm(frm);
+     if (FrmAlert(alertID_PasswordHashMissing) != 0)   /* 0 = "OK" */
+          return appCancelled;
 
-    err = PwHash_Create(newPasswd, cipher, iter, &salthash, &newRecordKey);
-    if (err)
-	return 1;
-    PwHash_Store(newPasswd, &salthash);
+     newPasswd = SetPasswd_Ask();
+     if (newPasswd == NULL)
+          return appCancelled;
 
-    FrmEraseForm(frm);
-    FrmDeleteForm(frm);
-    if (oldFrm)
-	FrmSetActiveForm(oldFrm);
+     KeyDB_CreateReservedRecords();
+     PwHash_Store(newPasswd);
 
-    /* XXX: Upgrade_Reencrypt(); */
-    /* Eradicate the new and old passwords.
-     */
-    CryptoDeleteKey(&newRecordKey);
-    MemSet(newPasswd, StrLen(newPasswd), 0);
-    return 0;
+     return 0;
 }
 
 
@@ -175,7 +146,7 @@ UPGRADE_SECTION Err Upgrade_HandleMissingHash(void)
  *
  * The database version is updated on successful return.
  */
-static UPGRADE_SECTION Err Upgrade_From1(void)
+static Err Upgrade_From1(void)
 {
      LocalID      sortInfoID, appInfoID;
      Err	  err;
@@ -197,7 +168,7 @@ static UPGRADE_SECTION Err Upgrade_From1(void)
           /* Shouldn't happen, but it's possible that there's no
            * category data there. */
           FrmAlert(ID_CategoriesMissing);
-          if ((err = KeyDB_CreateAppInfo()))
+          if ((err = KeyDB_CreateCategories()))
                goto outErr;
      }
 
@@ -222,7 +193,7 @@ static UPGRADE_SECTION Err Upgrade_From1(void)
 
 
 /* Convert from a database version oldVersion to the new version. */
-UPGRADE_SECTION Err UpgradeDB(UInt16 oldVersion)
+Err UpgradeDB(UInt16 oldVersion)
 {
     Err err;
 
@@ -236,7 +207,7 @@ UPGRADE_SECTION Err UpgradeDB(UInt16 oldVersion)
              return err;
 	}
     } else if (oldVersion == 1) {
-        /* This version kept the password in the SortInfo section. */
+        /* Kept a password has in the AppInfo section. */
         if ((err = Upgrade_From1())) 
             return err;
     } else {

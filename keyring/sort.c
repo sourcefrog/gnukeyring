@@ -40,10 +40,9 @@
 
 /* Compare records for sorting or sorted insertion.
  *
- * Because all records begin with the field containing the record name
- * the comparison is pretty simple: we sort in string order, except
- * that deleted records go to the end.  
- */
+ * Because all records begin with the strz record name the comparison
+ * is pretty simple: we sort in string order, except that deleted
+ * records go to the end.  */
 static Int16 Keys_Compare(void * rec1, void * rec2,
                           Int16 UNUSED(other),
                           SortRecordInfoPtr info1,
@@ -51,7 +50,6 @@ static Int16 Keys_Compare(void * rec1, void * rec2,
                           MemHandle UNUSED(appInfoHand))
 {
     Int16 result;
-    FieldHeaderType *fd1, *fd2;
     Char  *cp1, *cp2;
     const Int16 attr1 = info1->attributes, attr2 = info2->attributes;
     
@@ -71,12 +69,11 @@ static Int16 Keys_Compare(void * rec1, void * rec2,
     } else if (!rec2) {
 	result = +1;
     } else {
-	fd1 = (FieldHeaderType *) rec1;
-	fd2 = (FieldHeaderType *) rec2;
-	cp1 = (Char *) (fd1+1);
-	cp2 = (Char *) (fd2+1);
-	result = TxtGlueCaselessCompare(cp1, fd1->len, NULL, 
-					cp2, fd2->len, NULL);
+    
+	cp1 = (Char *) rec1;
+	cp2 = (Char *) rec2;
+	result = TxtGlueCaselessCompare(cp1, StrLen(cp1), NULL, 
+					cp2, StrLen(cp2), NULL);
     }
     if (!result)
 	result = MemCmp(info1->uniqueID, info2->uniqueID, 3);

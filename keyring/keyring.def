@@ -1,3 +1,7 @@
-application { "KeyringTest" GtkR }
+// build-prc definition file for Keyring
+// $Id$
 
-multiple code { "code2" }
+application { "Keyring" Gtkr backup }
+
+
+ 

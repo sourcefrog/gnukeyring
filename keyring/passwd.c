@@ -68,66 +68,29 @@ static void UnlockForm_SetFont(FormPtr frm, Boolean veil) {
 	FldSetFont(UI_GetObjectByID(frm, MasterKeyFld), font);
 }
 
-static CryptoKey *destKey;
+
 
 static Boolean UnlockForm_HandleEvent(EventPtr event)
 {
-    if (event->eType == ctlSelectEvent) {
-	if (event->data.ctlSelect.controlID == UnlockBtn) {
-	    /* Unlock button pressed.  Check password. */
-
-	    FormPtr frm = FrmGetActiveForm();
-	    int btnidx = FrmGetObjectIndex(frm, UnlockBtn);
-	    Char * 	entry;
-	    Boolean	correct;
-
-	    /* Hide button to tell the user that we are busy */
-	    FrmHideObject(frm, btnidx);
-
-	    entry = FldGetTextPtr(UI_GetObjectByID(frm, MasterKeyFld));
-	    if (!entry)
-		entry = "";
-
-	    correct = PwHash_Check(destKey, entry);
-
-	    /* Show button again */
-	    FrmShowObject(frm, btnidx);
-
-	    if (!correct) {
-		FrmAlert(WrongKeyAlert);
-		/* Eat event */
-		return true;
-	    }
-
-	    if (StrLen(entry)) {
-		/* Clear the field contents; we try to avoid having
-		 * the cleartext password lying around in memory.
-		 *
-		 * Debugging Palm OS doesn't like it if we change the
-		 * length of the field.  So we overwrite it with a's.
-		 */
-		MemSet(entry, StrLen(entry), 'a');
-	    }
-
-	    /* Give the event on to FrmDoDialog to close the dialog */
-	    return false;
-
-	} else if (event->data.ctlSelect.controlID == VeilPasswordCheck) {
-	    UnlockForm_SetFont(FrmGetActiveForm(), event->data.ctlSelect.on);
-	    return true;
-	}
+    if (event->eType == ctlSelectEvent
+	&& event->data.ctlSelect.controlID == VeilPasswordCheck) {
+	UnlockForm_SetFont(FrmGetActiveForm(), event->data.ctlSelect.on);
+	return true;
     }
     return false;
 }
 
-static Boolean UnlockForm_Run(CryptoKey *cryptoKey) {
+static Boolean UnlockForm_Run(CryptoKey cryptoKey) {
     UInt16 	result;
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(UnlockForm);
+    Char * 	entry;
+    Boolean	done, correct;
     Boolean	veil = true;
     Int16	size = sizeof(veil);
+    Int16       len;
+    UInt8       keyHash[kMD5HashSize];
 
-    destKey = cryptoKey;
     PrefGetAppPreferences(kKeyringCreatorID, prefID_VeilPassword,
 			  &veil, &size, true);
 
@@ -135,21 +98,46 @@ static Boolean UnlockForm_Run(CryptoKey *cryptoKey) {
     UnlockForm_SetFont(frm, veil);
     FrmSetEventHandler(frm, UnlockForm_HandleEvent);
 
-    FrmSetFocus(frm, FrmGetObjectIndex(frm, MasterKeyFld));
-    result = FrmDoDialog(frm);
-    
+    do { 
+
+	FrmSetFocus(frm, FrmGetObjectIndex(frm, MasterKeyFld));
+	result = FrmDoDialog(frm);
+
+	if (result == UnlockBtn) {
+	    entry = FldGetTextPtr(UI_GetObjectByID(frm, MasterKeyFld));
+	    if (!entry)
+		entry = "";
+	    done = correct = PwHash_Check(entry);
+
+	    if (correct) {
+		len = StrLen(entry);
+		MD5(entry, len, keyHash);
+		MemSet(entry, len, ' ');
+		Snib_StoreRecordKey(keyHash);
+		if (cryptoKey)
+		    CryptoPrepareKey(keyHash, cryptoKey);
+		MemSet(keyHash, sizeof(keyHash), 0);
+	    } else {
+		FrmAlert(WrongKeyAlert);
+	    }
+	} else {
+	    done = true;
+	    correct = false;
+	} 
+    } while (!done);
+
     veil = CtlGetValue(UI_GetObjectByID(frm, VeilPasswordCheck));
     PrefSetAppPreferences(kKeyringCreatorID, prefID_VeilPassword, 0,
 			  &veil, sizeof(veil), true);
     FrmDeleteForm(frm);
     FrmSetActiveForm(prevFrm);
-    return result == UnlockBtn;
+    return correct;
 }
 
 
 /* Get the encryption key, or return false if the user declined to
  * enter the master password. */
-Boolean Unlock_GetKey(Boolean askAlways, CryptoKey *key)
+Boolean Unlock_GetKey(Boolean askAlways, CryptoKey key)
 {
     /* First try to get the cached key */
     if (!askAlways && Snib_RetrieveKey(key))

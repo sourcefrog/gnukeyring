@@ -3,7 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 2002-2003 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
+ * Copyright (C) 2002 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,8 @@
 
 #include <PalmOS.h>
 #include <TxtGlue.h>
-#include "sections.h"
-#include "sha1.h"
-
+#include <md5.h>
 #include <des.h>
-#include "AESLib-noinline.h"
-
 #include "resource.h"
 #include "auto.h"
 #include "keyring.h"
