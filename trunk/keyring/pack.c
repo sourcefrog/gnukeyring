@@ -192,7 +192,6 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
     ErrNonFatalDisplayIf(idx == kNoRecord,
                          __FUNCTION__ ": no record to save");
     
-    ErrFatalDisplayIf(idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
     recHandle = DmResizeRecord(gKeyDB, idx, packRecLen);
     if (!recHandle) {
 	UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),

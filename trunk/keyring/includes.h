@@ -31,7 +31,5 @@
 #include "crypto.h"
 #include "pwhash.h"
 #include "record.h"
-#include "keydb.h"
-#include "listform.h"
 #include "snib.h"
 #include "prototype.h"
