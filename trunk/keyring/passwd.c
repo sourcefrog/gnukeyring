@@ -106,7 +106,9 @@ static Boolean UnlockForm_HandleEvent(EventPtr event)
 		 * Debugging Palm OS doesn't like it if we change the
 		 * length of the field.  So we overwrite it with a's.
 		 */
-		MemSet(entry, StrLen(entry), 'a');
+		UInt16 len = StrLen(entry);
+		MemWipe(entry, len);
+		MemSet(entry, len, 'a');
 	    }
 
 	    /* Give the event on to FrmDoDialog to close the dialog */

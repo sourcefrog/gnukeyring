@@ -215,9 +215,9 @@ static GUI_SECTION void KeyEdit_ToUnpacked(void)
 	+ 4 + 5 * sizeof(FieldHeaderType) + 2;
     UInt16 category = gRecord->category;
 
-    MemSet(gRecord->plainText, MemPtrSize(gRecord->plainText), 0);
+    MemWipe(gRecord->plainText, MemPtrSize(gRecord->plainText));
     MemPtrFree(gRecord->plainText);
-    MemSet(gRecord, MemPtrSize(gRecord), 0);
+    MemWipe(gRecord, MemPtrSize(gRecord));
     MemPtrFree(gRecord);
     gRecord = MemPtrNew(sizeof(UnpackedKeyType) + 4*sizeof(UInt16));
     gRecord->numFields = 0;
@@ -428,7 +428,7 @@ static GUI_SECTION void KeyEdit_FreeFields(void) {
 	MemHandle textH = FldGetTextHandle(f_AllFields[i]);
 	FldSetTextHandle(f_AllFields[i], NULL);
 	if (textH) {
-	    MemSet(MemHandleLock(textH), MemHandleSize(textH), 0);
+	    MemWipe(MemHandleLock(textH), MemHandleSize(textH));
 	    MemHandleUnlock(textH);
 	    MemHandleFree(textH);
 	}
@@ -440,9 +440,9 @@ static GUI_SECTION void KeyEdit_FreeFields(void) {
  * with zeros.
  */
 static GUI_SECTION void KeyEdit_FreeRecord(void) {
-    MemSet(gRecord->plainText, MemPtrSize(gRecord->plainText), 0);
+    MemWipe(gRecord->plainText, MemPtrSize(gRecord->plainText));
     MemPtrFree(gRecord->plainText);
-    MemSet(gRecord, MemPtrSize(gRecord), 0);
+    MemWipe(gRecord, MemPtrSize(gRecord));
     MemPtrFree(gRecord);
 }
 
@@ -488,7 +488,6 @@ static GUI_SECTION void KeyEdit_Save(void)
     FrmDrawForm(busyForm);
 
     Record_SaveRecord(gRecord, gKeyRecordIndex, gRecordKey);
-    Key_SetCategory(gKeyRecordIndex, gRecord->category);
 
     FrmEraseForm(busyForm);
     FrmDeleteForm(busyForm);
@@ -806,7 +805,7 @@ static GUI_SECTION void KeyEdit_Generate(void)
     oldH = FldGetTextHandle(f_AllFields[k_Passwd]);
     FldSetTextHandle(f_AllFields[k_Passwd], (MemHandle) h);
     if (oldH) {
-	MemSet(MemHandleLock(oldH), MemHandleSize(oldH), 0);
+	MemWipe(MemHandleLock(oldH), MemHandleSize(oldH));
 	MemHandleUnlock(oldH);
 	MemHandleFree(oldH);
     }

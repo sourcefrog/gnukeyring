@@ -25,9 +25,6 @@
 extern void *alloca(unsigned long size);
 #define EVEN(x) (((x)+1)&~1)
 
-#define kKeyDBTempName "Keys-GtkR-tmp"
-#define kKeyDBTmpType 'ktmp'
-
 /*
  * TODO: Create a shadow database and only if that succeeds remove
  * old database and rename new one.
@@ -89,7 +86,7 @@ Err SetPasswd_ReencryptRecords(CryptoKey *oldRecordKey,
 	    & ~(newRecordKey->blockSize - 1);
 
 	if (newsize > plainBufSize) {
-	    MemSet(plainBuf, plainBufSize, 0);
+	    MemWipe(plainBuf, plainBufSize);
 	    MemPtrFree(plainBuf);
 	    plainBufSize = newsize;
 	    plainBuf = MemPtrNew(plainBufSize);
@@ -128,7 +125,7 @@ Err SetPasswd_ReencryptRecords(CryptoKey *oldRecordKey,
     err = 0;
     outErr:
     /* Erase and free plainBuf */
-    MemSet(plainBuf, plainBufSize, 0);
+    MemWipe(plainBuf, plainBufSize);
     MemPtrFree(plainBuf);
     return err;
 }
@@ -180,7 +177,7 @@ void SetPasswd_Reencrypt(CryptoKey *oldRecordKey,
 	DmDeleteDatabase(gKeyDBCardNo, newKeyDBID);
 
     if ((err = DmCreateDatabase(gKeyDBCardNo, kKeyDBTempName,
-				kKeyringCreatorID, kKeyDBTmpType,
+				kKeyringCreatorID, kKeyDBTempType,
 				false /* not resource */)))
 	goto outErr;
 
@@ -218,8 +215,8 @@ void SetPasswd_Reencrypt(CryptoKey *oldRecordKey,
 			  NULL, NULL, &appInfo, NULL,
 			  &type, NULL);
 	PwHash_Store(newPassword, &salthash);
-	MemSet(&salthash, sizeof(salthash), 0);
-	MemSet(&newRecordKey, sizeof(newRecordKey), 0);
+	MemWipe(&salthash, sizeof(salthash));
+	MemWipe(&newRecordKey, sizeof(newRecordKey));
 	return;
     }
     
@@ -230,7 +227,7 @@ void SetPasswd_Reencrypt(CryptoKey *oldRecordKey,
     CryptoDeleteKey(newRecordKey);
     MemPtrFree(newRecordKey);
     outErr0:
-    MemSet(&salthash, sizeof(salthash), 0);
+    MemWipe(&salthash, sizeof(salthash));
 
     /* Complain about errors now. */
     ErrAlert(err);

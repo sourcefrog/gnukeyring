@@ -1,6 +1,6 @@
 $current_file="";
 $last_file="";
-$verbose = 1;
+$verbose = 0;
 if ($headername=="") {
     $headername="_PROTO_H_";
 }

@@ -37,6 +37,7 @@
 #define UpgradeFailedAlert		1026
 #define NotEnoughFeaturesAlert          1027
 #define BetaAlert                       1028
+#define CipherNotSupportedAlert         1029
 
 #define ListMenuBar			1100
 #define KeyEditMenuBar			1101

@@ -27,7 +27,7 @@
 // ======================================================================
 // Crypto functions
 
-static Err CheckGlib(UInt32 creator, char* libname) {
+Err CheckGlib(UInt32 creator, char* libname) {
     DmOpenRef libdb;
 
     if ((libdb = DmOpenDatabaseByTypeCreator('GLib', creator, 
@@ -86,8 +86,10 @@ Boolean CryptoPrepareKey(UInt16 cipher, SnibType *rawKey, CryptoKey *cryptKey)
     case AES_128_CBC_CIPHER:
     case AES_256_CBC_CIPHER:
 	cryptKey->blockSize = 16;
-	if (AESLib_OpenLibrary(&cryptKey->key.aes.refNum))
+	if (AESLib_OpenLibrary(&cryptKey->key.aes.refNum)) {
+	    FrmCustomAlert(NotEnoughFeaturesAlert, "AESLib.prc", NULL, NULL);
 	    return 0;
+	}
 	AESLibEncKey(cryptKey->key.aes.refNum, rawKey->key.aes,
 		     cipher == AES_256_CBC_CIPHER ? 32 : 16,
 		     &cryptKey->key.aes.enc);
@@ -96,6 +98,11 @@ Boolean CryptoPrepareKey(UInt16 cipher, SnibType *rawKey, CryptoKey *cryptKey)
 		     &cryptKey->key.aes.dec);
 	break;
     default:
+	{
+	    Char buffer[maxStrIToALen];
+	    StrIToA(buffer, cipher);
+	    FrmCustomAlert(CipherNotSupportedAlert, buffer, NULL, NULL);
+	}
 	return 0;
     }
     return 1;
@@ -107,7 +114,7 @@ void CryptoDeleteKey(CryptoKey *cryptKey) {
     case AES_256_CBC_CIPHER:
 	AESLib_CloseLibrary(cryptKey->key.aes.refNum);
     }
-    MemSet(cryptKey, sizeof(CryptoKey), 0);
+    MemWipe(cryptKey, sizeof(CryptoKey));
 }
 
 Err CryptoRead(void * from, void * to, UInt32 len, 

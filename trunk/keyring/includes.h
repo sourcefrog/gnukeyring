@@ -24,6 +24,7 @@
 #include <TxtGlue.h>
 #include "sections.h"
 #include "sha1.h"
+#include <md5.h>
 
 #include <des.h>
 #include "AESLib-noinline.h"

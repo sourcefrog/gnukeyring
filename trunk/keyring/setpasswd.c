@@ -138,13 +138,13 @@ Char *SetPasswd_Ask(UInt16 *pCipher, UInt16 *pIter)
      */
     handle = FldGetTextHandle(masterFld);
     if (handle) {
-	 MemSet(MemHandleLock(handle), MemHandleSize(handle), 0);
+	 MemWipe(MemHandleLock(handle), MemHandleSize(handle));
 	 MemHandleUnlock(handle);
     }
     FldSetTextHandle(masterFld, handle);
     handle = FldGetTextHandle(confirmFld);
     if (handle) {
-	 MemSet(MemHandleLock(handle), MemHandleSize(handle), 0);
+	 MemWipe(MemHandleLock(handle), MemHandleSize(handle));
 	 MemHandleUnlock(handle);
     }
     FldSetTextHandle(confirmFld, handle);
@@ -204,7 +204,7 @@ Boolean SetPasswd_Run(void)
 
     /* Eradicate the new and old passwords.
      */
-    MemSet(newPasswd, StrLen(newPasswd), 0);
+    MemWipe(newPasswd, StrLen(newPasswd));
     CryptoDeleteKey(oldKey);
     MemPtrFree(oldKey);
 

@@ -180,7 +180,7 @@ SHA1(const unsigned char *buffer, unsigned long len, unsigned char *resblock)
     }
     
     /* Move remaining bytes in internal buffer.  */
-    MemSet(b.data, sizeof(b.data), 0);
+    MemSet(b.data, sizeof(b.data));
     MemMoveSwap (b.data, buffer, remaining);
 #ifdef WORDS_BIGENDIAN
     ((char*) b.data)[remaining] = 0x80;
@@ -204,7 +204,7 @@ SHA1(const unsigned char *buffer, unsigned long len, unsigned char *resblock)
     MemMoveSwap(resblock, b.dig, sizeof(b.dig));
 
     /* Erase private data */
-    MemSet(&b, sizeof(b), 0);
+    MemWipe(&b, sizeof(b));
 }
 #endif
 
@@ -273,5 +273,5 @@ void PwHash_PBKDF2(void* result, int resultLen,
     }
 
     /* Now erase all buffers, they may contain passwords */
-    MemSet(&b, sizeof(b), 0);
+    MemWipe(&b, sizeof(b));
 }

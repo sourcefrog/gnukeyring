@@ -71,7 +71,7 @@ static void PwHash_CalcHash(HashType hash, SnibType *snib, UInt16 snibSize,
     buffer[15] = (snibSize + kSaltSize) * 8;
     SHA1_Block(initsha1, buffer, buffer);
     MemMove(hash, buffer, kHashSize);
-    MemSet(buffer, sizeof(buffer), 0);
+    MemWipe(buffer, sizeof(buffer));
 }
 
 
@@ -83,6 +83,7 @@ Err PwHash_Create(const Char *newPasswd, UInt16 cipher, UInt16 iter,
     SnibType snib;
     UInt16   snibSize = CryptoKeySize(cipher);
     int      i;
+    Err      err;
 
     /* Now create the salt, which must not contain NUL characters */
     for (i = 0; i < kSaltSize; i++) {
@@ -96,14 +97,12 @@ Err PwHash_Create(const Char *newPasswd, UInt16 cipher, UInt16 iter,
     PwHash_CalcSnib(&snib, snibSize, newPasswd, salthash->salt, iter);
     CryptoPrepareSnib(cipher, &snib);
     PwHash_CalcHash(salthash->hash, &snib, snibSize, salthash->salt);
-    if (newKey) {
-	if (!CryptoPrepareKey(cipher, &snib, newKey)) {
-	    MemSet(&snib, sizeof(snib), 0);
-	    return sysErrLibNotFound;
-	}
-    }
-    MemSet(&snib, sizeof(snib), 0);
-    return 0;
+
+    err = 0;
+    if (newKey && !CryptoPrepareKey(cipher, &snib, newKey))
+	err = sysErrLibNotFound;
+    MemWipe(&snib, sizeof(snib));
+    return err;
 }
 
 
@@ -123,7 +122,7 @@ Err PwHash_Store(const Char *newPasswd, SaltHashType *salthash)
     DmWrite(appInfoPtr, (UInt16) &((KrAppInfoType*)NULL)->keyHash, 
 	    salthash, sizeof(SaltHashType));
     MemPtrUnlock(appInfoPtr);
-    MemSet(salthash, sizeof(salthash), 0);
+    MemWipe(salthash, sizeof(salthash));
 
     return 0;
 }
@@ -145,9 +144,6 @@ Boolean PwHash_CheckSnib(SnibType *snib, CryptoKey *cryptoKey)
     if (result && cryptoKey) {
 	result = CryptoPrepareKey(appInfoPtr->keyHash.cipher, 
 				  snib, cryptoKey);
-	if (!result)
-	    FrmCustomAlert(NotEnoughFeaturesAlert, "crypto library", 
-			   NULL, NULL);
     }
     MemPtrUnlock(appInfoPtr);
 
@@ -180,12 +176,9 @@ Boolean PwHash_Check(CryptoKey *cryptoKey, Char *guess)
 	if (cryptoKey) {
 	    result = CryptoPrepareKey(appInfoPtr->keyHash.cipher, 
 				      &snib, cryptoKey);
-	    if (!result)
-		FrmCustomAlert(NotEnoughFeaturesAlert, "crypto library", 
-			       NULL, NULL);
 	}
     }
-    MemSet(&snib, sizeof(snib), 0);
+    MemWipe(&snib, sizeof(snib));
     MemPtrUnlock(appInfoPtr);
 
     return result;
