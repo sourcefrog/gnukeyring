@@ -58,6 +58,150 @@ BEGIN
 END
 
 // ======================================================================
+// Catalan translation contributed by Xavier Aranda
+
+TRANSLATION "ca"
+BEGIN
+  "Look Up:" = "Buscar:"
+  "New" = "Nova"
+  "Key ______ of ______" = "Clau ______ de ______" 
+  "Name:" = "Nom:"
+  "Account:" = "Compte:"
+  "Password:" = "Clau:"
+  "Confirm:"  = "Acceptar:" 
+  "Changed:" = "Modificat:"
+  "Done" = "Fet"
+  "Preferences" = "Preferències"
+  "Stay unlocked for:" = "Desbloquejat durant:"
+  "No time" = "Mai"
+  "15 sec" = "15 Seg."
+  "60 sec" = "1 Min."
+  "5 min" = "5 Min."
+
+  "Use Keyring fonts" = "Utilitzar les fonts de Keyring"
+  "Lock when switched off" = "Bloquejar en apagar"
+  "Veil password" = "Emmascara la clau"
+
+  "Generate"="Genera"
+  "OK" = "Sí"
+  "Cancel" = "Cancel·lar"
+
+  "Set Keyring Password" =  "Canviar la Clau principal"
+
+  "@@choosepassword" = "Tria una Clau:"
+"Password:" = "Clau:"
+"Confirm:" = "Confirmar:"
+  "Generate Password" = "Genera una Clau"
+  "@@generate1" = "Generar una clau aleatòria "
+  "@@generate2" = "Clau:"
+
+  "Length:" = "Longitud:"
+  "Include:" = "Incloure:"
+  "Generate" = "Generar"
+
+  "Unlock" =  "Desbloquejar"
+
+  "Enter your password:" = "Introdueix la Clau:"
+
+  "Encrypting..." = "Xifrant..."
+  "Decrypting..." = "Desxifrant..."
+
+  "@@OutOfMemory" =  "No hi ha prou memòria disponible."
+  "Password" = "Clau"
+  "@@WrongPassword" = "Clau incorrecta. Torna-ho a provar."
+  "@@PasswordMismatch" =  "Les claus no són iguals. Torna-ho a provar."
+
+  "Not here yet" = "Encara no disponible"
+  "@@NotImplemented" = "Aquesta característica no està implementada encara."
+  "@@NotEnoughFeatures" = "Aquesta versió de Keyring requereix ^1."
+  "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronunciable"
+
+  "@@BetaVersion" = "Aquesta és una versió beta de prova de Keyring.  Pot contenir errors bugs. Si us plau, guarda una altra còpia de qualsevol dada." 
+
+  "@@CouldntLaunchMemo" =  "El bloc de notes no es pot executar."
+"Cryptographic error: ^1" = "Error Criptogràfic: ^1"
+"Error accessing key database: ^1 (^2)" = "Error en accedir a la base de dades de claus: ^1 (^2)"
+"Error accessing snib database: ^1 (^2)" = "Error en accedir a la base de dades snib: ^1 (^2)"
+"Error creating keyring database: ^1 (^2)" = "Error en crear la base de dades de claus: ^1 (^2)" 
+"This keyring may not be changed." = "No es pot canviar aquesta base de dades"
+"The Keyring database is in read-only memory.  Do you want to open it with editing disabled?" = "La base de dades està en memòria no modificable. Vols obrir-la sense poder-la modificar?"
+"Upgrade Database?" = "Actualitzar base de dades?"
+"This database is from a previous version of Keyring.  Convert it to the new format?  (Please make a backup before doing this.)" = "Aquesta base de dades prové d'una versió anterior de Keyring. Convertir-la al nou format? (Si us plau, fes una còpia de seguretat abans)."
+"Convert" = "Convertir"
+"Can't upgrade database from version ^1." = "No es pot actualitzar la base de dades de la versió ^1."
+"Error upgrading database: ^1" = "Error en actualitzar la base de dades"
+"Database Damaged" = "Base de dades danyada"
+"Database Upgrade" = "Actualització de la base de dades"
+"There are no categories defined in this database.  Default categories have been added." = "Aquesta base de dades no té categories definides. S'han afegir les categories per defecte"
+"Sort Error" = "Error d'ordenació"
+"Error sorting database: ^1" = "Error en ordenar la base de dades"
+"Incompatible Database" = "Base de dades incompatible"
+"This database is from a later version of Keyring, and cannot be opened." = "Aquesta base de dades és d'una versió posterior de Keyring i no es pot obrir"
+"This database is from an earlier version of Keyring, but cannot be converted because it is in read-only memory." = "Aquesta base de dades és d'una versió anterior de Keyring, però no es pot convertir perquè està en la memòria no modificable"
+
+
+
+
+
+  "Delete Key" = "Esborrar Clau"
+  "Delete current key record?" = "Esborrar la Clau actual?"
+  "Save archive copy on PC" = "Guardar còpia en el PC"
+ "This is free software.  No warranty." = "Software gratuït.  No hi ha garantia." 
+
+  "Released under the GNU GPL v2." = "Compleix la GNU GPL v2." 
+
+  "Database" = "Base de Dades"
+  "Set Password..." = "Canviar la clau..."
+  "Options" = "Opcions"
+  "Edit" = "Modificar"
+
+  "Preferences..." =  "Preferències..."
+  "Tips" = "Suggeriments"
+  "About..." =  "Sobre..."
+
+  "Undo" = "Desfer"
+  "Undo All" = "Desfer tot"
+
+  "Graffiti Help" = "Ajuda de Grafitti"
+  "Paste" = "Enganxar"
+  "Cut" = "Tallar"
+  "Select All" = "Seleccionar Tot"
+  "Key ^0 of ^1" = "Clau ^0 de ^1"
+  "Copy" = "Copiar"
+  "Keyboard" = "Teclat"
+  "New Key" = "Nova Clau"
+"Change Date" = "Canviar data"
+"Error checking ROM version: ^1" = "Error en comprovar la versió ROM: ^1"
+  "Key" =  "Clau"
+  "Generate Password..." = "Generar Clau..."
+  "Export to Memo" = "Exportar al Bloc de Notes"
+  "Delete..." = "Esborrar..."
+
+  "@@GenerateHelp" = "help/en/generate.txt"
+  "@@KeyEditHelp" = "help/en/keyedit.txt"
+  "@@SetPasswdHelp" = "La Clau principal protegeix totes les claus, i cal escriure-la per accedir a la base de dades. Si l'oblides, no podràs accedir a la base de dades."
+"There is no data to export." = "No hi ha dades per exportar."
+
+
+  "Unfiled" = "No catalogat"
+  "Phone" = "Telèfon"
+  "Banking" = "Banc"
+  "Computer" = "Ordinador"
+
+  "@@accel_Undo" = "D"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "E"
+  "@@accel_SelectAll" = "S" 
+  "@@accel_Keyboard" = "T"
+  "@@accel_Graffiti" = "G"
+  
+   "Version" = "Versió"
+
+END
+
+// ======================================================================
 // Italian translation contributed by Paolo Gasti
 
 TRANSLATION "it"
@@ -1577,7 +1721,7 @@ MODAL
 BEGIN
 	TITLE "Keyring for PalmOS"
 
-	FORMBITMAP AT (69 18) BITMAP KeyBitmap
+	FORMBITMAP AT (80-16 18) BITMAP KeyBitmap
 
 	LABEL "Keyring"
 		AUTOID AT (CENTER 42) FONT 1
@@ -1644,9 +1788,20 @@ BEGIN
 	END
 END
 
-ICONFAMILY "keyring-22-1.pbm" "" "" "keyring-22-8.ppm" TRANSPARENT 255 255 255
+ICONFAMILYEX
+BEGIN
+	BITMAP "keyring-32-1.ppm" BPP 1
+	BITMAP "keyring-32-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 1
+	BITMAP "keyring-64-8.ppm" BPP 8 DENSITY 2
+END
 SMALLICON "keyring-15-1.pbm"
-BITMAPFAMILY ID KeyBitmap "keyring-22-1.pbm" "" "" "keyring-22-8.ppm" TRANSPARENT 255 255 255 COMPRESS
+BITMAPFAMILYEX ID KeyBitmap
+COMPRESS
+BEGIN
+	BITMAP "keyring-32-1.ppm" BPP 1
+	BITMAP "keyring-32-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 1
+	BITMAP "keyring-64-8.ppm" BPP 8 DENSITY 2
+END
 BITMAP ID LockBitmap "lock.xbm"
 BITMAP ID UnlockBitmap "unlock.xbm"
 

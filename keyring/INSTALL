@@ -1,6 +1,7 @@
 Installing GNU Keyring for PalmOS
 
-Copyright 1999-2003 The GNU Keyring Sourceforge Team
+Copyright 1999-2002 by Martin Pool
+Copyright 2001-2003 by Jochen Hoenicke
 
   http://gnukeyring.sourceforge.net/
 
@@ -20,6 +21,7 @@ like:
 to install the application.
 
 (The translations may be incomplete or out of date.  If you see a
-problem, please send me an updated translation.)
+problem, please send an updated translation to 
+gnukeyring-discuss@lists.sourceforge.net.)
 
 $Id$
