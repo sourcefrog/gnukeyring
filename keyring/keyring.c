@@ -196,12 +196,6 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	    PrefsForm_Run();
 	return true;
 
-    case CMD_CheckHeapOnChange:
-    case CMD_ScrambleOnChange:
-    case CMD_NoDebug:
-	Keyring_ToggleMemDebug(itemId);
-	return true;
-
     case SetPasswdCmd:
 	if (App_CheckReadOnly())
 	    return true;
