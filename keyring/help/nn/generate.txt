@@ -1,6 +1,0 @@
-Generer Passord set passordet i denne nyklen til ein ny tilfeldig verd.
-
-Lengden er antall teikn i det nye passordet.
-
-Inkluder spesifiserar kva for nokre teikn som er tolaten i passordet. Minst ei
-klasse må inkluderast.

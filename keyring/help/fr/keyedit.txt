@@ -1,5 +1,0 @@
-Générez un Mot de Passe: Créez un nouveau mot de passe aléatoire adaptant certains critères. 
-
-Exportez vers une Note: Enregistrez toute l'information de cette clé à un nouvelle note classé.
-
-Défaites tout: Jetez tous les changements puisque l'enregistrement a été ouvert. 
