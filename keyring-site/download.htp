@@ -4,7 +4,7 @@
 <file template="keyring.htt">
 
 
-<set cur_ver="1.2.1">
+<set cur_ver="1.2.2">
 <def name="zipentry"  option="code lang">
   <dlentry icon="binary.gif" 
            file="keyring-${cur_ver}-${code}.zip" 
