@@ -134,3 +134,66 @@ void UI_UnionSet(FormPtr frm, UInt16 const * map, UInt16 value)
 			(map[i] & value) ? true : false);
     }
 }
+
+/**
+ * This is the same as TxtGlueParamString, except that it works
+ * even if International Feature Set is not present.
+ *
+ * XXX: This only works if there is at most one place where the
+ * param is inserted.  This is good enough for keyring though.
+ */
+Char* UI_TxtParamString(const Char *inTemplate, 
+			const Char *param0, const Char *param1, 
+			const Char *param2, const Char *param3)
+{
+    UInt32 romVersion;
+    
+    FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
+    if (romVersion >= sysMakeROMVersion(3, 5, 0, sysROMStageRelease, 0)) {
+
+	return TxtParamString(inTemplate, param0, param1, param2, param3);
+
+    } else { 	
+	/* we cannot use TxtParamString() */
+
+	/* Hack, hack...  
+	 * This works for Palm OS calling conventions
+	 */
+	const Char **params = &param0;
+	MemHandle h;
+	Char *result;
+	UInt16 i, j;
+	UInt16 occurences[4];
+	UInt16 len = StrLen(inTemplate);
+
+	for (i = 0; i < 4; i++) {
+	    if (!params[i])
+		continue;
+	    
+	    /* Use TxtGlueReplaceStr to find number of occurences. */
+	    occurences[i] = TxtGlueReplaceStr
+		((Char *)inTemplate, 0xffff, NULL, i);
+	    for (j = 0; j < i; j++) {
+		if (!params[j])
+		    continue;
+		/* We must also handle repeated replacements. */
+		occurences[i] += occurences[j] * 
+		    TxtGlueReplaceStr((Char *)params[j], 0xffff, NULL, i);
+	    }
+	    len += (StrLen(param0) - 2) * occurences[i];
+	}
+	/* Now that we know the length we do the replacement */
+	h = MemHandleNew(len+1);
+	if (!h)
+	    return NULL;
+
+	result = MemHandleLock(h);
+	StrNCopy(result, inTemplate, len);
+	for (i = 0; i < 4; i++) {
+	    if (!params[i])
+		continue;
+	    TxtGlueReplaceStr(result, len, params[i], i);
+	}
+	return result;
+    }
+}

@@ -138,7 +138,7 @@ static void KeyEditForm_UpdateTitle(void)
     StrIToA(posStr, pos);
     StrIToA(totalStr, total);
 
-    keyFormTitle = TxtGlueParamString(titleTemplate, posStr, totalStr, NULL, NULL); 
+    keyFormTitle = UI_TxtParamString(titleTemplate, posStr, totalStr, NULL, NULL); 
     FrmCopyTitle(f_KeyEditForm, keyFormTitle);
     MemPtrFree(keyFormTitle);
     MemPtrUnlock(titleTemplate);
