@@ -116,6 +116,34 @@ being edited.
 
 </section>
 
+<section title="random number algorithm">
+<p>You can let keyring generate a random password for you.  The
+problem here is that you can't compute random numbers.  You can, of course,
+use a pseudo random number generator, but most are not good enough
+for cryptographic purposes:
+For example, if one would use the builtin random number generator,
+there is a big problem.  It is often seeded by the current time only.
+If an attacker knows the algorithm and can estimate the time the
+password was generated (some web sites tell everyone the day you
+became a member) he can just try all possible seeds and will find your
+passwords with only a minimum number of tries.</p>
+
+<p>For this reason keyring uses a strong pseudo random number
+generator.  It is seeded with every event sent to keyring, that means
+every pen stroke and every button press and some more.  The complete
+event structure including the coordinates of the pen stroke is used.
+So after you scribbled in the master password there is enough new
+randomness for generating really long passwords.  
+
+The randomness is collected in a random pool containing 256 random
+bytes.  New randomness is added as if it would be a huge random
+feedback shift register.  When extracting random data from the pool a
+SHA1 hash is calculated from the current content and fed back to the
+pool on the fly.  The algorithm is taken from the linux secure random
+generator.
+</p>
+</section>
+
 <section title="plans for next version">
    <p>To make brute-force attacks more difficult I plan to use
    PBKDF2 (see RFC 2898) for key generation.  This iteratively applies
