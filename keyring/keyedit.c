@@ -3,7 +3,7 @@
  * $Id$
  *
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,21 +201,22 @@ static void KeyEditForm_ToUnpacked(UnpackedKeyType *u) {
     // date is stored in the struct when it is edited
 }
 
+
 static void KeyEditForm_Done(void) {
     FrmGotoForm(ListForm);
 }
 
 
-/*  static Err KeyEditForm_Wakeup(SysNotifyParamType *np) { */
-/*      if(np->notifyType == sysNotifyLateWakeupEvent) { */
-/*      SysNotifyUnregister(gKeyDBCardNo, */
-/*                          gKeyDBID, */
-/*                          sysNotifyLateWakeupEvent, */
-/*                          sysNotifyNormalPriority); */
-/*      KeyEditForm_Done(); */
-/*      } */
-/*      return 0; */
-/*  } */
+static Err KeyEditForm_Wakeup(SysNotifyParamType *np) {
+    if (np->notifyType == sysNotifyLateWakeupEvent) {
+	 SysNotifyUnregister(gKeyDBCardNo,
+			     gKeyDBID,
+			     sysNotifyLateWakeupEvent,
+			     sysNotifyNormalPriority);
+	 KeyEditForm_Done();
+    }
+    return 0;
+}
 
 
 /*
@@ -252,13 +253,12 @@ static void KeyEditForm_Load(void)
     /* NotifyRegister is not present in 3.0.  We need to check for
      * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
      * call this.  It might be better to set an alarm to lock after
-     * the specified time instead. */
-/*      SysNotifyRegister(gKeyDBCardNo, */
-/*                    gKeyDBID, */
-/*                    sysNotifyLateWakeupEvent, */
-/*                    KeyEditForm_Wakeup, */
-/*                    sysNotifyNormalPriority, */
-/*                    NULL); */
+     * the specified time instead.
+     *
+     * POSE doesn't seem to send this notification on wakeup, so you
+     * can't test this in the simulator. */
+    SysNotifyRegister(gKeyDBCardNo, gKeyDBID, sysNotifyLateWakeupEvent,
+		      KeyEditForm_Wakeup, sysNotifyNormalPriority, NULL);
 }
 
 

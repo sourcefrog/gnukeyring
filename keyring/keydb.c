@@ -3,7 +3,7 @@
  * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,9 +85,6 @@ Boolean g_ReadOnly;
  * the final 0.13 release, and is almost correct for previous versions
  * except that the data was stored in AppInfo or SortInfo rather than
  * in record 0. */
-
-
-
 
 Int16 Keys_IdxOffsetReserved(void)
 {
@@ -375,7 +372,8 @@ Err KeyDB_Init(void)
      } else if (err) {
           goto failDB;
      } else {
-          /* So, we opened a database OK.  Now, is it old, new, or just right? */
+          /* So, we opened a database OK.  Now, is it old, new, or
+             just right? */
           if ((err = KeyDB_GetVersion(&ver)))
                goto failDB;
           if (ver < kDatabaseVersion) {
