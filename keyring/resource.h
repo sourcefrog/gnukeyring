@@ -1,6 +1,7 @@
 /* -*- mode: c; c-indentation-style: "java"; c-basic-offset: 4 -*-
  *
  * Copyright (C) 1999, 2000 by Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 2002-2003 Jochen Hoenicke <hoenicke@users.sourceforge.net>
  *
  * $Header$
  *
