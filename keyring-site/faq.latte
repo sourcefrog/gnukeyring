@@ -1,10 +1,15 @@
+{\def {\faqentry \=faqid \name \&rest}
+  {\a \name=\faqid {{\h3 \name {\a \href={\concat # \faqid} {\c-raquo}}} \rest}}
+}
+
 {\page 
   \pageid=faq \pagetitle={frequently asked questions}
   \rcsid=\"$Id$\"
 {
   {\h2 frequently asked questions}
 
-  {\faqentry {I have begun using Keyring, and am trying to verify that
+  {\faqentry \faqid=check_backup
+      {I have begun using Keyring, and am trying to verify that
        my encrypted data is being backed up on the pc during the
        hotsync process.  How can I ensure that this is happening?}
 
@@ -21,7 +26,8 @@
    Backups didn't work reliably with some Windows client
    software in 0.7.4 and earlier versions.}
 	  
-   {\faqentry {How do I open the .tar.gz file on Windows?}
+   {\faqentry \faqid=windoze_tgz
+      {How do I open the .tar.gz file on Windows?}
                 
 	  
 	    WinZip will open these files happily.  If you'd rather use
@@ -32,8 +38,9 @@
 	    There are probably other archive tools.}
 
 
-   {\faqentry {Why do I get a system error when trying to use GNU Keyring on
-    PalmOS 2? }
+   {\faqentry \faqid=palmos2
+     {Why do I get a system error when trying to use GNU Keyring on
+      PalmOS 2? }
 
    GNU Keyring up to and including version 0.13 relies on encryption
    functions built into the operating system ROM.  These functions are
