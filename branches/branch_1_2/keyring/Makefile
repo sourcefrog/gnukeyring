@@ -108,7 +108,7 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 LANGUAGES = en ca cs da de es fi fr it ja nl nb nn pt sv pl ru
 
 LOCALES = enUS <en caES <ca csCZ <cs daDK <da deDE <de esES <es fiFI <fi \
-          frFR <fr itIT <it jaJP <ja nlNL <nl noNO <nb ptBR <pt 
+          frFR <fr itIT <it jaJP <ja nlNL <nl noNO <nb ptBR <pt \
 	  svSE <sv plPL <pl ruRU <ru
 
 PILRCOPTS_ja = -Fj
