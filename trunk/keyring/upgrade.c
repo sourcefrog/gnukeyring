@@ -130,35 +130,22 @@ static Err Upgrade_From0(void)
 /* Handle a database that's missing its SortInfo data, having been
  * restored from a broken backup.  We temporarily allow this access,
  * and explain that the user should reset their password.  Return true
- * if access should be allowed, false to abort. */
-static Err Upgrade_HandleMissingSortInfo(void)
+ * if access should be allowed, false to abort. 
+ */
+Err Upgrade_HandleMissingHash(void)
 {
      UInt16 	result;
-     FormPtr 	prevFrm = FrmGetActiveForm();
-     FormPtr	frm = FrmInitForm(UnlockForm);
-     Char *entry;
-     UInt16 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
-     FieldPtr 	entryFld = FrmGetObjectPtr(frm, entryIdx);
+     Char       *newPasswd;
 
-     if (FrmAlert(alertID_SortInfoMissing) != 0)   /* 0 = "OK" */
-          return appErrMisc;
-
-     FrmSetFocus(frm, entryIdx);
-     result = FrmDoDialog(frm);
-     
-     if (result == UnlockBtn) {
-          entry = FldGetTextPtr(entryFld);
-          if (!entry)
-               entry = "";
-     } else {
+     if (FrmAlert(alertID_PasswordHashMissing) != 0)   /* 0 = "OK" */
           return appCancelled;
-     }
-     
-     KeyDB_CreateReservedRecords();
-     PwHash_Store(entry);
 
-     FrmDeleteForm(frm);
-     FrmSetActiveForm(prevFrm);
+     newPasswd = SetPasswd_Ask();
+     if (newPasswd == NULL)
+          return appCancelled;
+
+     KeyDB_CreateReservedRecords();
+     PwHash_Store(newPasswd);
 
      return 0;
 }
@@ -187,7 +174,7 @@ static Err Upgrade_From1(void)
 
      if (sortInfoID == 0) {
           /* TODO: Go through the checking-hash recovery procedure. */
-          return Upgrade_HandleMissingSortInfo();
+          return Upgrade_HandleMissingHash();
      }
 
      if (appInfoID == 0) {

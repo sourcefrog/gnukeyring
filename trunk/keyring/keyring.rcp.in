@@ -1333,12 +1333,12 @@ BEGIN
 END
 
 
-ALERT ID alertID_SortInfoMissing
+ALERT ID alertID_PasswordHashMissing
 WARNING
 BEGIN
     TITLE "Database Damaged"
 
-    MESSAGE "This database has been damaged by the PalmOS SortInfo bug.  Please enter your password to repair it."
+    MESSAGE "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken so make a backup first."
 
     BUTTONS "OK" "Cancel"
 END
