@@ -47,8 +47,8 @@
 //104
 		1058C7A6FEA54F5311CA2CBB = {
 			children = (
+				67EC61C407F832EC007BDBDA,
 				1058C7A7FEA54F5311CA2CBB,
-				F5D6A47D032395AC01A0EC02,
 			);
 			isa = PBXGroup;
 			name = "Linked Frameworks";
@@ -56,8 +56,7 @@
 			sourceTree = "<group>";
 		};
 		1058C7A7FEA54F5311CA2CBB = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
@@ -92,8 +91,7 @@
 //174
 		1758732AFF379DA111CA2CBB = {
 			explicitFileType = wrapper.application;
-			fallbackIsa = PBXFileReference;
-			isa = PBXApplicationReference;
+			isa = PBXFileReference;
 			path = "View Keyring.app";
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -256,8 +254,7 @@
 			sourceTree = "<group>";
 		};
 		2A37F4C4FDCFA73011CA2CEA = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = AppKit.framework;
 			path = /System/Library/Frameworks/AppKit.framework;
@@ -265,8 +262,7 @@
 			sourceTree = "<absolute>";
 		};
 		2A37F4C5FDCFA73011CA2CEA = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
@@ -359,6 +355,7 @@
 				F53ECB5D02D83A5101668B0C,
 				F508A9320397C64501A8010A,
 				F5CC86A103A0926801A8010A,
+				67441DFC07F829280012A400,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -398,6 +395,7 @@
 				F53ECB5E02D83A5101668B0C,
 				F508A9330397C64501A8010A,
 				F5CC86A203A0926801A8010A,
+				67441DFD07F829280012A400,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -422,7 +420,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1058C7A9FEA54F5311CA2CBB,
-				F5D6A47E032395AC01A0EC02,
+				67EC61C507F832EC007BDBDA,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -438,8 +436,6 @@
 //4A3
 //4A4
 		4A9504D0FFE6A4CB11CA0CBA = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -453,8 +449,6 @@
 			name = Development;
 		};
 		4A9504D1FFE6A4CB11CA0CBA = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -481,6 +475,34 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		67441DFA07F829280012A400 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CryptoEngine.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		67441DFB07F829280012A400 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = CryptoEngine.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		67441DFC07F829280012A400 = {
+			fileRef = 67441DFA07F829280012A400;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		67441DFD07F829280012A400 = {
+			fileRef = 67441DFB07F829280012A400;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		67953B0D041CE90B00199361 = {
 			children = (
 				67953B0E041CE90B00199361,
@@ -492,9 +514,8 @@
 			sourceTree = "<group>";
 		};
 		67953B0E041CE90B00199361 = {
-			fallbackIsa = PBXFileReference;
 			includeInIndex = 1;
-			isa = PBXFolderReference;
+			isa = PBXFileReference;
 			lastKnownFileType = folder;
 			name = English;
 			path = "English.lproj/View Keyring Help";
@@ -526,6 +547,20 @@
 			path = Keyring.psd;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		67EC61C407F832EC007BDBDA = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Security.framework;
+			path = /System/Library/Frameworks/Security.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		67EC61C507F832EC007BDBDA = {
+			fileRef = 67EC61C407F832EC007BDBDA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 //670
 //671
@@ -711,6 +746,8 @@
 		};
 		F55F7FCE02D9D5F901170456 = {
 			children = (
+				67441DFA07F829280012A400,
+				67441DFB07F829280012A400,
 				F5BBF1A502CF885A010205B6,
 				F5BBF1A602CF885A010205B6,
 			);
@@ -852,20 +889,6 @@
 		};
 		F5CF0F4C02CE107B0145D358 = {
 			fileRef = F5CF0F4A02CE107B0145D358;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5D6A47D032395AC01A0EC02 = {
-			isa = PBXFileReference;
-			lastKnownFileType = "compiled.mach-o.dylib";
-			name = libcrypto.dylib;
-			path = /usr/lib/libcrypto.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F5D6A47E032395AC01A0EC02 = {
-			fileRef = F5D6A47D032395AC01A0EC02;
 			isa = PBXBuildFile;
 			settings = {
 			};
