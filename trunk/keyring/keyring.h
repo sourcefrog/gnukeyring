@@ -33,13 +33,14 @@
  * v0 had the session key stored in the AppInfo block, and could not
  * support Categories
  *
- * v1 had the session key stored in the SortInfo block, which was a mistake
+ * v1 had the session key stored in the SortInfo block, which was a
+ * mistake.  Records are encrypted by the MD5 hash of the master
+ * password.
  *
  * v2 was in 0.13.0pr1 and not supported
  *
  * v3 has the session key and master password checksum stored in
- * hidden records.
- */
+ * hidden records.  */
 #define kDatabaseVersion	3
 
 /* The app and preferences version */
