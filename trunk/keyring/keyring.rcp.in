@@ -1485,6 +1485,21 @@ BEGIN
 	GRAFFITISTATEINDICATOR AT (152 150)
 END
 
+#define kFrmNavHeaderFlagsObjectFocusStartState 1
+NAVIGATION ID ListForm
+  INITIALSTATE kFrmNavHeaderFlagsObjectFocusStartState
+  INITIALOBJECTID    LookUpFld
+  JUMPOBJECTID       LookUpFld
+  BOTTOMLEFTOBJECTID LookUpFld
+NAVIGATIONMAP
+  ROW CategoryTrigger
+      LockBtn
+      ID_KeyTable           SKIP
+      ID_KeyTableScrollBar  SKIP
+  ROW LookUpFld
+  ROW NewKeyBtn
+END
+
 
 STRING ID TitleTemplateStr "Key ^0 of ^1"
 STRING ID EmptyTitleStr "New Key"
@@ -1533,6 +1548,21 @@ BEGIN
 	GRAFFITISTATEINDICATOR AT (152 150)
 END
 
+NAVIGATION ID KeyEditForm
+  INITIALSTATE kFrmNavHeaderFlagsObjectFocusStartState
+  INITIALOBJECTID    ID_KeyNameField
+  JUMPOBJECTID       DoneBtn
+  BOTTOMLEFTOBJECTID DoneBtn
+NAVIGATIONMAP
+  ROW CategoryTrigger
+      LockBtn
+  ROW ID_KeyNameField
+  ROW AccountField
+  ROW PaswordField
+  ROW DateTrigger
+  ROW ID_NotesField
+  ROW DoneBtn
+END
 
 FORM ID ID_PrefsForm AT (2 69 156 89)
 MODAL
@@ -1602,6 +1632,18 @@ BEGIN
 	graffitistateindicator at (140 prevtop)
 end
 
+NAVIGATION ID SetPasswdForm
+  INITIALSTATE kFrmNavHeaderFlagsObjectFocusStartState
+  INITIALOBJECTID    MasterKeyFld
+  JUMPOBJECTID       OkBtn
+  BOTTOMLEFTOBJECTID OkBtn
+NAVIGATIONMAP
+  ROW MasterKeyFld
+  ROW ConfirmFld
+  ROW OkBtn
+      CancelBtn
+END
+
 
 FORM ID GenerateForm AT (2 50 156 108)
 HELPID GenerateHelp
@@ -1651,6 +1693,18 @@ BEGIN
 	BUTTON "Cancel" CancelBtn AT (PREVRIGHT+6 PREVTOP AUTO AUTO)
 
 	GRAFFITISTATEINDICATOR AT (140 PREVTOP)
+END
+
+NAVIGATION ID UnlockForm
+  INITIALSTATE kFrmNavHeaderFlagsObjectFocusStartState
+  INITIALOBJECTID    MasterKeyFld
+  JUMPOBJECTID       UnlockBtn
+  BOTTOMLEFTOBJECTID UnlockBtn
+NAVIGATIONMAP
+  ROW MasterKeyFld
+  ROW VeilPasswordCheck
+  ROW UnlockBtn
+      CancelBtn
 END
 
 
@@ -2009,8 +2063,8 @@ END
 BITMAPFAMILYEX ID KeyBitmap
 COMPRESS
 BEGIN
-	BITMAP "keyring-22-1.pbm" BPP 1
-	BITMAP "keyring-22-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 1
+	BITMAP "keyring-32-1.pbm" BPP 1
+	BITMAP "keyring-32-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 1
 	BITMAP "keyring-64-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 2
 END
 
