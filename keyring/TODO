@@ -1,5 +1,11 @@
 -*- outline -*- 
 
+* Limit notes field
+
+The MemoPad app limits Memos to 4kb.
+
+* Implement our own encryption algorithm
+
 * Optionally check for password when entering the app, rather than when opening a key. 
 
 * Password persists

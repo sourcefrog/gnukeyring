@@ -19,6 +19,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/* FIXME: MemoPad limits memos to 4kb.  We should use that too, and
+ * make sure that we never write out more text than can be accepted. */
+
 #include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
