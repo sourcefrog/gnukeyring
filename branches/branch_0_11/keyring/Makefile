@@ -1,5 +1,5 @@
 # GNU Keyring for PalmOS
-# Copyright (C) 1999, 2000 by Martin Pool
+# Copyright (C) 1999, 2000 by Martin Pool <mbp@users.sourceforge.net>
 # $Id$
 
 APP             = keyring
@@ -49,7 +49,7 @@ CFLAGS          = -O3 -Wall -Winline -Wunused -W	\
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
-DOCS		= COPYING HACKING TODO TESTS 
+DOCS		= COPYING HACKING TESTS 
 # The web site is now maintained separately
 
 DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
@@ -90,9 +90,15 @@ $(BASE)-%.prc: %.resstamp $(EXE) $(DEF)
 
 dist: $(DIST_BALL)
 
+tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(DISTFILES)
-	$(TAR) -C .. -czf $(DIST_BALL) $(addprefix $(APP)/,$(DISTFILES))
+	rm -rf $(tmpdir)
+	mkdir -p $(tmpdir)/$(BASE)
+	cp --parents $(DISTFILES) $(tmpdir)/$(BASE)
+	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	ls -l $(DIST_BALL)
+	rm -fr $(tmpdir)
+
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
