@@ -65,16 +65,17 @@ static void Generate_LoadOrDefault(Int16 * plen,
 {
     Int16 data[2];
     Int16 version;
-    const UInt16 expectedSize = 2 * sizeof(Int16);
-    UInt16 size = expectedSize;
+    const Int16 expectedSize = 2 * sizeof(Int16);
+    Int16 size = expectedSize;
+    Int16 gotSize;
     
-    version = PrefGetAppPreferences(kKeyringCreatorID,
+    gotSize = PrefGetAppPreferences(kKeyringCreatorID,
 				    kGeneratePref,
 				    data,
 				    &size,
 				    true);
-    if (version == noPreferenceFound
-	|| version != kKeyringVersion
+    if (gotSize == noPreferenceFound
+	|| gotSize != expectedSize
 	|| size != expectedSize) {
 	*plen = 8;
 	*pclasses = kLower;
@@ -93,7 +94,7 @@ static void Generate_Save(Int16 len, Int16 classes) {
 
     PrefSetAppPreferences(kKeyringCreatorID,
 			  kGeneratePref,
-			  kKeyringVersion,
+			  kAppVersion,
 			  data,
 			  2*sizeof(Int16),
 			  true);

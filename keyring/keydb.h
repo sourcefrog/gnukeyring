@@ -19,22 +19,24 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-void KeyDB_SaveNewRecord(UnpackedKeyType const *unpacked, Char const *name);
-void KeyDB_UpdateRecord(UnpackedKeyType const *unpacked, UInt16 idx);
-void KeyDB_CreateAppInfo(void);
+Err KeyDB_CreateRingInfo(void);
 void KeyDB_SetPasswd(Char const *newPasswd);
 
 Err KeyDB_OpenExistingDB(DmOpenRef *dbp);
-Err KeyDB_CreateDB(DmOpenRef *dbp);
+Err KeyDB_CreateDB(void);
 Err KeyDB_MarkForBackup(DmOpenRef dbp);
+Err KeyDB_GetVersion(UInt16 *ver);
+Err KeyDB_SetVersion(void);
 
-Boolean KeyDB_IsInitRequired(void);
+extern Int16 gKeyDBCardNo;
+extern LocalID gKeyDBID;
+
+
+enum KeyDB_State KeyDB_Examine(void);
 Boolean KeyDB_Verify(Char const *guess);
-void KeyDB_RepositionRecord(Char * name, UInt16 * idx);
 #ifdef REALLY_OBLITERATE
 void UnpackedKey_Obliterate(UnpackedKeyPtr u);
 #endif /* REALLY_OBLITERATE */
 
 
-void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
-		      UInt8 const *key);
+Err KeyDB_CreateCategories(void);

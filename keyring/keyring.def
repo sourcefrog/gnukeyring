@@ -1,7 +1,7 @@
 // build-prc definition file for GNU Tiny Keyring
 // $Id$
 
-application { "Keyring" Gtkr }
+application { "Keyring" Gtkr ok-to-install-newer backup }
 
 
  

@@ -27,7 +27,8 @@
 #include "keyring.h"
 #include "uiutil.h"
 #include "passwd.h"
-
+#include "category.h"
+#include "listform.h"
 
 // =====================================================================
 // List form
@@ -38,20 +39,24 @@ static void ListForm_ListDraw(Int16 itemNum,
 {
     /* We keep deleted records at the end, so the first N records will
      * be ones we can draw. */
+
+    /* This could be faster if we remembered the current position and
+     * stepped forward to the next.  However it's not worth optimizing
+     * since it will likely change to be a table in the future. */
     MemHandle rec = 0;
     Char * recPtr = 0, *scrStr;
     UInt16 len;
     Char altBuf[30];
-    UInt16 recPos;
+    UInt16 idx;
 
     ErrFatalDisplayIf(!gKeyDB, __FUNCTION__ ": !gKeyDB");
     ErrFatalDisplayIf(itemNum > 10000, __FUNCTION__ ": unreasonable itemnum");
     
-    recPos = DmPositionInCategory(gKeyDB, itemNum, dmAllCategories);
-    if (recPos == dmMaxRecordIndex)
-	goto leave;
+    idx = DmPositionInCategory(gKeyDB, itemNum, gPrefs.category);
+    if (idx == dmMaxRecordIndex)
+	return;
 
-    rec = DmQueryRecord(gKeyDB, recPos);
+    rec = DmQueryRecord(gKeyDB, idx);
     if (!rec) {
 	scrStr = "<no-record>";
     } else { 
@@ -63,7 +68,7 @@ static void ListForm_ListDraw(Int16 itemNum,
 		// If there is no name, use the uniqueid instead
 		UInt32 uniqueID;
 	
-		DmRecordInfo(gKeyDB, itemNum, 0, &uniqueID, 0);
+		DmRecordInfo(gKeyDB, idx, 0, &uniqueID, 0);
 		altBuf[0] = 23;		// shortcut symbol
 		StrIToH(altBuf + 1, uniqueID);
 		scrStr = altBuf;
@@ -77,30 +82,29 @@ static void ListForm_ListDraw(Int16 itemNum,
 
     if (recPtr)
 	MemHandleUnlock(rec);
-    
- leave:
-    ;
 }
 
 
-static void ListForm_BuildChoices(ListPtr list) {
-    // DmNumRecordsInCategory doesn't count deleted records, which is what we
-    // need.
-    UInt16 numRows = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
-    LstSetListChoices(list, 0, numRows);
-    LstSetDrawFunction(list, ListForm_ListDraw);
+static void ListForm_FormOpen(void) {
+    FrmUpdateForm(FrmGetActiveFormID(), ~0);
+    FrmDrawForm(FrmGetActiveForm());
 }
 
 
-static void ListForm_FormOpen() {
-    FormPtr frm = FrmGetActiveForm();
-    ListPtr list = (ListPtr) UI_GetObjectByID(frm, KeysList);
-    UInt16 numRows = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
+static Boolean ListForm_Update(int updateCode) {
+    FormPtr		frm;
+    ListPtr		list;
+    UInt16		numRows;
     ScrollBarPtr 	scl;
     UInt16 		top, visRows, max;
+
+    frm = FrmGetActiveForm();
+    list = (ListPtr) UI_GetObjectByID(frm, KeysList);
+    numRows = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
     
-    ErrFatalDisplayIf(!list, "!listPtr");
-    ListForm_BuildChoices(list);
+    LstSetListChoices(list, 0, numRows);
+    LstSetDrawFunction(list, ListForm_ListDraw);
+
     visRows = LstGetVisibleItems(list);
     
     // Select most-recently-used record, if any.
@@ -123,7 +127,14 @@ static void ListForm_FormOpen() {
 
     SclSetScrollBar(scl, top, 0, max, visRows);
 
+    if (updateCode & updateCategory) {
+	// Set up the category name in the trigger
+	Category_UpdateName(frm, gPrefs.category);
+    }
+
     FrmDrawForm(frm);
+    
+    return true;
 }
 
 
@@ -139,7 +150,7 @@ static Boolean ListForm_ListSelect(EventPtr event) {
 }
 
 
-static void ListForm_NewKey() {
+static void ListForm_NewKey(void) {
     gKeyRecordIndex = kNoRecord;
     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
 	FrmGotoForm(KeyEditForm);
@@ -182,12 +193,20 @@ Boolean ListForm_HandleEvent(EventPtr event) {
 	    ListForm_NewKey();
 	    result = true;
 	    break;
+
+	case CategoryTrigger:
+	    Category_Selected(&gPrefs.category, true);
+	    break;
 	}
 	break;
 
     case frmOpenEvent:
 	ListForm_FormOpen();
 	result = true;
+	break;
+
+    case frmUpdateEvent:
+	result = ListForm_Update(event->data.frmUpdate.updateCode);
 	break;
 
     case lstSelectEvent:

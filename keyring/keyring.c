@@ -28,6 +28,7 @@
 #include "keydb.h"
 #include "passwd.h"
 #include "uiutil.h"
+#include "upgrade.h"
 #include "keyedit.h"
 #include "prefs.h"
 #include "listform.h"
@@ -55,72 +56,117 @@ UInt8		gRecordKey[kPasswdHashSize];
 
 
 
-void App_ReportSysError(Char const * func, int err) {
-    static Char buf[16];
+void App_ReportSysError(UInt16 msgID, Err err) {
+    Char buf[256];
 
-    StrIToA(buf, err);
-    FrmCustomAlert(SysErrAlert, func, buf, 0);
+    *buf = '\0';
+    SysErrString(err, buf, (UInt16) sizeof buf);
+    FrmCustomAlert(msgID, buf, 0, 0);
 }
 
 
-void App_LoadPrefs(void) {
-    Int16 version;
-    UInt16 size = sizeof(KeyringPrefsType);
+static void App_LoadPrefs(void) {
+    Int16 readBytes;
+    Int16 size = sizeof(KeyringPrefsType);
 
-    version = PrefGetAppPreferences(kKeyringCreatorID,
-				    kGeneralPref,
-				    &gPrefs, &size,
-				    true);
+    /* Set up the defaults first, then try to load over the top.  That
+     * way, if the structure is too short or not there, we'll be left
+     * with the defaults. */
 
-    if (version == noPreferenceFound
-	|| version != kKeyringVersion) {
-	gPrefs.timeoutSecs = 60;
-    }
+    gPrefs.timeoutSecs = 60;
+    gPrefs.category = dmAllCategories;
+    
+    PrefGetAppPreferences(kKeyringCreatorID,
+			  kGeneralPref,
+			  &gPrefs, &size,
+			  (Boolean) true);
 }
 
 
 void App_SavePrefs(void) {
     PrefSetAppPreferences(kKeyringCreatorID,
 			  kGeneralPref,
-			  kKeyringVersion,
+			  kAppVersion,
 			  &gPrefs,
-			  sizeof(KeyringPrefsType),
-			  true);
+			  (UInt16) sizeof(KeyringPrefsType),
+			  (Boolean) true);
 }
 
 
-Err App_Start() {
+static Boolean App_OfferUpgrade(void) {
+    return FrmAlert(UpgradeAlert) == 0;	/* button 0 = convert */
+}
+
+
+static Boolean App_TooNew(void) {
+    FrmAlert(TooNewAlert);
+    return false;
+}
+
+
+static Err App_PrepareDB(void) {
+    Err		err;
+    UInt16	ver;
+    
+    /* If the database doesn't already exist, then we require the user
+     * to set their password. */
+    err = KeyDB_OpenExistingDB(&gKeyDB);
+    if (err == dmErrCantFind) {
+	if ((err = KeyDB_CreateDB())
+	    || (err = KeyDB_OpenExistingDB(&gKeyDB))
+	    || (err = KeyDB_CreateRingInfo())
+	    || (err = KeyDB_CreateCategories()))
+	    goto failDB;
+	if (!SetPasswd_Run())
+	    return 1;
+    } else if (err) {
+	goto failDB;
+    } else {
+	/* So, we opened a database OK.  Now, is it old, new, or just right? */
+	if ((err = KeyDB_GetVersion(&ver)))
+	    goto failDB;
+	if (ver < kDatabaseVersion) {
+	    if (App_OfferUpgrade()) {
+		if ((err = UpgradeDB(ver)))
+		    return err;
+	    } else {
+		return 1;
+	    }
+	} else if (ver > kDatabaseVersion) {
+	    App_TooNew();
+	    return 1;
+	}
+    }
+
+    if ((err = KeyDB_MarkForBackup(gKeyDB)))
+	goto failDB;
+
+    return 0;
+
+
+ failDB:
+    App_ReportSysError(KeyDatabaseAlert, err);
+    return err;
+}
+
+
+static Err App_Start(void) {
     Err err;
 
     Unlock_Reset();
     App_LoadPrefs();
 
-    /* If the database doesn't already exist, then we require the user
-     * to set their password. */
-    err = KeyDB_OpenExistingDB(&gKeyDB);
-    if (err == dmErrCantFind) 
-	err = KeyDB_CreateDB(&gKeyDB);
-    if (err) {
-	App_ReportSysError(__FUNCTION__, err);
+    if ((err = App_PrepareDB()))
 	return err;
-    }
-
-    if (KeyDB_IsInitRequired()) {
-	KeyDB_CreateAppInfo();
-	if (!SetPasswd_Run())
-	    return 1;
-    }
-
-    if ((err = KeyDB_MarkForBackup(gKeyDB)))
-	return err;
-
+	   
     FrmGotoForm(ListForm);
   
     return 0;
 }
 
 
-void App_Stop(void) {
+static void App_Stop(void) {
+    App_SavePrefs();
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
 #ifdef ENABLE_OBLITERATE
@@ -169,7 +215,7 @@ static void App_EventLoop(void)
     UInt16			error;
 	
     do {
-	EvtGetEvent(&event, evtWaitForever);
+	EvtGetEvent(&event, (Int32) evtWaitForever);
 	
 	if (!SysHandleEvent(&event))
 	    if (!MenuHandleEvent(0, &event, &error))

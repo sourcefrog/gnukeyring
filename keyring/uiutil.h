@@ -25,6 +25,9 @@ FieldPtr UI_GetFocusObjectPtr(void);
 
 int UI_ScanForFirst(FormPtr frm, UInt16 const * map);
 void UI_ScanAndSet(FormPtr frm, UInt16 const *map, UInt16 value);
+void UI_SelectCategory(void);
 
 int UI_ScanUnion(FormPtr frm, UInt16 const * map);
 void UI_UnionSet(FormPtr frm, UInt16 const *map, UInt16 value);
+
+void UI_UpdateCategoryName(FormPtr frm, UInt16 category);
