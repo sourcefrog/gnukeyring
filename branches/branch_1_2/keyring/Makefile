@@ -69,8 +69,8 @@ JAVA		= java
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.2.2
-DEFINES		= -DkAppVersion=0x1022
+VERSION         = 1.2.3
+DEFINES		= -DkAppVersion=0x1023
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
@@ -99,6 +99,7 @@ BASE		= $(APP)-$(VERSION)
 DIST_BALL	= $(BASE).tar.gz
 DIST_ZIP	= $(BASE).zip
 DIST_NEWS	= $(BASE).news
+DIST_SIGS	= $(BASE).sig.zip
 TAR		= tar
 ZIP		= zip
 
@@ -116,6 +117,13 @@ LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it \
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
+DIST_BIN_SIG = $(patsubst %,%.sig,$(DIST_BIN) $(PRCS))
+DIST_BALL_SIG = $(patsubst %,%.sig,$(DIST_BALL))
+SSLEAYLIBS_SIG = $(patsubst %,%.sig,$(SSLEAYLIBS))
+SIGS = $(DIST_BIN_SIG) $(DIST_BALL_SIG) $(SSLEAYLIBS_SIG)
+
+
+
 
 default: $(BASE)-en.prc
 
@@ -134,7 +142,7 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
 
-dist: $(DIST_BALL) $(DIST_BIN) $(DIST_NEWS)
+dist: $(DIST_BALL) $(DIST_BIN) $(DIST_NEWS) $(DIST_SIGS)
 
 tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
@@ -150,9 +158,17 @@ $(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS)
 
 $(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
 	(cat NEWS ; md5sum $(PRCS) $(DIST_BALL) $(SSLEAYLIBS);echo ) > NEWS.tmp
+	rm -f $(DIST_NEWS)
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
 	@ls -l $(DIST_BIN) $(DIST_BALL)
+
+$(DIST_SIGS): $(SIGS)
+	$(ZIP) -jq9 $@ $^
+
+$(SIGS): %.sig: %
+	rm -f $@
+	gpg --detach-sign $*
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
