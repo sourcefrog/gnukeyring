@@ -35,6 +35,7 @@
 #include "passwd.h"
 #include "resource.h"
 #include "pwhash.h"
+#include "sesskey.h"
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
@@ -64,31 +65,6 @@ LocalID gKeyDBID;
  * that as record 0.  This is (I think) as close to atomic as we can
  * get under PalmOS.  It would be a bad thing if e.g. the system
  * crashed while we were changing it, and the session key was lost. */
-
-
-
-/*
- * Return a locked pointer to the ring info block stored in the
- * database's SortInfo pointer.
- *
- * XXX: It seems the SortInfo is not backed up (!!!) and so we can't
- * restore from backups.  Bugger.  */
-Err KeyDB_CreateRingInfo(void) {
-    LocalID		KeyringInfoID;
-    MemHandle		KeyringInfoHand;
-    Err			err;
-
-    KeyringInfoHand = DmNewHandle(gKeyDB, sizeof(KeyringInfoType));
-    KeyringInfoID = MemHandleToLocalID(KeyringInfoHand);
-    
-    if ((err = DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID,
-				 0, 0, 0, 0,
-				 0, 0, 0,
-				 0, &KeyringInfoID, 0, 0)))
-	return err;
-
-    return 0;
-}
 
 
 Err KeyDB_CreateCategories(void) {
@@ -128,12 +104,18 @@ Err KeyDB_CreateCategories(void) {
 
 /*
  * Set the master password for the database.  This is called after the
- * user has entered a new password and it has been properly checked.
+ * user has entered a new password and it has been properly checked,
+ * so all it has to do is the database updates.  This routine is also
+ * called when we're setting the initial master password for a newly
+ * created database.
+ *
+ * This routine must do two things: re-encrypt the session key and
+ * store it back, and store a check hash of the new password.
  */
 void KeyDB_SetPasswd(Char *newPasswd)
 {
+    SessKey_Store(newPasswd);
     PwHash_Store(newPasswd);
-/*      KeyDB_Reencrypt(newPasswd); */
     Unlock_PrimeTimer();
 }
 

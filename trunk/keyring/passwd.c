@@ -31,32 +31,13 @@
 #include "uiutil.h"
 #include "memutil.h"
 #include "pwhash.h"
+#include "crypto.h"
+#include "sesskey.h"
 
 static UInt32		gExpiry;
 
 // ======================================================================
 // Unlock form
-
-
-/* Store the hash of an entered correct password for later use in
- * decoding records. */
-static void Unlock_SetKey(Char const *passwd) {
-    Err		err;
-
-    if (!passwd)
-	passwd = "";
-
-    err = EncDigestMD5((void *) passwd, StrLen(passwd), gRecordKey);
-    if (err)
-	App_ReportSysError(CryptoErrorAlert, err);
-}
-
-
-#ifdef REALLY_OBLITERATE
-static void Unlock_ObliterateKey(void) {
-    MemSet(gRecordKey, kPasswdHashSize, 'x');
-}
-#endif
 
 
 void Unlock_Reset(void) {
@@ -90,7 +71,7 @@ Boolean UnlockForm_Run() {
 
 	    if (correct) {
 		Unlock_PrimeTimer();
-		Unlock_SetKey(entry);
+                SessKey_Load(entry);
 	    } else {
 		FrmAlert(WrongKeyAlert);
 	    }
