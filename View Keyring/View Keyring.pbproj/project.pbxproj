@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		080E96DAFE201CDB7F000001 = {
 			fileRef = 2A37F4B6FDCFA73011CA2CEA;
@@ -18,13 +18,16 @@
 			isa = PBXVariantGroup;
 			name = InfoPlist.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		089C1660FE840EACC02AAC07 = {
 			fileEncoding = 10;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/InfoPlist.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		089C1661FE840EACC02AAC07 = {
 			fileRef = 089C165FFE840EACC02AAC07;
@@ -50,12 +53,16 @@
 			isa = PBXGroup;
 			name = "Linked Frameworks";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		1058C7A7FEA54F5311CA2CBB = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		1058C7A8FEA54F5311CA2CBB = {
 			children = (
@@ -65,6 +72,7 @@
 			isa = PBXGroup;
 			name = "Other Frameworks";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		1058C7A9FEA54F5311CA2CBB = {
 			fileRef = 1058C7A7FEA54F5311CA2CBB;
@@ -83,9 +91,12 @@
 //173
 //174
 		1758732AFF379DA111CA2CBB = {
+			explicitFileType = wrapper.application;
+			fallbackIsa = PBXFileReference;
 			isa = PBXApplicationReference;
 			path = "View Keyring.app";
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 //170
 //171
@@ -104,6 +115,7 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //190
 //191
@@ -116,6 +128,10 @@
 //2A3
 //2A4
 		2A37F4A9FDCFA73011CA2CEA = {
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.7.sdk;
+			};
 			buildStyles = (
 				4A9504D0FFE6A4CB11CA0CBA,
 				4A9504D1FFE6A4CB11CA0CBA,
@@ -141,6 +157,7 @@
 			name = "View Keyring";
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4ABFDCFA73011CA2CEA = {
 			children = (
@@ -151,18 +168,23 @@
 			name = Classes;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4ACFDCFA73011CA2CEA = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = GtkrDocument.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4AEFDCFA73011CA2CEA = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = GtkrDocument.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4AFFDCFA73011CA2CEA = {
 			children = (
@@ -172,12 +194,15 @@
 			name = "Other Sources";
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4B0FDCFA73011CA2CEA = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = main.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4B6FDCFA73011CA2CEA = {
 			children = (
@@ -187,12 +212,15 @@
 			name = MainMenu.nib;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4B7FDCFA73011CA2CEA = {
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/MainMenu.nib;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4B8FDCFA73011CA2CEA = {
 			children = (
@@ -214,6 +242,7 @@
 			name = Resources;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4C3FDCFA73011CA2CEA = {
 			children = (
@@ -224,18 +253,25 @@
 			name = Frameworks;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		2A37F4C4FDCFA73011CA2CEA = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = AppKit.framework;
 			path = /System/Library/Frameworks/AppKit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		2A37F4C5FDCFA73011CA2CEA = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		2A37F4C6FDCFA73011CA2CEA = {
 			buildPhases = (
@@ -406,7 +442,12 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				OPTIMIZATION_CFLAGS = "-O0";
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -416,6 +457,8 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -433,8 +476,10 @@
 		6738159E041CEDDD0090EE6E = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = README;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		67953B0D041CE90B00199361 = {
 			children = (
@@ -444,13 +489,17 @@
 			name = "View Keyring Help";
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		67953B0E041CE90B00199361 = {
+			fallbackIsa = PBXFileReference;
 			includeInIndex = 1;
 			isa = PBXFolderReference;
+			lastKnownFileType = folder;
 			name = English;
 			path = "English.lproj/View Keyring Help";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		67953B10041CE90B00199361 = {
 			fileRef = 67953B0D041CE90B00199361;
@@ -460,8 +509,10 @@
 		};
 		67D3C0A20417DEB000095AE4 = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
 			path = Keyring.icns;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		67D3C0A30417DEB000095AE4 = {
 			fileRef = 67D3C0A20417DEB000095AE4;
@@ -471,8 +522,10 @@
 		};
 		67D3C0A40417DED400095AE4 = {
 			isa = PBXFileReference;
+			lastKnownFileType = file;
 			path = Keyring.psd;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //670
 //671
@@ -487,14 +540,18 @@
 		F508A9300397C64501A8010A = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = PrefsController.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F508A9310397C64501A8010A = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = PrefsController.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F508A9320397C64501A8010A = {
 			fileRef = F508A9300397C64501A8010A;
@@ -511,8 +568,10 @@
 		F508A9340397C6D901A8010A = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist;
 			path = defaults.plist;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F508A9350397C6D901A8010A = {
 			fileRef = F508A9340397C6D901A8010A;
@@ -528,12 +587,15 @@
 			name = Preferences.nib;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5123F260397F6DB01A8010A = {
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/Preferences.nib;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5123F270397F6DC01A8010A = {
 			fileRef = F5123F250397F6DB01A8010A;
@@ -549,12 +611,15 @@
 			name = GtkrDocument.nib;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5123F350397FB2401A8010A = {
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/GtkrDocument.nib;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5123F360397FB2401A8010A = {
 			fileRef = F5123F340397FB2401A8010A;
@@ -565,14 +630,18 @@
 		F53ECB5B02D83A5101668B0C = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = PDB.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F53ECB5C02D83A5101668B0C = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = PDB.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F53ECB5D02D83A5101668B0C = {
 			fileRef = F53ECB5B02D83A5101668B0C;
@@ -588,13 +657,17 @@
 		};
 		F5450DAE02CA52AF017D0FEF = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = Locked.tiff;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F5450DAF02CA52AF017D0FEF = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = Unlocked.tiff;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F5450DB002CA52AF017D0FEF = {
 			fileRef = F5450DAE02CA52AF017D0FEF;
@@ -622,6 +695,7 @@
 			isa = PBXGroup;
 			name = Controllers;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F55F7FCD02D9D5F901170456 = {
 			children = (
@@ -633,6 +707,7 @@
 			isa = PBXGroup;
 			name = Models;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F55F7FCE02D9D5F901170456 = {
 			children = (
@@ -643,18 +718,23 @@
 			name = Categories;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5A2A9D002BDAB4B014C1FA8 = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = AppController.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5A2A9D102BDAB4B014C1FA8 = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = AppController.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5A2A9D202BDAB4B014C1FA8 = {
 			fileRef = F5A2A9D002BDAB4B014C1FA8;
@@ -671,14 +751,18 @@
 		F5BBF1A502CF885A010205B6 = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = DataAdditions.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5BBF1A602CF885A010205B6 = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = DataAdditions.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5BBF1A702CF885A010205B6 = {
 			fileRef = F5BBF1A502CF885A010205B6;
@@ -695,14 +779,18 @@
 		F5CC869F03A0926801A8010A = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = AboutController.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5CC86A003A0926801A8010A = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = AboutController.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5CC86A103A0926801A8010A = {
 			fileRef = F5CC869F03A0926801A8010A;
@@ -724,12 +812,15 @@
 			name = About.nib;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5CC86A403A0978701A8010A = {
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/About.nib;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5CC86A503A0978701A8010A = {
 			fileRef = F5CC86A303A0978701A8010A;
@@ -740,14 +831,18 @@
 		F5CF0F4902CE107B0145D358 = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = Keyring.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5CF0F4A02CE107B0145D358 = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = Keyring.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5CF0F4B02CE107B0145D358 = {
 			fileRef = F5CF0F4902CE107B0145D358;
@@ -763,9 +858,11 @@
 		};
 		F5D6A47D032395AC01A0EC02 = {
 			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
 			name = libcrypto.dylib;
 			path = /usr/lib/libcrypto.dylib;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F5D6A47E032395AC01A0EC02 = {
 			fileRef = F5D6A47D032395AC01A0EC02;
@@ -781,13 +878,16 @@
 			name = Localizable.strings;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5E2C81102D0D61A01296BC8 = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/Localizable.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5E2C81202D0D61A01296BC8 = {
 			fileRef = F5E2C81002D0D61A01296BC8;
