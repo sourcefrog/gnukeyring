@@ -65,6 +65,7 @@
 typedef struct {
     UInt32		timeoutSecs;
     UInt16		category;
+    Boolean		useCustomFonts;
 } KeyringPrefsType;
 
 typedef KeyringPrefsType *KeyringPrefsPtr;

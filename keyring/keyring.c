@@ -45,6 +45,7 @@ static void App_LoadPrefs(void) {
 
     gPrefs.timeoutSecs = 60;
     gPrefs.category = dmAllCategories;
+    gPrefs.useCustomFonts = false;
     
     version = PrefGetAppPreferences(kKeyringCreatorID,
 				    kGeneralPref,
@@ -71,24 +72,41 @@ static void App_SavePrefs(void)
 			  (Boolean) true);
 }
 
+void App_LoadFonts(void)
+{
+    if (handleFontStar == NULL) {
+	handleFontStar = DmGetResource('NFNT', StarFont);
+	FntDefineFont(fntStar, (FontPtr)MemHandleLock(handleFontStar));
+	handleFontPW = DmGetResource('NFNT', PasswordFont);
+	FntDefineFont(fntPassword, (FontPtr)MemHandleLock(handleFontPW));
+    }
+}
+
+void App_ReleaseFonts(void)
+{
+    if (handleFontStar != NULL) {
+	MemHandleUnlock(handleFontStar);
+	DmReleaseResource(handleFontStar);
+	MemHandleUnlock(handleFontPW);
+	DmReleaseResource(handleFontPW);
+    }
+}
+
 
 
 static Err App_Start(void)
 {
     Err err;
 
-    handleFontStar = DmGetResource('NFNT', StarFont);
-    FntDefineFont(fntStar, (FontPtr)MemHandleLock(handleFontStar));
-    handleFontPW = DmGetResource('NFNT', PasswordFont);
-    FntDefineFont(fntPassword, (FontPtr)MemHandleLock(handleFontPW));
-
     App_LoadPrefs();
+    if (gPrefs.useCustomFonts)
+	App_LoadFonts();
 
     if ((err = Snib_Init()))
 	return err;
 
     if ((err = KeyDB_Init()))
-        return err;
+	return err;
 
     Secrand_Init();
     FrmGotoForm(ListForm);
@@ -107,11 +125,7 @@ static void App_Stop(void)
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
     DmCloseDatabase(gKeyDB);
-
-    MemHandleUnlock(handleFontStar);
-    DmReleaseResource(handleFontStar);
-    MemHandleUnlock(handleFontPW);
-    DmReleaseResource(handleFontPW);
+    App_ReleaseFonts();
 }
 
 
@@ -152,7 +166,7 @@ static void App_EventLoop(void)
 {
     EventType	event;
     UInt16			error;
-	
+    
     do {
 	EvtGetEvent(&event, (Int32) evtWaitForever);
 	Secrand_AddEventRandomness(&event);
@@ -237,7 +251,7 @@ static Err RomVersionCompatible (void)
 	if (romVersion < 0x02000000)
 	    AppLaunchWithCommand(sysFileCDefaultApp, 
 				 sysAppLaunchCmdNormalLaunch, NULL);
-        return sysErrRomIncompatible;
+	return sysErrRomIncompatible;
     }
     
     return 0;

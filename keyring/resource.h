@@ -92,6 +92,7 @@
 #define CategoryList			1243
 #define VeilPasswordCheck		1244
 #define LookUpFld			1245
+#define KeyringFontsCheck		1246
 
 #define AboutCmd			1300
 #define ChecksumCmd			1303

@@ -37,6 +37,7 @@ void PrefsForm_Run(void)
 {
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(ID_PrefsForm);
+    ControlPtr  fontsCtl;
     UInt16	btn;
     Int16	chosen;
     
@@ -48,7 +49,10 @@ void PrefsForm_Run(void)
 	-1
     };
 
+    fontsCtl = UI_GetObjectByID(frm, KeyringFontsCheck);
+
     UI_ScanAndSet(frm, map, gPrefs.timeoutSecs);
+    CtlSetValue(fontsCtl, gPrefs.useCustomFonts);
 
     btn = FrmDoDialog(frm);
 
@@ -60,6 +64,10 @@ void PrefsForm_Run(void)
 	gPrefs.timeoutSecs = chosen;
 	Snib_TimeoutChanged();
     }
+
+    gPrefs.useCustomFonts = CtlGetValue(fontsCtl);
+    if (gPrefs.useCustomFonts)
+	App_LoadFonts();
     
  leave:
     FrmDeleteForm(frm);
