@@ -87,64 +87,6 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
 
 
 
-
-
-#if 0
-static void ListForm_ListDraw(Int16 itemNum,
-                              RectanglePtr bounds,
-                              Char * UNUSED(*data))
-{
-    /* We keep deleted records at the end, so the first N records will
-     * be ones we can draw. */
-
-    /* This could be faster if we remembered the current position and
-     * stepped forward to the next.  However it's not worth optimizing
-     * since it will likely change to be a table in the future. */
-    MemHandle   rec = 0;
-    Char       *recPtr = 0, *scrStr;
-    UInt16      len;
-    Char        altBuf[10];
-    Int16       idx;
-
-    ErrFatalDisplayIf(itemNum > 10000, __FUNCTION__ ": unreasonable itemnum");
-
-    idx = ListForm_RecordIdx(itemNum);
-    if (idx == -1) {
-        scrStr = "<err>";
-        goto draw;
-    }
-
-    rec = DmQueryRecord(gKeyDB, idx);
-    if (!rec) {
-        scrStr = "<no-record>";
-        goto draw;
-    }
-    
-    recPtr = MemHandleLock(rec);
-    if (!recPtr) {
-        scrStr = "<no-ptr>";
-        goto draw;
-    }
-    
-    if (!*recPtr) {
-        // If there is no name, use the record index instead
-        altBuf[0] = '#';
-        StrIToA(altBuf + 1, idx);
-        scrStr = altBuf;
-    } else {
-        scrStr = recPtr;
-    }
-
- draw:
-    len = StrLen(scrStr);
-    WinDrawChars(scrStr, len, bounds->topLeft.x, bounds->topLeft.y);
-    
-    if (recPtr)
-        MemHandleUnlock(rec);
-}
-#endif
-
-
 static void ListForm_DrawCell(TablePtr UNUSED(table),
                               Int16 row, Int16 UNUSED(col), 
                               RectanglePtr bounds)
@@ -300,44 +242,6 @@ static void ListForm_FormOpen(void) {
 }
 
 
-#if 0
-static Boolean ListForm_Update(int updateCode) {
-    FormPtr             frm;
-    ListPtr             list;
-    UInt16              top, visRows, max;
-
-    frm = FrmGetActiveForm();
-    list = (ListPtr) UI_GetObjectByID(frm, KeysList);
-    ListForm_CountNumListed();
-    
-    LstSetListChoices(list, 0, f_NumListed);
-    LstSetDrawFunction(list, ListForm_ListDraw);
-
-    // Select most-recently-used record, if any.
-    if (gKeyPosition >= f_NumListed) {
-        gKeyPosition = gKeyRecordIndex = kNoRecord;
-        top = 0;
-    } else {
-        Int16 listItem = gKeyPosition - Keys_IdxOffsetReserved();
-        LstSetSelection(list, listItem);
-        LstMakeItemVisible(list, listItem);
-        top = list->topItem;
-    }
-
-    ListForm_InitScrollBar();
-
-    if (updateCode & updateCategory) {
-        // Set up the category name in the trigger
-        Category_UpdateName(frm, gPrefs.category);
-    }
-
-    FrmDrawForm(frm);
-    
-    return true;
-}
-#endif
-
-
 static Boolean ListForm_TableSelect(EventPtr event)
 {
     Int16       listIdx, idx;
@@ -359,30 +263,6 @@ static Boolean ListForm_TableSelect(EventPtr event)
     }
     return true;
 }
-
-
-#if 0
-static Boolean ListForm_ListSelect(EventPtr event) {
-    Int16       listIdx, idx;
-    Err         err;
-    if (event->data.lstSelect.listID != KeysList)
-        return false;
-
-    if (Unlock_CheckTimeout() || UnlockForm_Run()) {
-        /* Map from a position within this category to an overall
-         * record index. */
-        listIdx = event->data.lstSelect.selection
-             + Keys_IdxOffsetReserved();
-        idx = 0;
-        err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
-                                     dmSeekForward, gPrefs.category);
-        gKeyRecordIndex = idx;
-        gKeyPosition = listIdx;
-        FrmGotoForm(KeyEditForm);
-    }
-    return true;
-}
-#endif
 
 
 static void ListForm_NewKey(void) {
