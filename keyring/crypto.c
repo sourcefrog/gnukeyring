@@ -28,49 +28,18 @@
 
 #ifndef DISABLE_DES
 
-/*
- * Decrypt or encrypt a block using the session key, which must already be
- * unlocked.
- */
-static Err DES3_Block(void const *from, void *to, Boolean encrypt,
-                      UInt8 *cryptKey)
-{
-    Err err;
-    char other[kDESBlockSize];
-    UInt8 *kp;
-
-    kp = cryptKey;
-    ErrFatalDisplayIf(!kp, "record key unready");
-    err = EncDES((UInt8 *) from, kp, to, encrypt);
-    if (err)
-        return err;
-
-    kp = cryptKey + kDESKeySize;
-    err = EncDES((UInt8 *) to, kp, other, !encrypt);
-    if (err)
-        return err;
-    
-    kp = cryptKey;
-    err = EncDES((UInt8 *) other, kp, to, encrypt);
-    if (err)
-        return err;
-
-    return 0;
-}
-
 
 Err DES3_Read(void * from, void * to, UInt32 len, UInt8 *cryptKey)
 {
-    Err		err = 0;
+    des_key_schedule ks1, ks2;
 
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
+    des_set_key((char*)cryptKey, ks1);
+    des_set_key((char*)cryptKey + DES_KEY_SZ, ks2);
 
     do {
-	if ((err = DES3_Block(from, to, false, cryptKey))) {
-	    UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
-	    return err;
-	}
+	des_ecb2_encrypt(from, to, ks1, ks2, false);
 
 	to += kDESBlockSize;
 	from += kDESBlockSize;
@@ -85,16 +54,15 @@ Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len,
                UInt8 *cryptKey)
 {
     UInt8	third[kDESBlockSize];
-    Err		err = 0;
+    des_key_schedule ks1, ks2;
 
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
+    des_set_key(cryptKey, ks1);
+    des_set_key(cryptKey + DES_KEY_SZ, ks2);
 
     do {
-	if ((err = DES3_Block(from, third, true, cryptKey))) {
-	    UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
-	    return err;
-	}
+	des_ecb2_encrypt(from, third, ks1, ks2, true);
 
         DmWrite(recPtr, off, third, kDESBlockSize);
 

@@ -373,9 +373,7 @@ static void Secrand_ExtractEntropy(UInt8 buf[HASH_BUFFER_SIZE])
     UInt16 i;
 
     Secrand_AddTickRandomness();
-    err = EncDigestMD5((UInt8 *)g_RandomState.pool, POOLWORDS * 4, digest);
-    if (err)
-	UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
+    MD5((UInt8 *)g_RandomState.pool, POOLWORDS * 4, digest);
 
     /*
      * The following code does two separate things that happen

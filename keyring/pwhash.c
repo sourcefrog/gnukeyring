@@ -51,7 +51,6 @@
  */
 static Err PwHash_Calculate(UInt8 *digest, UInt32 salt, Char *passwd)
 {
-    Err		err;
     UInt8	buffer[kMessageBufSize];
 
     /* Generate salt. */
@@ -60,12 +59,7 @@ static Err PwHash_Calculate(UInt8 *digest, UInt32 salt, Char *passwd)
     
     StrNCopy(buffer + kSaltSize, passwd, kMessageBufSize - 1 - kSaltSize);
 
-    err = EncDigestMD5(buffer, kMessageBufSize, digest);
-    if (err) {
-	MemSet(buffer, kMessageBufSize, 0);
-	UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
-	return err;
-    }
+    MD5(buffer, kMessageBufSize, digest);
 
     return 0;
 }
