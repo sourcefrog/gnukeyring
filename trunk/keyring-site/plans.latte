@@ -1,0 +1,68 @@
+{\page 
+  \pageid=plan \pagetitle=plan
+  \rcsid=\"$Id$\"
+{
+  {\h2 development plan}
+
+  {\h3 0.13.0}
+
+  {\ul
+   {\li Fix the {\buglink \bugid=106167 backup and restore bug} in
+   0.11 }
+   {\li If possible, provide a script to recover data mangled by the
+   backup/restore bug}
+   {\li Fix the {\buglink \bugid=100727 resizing record bug}}
+   {\li Display a warning about beta status at startup}
+   {\li If the version of PalmOS does not have the necessary features
+   then display an apology rather than just crashing.}
+   {\li Use PalmOS memory debugging features}
+   {\li Change database format again to v2, with the session key and
+        master password hash stored in hidden records.}
+   {\li Support categories (this was in 0.11, but caused the
+   backup/restore bug).}
+   {\li For records with no public name, show them in the list by
+   their index number rather than a unique hex string.}
+   {\li Discard empty records.}
+   {\li Add an Edit/Undo All feature.}
+   {\li Show homepage URL in the About box.}
+  }
+
+  {\h3 Later versions}
+
+  {\ul 
+    {\li Beaming of records, or whole categories of records}
+    {\li Choose from the PalmOS standard fonts}
+    {\li Variable size fields in the edit screen (like Address Book),
+      or buttons to zoom onto fields so that longer entries may be
+      edited (like Mail)}
+    {\li Import from Memo Pad}
+    {\li Lock timeout should be independent of the handheld being 
+     switched off or of switching to other applications} 
+    {\li Optionally {\buglink \buglink=109050 hide passwords as 
+      they are entered}.  Perhaps
+      display just a single character as Grafitti confirmation.}
+    {\li Support PalmOS global Find.}
+    {\li Reminders to change passwords.}
+    {\li Automatically update the last-modified-date when the record
+     is changed.}
+    {\li More national language translations, or translations of these
+    web pages.  Volunteers?}
+  }
+
+  {\h3 Possibilities}
+  ({\externallink \href={http://sourceforge.net/bugs/?group_id=306}
+    Add your comments} if you want them!)
+
+  {\ul
+    {\li Provide a custom font that makes the small letter l and the large
+    letter I are distinguishable in passwords. }
+    {\li Provide our own implementation of the encryption and checksum
+       code so that Keyring can run on PalmOS 2.0.}
+    {\li Import/Export whole categories}
+    {\li Provide a GNOME PC interface}
+    {\li Keep multiple key databases on the same handheld and choose
+    between them, and choose which memory card to use when creating a
+    new db.}
+  }
+}
+}
