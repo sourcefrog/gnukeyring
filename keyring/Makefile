@@ -67,8 +67,8 @@ JAVA		= java
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.2
-DEFINES		= -DkAppVersion=0x1020
+VERSION         = 1.2.1
+DEFINES		= -DkAppVersion=0x1021
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
