@@ -79,6 +79,7 @@ BEGIN
   "Delete Key" = "キーの削除"
   "Delete current key record?" = "現在のキーを削除しますか？"
 
+  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
   "@@BetaVersion"
    = "これはKeyringのベータテストバージョンです。バグがある可能\性があります。かならず別の媒体にも保管してください。"
 

@@ -28,16 +28,18 @@ void Search(FindParamsPtr findParams, Boolean hasGlobals)
     UInt16 recordNum;
     UInt8 checkEventCounter = 16;
     MemHandle handle;
-    Char *rec;
+    FieldHeaderType *fldHeader;
+    UInt16 fldIndex;
     UInt32 pos;
     UInt16 len;
     LocalID dbID;
     Int16 cardNo;
     RectangleType r;
     Boolean hasSnib = false;
-    CryptoKey encryptionKey;
+    CryptoKey *encryptionKey = NULL;
     Int16 matchField;
-
+    Char *text;
+ 
     findParams->more = true;
 
     /* We open database readonly and assume latest version. */
@@ -63,6 +65,7 @@ void Search(FindParamsPtr findParams, Boolean hasGlobals)
 	 * So we only allow searching the full database when the find
 	 * dialog was invoked within keyring.
 	 */
+	encryptionKey = MemPtrNew(sizeof(CryptoKey));
 	hasSnib = Snib_RetrieveKey(encryptionKey);
     }
     recordNum = findParams->recordNum;
@@ -84,58 +87,59 @@ void Search(FindParamsPtr findParams, Boolean hasGlobals)
 	    break;
 	}
 	
-	rec = MemHandleLock(handle);
 	matchField = -1;
 	if (hasSnib) {
-	    UnpackedKeyType unpacked;
-	    Keys_UnpackRecord(rec, &unpacked, encryptionKey);
-	    if (unpacked.nameHandle) {
-		if (TxtGlueFindString(MemHandleLock(unpacked.nameHandle),
-				      findParams->strToFind, &pos, &len))
-		    matchField = 0;
-		MemHandleUnlock(unpacked.nameHandle);
-	    }
-	    if (matchField < 0 && unpacked.acctHandle)
-	    {
-		if (TxtGlueFindString(MemHandleLock(unpacked.acctHandle),
-				      findParams->strToFind, &pos, &len))
-		    matchField = 1;
-		MemHandleUnlock(unpacked.acctHandle);
-	    }
-	    if (matchField < 0 && unpacked.passwdHandle)
-	    {
-		if(TxtGlueFindString(MemHandleLock(unpacked.passwdHandle),
-				     findParams->strToFind, &pos, &len))
-		    matchField = 2;
-		MemHandleUnlock(unpacked.passwdHandle);
-	    }
-	    if (matchField < 0 && unpacked.notesHandle)
-	    {
-		if (TxtGlueFindString(MemHandleLock(unpacked.notesHandle), 
-				      findParams->strToFind, &pos, &len))
-		    matchField = 3;
-		MemHandleUnlock(unpacked.notesHandle);
-	    }
-	    UnpackedKey_Free(&unpacked);
-	} 
-	else if (TxtGlueFindString(rec, findParams->strToFind, &pos, &len))
-	    matchField = 0;
+	    UnpackedKeyType *unpacked;
+	    Record_Unpack(handle, &unpacked, encryptionKey);
+	    for (fldIndex = 0; 
+		 matchField < 0 && fldIndex < unpacked->numFields; 
+		 fldIndex++) {
+		fldHeader = (FieldHeaderType *)
+		    (unpacked->plainText + unpacked->fieldOffset[fldIndex]);
 
-	MemHandleUnlock(handle);
+		if (fldHeader->fieldID < 3 || fldHeader->fieldID == 255) {
+		    char tmp;
+		    text = (char*) (fldHeader + 1);
+		    tmp = text[fldHeader->len];
+		    text[fldHeader->len] = 0;
+		    if (TxtGlueFindString((char*) (fldHeader + 1),
+					  findParams->strToFind, &pos, &len))
+			matchField = fldIndex;
+		    text[fldHeader->len] = tmp;
+		}
+	    }
+	    Record_Free(unpacked);
+	} else {
+	    fldHeader = MemHandleLock(handle);
+	    text = MemPtrNew(fldHeader->len + 1);
+	    if (text) {
+		MemMove(text, (char *) (fldHeader + 1), fldHeader->len);
+		text[fldHeader->len] = 0;
+		if (TxtGlueFindString(text, findParams->strToFind, &pos, &len))
+		    matchField = 0;
+		MemPtrFree(text);
+	    }
+	    MemHandleUnlock(handle);
+	}
 
 	if (matchField >= 0) {
 	    if (FindSaveMatch(findParams, recordNum, pos, matchField, len, 
 			      cardNo, dbID))
 		break;
 
+	    fldHeader = MemHandleLock(handle);
 	    FindGetLineBounds(findParams, &r);
-	    ListForm_DrawToFit(rec, recordNum, 
+	    ListForm_DrawToFit((char*) (fldHeader + 1), fldHeader->len,
 			       r.topLeft.x, r.topLeft.y, r.extent.x);
 	    findParams->lineNumber++;
+	    MemHandleUnlock(handle);
 	}
 	recordNum++;
     }
+    if (encryptionKey) {
+	CryptoDeleteKey(encryptionKey);
+	MemPtrFree(encryptionKey);
+    }
 
-    MemSet(encryptionKey, sizeof(encryptionKey), 0);
     DmCloseDatabase(keyDB);
 }

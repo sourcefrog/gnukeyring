@@ -3,8 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
- * Copyright (C) 2002-2003 Jochen Hoenicke <hoenicke@users.sourceforge.net>
+ * Copyright (C) 2003 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +20,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-typedef struct {
-    UInt16 cipher;
-    UInt16 blockSize;
-    union {
-	des_key_schedule des[3];
-	struct {
-	    aes_ctx enc;
-	    aes_ctx dec;
-	    UInt16  refNum;
-	} aes;
-    } key;
-} CryptoKey;
+#define kSHA1HashSize            20
+#define kSHA1BlockSize           64
+
+typedef struct SHAstate_st
+{
+    UInt32 dig[5];
+    UInt32 len,lenHi;
+    UInt32 data[kSHA1BlockSize/sizeof(UInt32)];
+} SHA_CTX;
+
+SHA1_SECTION void 
+SHA1_Block (const UInt32 *digin, UInt32 *buffer, UInt32 *digout);

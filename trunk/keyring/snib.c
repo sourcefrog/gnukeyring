@@ -39,11 +39,14 @@
  * ideally there would be some kind of cross-checking between them.
  */
 
-
-
-#define k_SnibDBName "Keys-Gtkr-Temp"
 #define k_SnibFtrId 'Sn'
 #define k_SnibVersion 2
+
+typedef struct {
+    SnibType  snib;
+    UInt32    expiryTime;
+    Boolean   keepWhileBusy;
+} FtrSnibType, *FtrSnibPtr;
 
 /*
  * We store the unlocked session key in a temporary database
@@ -51,16 +54,6 @@
  */
 Err Snib_Init(void)
 {
-#ifndef NO_DELETE_OLD_KEY
-    {
-	 Int16   cardNo = 0;
-	 LocalID dbID;
-	 /* Remove old key Database */
-	 dbID = DmFindDatabase(cardNo, k_SnibDBName);
-	 if (dbID)
-	      DmDeleteDatabase(cardNo, dbID);
-    }
-#endif
     return errNone;
 }
 
@@ -73,15 +66,20 @@ Err Snib_Init(void)
 void Snib_Eradicate(void)
 {
     Err err;
-    SnibPtr snib;
+    FtrSnibPtr snib;
 
     err = FtrGet(kKeyringCreatorID, k_SnibFtrId, (UInt32*) &snib);
     if (err == ftrErrNoSuchFeature)
 	/* Key was already removed */
 	return;
 
+    /* Because Gremlins are bad in guessing passwords :) and very fast
+     * in locking the database, never erase the snib for gremlin tests.
+     */
+#ifndef GREMLINS
+
     if (!err) {
-	err = MemSet(snib, sizeof (SnibStruct), 0);
+	err = MemSet(snib, sizeof (FtrSnibType), 0);
 	if (!err) {
 	    err = MemPtrFree(snib);
 	    if (!err)
@@ -114,12 +112,13 @@ void Snib_Eradicate(void)
 	    && FrmGetActiveFormID() == ListForm)
 	    FrmUpdateForm(ListForm, frmRedrawUpdateCode);
     }
+#endif
 }
 
-SnibPtr Snib_GetSnib(Boolean create)
+static FtrSnibPtr Snib_GetSnib(Boolean create)
 {
     Err err;
-    SnibPtr snib;
+    FtrSnibPtr snib;
 
     err = FtrGet(kKeyringCreatorID, k_SnibFtrId, (UInt32*) &snib);
     if (!err)
@@ -127,7 +126,7 @@ SnibPtr Snib_GetSnib(Boolean create)
     if (!create)
 	return NULL;
 
-    snib = MemPtrNew (sizeof (SnibStruct));
+    snib = MemPtrNew (sizeof (FtrSnibType));
     if (snib == NULL)
 	err = memErrNotEnoughSpace;
     else
@@ -145,7 +144,7 @@ SnibPtr Snib_GetSnib(Boolean create)
 /*
  * Set a new expiry time.
  */
-static void Snib_ResetTimer(SnibPtr snib)
+static void Snib_ResetTimer(FtrSnibPtr snib)
 {
     UInt16  cardNo;
     LocalID dbID;
@@ -156,20 +155,30 @@ static void Snib_ResetTimer(SnibPtr snib)
 }
 
 /*
+ * Called when ever a pen or hard key event happens.  This updates the
+ * snib timeout if requested.
+ */
+void Snib_Event(void)
+{
+    FtrSnibPtr snib = Snib_GetSnib(false);
+    if (snib && snib->keepWhileBusy) {
+	Snib_ResetTimer(snib);
+    }
+}
+
+/*
  * Store the record key (hash of master password) for use later in
  * this session.  Also resets the timer.
  */
-void Snib_StoreRecordKey(UInt8 *newHash)
+void Snib_StoreRecordKey(SnibType *newHash)
 {
-    Err err;
-
     if (gPrefs.timeoutSecs) {
-	SnibPtr snib = Snib_GetSnib (true);
-	
-	err = MemMove(snib->recordKey, newHash, k2DESKeySize);
-	if (err)
-	    UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
-	
+	FtrSnibPtr snib = Snib_GetSnib (true);
+	if (!snib)
+	    return;
+
+	MemMove(&snib->snib, newHash, kSnibSize);
+	snib->keepWhileBusy = gPrefs.keepSnibWhileBusy;
 	Snib_ResetTimer(snib);
     }
 }
@@ -180,9 +189,15 @@ void Snib_TimeoutChanged(void)
     if (gPrefs.timeoutSecs == 0) {
 	Snib_Eradicate ();
     } else {
-	SnibPtr snib = Snib_GetSnib(false);
-	if (snib && TimGetSeconds() + gPrefs.timeoutSecs < snib->expiryTime)
+	FtrSnibPtr snib = Snib_GetSnib(false);
+	if (!snib)
+	    return;
+	if (snib->keepWhileBusy) {
+	    snib->keepWhileBusy = gPrefs.keepSnibWhileBusy;
 	    Snib_ResetTimer(snib);
+	} else if (TimGetSeconds() + gPrefs.timeoutSecs < snib->expiryTime) {
+	    Snib_ResetTimer(snib);
+	}
     }
 }
 
@@ -190,16 +205,17 @@ void Snib_TimeoutChanged(void)
 /**
  * Retrieve the key hash from the snib if it exists, and return TRUE.
  * Otherwise, return FALSE.
- **/
-Boolean Snib_RetrieveKey(CryptoKey keyHash)
+ */
+Boolean Snib_RetrieveKey(CryptoKey *keyHash)
 {
-    SnibPtr snib;
+    FtrSnibPtr snib;
 
     snib = Snib_GetSnib(false);
     if (snib == NULL)
 	return false;
 
-    if (keyHash)
-	CryptoPrepareKey(snib->recordKey, keyHash);
+    if (!PwHash_CheckSnib(&snib->snib, keyHash))
+	return false;
+
     return true;
 }

@@ -21,16 +21,4 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* The Snib contains a DES3-EDE key that will be used to encrypt and
- * decrypt the records.  It's read out of the hidden record when the
- * user's password is entered, and is stored in a special place.
- */
 
-/*
- * There is only one record in this database, and it contains this
- * structure.
- */
-typedef struct {
-    UInt32    expiryTime;
-    UInt8     recordKey[k2DESKeySize];
-} SnibStruct, *SnibPtr;

@@ -24,23 +24,19 @@
 
 // in-memory unpacked form of a key record
 typedef struct {
-    /* Length of corresponding string fields, not including the
-     * terminating NUL that is present inside the memory blocks. */
-    UInt16 nameLen, acctLen, passwdLen, notesLen;
+    UInt16    len;
+    UInt8     fieldID;
+    UInt8     fontID;
+} FieldHeaderType,  *FieldHeaderPtr;
     
-    /* Handles to string values, or 0.
-     *
-     * It might be easier to keep pointers to locked-in strings here,
-     * but the record is potentially too big to comfortably do that:
-     * we might only have 16kB total of application dynamic RAM.
-     * Also, the Field functions want to have handles they can resize,
-     * rather than pointers. */
-    MemHandle nameHandle, acctHandle, passwdHandle, notesHandle;
 
-    UInt16 category;
+typedef struct {
+    UInt16    category;
+    UInt16    numFields;
 
-    /* Date password was last changed. */
-    DateType lastChange;
+    void     *plainText;
+
+    UInt16    fieldOffset[1];
 } UnpackedKeyType;
 
 typedef UnpackedKeyType *UnpackedKeyPtr;

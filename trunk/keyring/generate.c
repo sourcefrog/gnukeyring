@@ -210,6 +210,14 @@ static void Generate_Word(Char * word, Int16 flags, Int16 pwlen)
     PronStateType state;
     Int16 word_length;
     Int16 oFlags = flags & (kDigits | kPunct);
+    MemHandle pronHandle;
+    void  *prondata;
+
+    /*
+     * Get rules and digram pointers.
+     */
+    pronHandle = DmGet1Resource('PRON', 1000);
+    prondata = MemHandleLock(pronHandle);
 
     MemSet(&state, sizeof(state), 0);
     /*
@@ -227,7 +235,8 @@ static void Generate_Word(Char * word, Int16 flags, Int16 pwlen)
 	 */
 	Char * syllable = word + word_length;
 	Char * ptr;
-	Pron_GetSyllable (syllable, pwlen - word_length, &state);
+	Pron_GetSyllable (syllable, pwlen - word_length, 
+			  &state, prondata);
 	word_length += StrLen (syllable);
 
 	if ((flags & kUpper) != 0) {
@@ -279,6 +288,7 @@ static void Generate_Word(Char * word, Int16 flags, Int16 pwlen)
     }
 
     word[word_length] = '\0';
+    MemHandleUnlock(pronHandle);
 }
 
 static MemHandle Generate_MakePassword(FormPtr frm)

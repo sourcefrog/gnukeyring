@@ -26,6 +26,7 @@
 
 #include "includes.h"
 
+#define offsetof(str,fld) ((UInt16) &(((str *) NULL)->fld))
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
@@ -189,6 +190,106 @@ Err KeyDB_CreateReservedRecords(void)
 }
 
 
+Err KeyDB_CreateAppInfo(void)
+{
+    LocalID      appInfoID;
+    MemHandle    appInfoHandle;
+    KrAppInfoPtr appInfoPtr;
+
+    UInt16       appInfoSize;
+
+#ifdef SUPPPORT_TEMPLATES
+    MemHandle    templateHandle;
+    UInt16       offset;
+    UInt8        *templatePtr, *templateBlock;
+    UInt8        numLabels;
+    UInt8        numTemplates;
+    UInt16       templateLength;
+
+    templateHandle = DmGetResource('TMPL', 1000);
+    templatePtr = templateBlock = MemHandleLock(templateHandle);
+
+    numLabels = 0;
+    numTemplates = 0;
+    templateLength = 0;
+    while (*templatePtr != 0) {
+	int namlen = StrLen(templatePtr);
+	templatePtr += namlen + 3;
+	numLabels++;
+    }
+    templatePtr++;
+    while (*templatePtr != 0) {
+	int namlen = StrLen(templatePtr);
+	int comps;
+	templatePtr += namlen + 1;
+	comps = *templatePtr;
+	templatePtr += comps + 1;
+	templateLength += namlen + 1 + comps + 1;
+	numTemplates++;
+    }
+#endif
+
+    appInfoSize = sizeof(KrAppInfoType);
+#ifdef SUPPPORT_TEMPLATES
+    appInfoSize += numLabels * sizeof(KrLabelType)
+	+ templateLength;
+#endif
+    appInfoHandle = DmNewHandle(gKeyDB, appInfoSize);
+    if (!appInfoHandle) {
+#ifdef SUPPPORT_TEMPLATES
+	MemHandleUnlock(templateHandle);
+	DmReleaseResource(templateHandle);
+#endif
+	return DmGetLastErr();
+    }
+    
+    appInfoID = MemHandleToLocalID(appInfoHandle);
+    DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID,
+		      0,0,0,0,
+		      0,0,0,
+		      &appInfoID, 0,0,0);
+    appInfoPtr = MemLocalIDToLockedPtr(appInfoID, gKeyDBCardNo);
+
+    /* Clear the app info block. */
+    DmSet(appInfoPtr, 0, appInfoSize, 0);
+
+    /* Initialize the categories. */
+    CategoryInitialize(&appInfoPtr->categoryInfo, CategoryRsrc);
+    
+#ifdef SUPPPORT_TEMPLATES
+    DmWrite(appInfoPtr, offsetof(KrAppInfoType, numberOfLabels), 
+	    &numLabels, 1);
+    DmWrite(appInfoPtr, offsetof(KrAppInfoType, numberOfTemplates),
+	    &numTemplates, 1);
+
+    /* Initialize default fields. */
+    numLabels = 0;
+    offset    = sizeof(KrAppInfoType);
+    templatePtr = templateBlock;
+    while (*templatePtr != 0) {
+	int namlen = StrLen(templatePtr);
+	if (namlen > 16)
+	    namlen = 16;
+	DmWrite(appInfoPtr, offset, templatePtr, namlen);
+	offset += 16;
+	templatePtr += namlen + 1;
+	DmWrite(appInfoPtr, offset, templatePtr, 2);
+	templatePtr += 2;
+	offset += 2;
+    }
+    templatePtr++;
+    /* Initialize the templates. */
+    DmWrite(appInfoPtr, offset, templatePtr, templateLength);
+
+    MemHandleUnlock(templateHandle);
+    DmReleaseResource(templateHandle);
+#endif
+
+    MemPtrUnlock(appInfoPtr);
+    return 0;
+}
+
+
 Err KeyDB_SetVersion(void) 
 {
     UInt16 version = kDatabaseVersion;
@@ -201,7 +302,8 @@ Err KeyDB_SetVersion(void)
 
 
 /* Set the backup bit.  It seems that without this the Windows desktop
- * software doesn't make the backup properly */
+ * software doesn't make the backup properly 
+ */
 static Err KeyDB_MarkForBackup(void) {
     UInt16 attr;
     
@@ -224,8 +326,10 @@ static Err KeyDB_MarkForBackup(void) {
 static Err KeyDB_CreateDB(void) {
     Err err;
     Char *newPasswd;
+    SaltHashType salthash;
+    UInt16 cipher, iter;
 
-    newPasswd = SetPasswd_Ask();
+    newPasswd = SetPasswd_Ask(&cipher, &iter);
     if (newPasswd == NULL)
 	return appCancelled;
 
@@ -246,15 +350,17 @@ static Err KeyDB_CreateDB(void) {
     if (!gKeyDB)
 	goto outFindErr;
 
-    if ((err = KeyDB_CreateReservedRecords()))
-	return err;
-    
-    if ((err = KeyDB_CreateCategories()))
+    if ((err = KeyDB_CreateAppInfo()))
 	goto outErr;
     
-    PwHash_Store(newPasswd);
+    err = PwHash_Create(newPasswd, cipher, iter, &salthash, NULL);
+    if (!err)
+	PwHash_Store(newPasswd, &salthash);
+    MemSet(&salthash, sizeof(salthash), 0);
     MemSet(newPasswd, StrLen(newPasswd), 0);
     MemPtrFree(newPasswd);
+    if (err)
+	goto outErr;
 
     if ((err = KeyDB_MarkForBackup()))
 	goto outErr;
@@ -265,30 +371,15 @@ static Err KeyDB_CreateDB(void) {
     err = DmGetLastErr();
     
  outErr:
+    if (gKeyDB)
+	DmCloseDatabase(gKeyDB);
+    if (gKeyDBID)
+	DmDeleteDatabase(gKeyDBCardNo, gKeyDBID);
+
     UI_ReportSysError2(ID_CreateDBAlert, err, __FUNCTION__);
     return err;
 }
 
-
-/* Current database version may have problems finding
- * the hidden records containing hash if some backup
- * program shuffled it around.  
- */
-static Err KeyDB_CheckHiddenRecord(void) {
-    UInt16 len = DmNumRecords(gKeyDB);
-    UInt16 recAttr;
-
-    if (len > 0
-	&& DmRecordInfo(gKeyDB, 0, &recAttr, NULL, NULL) == errNone
-	&& (recAttr & dmRecAttrSecret)) {
-	/* Hidden record is okay */
-	return errNone;
-    }
-    
-    /* The hidden record is missing.  Ask for password and restore it.
-     */
-    return Upgrade_HandleMissingHash();
-}
 
 /*
  * Get everything going: either open an existing DB (converting if
@@ -341,6 +432,9 @@ Err KeyDB_Init(void)
 	 if (FrmAlert(UpgradeAlert) != 0)
 	     return appCancelled;
 
+#if 1
+	 return appCancelled;
+#else 
 	 if ((err = UpgradeDB(ver)))
 	     return err;
 	     
@@ -349,12 +443,10 @@ Err KeyDB_Init(void)
 	  * didn't do that. */
 	 if ((err = KeyDB_MarkForBackup()))
 	     goto failDB;
+#endif
      } else if (ver > kDatabaseVersion) {
 	 FrmAlert(TooNewAlert);
 	 return appCancelled;
-     } else {
-	 if ((err = KeyDB_CheckHiddenRecord()))
-	     return err;
      }
 
      /* Remember or clear the r/o state, so one doesn't need to reconfirm. */
@@ -368,3 +460,13 @@ Err KeyDB_Init(void)
      UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
      return err;
 }
+
+KrAppInfoPtr KeyDB_LockAppInfo(void) {
+    LocalID appInfoID = 0;
+    DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, 0, 0, 0, 0,
+		   0, 0, 0, 
+		   &appInfoID, 0, 0, 0);
+    ErrFatalDisplayIf(appInfoID == 0, "AppInfo destroyed");
+    return MemLocalIDToLockedPtr(appInfoID, gKeyDBCardNo);
+}
+

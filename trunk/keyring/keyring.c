@@ -94,29 +94,9 @@ void App_ReleaseFonts(void)
     }
 }
 
-
-static Err CheckGlib(UInt32 creator, char* libname) {
-    DmOpenRef libdb;
-
-    if ((libdb = DmOpenDatabaseByTypeCreator('GLib', creator, 
-					     dmModeReadOnly))) {
-	DmCloseDatabase(libdb);
-	return 0;
-    }
-
-    FrmCustomAlert(NotEnoughFeaturesAlert, libname, NULL, NULL);
-    return sysErrLibNotFound;
-}
-
-
 static Err App_Start(void)
 {
     Err err;
-
-    /* Check if the necessary openssl libraries are installed */
-    if ((err = CheckGlib('CrDS', "DESLib.prc"))
-	|| (err = CheckGlib('CrMD', "MDLib.prc")))
-	return err;
 
     App_LoadPrefs();
 
@@ -172,7 +152,7 @@ static Boolean App_HandleEvent(EventPtr event)
 	    break;	
 
 	case KeyEditForm:
-	    FrmSetEventHandler(frm, KeyEditForm_HandleEvent);
+	    FrmSetEventHandler(frm, KeyEdit_HandleEvent);
 	    result = true;
 	    break;
 	}
@@ -191,21 +171,22 @@ static void App_EventLoop(void)
 	EvtGetEvent(&event, (Int32) evtWaitForever);
 	Secrand_AddEventRandomness(&event);
 
-	if (event.eType == keyDownEvent) {
-	    if (event.data.keyDown.chr == vchrAutoOff
+	if (event.eType == keyDownEvent
+	    && (event.data.keyDown.chr == vchrAutoOff
 		|| event.data.keyDown.chr == vchrPowerOff
-		|| event.data.keyDown.chr == vchrLock) {
-		gSleeping = true;
-		if (gEditFormActive && 
-		    (event.data.keyDown.chr == vchrLock
-		     || Snib_GetSnib(false) == NULL)) {
-		    FrmSaveAllForms();
-		    FrmCloseAllForms();
-		    FrmGotoForm(ListForm);
-		}
+		|| event.data.keyDown.chr == vchrLock)) {
+	    gSleeping = true;
+	    if (gEditFormActive && 
+		(event.data.keyDown.chr == vchrLock
+		 || !Snib_RetrieveKey(NULL))) {
+		FrmSaveAllForms();
+		FrmCloseAllForms();
+		FrmGotoForm(ListForm);
 	    }
-	} else if (event.eType != nilEvent)
+	} else if (event.eType != nilEvent) {
+	    Snib_Event();
 	    gSleeping = false;
+	}
 	
 	if (!SysHandleEvent(&event))
 	    if (!MenuHandleEvent(0, &event, &error))
@@ -334,7 +315,7 @@ UInt32 PilotMain(UInt16 launchCode,
 		    return err;
 	    }
 
-	    KeyEditForm_GotoRecord(recordNum);
+	    KeyEdit_GotoRecord(recordNum);
 	    if (launched) {
 		App_EventLoop();
 		App_Stop();
