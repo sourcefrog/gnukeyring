@@ -139,3 +139,116 @@ BEGIN
   "@@accel_Keyboard" = "K"
   "@@accel_Graffiti" = "G"
 END
+
+// ======================================================================
+// Czech translation - Tom Z. Meinlschmidt <tomas@meinlschmidt.org>
+
+TRANSLATION "cs"
+BEGIN
+  "Look Up:" = "Hledat:"
+  "New" = "Nový"
+  "Key ______ of ______" = "Klíè ______ z ______" 
+  "Name:" = "Jméno:"
+  "Account:" = "Úèet:"
+  "Password:" = "Heslo:"
+  "Confirm:"  = "Potvrzení:" 
+  "Changed:" = "Zmìnìno:"
+  "Done" = "Hotovo"
+  "Preferences" = "Nastavení"
+  "Stay unlocked for:" = "Zùstat nezablokovaný po:"
+  "No time" = "0 sec."
+  "15 sec" = "15 sec."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+  "Veil password" = "Maskovat heslo"
+  "Generate"="Generovat"
+
+  "Cancel" = "Zru¹it"
+
+  "Set Keyring Password" =  "Nastavit pøístupové heslo"
+
+  "@@choosepassword" = "Zvolte nové pøístupové heslo:"
+
+  "Generate Password" = "Generovat heslo"
+  "@@generate1" = "Generování náhodného hesla "
+  "@@generate2" = "heslo:"
+
+  "Length:" = "Délka:"
+  "Include:" = "Obsahuje:"
+  "Generate" = "Generovat"
+
+  "Unlock" =  "Odblokovat"
+
+  "Enter your password:" = "Vlo¾te své heslo:"
+
+  "Encrypting..." = "©ifruji..."
+  "Decrypting..." = "De¹ifruji..."
+
+  "@@OutOfMemory" =  "Málo pamìti."
+  "Password" = "Heslo"
+  "@@WrongPassword" = "©patné heslo. Zadejte znovu"
+  "@@PasswordMismatch" =  "Heslo nesouhlasí."
+  "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "vyslovitelné"
+
+  "Not here yet" = "Zatím neimplementováno."
+  "@@NotImplemented" = "Tato vlastnosti zatím není implementována."
+  "@@NotEnoughFeatures" = "Tato verze Keyring vy¾aduje ^1."
+
+  "@@CouldntLaunchMemo" = "Nemohu spustit Poznámkový blok."
+
+  "Delete Key" = "Smazat záznam?"
+  "Delete current key record?" = "Smazat aktuální záznam?"
+
+  "@@BetaVersion"
+   = "Toto je beta verze Keyringu. Mù¾e obsahovat chyby. Udìlejte si zálohu jinde nezazálohovaných, zde ulo¾ených, dat."
+
+  "This is free software.  No warranty." = "Toto je svobodný software. Bez záruk." 
+
+  "Released under the GNU GPL v2." = "Vydáno pod licencí GNU GPL v2." 
+
+  "Save archive copy on PC" = "Ulo¾it kopii do PC"
+
+  "Database" = "Databáze"
+  "Set Password..." = "Nastavení hesla..."
+  "Options" = "Nastavení"
+  "Tips" = "Tipy"
+  "Edit" = "Úpravy"
+
+  "Preferences..." =  "Pøedvolby..."
+  "About..." =  "O aplikaci..."
+
+  "Undo" = "Zpìt"
+  "Undo All" = "Zìpìt v¹e"
+  "Graffiti Help" = "Nápovìda Graffiti"
+  "Paste" = "Vlo¾it"
+  "Cut" = "Vyjmout"
+  "Select All" = "Oznaèit v¹e"
+  "Key ^0 of ^1" = "Záznam ^0 z ^1"
+  "Copy" = "Kopie"
+  "Keyboard" = "Klávesnice"
+  "New Key" = "Nový záznam"
+
+  "Key" =  "Záznam"
+  "Generate Password..." = "Generování hesla..."
+  "Export to Memo" = "Export do Poznámkového bloku"
+  "Delete..." = "Smazat..."
+
+  "@@GenerateHelp" = "help/cs/generate.txt"
+  "@@KeyEditHelp" = "help/cs/keyedit.txt"
+  "@@SetPasswdHelp" = "Pøístupové heslo chrání v¹echny záznamy. Je vy¾adováno pro vstup do databáze. Je-li ztraceno nebo zapomenuto, není pøístup do databáze mo¾ný."
+
+  "There is no data to export." = "Nejsou zde data pro export."
+
+  "Unfiled" = "Nevyplnìno"
+  "Phone" = "Telefon"
+  "Banking" = "Banka"
+
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "V"
+  "@@accel_SelectAll" = "S"
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
+END

@@ -105,9 +105,9 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 # For a list of ISO language codes, see
 # http://www.loc.gov/standards/iso639-2/englangn.html
 # The codes nn and nb for nynorsk and bokmål are recent additions.
-LANGUAGES = en ca da de es fi fr it ja nl nb nn pt sv pl ru
+LANGUAGES = en ca cs da de es fi fr it ja nl nb nn pt sv pl ru
 
-LOCALES = enUS <en caES <ca daDK <da deDE <de esES <es fiFI <fi \
+LOCALES = enUS <en caES <ca csCZ <cs daDK <da deDE <de esES <es fiFI <fi \
           frFR <fr itIT <it jaJP <ja nlNL <nl noNO <nb ptBR <pt 
 	  svSE <sv plPL <pl ruRU <ru
 
