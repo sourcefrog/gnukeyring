@@ -21,6 +21,7 @@
  */
 
 #include <PalmOS.h>
+#include <PalmSG.h>
 #include <TxtGlue.h>
 #include <WinGlue.h>
 #include "sections.h"
