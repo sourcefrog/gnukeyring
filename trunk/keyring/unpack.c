@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
  *
  * $Id$
  * 
@@ -34,16 +34,16 @@
 /* Convert from a packed database record into an unpacked in-memory
  * representation.  Return true if conversion was successful. */
 void Keys_Unpack(MemHandle record, UnpackedKeyType *u,
-		 UInt8 const *UNUSED(key))
+                 UInt8 const *UNUSED(key))
 {
-    Char *	recPtr;
-    UInt32	recLen;
-    Int32	nameLen;
-    Char *	ptr;
+    Char *      recPtr;
+    UInt32      recLen;
+    Int32       nameLen;
+    Char *      ptr;
 #if 0
-    Char *	plainBuf;
-    Char *	cryptPtr;
-    Err		err;
+    Char *      plainBuf;
+    Char *      cryptPtr;
+    Err         err;
 #endif 
 
     recPtr = MemHandleLock(record);    
@@ -58,10 +58,10 @@ void Keys_Unpack(MemHandle record, UnpackedKeyType *u,
 
     cryptPtr = recPtr + nameLen + 1;
     err = DES3_Buf(cryptPtr, plainBuf, recLen - (cryptPtr - recPtr), false,
-		   key);
+                   key);
     if (err) {
-	/* TODO: If this failed, indicate to the caller that we couldn't unpack the record. */
-	App_ReportSysError(CryptoErrorAlert, err);
+        /* TODO: If this failed, indicate to the caller that we couldn't unpack the record. */
+        App_ReportSysError(CryptoErrorAlert, err);
     }
 
     ptr = plainBuf;
