@@ -55,6 +55,7 @@
 #define kGeneralPref		1
 #define kGeneratePref		2
 #define kLastVersionPref        3
+#define prefID_ReadOnlyAccepted 4
 
 #define kMaxRecords             2000
 
