@@ -10,7 +10,7 @@
       vlink="#cc0000">
 <h1>GNU Keyring 0.7.3</h1>
 
-<p>Copyright (C) 1999, 2000 by Martin Pool <a href="mailto:mbp@humbug.org.au">&lt;mbp@humbug.org.au&gt;</a>
+<p>Copyright 1999 by Martin Pool <a href="mailto:mbp@humbug.org.au">&lt;mbp@humbug.org.au&gt;</a>
 
 <p><tt>$Id$</tt>
 
@@ -36,8 +36,13 @@ USA.
 </font>
 
 
-<h2>Introduction</h2>
-
+    <table border=0>
+      <tr>
+	<td valign=top>
+	  <h2>Introduction</h2>
+	  </td>
+	
+	<td valign=top>
 <p><em>GNU Keyring</em> lets you securely store digital secret keys on
 your <a href="http://www.palm.com/">PalmOS</a> (PalmPilot, Visor,
 WorkPad) handheld computer.  This information might include:
@@ -52,11 +57,16 @@ WorkPad) handheld computer.  This information might include:
 
 <p><b>GNU Keyring should be considered to be a beta release: there are
 no serious known bugs, but please don't use it as your only copy of
-any important data yet.</b>
+any important data yet.</b> </p>
+	  </td>
+      </tr>
 
+      <tr>
+	<td valign=top>
+	  <h2>Installation</h2>
+	</td>
 
-<h2>Installation</h2>
-
+	<td valign=top>
 <p>Install the 
 <a href="keyring-0.7.3.prc"><tt>keyring-0.7.3.prc</tt></a> 
 binary
@@ -68,24 +78,29 @@ with PalmOS 3.3.
 <p>The database can be backed up using the normal Hotsync mechanism.
 There is currently no support for editing the database on a PC. 
 
-<h3>Files:</h3>
+	  <p><a href="keyring-0.7.3.tar.gz">keyring-0.7.3.tar.gz</a>; 
+	    <a href="keyring-0.7.3.prc">keyring-0.7.3.prc</a>;
+	    <a href="TODO">TODO</a>;
+	    <a href="http://sourceforge.net/cvs/?group_id=306">CVS</a>
+	    
+	  <p>To rebuild from source, you will need the GNU PalmOS toolchain.  On
+	    <a href="http://www.debian.org/">Debian GNU</a>, that means these
+	    packages:
 
-<p><a href="keyring-0.7.3.tar.gz">keyring-0.7.3.tar.gz</a>; 
-<a href="keyring-0.7.3.prc">keyring-0.7.3.prc</a>;
-<a href="TODO">TODO</a>
+	  <ul>
+	    <li>prc-tools-0.5.0r-3
+	    <li>pilrc-2.4-2
+	    <li>pilot-link-0.9.3-1
+	  </ul>
 
-<p>To rebuild from source, you will need the GNU PalmOS toolchain.  On
-<a href="http://www.debian.org/">Debian GNU</a>, that means these
-packages:
+	  </td>
+      </tr>
 
-<ul>
-  <li>prc-tools-0.5.0r-3
-  <li>pilrc-2.4-2
-  <li>pilot-link-0.9.3-1
-</ul>
+      <tr>
+	<td valign=top><h2>Use</h2>
+	  </td>
 
-<h2>Use</h2>
-
+	<td valign=top>
 <p>GNU Keyring stores records called "keys", each of which can contain 
 
 <ul>
@@ -120,8 +135,14 @@ symbols.  Use the "Generate Password" command in the key edit form to
 do this.
 
 
-<h2>Security Information</h2>
+	  </td>
+      </tr>
 
+      <tr>
+	<td valign=top><h2>Security Information</h2>
+	  </td>
+
+	<td valign=top>
 <p>This product contains no cryptographic algorithms.  It does call
 through a standard system trap method into code that may already be 
 present in your version of PalmOS.
@@ -161,8 +182,14 @@ href="http://gnukeyring.sourceforge.net/">http://gnukeyring.sourceforge.net/</a>
 </ul>
 
 
-<h2>Support / Feedback</h2>
+	  </td>
+      </tr>
 
+      <tr>
+	<td valign=top><h2>Support / Feedback</h2>
+	  </td>
+
+	<td valign=top>
 <p>GNU Keyring is written and maintained by Martin Pool <a
 href="mailto:mbp@humbug.org.au">&lt;mbp@humbug.org.au&gt;</a>.  
 
@@ -182,18 +209,28 @@ Tracking</a>.
 
 
 <a name="Changes">
-<h2>Release History</h2>
+	  </td>
+      </tr>
 
+      <tr>
+	<td valign=top><h2>Release History</h2>
+	</td>
+	<td valign=top>
 <dl>
-  <dt>0.7.2
-  <dd>(1999-12-19)
-   Fix title when paging through records.  
-   Rearrange menus; add more help text.
-   Preferences dialog is now also available from the Key Edit form.
-
-  <dt>0.7.1
-  <dd>(1999-12-19)
-    Remember the settings for key generation between uses.
+	    <dt>0.7.3</dt>
+	    <dd>(2000-01-30)
+	      
+	      Move CVS onto SourceForge.
+	      
+	    <dt>0.7.2
+	    <dd>(1999-12-19)
+	      Fix title when paging through records.  
+	      Rearrange menus; add more help text.
+	      Preferences dialog is now also available from the Key Edit form.
+	      
+	    <dt>0.7.1
+	    <dd>(1999-12-19)
+	      Remember the settings for key generation between uses.
 
   <dt>0.7.0
   <dd>(1999-12-19)
@@ -243,8 +280,13 @@ Tracking</a>.
 </dl>
 
 
-<h2>Coming features</h2>
+	  </td>
+      </tr>
 
+      <tr>
+	<td valign=top><h2>Coming features</h2>
+	</td>
+	<td valign=top>
     <ul>
       <li>GNOME-Pilot integration, so you can edit your keyring on a PC
       <li><a href="doc/memo-import-export.html">Import/export to the memo pad</a>
@@ -254,9 +296,16 @@ Tracking</a>.
     </ul>
 
 
-<h2>Links</h2>
+	  </td>
+      </tr>
 
-<ul>
+      <tr>
+	<td valign=top><h2>Links</h2>
+	</td>
+	<td valign=top>
+
+
+	  <ul>
   <li><a href="http://www.counterpane.com/crypto-gram-9909.html#OpenSourceandSecurity">Bruce Schneier on "Open Source and Security"</a>
  
   <li><a href="http://www.efa.org.au/">Electronic Frontiers Australia</a>
@@ -275,7 +324,9 @@ Tracking</a>.
   
 </ul>
 
-
+	</td>
+      </tr>
+    </table>
 
 <hr>
 
