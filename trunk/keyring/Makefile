@@ -43,13 +43,12 @@ CFLAGS          = -O2 -Wall -Werror -Winline -Wunused -W \
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
-TOP_DOCS	= HACKING COPYING BUGS TODO TESTS 
-DOCS		= $(TOP_DOCS) \
+DOCS		= HACKING COPYING BUGS TODO TESTS \
 		  doc/break.html doc/find.html doc/index.html \
 		  doc/memo-import-export.html doc/security.html \
 		  doc/attack-tree.txt doc/description.txt \
 		  doc/Blatant-Plug-Insert-4-Cheap.jpg \
-		  doc/keyring.css
+		  doc/keyring.css doc/snaps/*.png
 
 DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
 		  $(DOCS) $(wildcard *.c *.h) $(DEF) \
@@ -107,8 +106,8 @@ clean:
 # Only useful for the maintainer
 .PHONY: _upload
 hosting_dir = gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
-upload_doc: $(DOCS)
-	rsync --times -e ssh -v $(DOCS) $(hosting_dir) 
+upload_doc: 
+	cd doc && rsync --recursive --times -e ssh -v $(hosting_dir) 
 
 sig: $(DIST_SIG)
 
