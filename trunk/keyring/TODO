@@ -4,11 +4,15 @@ Page up in list doesn't work?
 
 Advise use of accented characters as they're much harder to guess.
 
-* Slow text entry?
+* Lock the database when the timeout expires, even if it's currently
+  showing a record.  Also, make sure changes to the system clock
+  cannot cause the keyring to unlock again.  Also, make sure that the
+  Snib database is overwritten and unlinked when we lock.
 
-Slower than Memo Pad?
+* Strong randomness
 
-* Sort
+* Don't use private records, because they're deleted when the system
+  password is reset.
 
 * Choose fonts
 
@@ -31,8 +35,6 @@ minimum length; use of accented/extended characters
 * Lock on power off/switching apps
 
 * Move to right record on empty record & page down
-
-* Sort
 
 * No session key
 
