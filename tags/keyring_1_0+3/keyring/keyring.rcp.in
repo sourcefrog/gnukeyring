@@ -1,0 +1,816 @@
+/*
+ * GNU Keyring -- store passwords securely on a handheld
+ *
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * 
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+
+/* International translations; must appear first */
+
+/* TODO: Please translate the category names, somebody. */
+
+TRANSLATION "en"
+BEGIN 
+  "@@choosepassword" = "Enter new keyring master password:"
+  "@@generate1" = "Generate a new random "
+  "@@generate2" = "password:"
+  "@@OutOfMemory" = "Not enough dynamic memory to proceed."
+  "@@WrongPassword" = "Password incorrect.  Please try again."
+  "@@PasswordMismatch" = "The passwords you entered do not match."
+  "@@NotImplemented" = "Sorry, that feature is not implemented yet."
+
+  "@@GenerateHelp" = "help/en/generate.txt"
+  "@@KeyEditHelp" = "help/en/keyedit.txt"
+
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S" 
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
+END
+
+
+// ======================================================================
+// German translation contributed by Stefan H. Holek 
+
+TRANSLATION "de"
+BEGIN
+  "New" = "Neu"
+  "Key ______ of ______" = "Schlüssel ______ v. ______" 
+  "Name:" = "Name:"
+  "Account:" = "Konto:"
+  "Password:" = "Passwort:"
+  "Confirm:"  = "Bestätigen:" 
+  "Changed:" = "Geändert:"
+  "Done" = "Fertig"
+  "Preferences" = "Einstellungen"
+  "Stay unlocked for:" = "Sperren nach:"
+  "No time" = "0 Sek."
+  "15 sec" = "15 Sek."
+  "60 sec" = "1 Min."
+  "5 min" = "5 Min."
+
+  "Cancel" = "Abbrechen"
+
+  "Set Keyring Password" =  "Passwort festlegen"
+
+  "@@choosepassword" = "Bitte wählen sie ein Passwort:"
+
+  "Generate Password" = "Passwort Generieren"
+  "@@generate1" = "Ein neues Passwort "
+  "@@generate2" = "generieren:"
+
+  "Length:" = "Länge:"
+  "Include:" = "Zeichen:"
+  "Generate" = "Generieren"
+
+  "Unlock" =  "Entsperren"
+
+  "Enter your password:" = "Geben sie ihr Passwort ein:"
+
+  "Encrypting..." = "Verschlüsseln..."
+  "Decrypting..." = "Entschlüsseln..."
+
+  "@@OutOfMemory" =  "Nicht genügend dynamic memory."
+  "@@WrongPassword" = "Passwort falsch.  Bitte versuchen sie es nocheinmal."
+  "@@PasswordMismatch" =  "Passworte stimmen nicht überein.  Bitte versuchen sie es nocheinmal."
+
+  "Not here yet" = "Noch nicht implementiert"
+  "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
+
+  "^1: System error ^2" =  "^1: Systemfehler ^2"
+  "Couldn't launch the Memo Pad" =  "Die Merkzettel Anwendung konnte nicht gestartet werden."
+
+  "Delete Key" = "Schlüssel löschen"
+  "Delete current key record?" = "Aktuellen Schlüssel löschen?"
+
+  "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+   = "Dies ist ein beta Testversion von GNU Keyring.  Es könnten Fehler auftreten.  Bitte bewahren sie eine Kopie ihrer Daten auf."
+
+  "This is free software.  No warranty." = "Free Software.  Keine Gewährleistung." 
+
+  "Released under the GNU GPL v2." = "Herausgegeben unter GNU GPL v2." 
+
+  "Save archive copy on PC" = "Archivkopie auf PC speichern"
+
+  "Database" = "Datenbank"
+  "Set Password..." = "Passwort festlegen..."
+  "Options" = "Optionen"
+  "Tips" = "Tipps"
+  "Edit" = "Bearbeiten"
+
+  "Preferences..." =  "Einstellungen..."
+  "About..." =  "Info..."
+
+  "Undo" = "Rückgängig"
+  "Undo All" = "Änderungen verwerfen"
+  "Graffiti Help" = "Graffiti-Hilfe"
+  "Paste" = "Einfügen"
+  "Cut" = "Ausschneiden"
+  "Select All" = "Alles auswählen"
+  "Key %d of %d" = "Schlüssel %d v. %d"
+  "Copy" = "Kopieren"
+  "Keyboard" = "Tastatur"
+  "New Key" = "Neuer Schlüssel"
+
+  "Record" =  "Eintrag"
+  "Generate Password..." = "Passwort generieren..."
+  "Export to Memo" = "Als Merkzettel exportieren"
+  "Delete..." = "Eintrag löschen..."
+
+  "@@GenerateHelp" = "help/de/generate.txt"
+  "@@KeyEditHelp" = "help/de/keyedit.txt"
+
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "V"
+  "@accel_SelectAll" = "A"
+  "@accel_Keyboard" = "T"
+  "@accel_Graffiti" = "G"
+END
+
+// ======================================================================
+// Spanish translation contributed by Juan Carlos Borrás
+
+TRANSLATION "es"
+BEGIN
+  "New" = "Nueva"
+  "Key ______ of ______" = "Clave ______ de ______" 
+  "Name:" = "Nombre:"
+  "Account:" = "Cuenta:"
+  "Password:" = "Clave:"
+  "Confirm:"  = "Aceptar:" 
+  "Changed:" = "Modificado:"
+  "Done" = "Hecho"
+  "Preferences" = "Preferencias"
+  "Stay unlocked for:" = "Desbloqueado durante:"
+  "No time" = "Nunca"
+  "15 sec" = "15 Seg."
+  "60 sec" = "1 Min."
+  "5 min" = "5 Min."
+
+  "Cancel" = "Cancelar"
+
+  "Set Keyring Password" =  "Cambiar la Clave del Llavero"
+
+  "@@choosepassword" = "Escoje una Clave:"
+
+  "Generate Password" = "Genera una Clave"
+  "@@generate1" = "Generar una clave aleatoria "
+  "@@generate2" = "Clave:"
+
+  "Length:" = "Tamaño:"
+  "Include:" = "Incluye:"
+  "Generate" = "Generar"
+
+  "Unlock" =  "Desbloquear"
+
+  "Enter your password:" = "Introduzca su clave:"
+
+  "Encrypting..." = "Cifrando..."
+  "Decrypting..." = "Descifrando..."
+
+  "@@OutOfMemory" =  "No hay suficiente memoria disponible."
+  "@@WrongPassword" = "Clave incorrecta. Inténtelo de nuevo."
+  "@@PasswordMismatch" =  "Las claves no son iguales. Inténtelo de nuevo."
+
+  "Not here yet" = "Vuelva Vd. mañana"
+  "@@NotImplemented" = "Esta característica no está implementada aun."
+
+  "^1: System error ^2" =  "^1: ¡Error! ^2"
+  "Couldn't launch the Memo Pad" =  "El block de notas no puede ejecutarse."
+
+  "Delete Key" = "Borrar Clave"
+  "Delete current key record?" = "¿Borrar la presente Clave?"
+  "Save archive copy on PC" = "Guardar copia en el PC"
+
+  "Database" = "Base de Datos"
+  "Set Password..." = "Cambiar la clave..."
+  "Options" = "Opciones"
+  "Edit" = "Editar"
+
+  "Preferences..." =  "Preferencias..."
+  "Tips" = "Sugerencias"
+  "About..." =  "Acerca..."
+
+  "Undo" = "Deshacer"
+  "Graffiti Help" = "Ayuda de Grafitti"
+  "Paste" = "Pegar"
+  "Cut" = "Cortar"
+  "Select All" = "Seleccionar Todo"
+  "Key %d of %d" = "Clave %d de %d"
+  "Copy" = "Copiar"
+  "Keyboard" = "Teclado"
+  "New Key" = "Nueva Clave"
+
+  "Record" =  "Ficha"
+  "Generate Password..." = "Generar Clave..."
+  "Export to Memo" = "Exportar al Block de Notas"
+  "Delete..." = "Borrar..."
+
+  "@@GenerateHelp" = "help/es/generate.txt"
+  "@@KeyEditHelp" = "help/es/keyedit.txt"
+
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S" 
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
+END
+
+// ======================================================================
+// Swedish translation by Kalle Svensson <kalle@gnupung.net>
+
+TRANSLATION "sv"
+BEGIN
+  "New" = "Ny"
+  "Key ______ of ______" = "Nyckel ______ av ______" 
+  "Name:" = "Namn:"
+  "Account:" = "Konto:"
+  "Password:" = "Lösenord:"
+  "Confirm:"  = "Bekräfta:" 
+  "Changed:" = "Ändrad:"
+  "Done" = "Klar"
+  "Preferences" = "Inställningar"
+  "Stay unlocked for:" = "Håll upplåst:"
+  "No time" = "0 sek."
+  "15 sec" = "15 sek."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+
+  "Cancel" = "Avbryt"
+
+  "Set Keyring Password" =  "Sätt nyckelringslösenord"
+
+  "@@choosepassword" = "Välj ett lösenord:"
+
+  "Generate Password" = "Skapa lösenord"
+  "@@generate1" = "Skapa ett nytt "
+  "@@generate2" = "lösenord:"
+
+  "Length:" = "Längd:"
+  "Include:" = "Inkludera:"
+  "Generate" = "Skapa"
+
+  "Unlock" =  "Lås upp"
+
+  "Enter your password:" = "Mata in ditt lösenord:"
+
+  "Encrypting..." = "Krypterar..."
+  "Decrypting..." = "Dekrypterar..."
+
+  "@@OutOfMemory" =  "För lite dynamiskt minne för att fortsätta."
+  "@@WrongPassword" = "Felaktigt lösenord. Försök igen."
+  "@@PasswordMismatch" =  "Lösenorden stämmer inte överens. Försök igen."
+
+  "Not here yet" = "Inte här ännu"
+  "@@NotImplemented" = "Denna funktion är inte implementerad ännu."
+
+  "^1: System error ^2" =  "^1: Systemfel ^2"
+  "Couldn't launch the Memo Pad" =  "Kunde inte starta Memo Pad."
+
+  "Delete Key" = "Ta bort nyckel"
+  "Delete current key record?" = "Ta bort den aktuella nyckeln?"
+  "Save archive copy on PC" = "Spara arkivkopia på PC"
+
+  "Database" = "Databas"
+  "Set Password..." = "Sätt lösenord..."
+  "Options" = "Alternativ"
+  "Edit" = "Redigera"
+
+  "Preferences..." =  "Inställningar..."
+  "About..." =  "Om Keyring"
+
+  "Undo" = "Ångra"
+  "Graffiti Help" = "Graffiti-hjälp"
+  "Paste" = "Klistra in"
+  "Cut" = "Klipp ut"
+  "Select All" = "Markera alla"
+  "Key %d of %d" = "Nyckel %d av %d"
+  "Copy" = "Kopiera"
+  "Keyboard" = "Tangentbord"
+  "New Key" = "Ny nyckel"
+
+  "Record" =  "Post"
+  "Generate Password..." = "Skapa lösenord..."
+  "Export to Memo" = "Spara som Memo"
+  "Delete..." = "Ta bort..."
+
+  "@@GenerateHelp" = "help/sv/generate.txt"
+  "@@KeyEditHelp" = "help/sv/keyedit.txt"
+
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S" 
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
+END
+
+#include "resource.h"
+
+VERSION ID 1000 "__VERSION__"
+
+FORM ID ListForm AT (0 0 160 160)
+MENUID ListMenuBar
+BEGIN
+	TITLE "GNU Keyring"
+
+	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 0 AUTO AUTO) RIGHTANCHOR USABLE
+	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
+
+	TABLE ID ID_KeyTable AT (0 17 152 129) COLUMNS 1 ROWS 16
+		EDITABLE COLUMNWIDTHS 150
+
+	SCROLLBAR ID ID_KeyTableScrollBar 
+		AT (PREVRIGHT+1 PREVTOP 7 PREVHEIGHT)
+		VALUE 0 MIN 0 MAX 0 PAGESIZE 0
+
+	BUTTON "New" NewKeyBtn AT (1 147 AUTO AUTO)
+END
+
+
+FORM ID KeyEditForm AT (0 0 160 160)
+MENUID KeyEditMenuBar
+BEGIN
+	/* The default title buffer must be big enough for anything we 
+	 * want to copy into it */
+	TITLE "Key ______ of ______" 
+
+	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 1 AUTO AUTO) 
+		RIGHTANCHOR USABLE
+
+	LIST "" ID CategoryList AT (RIGHT@159 1 80 AUTO) NONUSABLE VISIBLEITEMS 1
+
+	FIELD ID ID_KeyNameField AT (47 18 110 AUTO) USABLE  
+		UNDERLINED AUTOSHIFT MAXCHARS 40
+
+	LABEL "Name:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
+
+	FIELD ID AccountField AT (47 PREVBOTTOM 110 AUTO) USABLE
+		UNDERLINED MAXCHARS 50 
+
+	LABEL "Account:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
+
+	FIELD PasswordField AT (47 PREVBOTTOM 110 AUTO) USABLE 
+		UNDERLINED MAXCHARS 50
+
+	LABEL "Password:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
+
+	FIELD ID ID_NotesField AT (1 PREVBOTTOM 150 88) USABLE
+		UNDERLINED AUTOSHIFT MULTIPLELINES MAXCHARS 3000 
+
+	SCROLLBAR ID NotesScrollbar AT (152 PREVTOP 7 PREVHEIGHT) USABLE 
+	
+	BUTTON "Done" DoneBtn AT (1 147 AUTO AUTO)
+
+	GRAFFITISTATEINDICATOR AT (150 150)
+END
+
+
+FORM ID ID_PrefsForm AT (2 96 156 62)
+MODAL
+BEGIN
+	TITLE "Preferences"
+
+	LABEL "Stay unlocked for:" AUTOID AT (5 15) FONT 1
+
+	PUSHBUTTON "No time" ID Expiry0Push AT (5 PREVBOTTOM+1 AUTO AUTO)
+		GROUP 1
+	PUSHBUTTON "15 sec" ID Expiry15Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
+		GROUP 1
+	PUSHBUTTON "60 sec" ID Expiry60Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
+		GROUP 1
+	PUSHBUTTON "5 min" ID Expiry300Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
+		GROUP 1
+
+/*        CHECKBOX "Lock when switched off" ID ID_PowerOffLock 
+               AT (3 PREVBOTTOM+5 AUTO AUTO) FONT 1
+*/
+	
+	BUTTON "OK" OkBtn AT (5 PREVBOTTOM+6 AUTO AUTO) 
+	BUTTON "Cancel" CancelBtn AT (PREVRIGHT+6 PREVTOP AUTO AUTO)
+END
+
+
+FORM ID SetPasswdForm AT (2 78 156 80)
+HELPID SetPasswdHelp
+MODAL
+BEGIN
+	title "Set Keyring Password"
+
+	label "@@choosepassword"
+		autoid at (5 15) font 0
+
+	label "Password:" 
+		autoid at (prevleft PREVBOTTOM+2) font 1
+
+	field id MasterKeyFld at (65 prevtop 85 15)
+		underlined maxchars 40
+
+	label "Confirm:" 
+		autoid at (5 prevbottom) font 1
+
+	field id ConfirmFld at (65 prevtop 85 15)
+		underlined maxchars 40
+
+	button "OK" OkBtn at (5 prevbottom+4 auto auto)
+	button "Cancel" CancelBtn at (prevright+5 prevtop auto auto)
+end
+
+
+FORM ID GenerateForm AT (2 62 156 96)  /* (2 50 156 108) */
+HELPID GenerateHelp
+MODAL
+BEGIN
+	TITLE "Generate Password"
+
+	LABEL "@@generate1" AUTOID AT (3 15) FONT 1
+	LABEL "@@generate2" AUTOID AT (PREVLEFT PREVBOTTOM) FONT 1
+
+	LABEL "Length:" autoid at (right@43 prevbottom+4) font 1
+	pushbutton "4" id Length4Push at (46 prevtop auto auto)		  group 1
+	pushbutton "6" id Length6Push at (prevright+1 prevtop auto auto)  group 1
+	pushbutton "8" id Length8Push at (prevright+1 prevtop auto auto)  group 1 
+	pushbutton "10" id Length10Push at (prevright+1 prevtop auto auto) group 1
+	pushbutton "16" id Length16Push at (prevright+1 prevtop auto auto) group 1
+	pushbutton "20" id Length20Push at (prevright+1 prevtop auto auto) group 1
+	
+	LABEL "Include:" AUTOID AT (RIGHT@43 PREVBOTTOM+6) FONT 1
+	PUSHBUTTON "a-z" ID IncludeLower at (46 prevtop auto auto) 
+	PUSHBUTTON "A-Z" id IncludeUpper at (prevright+1 prevtop auto auto) 
+	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
+	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 PREVTOP 20 auto)
+        PUSHBUTTON "ä¥©" ID ID_IncludeHigh AT (PREVRIGHT+1 PREVTOP 22 AUTO)
+/*        PUSHBUTTON "pronounceable syllables" ID ID_Syllables AT (44 PREVBOTTOM+1 PREVRIGHT-44 AUTO) */
+
+	BUTTON "Generate" id OkBtn at (3 PREVBOTTOM+7 auto auto)
+	button "Cancel" id CancelBtn at (prevright+5 prevtop auto auto)
+end
+
+
+FORM ID UnlockForm AT (2 98 156 60)
+MODAL
+BEGIN
+	TITLE "Unlock"
+	
+	LABEL "Enter your password:" AUTOID AT (3 15) FONT 1
+
+	FIELD ID MasterKeyFld AT (3 30 150 15) UNDERLINED MAXCHARS 40 
+
+	BUTTON "Unlock" UnlockBtn AT (3 45 AUTO AUTO)
+	BUTTON "Cancel" CancelBtn AT (PREVRIGHT+6 PREVTOP AUTO AUTO)
+
+	GRAFFITISTATEINDICATOR AT (140 PREVTOP)
+END
+
+
+FORM ID BusyEncryptForm AT (45 65 70 30)
+MODAL
+BEGIN
+	LABEL "Encrypting..." AUTOID AT (CENTER CENTER) FONT 1
+END
+
+
+FORM ID BusyDecryptForm AT (40 65 80 30)
+MODAL
+BEGIN
+	LABEL "Decrypting..." AUTOID AT (CENTER CENTER) FONT 1
+END
+
+
+ALERT ID OutOfMemoryAlert
+ERROR
+BEGIN
+ 	MESSAGE "@@OutOfMemory"
+	
+	BUTTONS "OK"
+END
+
+
+ALERT ID WrongKeyAlert
+ERROR
+BEGIN
+	TITLE "Password"
+
+	MESSAGE "@@WrongPassword"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID PasswdMismatchAlert
+ERROR
+BEGIN
+	TITLE "Password"
+
+	MESSAGE "@@PasswordMismatch"
+
+	BUTTONS "OK"
+END
+
+
+
+ALERT ID ID_NotImplementedAlert
+BEGIN
+	TITLE "Not here yet"
+
+	MESSAGE "Sorry, that feature is not implemented yet."
+
+	BUTTONS "Oh well"
+END
+
+
+ALERT ID CouldntLaunchMemoAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Couldn't launch the Memo Pad"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID CryptoErrorAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Cryptographic error: ^1"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID ID_KeyDatabaseAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Error accessing key database: ^1 (^2)"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID ID_SnibDatabaseAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Error accessing snib database: ^1 (^2)"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID ID_CreateDBAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Error creating keyring database: ^1 (^2)"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID alertID_ExportEmpty
+ERROR
+BEGIN
+	TITLE "Export"
+
+	MESSAGE "There is no data to export."
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID UpgradeAlert
+CONFIRMATION
+BEGIN
+	TITLE "Upgrade Database?"
+
+	MESSAGE "This database is from a previous version of Keyring.  Convert it to the new format?  (Please make a backup before doing this.)"
+
+	BUTTONS "Convert" "Cancel"
+END
+
+
+ALERT ID BetaAlert
+WARNING
+BEGIN
+  TITLE "Beta Software"
+
+  MESSAGE "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data."
+
+  BUTTONS "OK" 
+END
+
+
+ALERT ID CantUpgradeAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Can't upgrade database from version ^1."
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID UpgradeFailedAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Error upgrading database: ^1"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID alertID_SortInfoMissing
+WARNING
+BEGIN
+    TITLE "Database Damaged"
+
+    MESSAGE "This database has been damaged by the PalmOS SortInfo bug.  Please enter your password to repair it."
+
+    BUTTONS "OK" "Cancel"
+END
+
+
+ALERT ID ID_CategoriesMissing
+WARNING
+BEGIN
+	TITLE "Database Upgrade"
+
+	MESSAGE "There are no categories defined in this database.  Default categories have been added."
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID NotEnoughFeaturesAlert
+ERROR
+BEGIN
+	TITLE "Not Enough Features"
+
+	MESSAGE "This version of GNU Keyring requires PalmOS 3.0 features and cannot run here."
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID ID_SortError
+ERROR
+BEGIN	
+	TITLE "Sort Error"
+
+	MESSAGE "Error sorting database: ^1"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID TooNewAlert
+ERROR
+BEGIN
+	TITLE "Incompatible Database"
+
+	MESSAGE "This database is from a later version of Keyring, and cannot be opened."
+
+	BUTTONS "Cancel"
+END
+
+
+FORM ID ConfirmDeleteForm AT (2 94 156 64)
+MODAL
+BEGIN
+	TITLE "Delete Key"
+
+	LABEL "Delete current key record?" AUTOID AT (5 16) FONT 1 
+
+	CHECKBOX "Save archive copy on PC" ID SaveArchiveCheck 
+		AT (5 PREVBOTTOM + 3 AUTO AUTO) FONT 1
+
+	BUTTON "OK" ID OkBtn AT (5 46 AUTO AUTO) 
+	BUTTON "Cancel" ID CancelBtn AT (PREVRIGHT + 5 PREVTOP AUTO AUTO)
+END
+
+
+
+FORM ID AboutForm AT (2 2 156 156)
+MODAL
+BEGIN
+	TITLE "GNU Keyring"
+
+	FORMBITMAP AT (69 20) BITMAP KeyBitmap
+
+	LABEL "GNU Keyring"
+		AUTOID AT (CENTER 50) FONT 1
+	LABEL "__VERSION__ (__DATE__)" 
+		AUTOID AT (CENTER PREVBOTTOM) FONT 1
+
+  	LABEL "Copyright 1999, 2000 by Martin Pool" AUTOID AT (CENTER PREVBOTTOM+4)
+	LABEL "This is free software.  No warranty." AUTOID AT (CENTER PREVBOTTOM) 
+	LABEL "Released under the GNU GPL v2." AUTOID AT (CENTER PREVBOTTOM) 
+
+	LABEL "http://gnukeyring.sourceforge.net/" AUTOID AT (CENTER PREVBOTTOM+2)
+
+	BUTTON "OK" AUTOID AT (CENTER 139 30 12)
+END
+
+
+
+MENU ID ListMenuBar
+BEGIN
+	PULLDOWN "Keyring"
+	BEGIN
+		MENUITEM "Set Password..." ID SetPasswdCmd 
+	END
+
+	PULLDOWN "Options"
+	BEGIN
+		MENUITEM "Preferences..." ID ID_PrefsCmd
+		MENUITEM "About..." ID AboutCmd
+	END
+END
+
+
+MENU ID KeyEditMenuBar
+BEGIN
+	PULLDOWN "Key"
+	BEGIN
+		MENUITEM "Generate Password..." ID GenerateCmd
+		MENUITEM "Export to Memo" ID ExportMemoCmd
+		MENUITEM SEPARATOR
+		MENUITEM "Undo All" ID ID_UndoAllCmd
+		MENUITEM "Delete..." id DeleteKeyCmd 
+	END
+
+	PULLDOWN "Edit"
+	BEGIN
+		MENUITEM "Undo" ID EditUndo "@accel_Undo"
+		MENUITEM "Cut" ID EditCut "@accel_Cut"
+		MENUITEM "Copy" ID EditCopy "@accel_Copy"
+		MENUITEM "Paste" ID EditPaste "@accel_Paste"
+		MENUITEM "Select All" ID EditSelectAll "@accel_SelectAll"
+		MENUITEM SEPARATOR
+		MENUITEM "Keyboard" ID KeyboardCmd "@accel_Keyboard"
+		MENUITEM "Graffiti Help" ID GraffitiReferenceCmd "@accel_Graffiti"
+	END
+
+	PULLDOWN "Options"
+	BEGIN
+		MENUITEM "Preferences..." ID ID_PrefsCmd 
+		MENUITEM "Tips..."	ID HelpCmd
+		MENUITEM "About..." ID AboutCmd
+	END
+END
+
+ICON "keyring-22.xbm"
+SMALLICON "keyring-15.xbm"
+BITMAP ID KeyBitmap "keyring-22.xbm"
+
+STRING ID TitleTemplateStr "Key %d of %d"
+STRING ID EmptyTitleStr "New Key"
+STRING ID ErrCheckingROM  "Error checking ROM version: ^1"
+
+// Help messages
+STRING ID GenerateHelp file "@@GenerateHelp"
+STRING ID KeyEditHelp FILE "@@KeyEditHelp"
+
+STRING ID SetPasswdHelp "@@SetPasswdHelp"
+
+CATEGORIES ID CategoryRsrc "Unfiled" "Banking" "Computer" "Phone" "Web"
