@@ -453,6 +453,7 @@ static void KeyEditForm_GetFields(void)
 static void Edit_PrepareFields(void)
 {
     FieldAttrType attr;
+    UInt32 encoding;
 
     FldGetAttributes(f_NotesFld, &attr);
     attr.hasScrollBar = true;
@@ -468,6 +469,16 @@ static void Edit_PrepareFields(void)
               attr.editable = false;
               FldSetAttributes(f_AllFields[i], &attr);
          }              
+    }
+
+    if (FtrGet(sysFtrCreator, sysFtrNumEncoding, &encoding))
+	/* if feature not found it is palm latin */
+	encoding = charEncodingPalmLatin;
+
+    /* If encoding is not latin, use default fonts. */
+    if (encoding == charEncodingPalmLatin) {
+	FldSetFont(f_AllFields[2], fntPassword);
+	FldSetFont(f_AllFields[3], fntPassword);
     }
 }
 
