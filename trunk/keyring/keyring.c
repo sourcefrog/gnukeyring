@@ -213,13 +213,16 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 }
 
 
-static Err RomVersionCompatible (UInt32 requiredVersion)
+static Err RomVersionCompatible (void)
 {
     UInt32 romVersion;
+    UInt32 encryption = 0;
 
     // See if we have at least the minimum required version of the ROM or later.
     FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
-    if (romVersion < requiredVersion) {
+    FtrGet(sysFtrCreator, sysFtrNumEncryption, &encryption);
+    if (romVersion < sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0)
+	|| (encryption & sysFtrNumEncryptionMaskDES) == 0) {
 	FrmAlert(NotEnoughFeaturesAlert);
 	
 	// Pilot 1.0 will continuously relaunch this app unless we switch to 
@@ -256,9 +259,7 @@ UInt32 PilotMain(UInt16 launchCode,
     }
 
     if (launchCode == sysAppLaunchCmdNormalLaunch) {
-	UInt32 rom30 = sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0);
-	
-	if ((err = RomVersionCompatible(rom30)))
+	if ((err = RomVersionCompatible()))
 	    return err;
 
 	err = App_Start();
