@@ -24,8 +24,7 @@
 /*
  * TODO: Generate pronouncable text
  *
- * TODO: Also include high-ASCII characters that can be easily written
- * using Graffiti.  This makes it *much* harder to break.
+ * TODO: Prevent people from choosing no options.
  */
 
 #include <PalmOS.h>
