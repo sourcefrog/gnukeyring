@@ -2,7 +2,7 @@
 # $Id$
 
 
-pages=index screenshots download mirrors thanks plans faq	\
+pages=index screenshots download thanks plans faq	\
       history conduits lists contribute
 
 extra=robots.txt Blatant-Plug-Insert-4-Cheap-Dark.jpg snaps/*.png icons/*.gif

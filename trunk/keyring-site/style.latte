@@ -139,9 +139,12 @@
 \;       {\externallink \href={https://sourceforge.net/news/?group_id=306}
 \;          news } |
      {\externallink \href={https://sourceforge.net/bugs/?group_id=306}
-        bugs & suggestions } |
-     {\pagelink mirrors}
-
+        bugs & suggestions } 
+     {\br}
+     mirrors: {\foreach \mirror \mirrorlist 
+       {\let {{\url {\cadr \mirror}} {\countrycode {\car \mirror}}}
+          {\externallink \href=\url \countrycode}} 
+      }
 
      {\rule}
    }
