@@ -1,0 +1,7 @@
+A:link { color: red; font-weight: bold }
+A { text-decoration: none; font-weight: bold }
+A:hover { text-decoration: underline }
+A:vlink { text-decoration: none }
+A:alink { color: red; text-decoration: underline }
+BODY  { font-size: 11px; font-family: verdana, arial, helvetica; background: black }
+STRONG { font-weight: bold; font-size: 12px; font-family: verdana, arial, helvetica }

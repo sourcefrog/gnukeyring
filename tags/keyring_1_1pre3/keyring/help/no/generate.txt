@@ -1,0 +1,5 @@
+Generer Passord setter passordet til denne nøkkelen til en ny tilfeldig verdi.
+
+Lengden er antall tegn i det nye passordet.
+
+Inkluder spesifiserer hvilke tegn som er tillatt i passordet. Minst en klasse må inkluderes.
