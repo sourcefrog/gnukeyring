@@ -25,3 +25,5 @@ void Key_SetCategory(UInt16 idx, UInt16 category);
 Err KeyDB_CreateNew(UInt16 *idx);
 void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr,
 		      UInt8 *key);
+
+void Keys_CalcPackedSize(UnpackedKeyType const *unpacked);
