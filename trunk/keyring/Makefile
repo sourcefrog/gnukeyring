@@ -39,7 +39,7 @@ EXE		= $(APP)
 
 EN_PRC          = $(BASE)-en.prc
 
-CC              = m68k-palmos-gcc
+CC              = m68k-palmos-coff-gcc
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
@@ -93,6 +93,8 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 
 BASE		= $(APP)-$(VERSION)
 
+# For a list of ISO language codes, see
+# http://www.unicode.org/unicode/onlinedat/languages.html
 LANGUAGES = en de es sv
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
