@@ -93,10 +93,8 @@ static Err App_Start(void) {
     if ((err = Snib_Init()))
 	return err;
 
-    if ((err = KeyDB_Init())) {
-	Snib_Close();
+    if ((err = KeyDB_Init()))
         return err;
-    }
 
     Secrand_Init();
     FrmGotoForm(ListForm);
@@ -112,7 +110,6 @@ static void App_Stop(void) {
     Secrand_Close();
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
-    Snib_Close();
     DmCloseDatabase(gKeyDB);
 }
 

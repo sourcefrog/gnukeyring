@@ -63,14 +63,7 @@ void KeyDB_SetPasswd(UInt8 *oldKey, Char *newPasswd)
 {
      PwHash_Store(newPasswd);
      KeyDB_Reencrypt(oldKey, newPasswd);
-     Unlock_PrimeTimer();
 }
-
-
-void Unlock_PrimeTimer(void) {
-    Snib_SetExpiry(TimGetSeconds() + gPrefs.timeoutSecs);
-}
-
 
 static void UnlockForm_SelAll(void) {
     /* We'd like to select the entire contents of the form every time
@@ -116,7 +109,6 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 		    correct = false;
 		} else {
 		    Snib_StoreRecordKey(keyHash);
-		    Unlock_PrimeTimer();
 		}
 	    } else {
 		FrmAlert(WrongKeyAlert);
