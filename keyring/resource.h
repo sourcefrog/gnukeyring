@@ -87,6 +87,7 @@
 #define PrefsCmd			1307
 #define GenerateCmd			1308
 #define ExportMemoCmd			1309
+#define HelpCmd				1310
 
 #define EditCopy			1400
 #define EditCut				1401
@@ -97,3 +98,4 @@
 #define ConfirmDeleteStr		1501
 #define GenerateHelp			1502
 #define PreferencesHelp			1503
+#define KeyEditHelp			1504
