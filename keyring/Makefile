@@ -11,13 +11,8 @@ APP             = keyring
 ICONTEXT        = "Keyring"
 APPID           = "Gtkr"
 
-# XXX: You may have to edit this to match your SDK installation
-#PALM_BASE       = /usr/local/include/palmos3.5
-#C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI:$(PALM_BASE)/Libraries/PalmOSGlue:$(PALM_BASE)/Dynamic:$(PALM_BASE)/Libraries
-#export C_INCLUDE_PATH
-
 RCP             = $(APP).rcp
-RCP_IN          = $(RCP).ja $(RCP).iso2 $(RCP).in
+RCP_IN          = $(RCP).ja $(RCP).iso2 $(RCP).cp1251 $(RCP).in
 BITMAPS         = keyring-15-1.pbm keyring-32-1.ppm keyring-32-8.ppm    \
 		  keyring-64-8.ppm keyring-22.xcf lock.xbm unlock.xbm
 RESOURCES	= fontPW.txt fontstar.txt $(BITMAPS)
@@ -110,10 +105,14 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 # For a list of ISO language codes, see
 # http://www.loc.gov/standards/iso639-2/englangn.html
 # The codes nn and nb for nynorsk and bokmål are recent additions.
-LANGUAGES = en ca da de es fr it ja nl nb nn pt sv pl
+LANGUAGES = en ca da de es fr it ja nl nb nn pt sv pl ru
 
 LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it \
-          jpJP <ja nlNL <nl noNO <nb ptBR <pt svSE <sv plPL <pl
+          jpJP <ja nlNL <nl noNO <nb ptBR <pt svSE <sv plPL <pl \
+	  ruRU <ru
+
+PILRCOPTS_ja = -Fj
+PILRCOPTS_ru = -Fc
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
@@ -121,8 +120,6 @@ DIST_BIN_SIG = $(patsubst %,%.sig,$(DIST_BIN) $(PRCS))
 DIST_BALL_SIG = $(patsubst %,%.sig,$(DIST_BALL))
 SSLEAYLIBS_SIG = $(patsubst %,%.sig,$(SSLEAYLIBS))
 SIGS = $(DIST_BIN_SIG) $(DIST_BALL_SIG) $(SSLEAYLIBS_SIG)
-
-
 
 
 default: $(BASE)-en.prc
@@ -137,7 +134,7 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	@[ -d res/$* ] || mkdir -p res/$*
 	@-rm -f res/$*/*
 	@-rm -f *.bin
-	$(PILRC) -allowEditID -H auto.h.tmp -q $(shell [ "$*" = ja ] && echo -Fj) -L $* $(RCP) res/$*/ >/dev/null
+	$(PILRC) -allowEditID -H auto.h.tmp -q $(PILRCOPTS_$*) -L $* $(RCP) res/$*/ >/dev/null
 	@if cmp -s auto.h auto.h.tmp; then rm -f auto.h.tmp; \
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
