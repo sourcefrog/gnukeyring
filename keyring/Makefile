@@ -8,7 +8,7 @@ APP             = keyring
 ICONTEXT        ="GNU Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 1.0+3
+VERSION         = 1.0+4
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
