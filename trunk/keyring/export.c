@@ -53,7 +53,7 @@
 
 /*
  * Maximum length of record supported by the Memo Pad application
- *
+ */
 #define kMaxExport (4<<10)
 
 /*
