@@ -38,11 +38,13 @@
  * mistake.  Records are encrypted by the MD5 hash of the master
  * password.
  *
- * v2 was in 0.13.0pr1 and not supported
+ * v2 was in 0.13.0pr1 [NOT SUPPORTED]
  *
  * v3 has the session key and master password checksum stored in
- * hidden records.  */
-#define kDatabaseVersion	3
+ * hidden records. [NOT SUPPORTED]
+ *
+ * v4 (0.13.0pr4) doesn't use session keys. */
+#define kDatabaseVersion	4
 
 /* The app and preferences version */
 #define kAppVersion		132
