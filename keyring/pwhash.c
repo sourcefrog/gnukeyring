@@ -52,19 +52,26 @@ static void PwHash_CalcSnib(SnibType *snib, UInt16 snibSize,
 
 /*
  * Generate the hash of a password, using specified salt.
+ * This calculates the first kHashSize bytes of the standard SHA1 sum 
+ * of hash concatenated with snib.
+ *
+ * This code relies on the fact that SHA1 and m68k are both big endian and
+ * that kSaltSize + snibSize < 55 bytes.  Fix this if you support passwords
+ * with more than 376 bits.
  */
 static void PwHash_CalcHash(HashType hash, SnibType *snib, UInt16 snibSize,
 			    UInt8 *salt)
 {
-    UInt8 digest[kSHA1HashSize];
-    UInt8 buffer[snibSize + kSaltSize];
+    UInt32 buffer[kSHA1BlockSize / sizeof(UInt32)];
 
-    MemMove(buffer, snib, snibSize);
-    MemMove(buffer + snibSize, salt, kSaltSize);
-    SHA1(buffer, snibSize + kSaltSize, digest);
     MemSet(buffer, sizeof(buffer), 0);
-    MemMove(hash, digest, kHashSize);
-    MemSet(digest, sizeof(digest), 0);
+    MemMove(((char*)buffer), snib, snibSize);
+    MemMove(((char*)buffer) + snibSize, salt, kSaltSize);
+    ((char*)buffer)[snibSize + kSaltSize] = 0x80;
+    buffer[15] = (snibSize + kSaltSize) * 8;
+    SHA1_Block(initsha1, buffer, buffer);
+    MemMove(hash, buffer, kHashSize);
+    MemSet(buffer, sizeof(buffer), 0);
 }
 
 
