@@ -26,7 +26,6 @@
 
 #include "resource.h"
 #include "keyring.h"
-#include "callback.h"
 #include "keydb.h"
 #include "passwd.h"
 #include "uiutil.h"

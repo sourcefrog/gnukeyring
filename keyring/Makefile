@@ -11,7 +11,7 @@ RCP             = $(APP).rcp
 PRC             = $(APP)-$(VERSION).prc
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
 		  crypto.c passwd.c uiutil.c generate.c prefs.c \
-		  export.c
+		  export.c dbutil.c
 DEP             = $(subst .c,.d,$(SRC))
 OBJ		= $(subst .c,.o,$(SRC))
 #GRC             = $(APP).grc

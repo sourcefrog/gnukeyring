@@ -28,7 +28,6 @@
 #include <Encrypt.h>
 
 #include "keyring.h"
-#include "callback.h"
 #include "memutil.h"
 #include "keydb.h"
 #include "crypto.h"
@@ -186,7 +185,6 @@ static Int16 KeyDB_CompareRecords(void * rec1, void * rec2,
     Int16 result;
     Char	*cp1, *cp2;
 
-    CALLBACK_PROLOGUE;
     if (info1 && (info1->attributes & dmRecAttrDelete))
 	result = +1;
     else if (info2 && (info2->attributes & dmRecAttrDelete))
@@ -208,7 +206,6 @@ static Int16 KeyDB_CompareRecords(void * rec1, void * rec2,
 	else 
 	    result = StrCompare(cp1, cp2);
     }
-    CALLBACK_EPILOGUE;
     return result;
 }
 

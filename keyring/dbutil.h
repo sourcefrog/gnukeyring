@@ -19,10 +19,5 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-MemHandle Mem_StrToHandle(Char * ptr, UInt32 *);
-MemHandle Mem_ReadString(Char * *ptr, UInt32 *);
-void Mem_ReadChunk(Char **ptr, UInt32 len, void * dest);
-void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len);
-
-void Mem_ObliteratePtr(void * p);
-void Mem_ObliterateHandle(MemHandle h);
+void DB_WriteStringFromHandle(void *dest, UInt32 *off, MemHandle h, UInt32 len);
+void DB_WriteString(void *dest, UInt32 *off, Char const *str);

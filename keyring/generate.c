@@ -29,7 +29,6 @@
 
 #include "resource.h"
 #include "keyring.h"
-#include "callback.h"
 #include "generate.h"
 #include "uiutil.h"
 

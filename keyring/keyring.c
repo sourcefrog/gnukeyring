@@ -25,7 +25,6 @@
 
 #include "resource.h"
 #include "keyring.h"
-#include "callback.h"
 #include "keydb.h"
 #include "passwd.h"
 #include "uiutil.h"
@@ -137,8 +136,6 @@ static Boolean App_HandleEvent(EventPtr event)
     UInt16		formId;
     Boolean	result = false;
 
-    CALLBACK_PROLOGUE;
-
     if (event->eType == frmLoadEvent) {
 	// Load the form resource specified in the event then activate
 	// the form.
@@ -162,7 +159,6 @@ static Boolean App_HandleEvent(EventPtr event)
 	}
     }
 
-    CALLBACK_EPILOGUE;
     return result;
 }
 
@@ -205,7 +201,6 @@ Boolean Common_HandleMenuEvent(EventPtr event)
     FieldPtr fld;
     Boolean result = false;
 
-    CALLBACK_PROLOGUE;
     fld = UI_GetFocusObjectPtr();
     
     switch (event->data.menu.itemID) {
@@ -261,7 +256,6 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	break;
     }
 
-    CALLBACK_EPILOGUE;
     return result;
 }
 
