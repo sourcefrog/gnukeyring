@@ -177,6 +177,7 @@ BEGIN
   "15 sec" = "15 Sek."
   "60 sec" = "1 Min."
   "5 min" = "5 Min."
+  "Veil password" = "Verschleiere Passwort"
 
   "Cancel" = "Abbrechen"
 
@@ -960,6 +961,8 @@ END
 
 VERSION ID 1000 "__VERSION__"
 
+FONT ID StarFont FONTID fntStar "fontstar.txt"
+
 FORM ID ListForm AT (0 0 160 160)
 MENUID ListMenuBar
 BEGIN
@@ -1068,6 +1071,8 @@ BEGIN
 
 	button "OK" OkBtn at (5 prevbottom+4 auto auto)
 	button "Cancel" CancelBtn at (prevright+5 prevtop auto auto)
+
+	graffitistateindicator at (140 prevtop)
 end
 
 
@@ -1101,16 +1106,20 @@ BEGIN
 end
 
 
-FORM ID UnlockForm AT (2 98 156 60)
+FORM ID UnlockForm AT (2 86 156 72)
 MODAL
 BEGIN
 	TITLE "Unlock"
 	
 	LABEL "Enter your password:" AUTOID AT (3 15) FONT 1
 
-	FIELD ID MasterKeyFld AT (3 30 150 15) UNDERLINED MAXCHARS 40 
+	FIELD ID MasterKeyFld AT (3 prevbottom+1 150 auto)
+		UNDERLINED MAXCHARS 40 FONT fntStar
 
-	BUTTON "Unlock" UnlockBtn AT (3 45 AUTO AUTO)
+        CHECKBOX "Veil password" ID VeilPasswordCheck
+                AT (3 PREVBOTTOM+1 AUTO AUTO)
+
+	BUTTON "Unlock" UnlockBtn AT (3 PREVBOTTOM+4 AUTO AUTO)
 	BUTTON "Cancel" CancelBtn AT (PREVRIGHT+6 PREVTOP AUTO AUTO)
 
 	GRAFFITISTATEINDICATOR AT (140 PREVTOP)

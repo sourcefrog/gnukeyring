@@ -7,6 +7,8 @@
  * Keyring for PalmOS
  */
 
+#define fntStar				 128
+
 #define ListForm			1000
 #define KeyEditForm			1001
 #define AboutForm			1002
@@ -43,6 +45,8 @@
 #define KeyBitmap                       1106
 #define LockBitmap                      1107
 #define UnlockBitmap                    1108
+
+#define StarFont			1150
 
 #define DoneBtn				1202
 #define CountDownTrigger		1204
@@ -84,6 +88,7 @@
 #define GenerateBtn			1241
 #define CategoryTrigger			1242
 #define CategoryList			1243
+#define VeilPasswordCheck		1244
 
 #define AboutCmd			1300
 #define KeyboardCmd			1301

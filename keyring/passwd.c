@@ -63,7 +63,16 @@ static void UnlockForm_SelAll(void) {
 /*          FldSetSelection(f_entryFld, 0, len); */
 }
 
-
+static Boolean UnlockForm_HandleEvent(EventPtr event)
+{
+    if (event->eType == ctlSelectEvent
+	&& event->data.ctlSelect.controlID == VeilPasswordCheck) {
+	FldSetFont(UI_GetObjectByID(FrmGetActiveForm(), MasterKeyFld), 
+		   event->data.ctlSelect.on ? fntStar : stdFont);
+	return true;
+    }
+    return false;
+}
 
 static Boolean UnlockForm_Run(UInt8 *keyHash) {
     UInt16 	result;
@@ -71,12 +80,21 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
     FormPtr	frm = FrmInitForm(UnlockForm);
     Char * 	entry;
     UInt16 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
-    Boolean 	done, correct;
+    Boolean	done, correct;
+    Boolean	veil = true;
+    Int16	size = sizeof(veil);
     Err         err;
     Int16       len;
 
+    PrefGetAppPreferences(kKeyringCreatorID, prefID_VeilPassword,
+			  &veil, &size, true);
+
+    CtlSetValue(UI_GetObjectByID(frm, VeilPasswordCheck), veil);
+    FrmSetEventHandler(frm, UnlockForm_HandleEvent);
+
     do { 
         f_entryFld = FrmGetObjectPtr(frm, entryIdx);
+	FldSetFont(f_entryFld, veil ? fntStar : stdFont);
 
 	FrmSetFocus(frm, entryIdx);
 	result = FrmDoDialog(frm);
@@ -107,6 +125,9 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 	} 
     } while (!done);
 
+    veil = CtlGetValue(UI_GetObjectByID(frm, VeilPasswordCheck));
+    PrefSetAppPreferences(kKeyringCreatorID, prefID_VeilPassword, 0,
+			  &veil, sizeof(veil), true);
     FrmDeleteForm(frm);
     FrmSetActiveForm(prevFrm);
     return correct;
