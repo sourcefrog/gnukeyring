@@ -27,6 +27,7 @@
 
 static void UnlockForm_SetFont(FormPtr frm, Boolean veil) {
     FontID font;
+    UInt32 romVersion;
     if (veil) {
 	font = gPrefs.useCustomFonts ? fntStar : symbolFont;
     } else {
@@ -35,13 +36,35 @@ static void UnlockForm_SetFont(FormPtr frm, Boolean veil) {
 	    /* if feature not found it is palm latin */
 	    encoding = charEncodingPalmLatin;
 
-	/* If encoding is not latin, use default fonts. */
+	/* Check if we should use custom fonts. */
 	if (gPrefs.useCustomFonts && encoding == charEncodingPalmLatin)
 	    font = fntPassword;
 	else
 	    font = stdFont;
     }
-    FldSetFont(UI_GetObjectByID(frm, MasterKeyFld), font);
+    FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
+    if (romVersion < sysMakeROMVersion(3, 5, 0, sysROMStageRelease, 0)) {
+	/* Work around a nasty bug in older palm versions */
+	FieldPtr field = (FieldPtr) UI_GetObjectByID(frm, MasterKeyFld);
+	MemHandle text = FldGetTextHandle(field);
+	UInt16  offset = 0, len = 0, inspt = 0;
+	if (text) {
+	    char *start = MemHandleLock(text);
+	    offset = FldGetTextPtr(field) - start;
+	    len = FldGetTextLength(field);
+	    inspt = FldGetInsPtPosition(field);
+	    MemHandleUnlock(text);
+	    FldSetTextHandle(field, NULL);
+	}
+	FldSetFont(field, font);
+	if (text) {
+	    FldSetText(field, text, offset, len);
+	    FldSetInsertionPoint(field, inspt);
+	    if (FrmVisible(frm))
+		FldDrawField(field);
+	}
+    } else
+	FldSetFont(UI_GetObjectByID(frm, MasterKeyFld), font);
 }
 
 
