@@ -1,5 +1,0 @@
-Generuj has³o ustawia has³o tego klucza na now± losow± warto¶æ.
-
-Rozmiar jest ilo¶ci± znaków w ha¶le.
-
-Za³±cz okre¶la które znaki bêd± dozwolone w ha¶le. Co najmniej jedna klasa powinna zostaæ za³±czona. Je¶li "wymawialne" jest zaznaczone, wtedy zostanie wygenerowane wymawialne has³o sk³±daj±ce siê z ma³ych znaków.

@@ -1,5 +1,0 @@
-Generuj has³o: Stwórz nowe losowe has³o spe³niaj±ce okre¶lone kryteria.
-
-Eksportuj do Memo: Zapisz wszystkie informacje z tego klucza do nowego wpisu memo nie przydzielonego do ¿adnej grupy.
-
-Cofnij wszystko: Porzuæ wszystkie zmiany od momentu otwarcia rekordu.

@@ -1,5 +1,0 @@
-Genereer Wachtwoord stelt het wachtwoord automatisch in op een willekeurige waarde.
-
-Lengte is het aan karakters in het nieuwe wachtwoord.
-
-Opnemen specificeert welke karakters toegestaan zijn in het wachtwoord. Er moet op zijn minst een klasse worden opgenomen.
