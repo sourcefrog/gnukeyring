@@ -34,11 +34,9 @@ BITMAPS         = keyring-15.bmp keyring-22.bmp philosophical-gnu-tiny-bw.bmp
 # does not involve size-speed tradeoffs.
 CFLAGS          = -O2 -Wall -Werror -Winline -W $(DEFINES) $(INCLUDES) -MMD -g
 
-DOCS		= HACKING COPYING index.html Blatant-Plug-Insert-4-Cheap.JPG \
-		  BUGS TODO TESTS doc/attack-tree.txt \
-		  doc/security.html doc/description.txt doc/memo-import-export.html \
-		  doc/find.html \
-		  robots.txt
+TOP_DOCS	= HACKING COPYING BUGS TODO TESTS 
+DOCS		= $(TOP_DOCS) doc/*.html doc/*.txt doc/*.jpg \
+		  doc/keyring.css
 
 DISTFILES       = $(RCP) $(PRC) Makefile $(HELP_TXT) $(BITMAPS) \
 		  $(DOCS) $(wildcard *.c *.h)
@@ -101,15 +99,13 @@ install: $(PRC)
 # Only useful for the maintainer
 .PHONY: _upload
 hosting_dir = gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
-upload_files = $(DIST_BALL) $(DOCS) $(PRC) 
-upload: $(upload_files)
-	rsync --relative -e ssh -v $(upload_files) $(hosting_dir) 
-
 upload_doc: $(DOCS)
-	rsync --relative -e ssh -v $(DOCS) $(hosting_dir) 
+	rsync -e ssh -v $(DOCS) $(hosting_dir) 
+
+# TODO: Also upload the release to the SourceForge download area
 
 count: 
-	wc -l *.[ch] *.rcp Makefile
+	@cat *.[ch] *.rcp Makefile|wc -l
 
 tags: TAGS
 TAGS:	
