@@ -16,8 +16,9 @@
 
    <p>prc-tools 0.5, which is current in Debian as of July 2001 is far
    too old and will not work.</li>
-   <li>Download, build and install the <a href="http://www.ardiri.com/index.php?redir=palm&amp;cat=pilrc&amp;subcat=download">pilrc package</a>.  (The Debian version
-   of this is OK.)</li>
+   <li>Download, build and install the latest <a
+     href="http://sourceforge.net/project/showfiles.php?group_id=7404">pilrc
+     package</a>.  You need at least version 3.1.</li>
    <li>Install the <a href="http://www.palmos.com/dev/tools/sdk/">PalmOS headers and libraries</a> in <tt>/usr/local/palmdev/</tt>.</li>
    <li>Keyring should now build cleanly.</li></ol>
 </section>
