@@ -34,7 +34,8 @@
   Other features include:
 
   {\ul 
-    {\li Secure triple-DES encryption}
+    {\li Secure triple-DES encryption using a 112-bit key derived from
+     the password}
     {\li Open Source Software: no back doors, no license fees}
     {\li English, German, Spanish and Swedish localized versions}
     {\li Export records to the Memo Pad}
@@ -48,7 +49,6 @@ GNU Keyring stores records called "keys", each of which can contain
   {\li A non-secret name for the key}
   {\li An account name}
   {\li A password}
-  {\li The date the password was last changed}
   {\li Free-form notes}
 }
 
@@ -75,6 +75,17 @@ password of specified length, optionally including letters, numbers or
 symbols.  Use the "Generate Password" command in the key edit form to
 do this.
 
+{\h2 how to use}
+
+    To keep your data secure:
+
+    {\ul
+      {\li Choose a master password of at least 6 characters,
+      preferably including non-alphanumeric characters.}
+
+      {\li Make backups only onto secure computers.}
+    }
+
 {\h2 security information}
 
 This product contains no cryptographic algorithms.  It does call
@@ -91,26 +102,29 @@ The master password is not stored in the database.  Instead, an
 MD5 hash of the password and a random 32-bit salt is stored and
 checked against entered values.
 
-Records are protected by DES3-EDE-ECB encryption.  The first and
-second 8-byte halves of an MD5 hash of the password as the two
-keys.  8-byte blocks of the record (plus zero padding) are
-processed in this fashion.
+    The master password is also used to generate a record encryption key.
+    The 128-byte MD5 hash of the master password is spilt into two
+    64-bit keys, {\em K1} and {\em K2}.  (DES ignores the top bit of
+    each byte, so the key has 112 effective unknown bits.) These are
+    used to generate record data encrypted as {\em Enc(K1, Dec(K2,
+    Enc(K1, Data)))}.  Each 8-byte data block is independently
+    encrypted by the same key.
 
-PalmOS does not have memory protection between applications: a
-hostile application or PC-based conduit could read information from
-inside the Keyring database.  Keeping records encrypted provides some
-protection, but it is far from impossible.  GNU Keyring attempts to
-overwrite memory containing sensitive data after use, but this only
-gives partial protection.
+    PalmOS does not have memory protection between applications: a
+    hostile application or PC-based conduit could read information
+    from inside the Keyring database.  Keeping records encrypted
+    provides some protection, but it is far from impossible.  GNU
+    Keyring attempts to overwrite memory containing sensitive data
+    after use, but this only gives partial protection.
 
-The PalmOS pseudorandom number generator is used to generate
-session keys and random passwords; it may be predictable.
+    The PalmOS pseudorandom number generator is used to generate
+    random passwords; it may be predictable.
 
-You should only Hotsync to trusted computers.  It would be possible
-to (for example) put a trojan on the PC that grabbed the handheld's
-memory image, or that installed a trojan onto the handheld.
+    You should only Hotsync to trusted computers.  It would be
+    possible to (for example) put a trojan on the PC that grabbed the
+    handheld's memory image, or that installed a trojan onto the
+    handheld.  To avoid trojan versions, please {\pagelink
+    \pageid=download download} from a {\pagelink \pageid=mirrors
+    mirror site} and check the GnuPG signature.  
 
-You can review the source of GNU Keyring, or rebuild it to get a
-trusted binary. 
-}
-}
+} }
