@@ -149,11 +149,19 @@ static Boolean ListForm_Update(int updateCode) {
 
 
 static Boolean ListForm_ListSelect(EventPtr event) {
+    Int16	listIdx, idx;
+    Err		err;
     if (event->data.lstSelect.listID != KeysList)
 	return false;
 
     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
-	gKeyRecordIndex = event->data.lstSelect.selection;
+	/* Map from a position within this category to an overall
+	 * record index. */
+	listIdx = event->data.lstSelect.selection;
+	idx = 0;
+	err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
+				     dmSeekForward, gPrefs.category);
+	gKeyRecordIndex = idx;
 	FrmGotoForm(KeyEditForm);
     }
     return true;
