@@ -1,0 +1,7 @@
+This CVS module, `site', contains the rproxy web site.  Changes are
+manually uploaded to the web server.  You only need this module if you
+want to submit changes to the site.
+
+This site is built using the great Latte <http://latte.org/> tool,
+which is some kind of combination of TeX, Scheme, and HTML.  See if
+you like it.
