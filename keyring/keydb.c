@@ -1,4 +1,4 @@
-/* -*- c-file-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
  *
  * $Id$
  * 
@@ -259,12 +259,11 @@ Err KeyDB_CreateDB(void) {
 }
 
 
+/* Set the backup bit.  It seems that without this the Windows desktop
+ * software doesn't make the backup properly */
 Err KeyDB_MarkForBackup(void) {
     UInt16 attr;
     
-    // Set the backup bit.  It seems that without this the Windows
-    // desktop software doesn't make the backup properly
-
     /* TODO: Here or elsewhere set the database version! */
     
     DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL, &attr, NULL, NULL,
