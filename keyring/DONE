@@ -1,3 +1,11 @@
+* Keep temporary key in a locked DB
+
+This way we won't relock when switching applications.
+
+* Screenshots
+
+* Beep appropriately
+
 DONE Should say "Palm Pilot" 
 Even though that's not the correct name people tend to search for
 "Pilot" as a keyword.
