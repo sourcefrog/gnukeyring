@@ -264,16 +264,8 @@ typedef struct {
 
 static Secrand_BucketType g_RandomState;
 
-static inline UInt32 rotate_left(int i, UInt32 word)
-{
-    return (word << i) | (word >> (32 - i));
-}
-
 /*
- * This function adds a byte into the entropy "pool".  It does not
- * update the entropy estimate.  The caller must do this if appropriate.
- *
- * This function is tuned for speed above most other considerations.
+ * This function adds a number of words into the entropy "pool".
  *
  * The pool is stirred with a primitive polynomial of the appropriate degree,
  * and then twisted.  We twist by three bits at a time because it's
@@ -281,88 +273,51 @@ static inline UInt32 rotate_left(int i, UInt32 word)
  * entropy is concentrated in the low-order bits.
  */
 #define MASK(x) ((x) & (POOLWORDS-1))	/* Convenient abreviation */
-static void Secrand_AddEntropyWords(UInt32 x, UInt32 y)
+static void Secrand_AddEntropyWords(UInt32 *p, Int16 count)
 {
     static UInt32 const twist_table[8] = {
 	0, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
 	0xedb88320, 0xd6d6a3e8, 0x9b64c2b0, 0xa00ae278 };
     unsigned i, j;
     
-    i = MASK(g_RandomState.add_ptr - 2);	/* i is always even */
-    g_RandomState.add_ptr = i;
-    
+    i = g_RandomState.add_ptr;
+    j = g_RandomState.input_rotate;
+    while (count-- > 0) {
+	UInt32 x = *p++;
+	i = MASK(i - 1);
+	
 #ifdef ROTATE_PARANOIA
-    j = g_RandomState.input_rotate + 7;
-    if (!i)
 	j += 7;
-    g_RandomState.input_rotate = j &= 31;
-    
-    x = rotate_left(j, x);
-    y = rotate_left(j, y);
+	if (!i)
+	    j += 7;
+	j &= 31;
+	
+	x = (x << j) | (x >> (32 - j));
 #endif
 
-    /*
-     * XOR in the various taps.  Even though logically, we compute
-     * x and then compute y, we read in y then x order because most
-     * caches work slightly better with increasing read addresses.
-     * If a tap is even then we can use the fact that i is even to
-     * avoid a masking operation.  Every polynomial has at least one
-     * even tap, so j is always used.
-     */
-#if TAP1 & 1
-    y ^= g_RandomState.pool[MASK(i+TAP1)];
-    x ^= g_RandomState.pool[MASK(i+TAP1+1)];
-#else
-    j = MASK(i+TAP1);
-    y ^= g_RandomState.pool[j];
-    x ^= g_RandomState.pool[j+1];
-#endif
-#if TAP2 & 1
-    y ^= g_RandomState.pool[MASK(i+TAP2)];
-    x ^= g_RandomState.pool[MASK(i+TAP2+1)];
-#else
-    j = MASK(i+TAP2);
-    y ^= g_RandomState.pool[j];
-    x ^= g_RandomState.pool[j+1];
-#endif
-#if TAP3 & 1
-    y ^= g_RandomState.pool[MASK(i+TAP3)];
-    x ^= g_RandomState.pool[MASK(i+TAP3+1)];
-#else
-    j = MASK(i+TAP3);
-    y ^= g_RandomState.pool[j];
-    x ^= g_RandomState.pool[j+1];
-#endif
-#if TAP4 & 1
-    y ^= g_RandomState.pool[MASK(i+TAP4)];
-    x ^= g_RandomState.pool[MASK(i+TAP4+1)];
-#else
-    j = MASK(i+TAP4);
-    y ^= g_RandomState.pool[j];
-    x ^= g_RandomState.pool[j+1];
-#endif
-#if TAP5 == 1
-    /* We need to pretend to write pool[i+1] before computing y */
-    x ^= g_RandomState.pool[MASK(i+2)];
-    x ^= g_RandomState.pool[i+1];
-    y ^= g_RandomState.pool[i+1] = x = (x >> 3) ^ twist_table[x & 7];
-    y ^= g_RandomState.pool[i];
-    g_RandomState.pool[i] = (y >> 3) ^ twist_table[y & 7];
-#else
-#if TAP5 & 1
-    y ^= g_RandomState.pool[MASK(i+TAP5)];
-    x ^= g_RandomState.pool[MASK(i+TAP5+1)];
-#else
-    j = MASK(i+TAP5);
-    y ^= g_RandomState.pool[j];
-    x ^= g_RandomState.pool[j+1];
-#endif
+	/*
+	 * XOR in the various taps.  Even though logically, we compute
+	 * x and then compute y, we read in y then x order because most
+	 * caches work slightly better with increasing read addresses.
+	 * If a tap is even then we can use the fact that i is even to
+	 * avoid a masking operation.  Every polynomial has at least one
+	 * even tap, so j is always used.
+	 */
+	x ^= g_RandomState.pool[MASK(i+TAP1)];
+	x ^= g_RandomState.pool[MASK(i+TAP2)];
+	x ^= g_RandomState.pool[MASK(i+TAP3)];
+	x ^= g_RandomState.pool[MASK(i+TAP4)];
+	x ^= g_RandomState.pool[MASK(i+TAP5)];
+	g_RandomState.pool[i]  = (x >> 3) ^ twist_table[x & 7];
+    }
+    g_RandomState.add_ptr = i;
+    g_RandomState.input_rotate = j;
+}
 
-    y ^= g_RandomState.pool[i];
-    x ^= g_RandomState.pool[i+1];
-    g_RandomState.pool[i] = (y >> 3) ^ twist_table[y & 7];
-    g_RandomState.pool[i+1] = (x >> 3) ^ twist_table[x & 7];
-#endif
+static void Secrand_AddTickRandomness()
+{
+    UInt32 ticks = TimGetTicks();
+    Secrand_AddEntropyWords(&ticks, 1);
 }
 
 /*
@@ -371,8 +326,8 @@ static void Secrand_AddEntropyWords(UInt32 x, UInt32 y)
  */
 void Secrand_Init(void)
 {
-    Int16 version;
-    Int16 size = sizeof(g_RandomState);
+    Int16  version;
+    Int16  size = sizeof(g_RandomState);
     
     version = PrefGetAppPreferences(kKeyringCreatorID, k_SecrandPrefId,
 				    &g_RandomState, &size, false);
@@ -385,7 +340,7 @@ void Secrand_Init(void)
 	g_RandomState.add_ptr = 0;
 	g_RandomState.input_rotate = 0;
     }
-    Secrand_AddEntropyWords(TimGetTicks(), TimGetSeconds());
+    Secrand_AddTickRandomness();
 }
 
 /*
@@ -398,38 +353,30 @@ void Secrand_Close(void)
 			  &g_RandomState, sizeof(g_RandomState), false);
 }
 
+
 /*
  * This function adds entropy to the entropy "pool" from an event.
  */
 void Secrand_AddEventRandomness(EventType *ev)
 {
     UInt32 *rand = (UInt32 *) ev;
-    int i = sizeof(EventType) / sizeof(UInt32) / 2;
-    UInt32 x = TimGetTicks(), y = x;
-    
-    while (i-- > 0) {
-	x = (x << 5) | (x >> 27);
-	y = (y << 5) | (y >> 27);
-	x ^= *rand++;
-	y ^= *rand++;
-    }
-    Secrand_AddEntropyWords(x, y);
+    Secrand_AddEntropyWords(rand, sizeof(EventType) / sizeof(UInt32));
 }
 
-#define HASH_BUFFER_SIZE (kMD5HashSize / (2 * sizeof(UInt32)))
+#define HASH_BUFFER_SIZE (kMD5HashSize / 2)
 
 /*
  * This function extracts randomness from the "entropy pool", and
  * returns it in a buffer.
  */
-static void Secrand_ExtractEntropy(UInt32 buf[HASH_BUFFER_SIZE])
+static void Secrand_ExtractEntropy(UInt8 buf[HASH_BUFFER_SIZE])
 {
-    UInt32 tmp[2 * HASH_BUFFER_SIZE];
+    UInt32 tmp[kMD5HashSize/4];
     Char *digest = (Char *)tmp;
     Err err;
     UInt16 i;
 
-    Secrand_AddEntropyWords(TimGetTicks(), TimGetSeconds());
+    Secrand_AddTickRandomness();
     err = EncDigestMD5((UInt8 *)g_RandomState.pool, POOLWORDS * 4, digest);
     if (err)
 	UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
@@ -449,53 +396,25 @@ static void Secrand_ExtractEntropy(UInt32 buf[HASH_BUFFER_SIZE])
      * any patterns in the hash output.  (The exact folding
      * pattern is not important; the one used here is quick.)
      */
-    for (i = 0; i < HASH_BUFFER_SIZE; i++) {
-	UInt32 x = tmp[i], y = tmp[i + HASH_BUFFER_SIZE];
-	Secrand_AddEntropyWords(x, y);
-	buf[i] = x ^ y;
-    }
+    Secrand_AddEntropyWords(tmp, kMD5HashSize / sizeof(UInt32));
+    for (i = 0; i < HASH_BUFFER_SIZE; i++)
+	buf[i] = digest[i] ^ digest[i + HASH_BUFFER_SIZE];
 }
 
 /*
- * This function is exported.  It returns an UInt32 number with n bits
+ * This function is exported.  It returns an 8 bits of
  * strong random bits, suitable for password generation etc.
  */
-UInt32 Secrand_GetBits(int nbits)
+UInt8 Secrand_GetByte(void)
 {
-    static UInt32 bitbucket[HASH_BUFFER_SIZE];
-    static Int16  usedBits = 32 * HASH_BUFFER_SIZE;
-    UInt32 *ptr;
-    Int16  bitsAtPtr;
-    UInt32 result = 0;
+    static UInt8 bitbucket[HASH_BUFFER_SIZE];
+    static Int16 used = HASH_BUFFER_SIZE;
 
-    /* ptr points to next position that has randomness left
-     * bitsAtPtr tells how many low bits at ptr are random.
-     */
-    ptr       = bitbucket + (usedBits >> 5);
-    bitsAtPtr = 32 - (usedBits & 31);
-
-    for (;;) {
-	if (usedBits == 32 * HASH_BUFFER_SIZE) {
-	    /* We used up the whole pool, so refresh it.
-	     */
-	    Secrand_ExtractEntropy(bitbucket);
-	    usedBits = 0;
-	    ptr = bitbucket;
-	    bitsAtPtr = 32;
-	}
-
-	if (nbits > bitsAtPtr) {
-	    result = (result << bitsAtPtr) | *ptr;
-	    usedBits += bitsAtPtr;
-	    nbits -= bitsAtPtr;
-	    *ptr++ = 0;
-	    bitsAtPtr = 32;
-	} else {
-	    bitsAtPtr -= nbits;
-	    result = (result << nbits) | (*ptr >> bitsAtPtr);
-	    *ptr &= (1L << bitsAtPtr) - 1;
-	    usedBits += nbits;
-	    return result;
-	}
+    if (used == HASH_BUFFER_SIZE) {
+	/* We used up the whole pool, so refresh it.
+	 */
+	Secrand_ExtractEntropy(bitbucket);
+	used = 0;
     }
+    return bitbucket[used++];
 }
