@@ -4,7 +4,7 @@
     <title>New Keyring Database Format</title>
   </head>
 
-    <body bgcolor="#444444" background="Blatant-Plug-Insert-4-Cheap.JPG" 
+    <body bgcolor="#444444" background="Blatant-Plug-Insert-4-Cheap.jpg" 
 	  text="white" 
 	  link="red" alink="red" 
 	  vlink="#cc0000">
@@ -16,6 +16,7 @@
       I think it might be time to change the Keyring database format.
       Obviously we'll want to do this in a backward-compatible way.
 
+
     <h3>What's wrong?</h3>
 
     <p>
@@ -23,6 +24,33 @@
       may not actually require changing the database, but taken
       together it's probably time.
 
+    <h3>Categories</h3>
+
+    <p>
+      We don't support categories at the moment.  It would be kind of
+      nice if we did.
+
+    <p>
+      The default <tt>Category*</tt> routines expect to be able to
+      control the <tt>AppInfo</tt> block of the database.  At the
+      moment we use this for our own purposes, holding the session key
+      and similar stuff.
+
+    <p>
+      We could work around this, but it would be a pain to reimplement
+      a lot of code that's already basically there.
+
+    <p>
+      So, if we can't store this stuff in the <tt>AppInfo</tt> block,
+      where can it go?  Well, the <tt>SortInfo</tt> block seems to be
+      unnecessary for our purposes, so perhaps we could make that
+      point to our record.  That would also make conversion pretty
+      simple: we'd just detach the chunk from AppInfo, and attach it
+      to SortInfo.  We have to make sure detaching it doesn't cause it
+      to be orphaned.
+
+    <h3>Encryption Algorithm</h3>
+      
     <p>
       The foremost problem is that we encrypt all of the records with
       a hash of the password.  This is nice and simple, but
@@ -54,7 +82,6 @@
       href="http://www.counterpane.com/twofish.html">Twofish</a>.
 
     <ul>
-	<li>I want to support Categories.
 	
         <li>The ``resizing record'' bug makes me suspicious of all
         that code.
