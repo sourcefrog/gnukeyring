@@ -1,0 +1,403 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title>Gnu Keyring for PalmOS</title>
+    <link rel="stylesheet" type="text/css" href="keyring.css">
+  </head>
+
+<body>
+    <h1>GNU Keyring</h1>
+    
+      <A href="http://sourceforge.net"> 
+	<IMG src="http://sourceforge.net/sflogo.php?group_id=306&type=1"
+	     width="88" align=right height="31" border="0"></A>
+
+    <p>Copyright (C) 1999, 2000
+      by Martin Pool <a href="mailto:mbp@humbug.org.au">&lt;mbp@humbug.org.au&gt;</a>
+
+    <p><tt>$Id$</tt>
+      
+<font size=-1>
+
+<p>This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version.
+
+<p>This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+<p>You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+USA.
+
+<p>For more details see the file <A href="COPYING">COPYING</a>
+
+</font>
+
+
+    <table border="0" cellpadding="10">
+      <tr>
+	<td valign=top>
+	  <h2>Introduction</h2>
+	  </td>
+	
+	<td valign=top>
+<p><em>GNU Keyring</em> lets you securely store digital secret keys on
+your <a href="http://www.palm.com/">PalmOS</a> (PalmPilot, Visor,
+WorkPad) handheld computer.  This information might include:
+
+<ul>
+  <li>Computer account passwords
+  <li>Credit card numbers
+  <li>GnuPG or PGP passphrases
+  <li>SKey one-time-pads
+  <li>Phone banking keywords
+</ul>
+
+	  <p><b>GNU Keyring should be considered to be a beta release.  Please
+	      don't use it as your only copy of any important data
+	      yet.</b>
+	  </p>
+	  </td>
+      </tr>
+
+      <tr>
+	<td valign=top>
+	  <h2>Installation</h2>
+	</td>
+
+	<td valign=top>
+
+	  <p>
+	    <a href="http://sourceforge.net/project/filelist.php?group_id=306">Download the prc file or source tarball
+	      from SourceForge</a>.</p>
+	      
+	  <p>Install the keyring.prc binary on your handheld.  GNU
+	    Keyring will create a blank database the first time it
+	    runs.  GNU Keyring ought to run on any device with PalmOS
+	    2.0 or later, but please let me know how you go.  I test
+	    it on a PalmIII with PalmOS 3.3.
+	    
+	  <p>The database can be backed up using the normal Hotsync mechanism.
+	    There is currently no support for editing the database on
+	    a PC.
+
+	  <p>If you use GNU Keyring, please consider joining the
+	    <a href="http://sourceforge.net/mail/?group_id=306">
+	      mailing lists</a>.
+	    
+	  <p><a href="TODO">TODO</a>;
+	    <a href="http://sourceforge.net/cvs/?group_id=306">CVS information</a>;
+	    <a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/keyring/?cvsroot=gnukeyring">CVSWeb</a>
+	    
+	  <p>To rebuild from source, you will need the GNU PalmOS toolchain.  On
+	    <a href="http://www.debian.org/">Debian GNU</a>, that means these
+	    packages:
+
+	  <ul>
+	    <li>prc-tools-0.5.0r-3
+	    <li>pilrc-2.4-2
+	    <li>pilot-link-0.9.3-1
+	  </ul>
+
+	  </td>
+      </tr>
+
+      <tr>
+	<td valign=top><h2>Use</h2>
+	  </td>
+
+	<td valign=top>
+<p>GNU Keyring stores records called "keys", each of which can contain 
+
+<ul>
+  <li>A non-secret name for the key
+  <li>An account name
+  <li>A password
+  <li>The date the password was last changed
+  <li>Free-form notes
+</ul>
+
+<p>The name is shown in the list view even when the database is
+locked, so it should contain enough information to let you identify
+the record, but nothing confidential.  If no name is assigned, a
+stable unique ID is shown instead.
+
+<p>The keyring is secured by a <em>master password</em>.  To view or
+edit records, you must enter the master password.  The master password
+may be changed through the "Set Password" command in the list view.
+
+<p>For your convenience, the keyring can stay unlocked for a time
+after you enter your master password.  You can configure this
+behaviour through the "Preferences" command.  
+
+<p>The keyring always locks itself again when you switch to another
+application.  This seems necessary for security, to make sure that the
+encryption key is not kept unencrypted in memory and out of the
+program's control.
+
+<p>When you need to set a password, GNU Keyring can generate a random
+password of specified length, optionally including letters, numbers or
+symbols.  Use the "Generate Password" command in the key edit form to
+do this.
+
+	  <p>
+	    I think GNU Keyring approaches the best security one can
+	    achieve on this platform.  <a href="break.html">Here are
+	    some notes on its vulnerability to brute-force
+	    cracking</a>.
+
+	  </td>
+      </tr>
+
+      <tr>
+	<td valign=top><h2>Security Information</h2>
+	  </td>
+
+	<td valign=top>
+<p>This product contains no cryptographic algorithms.  It does call
+through a standard system trap method into code that may already be 
+present in your version of PalmOS.
+
+<p>In general, Palm application databases are not protected on the
+Hotsync PC, even if they contain private records.  Confidential data
+therefore is visible to anyone who can read that file on the PC.
+However, GNU Keyring encrypts all data except when it is actually
+being edited.
+
+<p>The master password is not stored in the database.  Instead, an
+MD5 hash of the password and a random 32-bit salt is stored and
+checked against entered values.
+
+<p>Records are protected by DES3-EDE-ECB encryption.  The first and
+second 8-byte halves of an MD5 hash of the password as the two
+keys.  8-byte blocks of the record (plus zero padding) are
+processed in this fashion.
+
+<p>PalmOS does not have memory protection between applications: a
+hostile application or PC-based conduit could read information from
+inside the Keyring database.  Keeping records encrypted provides some
+protection, but it is far from impossible.  GNU Keyring attempts to
+overwrite memory containing sensitive data after use, but this only
+gives partial protection.
+
+<p>The PalmOS pseudorandom number generator is used to generate
+session keys and random passwords; it may be predictable.
+
+<p>You should only Hotsync to trusted computers.  It would be possible
+to (for example) put a trojan on the PC that grabbed the handheld's
+memory image, or that installed a trojan onto the handheld.
+
+<p>You can review the source of GNU Keyring, or rebuild it to get a
+trusted binary.  The web page is at <a
+href="http://gnukeyring.sourceforge.net/">http://gnukeyring.sourceforge.net/</a>.
+</ul>
+
+
+	  </td>
+      </tr>
+
+      <tr>
+	<td valign=top><h2>Support / Feedback</h2>
+	  </td>
+
+	<td valign=top>
+	  <p>GNU Keyring is written and maintained by Martin Pool
+	    <a href="mailto:mbp@humbug.org.au">&lt;mbp@humbug.org.au&gt;</a>.  
+	    
+	  <p>GNU Keyring is not shareware, but if you like this program please
+	    consider <a href="http://www.gnu.org/help/help.html">how you can help
+	      the GNU project</a>.
+
+	  <p>You should be able to find up-to-date information about this
+	    program at 
+	    <a href="http://www.freshmeat.net/appindex/1999/11/14/942590261.html">Freshmeat</a> 
+	    or 
+	    <a href="http://gnukeyring.sourceforge.net/">SourceForge</a>
+
+	  <p>Please report bugs using the SourceForge bug tracking system:
+	    <a href="http://www.sourceforge.net/bugs/?group_id=306">GNU Keyring Bug
+	      Tracking</a>.
+	</td>
+      </tr>
+
+      <tr>
+	<td valign=top><h2>FAQ</h2></td>
+	<td valign=top>
+	  
+	  <p><em>I have begun using keyring, and am trying to verify that
+	      my encrypted data is being backed up on the pc during the
+	      hotsync process.  How can I ensure that this is happening?</em>
+
+	  <p>Have a look in the backup directory of your desktop
+	    software.  You should see a file called Keys-Gtkr.pdb --
+	    this is the data.  The date on that file will tell you
+	    when the file was last backed up.  If you're using Unix,
+	    you can use the `pilot-file' command to see the encrypted
+	    records inside it and their individual modification times.
+	    Because the keys are encrypted you can't look inside it at
+	    the moment, but there may be support for editing on a PC
+	    in the future.
+	  </p>
+
+	  <p>
+	    Backups didn't work reliably with some Windows client
+	    software in 0.7.4 and earlier versions.
+	  </p>
+	</td>
+      </tr>
+      
+      <tr>
+	<td valign=top><a name="Changes"></a><h2>Release History</h2></td>
+      </td>
+	<td valign=top>
+	  <dl>
+	    <dt>0.7.5</dt>
+	    <dd>(2000-02-24)
+
+	      Mark the database for backup; some Windows client
+	      software seems to require this bit to be set.
+	    
+	    <dt>0.7.4a</dt>
+	    <dd>(2000-02-14)
+
+	      Add notes on <a href="break.html">breaking keyrings</a>
+	      to the web site.  No new software.
+	    
+	    <dt>0.7.4</dt>
+	    <dd>(2000-02-04)
+
+	      Try to fix crash at startup on Visors.
+	      Up/down buttons work in the list form (Craig Wiegert).  
+	    
+	    <dt>0.7.3</dt>
+	    <dd>(2000-01-30)
+	      
+	      Move CVS onto SourceForge.
+	      
+	    <dt>0.7.2
+	    <dd>(1999-12-19)
+	      Fix title when paging through records.  
+	      Rearrange menus; add more help text.
+	      Preferences dialog is now also available from the Key Edit form.
+	      
+	    <dt>0.7.1
+	    <dd>(1999-12-19)
+	      Remember the settings for key generation between uses.
+
+  <dt>0.7.0
+  <dd>(1999-12-19)
+    Automatically generate random passwords matching certain criteria; 
+    GUI tweaks.
+
+  <dt>0.6.0
+  <dd>(1999-12-18)
+    Obliterate memory of sensitive data after use.
+
+  <dt>0.5.2 
+  <dd>(1999-12-18) 
+    Use a scrollbar in the main list form.
+
+  <dt>0.5.1
+  <dd>(1999-12-06) 
+    Fix bug that intermittently broke the "Set
+    Password" function.
+
+  <dt>0.5.0
+  <dd>(1999-12-03)
+    Automatically save records when changing apps or when the 
+    page buttons are pressed.  Re-encrypt records when the password
+    is changed.  Only save dirty records.
+
+  <dt>0.4.2
+  <dd>Change from using single-DES to DES3-EDE with a 112-bit key
+    being the MD5 hash of the password.
+
+  <dt>0.4.1
+  <dd>Show "wait" dialogs while encrypting and decrypting.
+
+  <dt>0.4.0
+  <dd>Single DES encryption using the master key is implemented.  
+      The record format has changed and is likely to change again 
+      before it finally stabilizes.
+
+  <dt>0.3.2
+  <dd>Soft and hard key navigation while editing records.  
+      Fix title in edit form.
+			  
+  <dt>0.3.1
+  <dd>Fixes a serious bug in record sorting.  Alpha.
+
+  <dt>0.3 <dd>First public release.  Working, but the file format is
+  not stable and record encryption is not implemented.
+</dl>
+
+
+	  </td>
+      </tr>
+
+      <tr>
+	<td valign=top><h2>Coming features</h2>
+	</td>
+	<td valign=top>
+	  <ul>
+	    <li><a href="break.html">Breaking passwords</a>
+	    <li>GNOME-Pilot integration, so you can edit your keyring on a PC
+	    <li><a href="memo-import-export.html">Import/export to the memo pad</a>
+	    <li>Multiple categories
+	    <li>GPG-signed releases
+	    <li><a href="find.html">Find</a>
+	    <li>(Your suggestions here!)
+	  </ul>
+	</td>
+      </tr>
+
+      <tr>
+	<td valign=top><h2>Links</h2>
+	</td>
+	<td valign=top>
+
+
+	  <ul>
+  <li><a href="http://www.counterpane.com/crypto-gram-9909.html#OpenSourceandSecurity">Bruce Schneier on "Open Source and Security"</a>
+ 
+  <li><a href="http://www.efa.org.au/">Electronic Frontiers Australia</a>
+
+  <li><a href="http://www.palm.com/devzone/">3Com DevZone</a>
+
+  <li><a href="http://www.scumby.com/scumbysoft/pilot/pilrc/index.htm">Wes Cherry's <em>PilRC</em> tool</a>
+
+  <li><a href="http://homepages.enterprise.net/jmarshall/palmos/">Random links for PalmOS development resources</a></li>
+
+  <li><a href="http://www.freshmeat.net/appindex/1999/11/14/942590261.html">Freshmeat Appindex 942590261</a>
+
+  <li><a href="http://www.sourceforge.net/project/?form_grp=306">SourceForge Project Page</a>
+
+  <li><a href="http://eunuchs.org/linux/palm/index.html">The comprehensive Linux-PalmPilot page</a>
+  
+</ul>
+
+	  </td>
+      </tr>
+
+      <tr>
+	<td valign=top>
+	  <h2>Thanks</h2>
+	</td>
+
+	<td>
+	  <ul>
+	    <li><a href="http://www.valinux.com/">VA Linux Systems</a>
+	      for SourceForge</li>
+	    <li><a href="http://www.linuxcare.com.au/">Linuxcare OzLabs</a> for a cool
+	      place to work.</li>
+	    <li>Craig Wiegert</li>
+	</td>
+      </tr>
+    </table>
+  </body>
+</html>
