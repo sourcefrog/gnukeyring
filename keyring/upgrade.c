@@ -29,19 +29,6 @@
  * TODO: Upgrade to v3 from v1.
  */
 
-
-void Keyring_TooNew(void)
-{
-    FrmAlert(TooNewAlert);
-}
-
-
-Boolean Keyring_OfferUpgrade(void)
-{
-    return FrmAlert(UpgradeAlert) == 0;	/* button 0 = convert */
-}
-
-
 static void UpgradeDB_Failed(int oldVersion)
 {
     char oldVer[8];
