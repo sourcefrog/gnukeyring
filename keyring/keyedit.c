@@ -41,7 +41,12 @@
 #include "listform.h"
 
 /*
- * TODO: Newline in single-line fields should move down one.
+ * TODO: Newline in single-line fields should move down one, perhaps?
+ * Really this is only useful on POSE -- on the real system, people
+ * can just use the next-field character.
+ *
+ * TODO: When flipping records, if the timeout has expired instead go
+ * back to the list. 
  */
 
 
