@@ -50,6 +50,8 @@ with keyring-1.2.2.</p>
 	      desc="Zip archive of all binaries"--->
     <dlentry  icon="compressed.gif" file="keyring-${cur_ver}.tar.gz" 
 	      desc="Tar-ball of sources">
+    <dlentry  icon="compressed.gif" file="keyring-link-${cur_ver}.tar.gz" 
+	      desc="Example code to decrypt data on PC">
     <tr><td colspan="3">The following provides the source code for 
 	third party libraries.  You don't need these to compile keyring.
 	</td></tr>
