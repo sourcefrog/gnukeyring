@@ -616,6 +616,17 @@ BEGIN
 END
 
 
+ALERT ID alertID_OfferReadOnly
+CONFIRMATION
+BEGIN
+	TITLE "Keyring"
+
+	MESSAGE "The Keyring database is in read-only memory.  Do you want to open it with editing disabled?"
+	
+	BUTTONS "OK" "Cancel"
+END
+
+
 ALERT ID alertID_ExportEmpty
 ERROR
 BEGIN
@@ -722,6 +733,17 @@ BEGIN
 
 	MESSAGE "This database is from a later version of Keyring, and cannot be opened."
 
+	BUTTONS "Cancel"
+END
+
+
+ALERT ID alertID_UpgradeReadOnly
+ERROR
+BEGIN
+	TITLE "Incompatible Database"
+
+	MESSAGE "This database is from an earlier version of Keyring, but cannot be converted because it is in read-only memory."
+	
 	BUTTONS "Cancel"
 END
 
