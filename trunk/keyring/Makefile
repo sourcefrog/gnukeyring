@@ -3,10 +3,10 @@
 # $Id$
 
 APP             = keyring
-ICONTEXT        ="Tightly Bound"
+ICONTEXT        ="No Peeking"
 APPID           = "Gtkr"
 
-VERSION         = 1.0pr6
+VERSION         = 1.0dev7
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
@@ -46,6 +46,13 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 # Empirically the smallest executables come from -O2, which makes sense
 # because it is defined to be the greatest amount of optimization that
 # does not involve size-speed tradeoffs.
+
+# Adding -O3 seems to make a difference to execution time as many
+# functions are inlined.  However, it also generates code that
+# greviously confuses gdb.  So, for debugging we turn optimization 
+# off altogether and for ship versions we turn it right up.
+
+# TODO: Switch optimization based on version number?
 
 # On the other hand -O0 seems to make gcc not treat constants
 # properly. Foo. 
