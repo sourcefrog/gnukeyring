@@ -46,6 +46,12 @@ LocalID gKeyDBID;
 // Reference to the keys database
 DmOpenRef       gKeyDB;
 
+/*
+ * True if the database can only be opened read-only; if e.g. the database is
+ * stored in ROM.
+ */
+Boolean g_ReadOnly;
+
 
 /* ======================================================================
  * Key database
@@ -123,6 +129,9 @@ Err KeyDB_OpenExistingDB(void) {
     if ((err = DmOpenDatabaseInfo(gKeyDB, &gKeyDBID, NULL, NULL,
 				  &gKeyDBCardNo, NULL)))
 	return err;
+
+    /* XXX: Just for testing read-only support. */
+    g_ReadOnly = true;
 
     return 0;
 }
