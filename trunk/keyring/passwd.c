@@ -1,8 +1,7 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
- * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,13 +176,8 @@ Boolean SetPasswd_Run(void) {
     ErrFatalDisplayIf(!masterPtr, __FUNCTION__ " out of memory");
     StrCopy(masterPtr, confirmPtr);
 
-    Mem_ObliterateHandle((VoidHand) FldGetTextHandle(masterFld));
-    Mem_ObliterateHandle((VoidHand) FldGetTextHandle(confirmFld));
-
     // May as well release confirm form to free up memory
     FrmDeleteForm(frm);
-    masterFld = confirmFld = NULL;
-    confirmPtr = NULL;
     
     frm = FrmInitForm(BusyEncryptForm);
     FrmDrawForm(frm);
@@ -197,7 +191,8 @@ Boolean SetPasswd_Run(void) {
 
  leave:
     FrmDeleteForm(frm);
-    FrmSetActiveForm(prevFrm);
+    if (prevFrm)
+	FrmSetActiveForm(prevFrm);
     return result;
 }
 
