@@ -1,11 +1,5 @@
 //  
-//  Public domain terminal emulator font.  Share and enjoy.
-//  
-//  WARNING:  This bdf file was generated from a font server using
-//  fstobdf.  The resulting font is subject to the same copyright,
-//  license, and trademark restrictions as the original font.  The
-//  authors and distributors of fstobdf disclaim all liability for
-//  misuse of the program or its output.
+//  Based on a public domain terminal emulator font.  Share and enjoy.
 //  
 
 FONTTYPE 36864
@@ -637,17 +631,17 @@ GLYPH 78
 ------
 
 GLYPH 79
------
------
--##--
-#--#-
-#--#-
-#--#-
-#--#-
-#--#-
--##--
------
------
+-------
+-------
+--##---
+-#--#--
+#----#-
+#----#-
+#----#-
+-#--#--
+--##---
+-------
+-------
 
 GLYPH 80
 -----
@@ -929,9 +923,9 @@ GLYPH 101
 -----
 -##--
 #--#-
-###--
+####-
 #----
--##--
+-###-
 -----
 -----
 
@@ -956,10 +950,10 @@ GLYPH 103
 -##--
 #--#-
 #--#-
-#--#-
 -###-
 ---#-
 ###--
+-----
 
 GLYPH 104
 -----
