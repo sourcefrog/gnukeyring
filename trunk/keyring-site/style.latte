@@ -6,10 +6,9 @@
     {\a \href={\href} \rest}
 }
 
-{\def {\faqentry \name \&rest}
+{\def {\faqentry \=faqid \name \&rest}
 
-  {{\h3 \name} \rest}
-
+  {\a \name={\if \faqid \faqid \"\"} {{\h3 \name} \rest}}
 }
 
 {\def {\personlink \name} {\externallink \href={http://linuxcare.com.au/people/\name/} \name}
@@ -32,6 +31,7 @@
 {\def {\buglink \=bugid \&rest}
   {\a
   \href={https://sourceforge.net/bugs/?func=detailbug&bug_id=\bugid&group_id=306}
+     #\bugid
      \rest
   }
 }
