@@ -373,10 +373,13 @@ Boolean ListForm_HandleEvent(EventPtr event)
         return true;
 
     case menuEvent:
-        if (!Common_HandleMenuEvent(event))
-            App_NotImplemented();
-        ListForm_DrawLockBitmap();
-        result = true;
+        if (Common_HandleMenuEvent(event)) {
+	    /* We may have left the form.  Update the lock bitmap
+	     * on return.
+	     */
+	    ListForm_DrawLockBitmap();
+	    return true;
+	}
         break;
 
     case sclRepeatEvent:

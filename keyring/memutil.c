@@ -84,6 +84,23 @@ MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len)
     return h;
 }
 
+/*
+ * PTR points to a pointer pointing to a buffer containing a memory chunk,
+ * which runs on for no more than REMAIN bytes.  We copy out the first
+ * count bytes, put it in the destination buffer.
+ * PTR and REMAIN are adjusted to show the amount remaining.
+ */
+void Mem_ReadChunk(Char **ptr, Int16 *remain, void *dest, Int16 count)
+{
+    if (*remain < 0)
+	return;
+    if (count > *remain)
+	count = *remain;
+    MemMove(dest, *ptr, count);
+    *ptr += count;
+    *remain -= count;
+}
+
 void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len)
 {
     if (h) {

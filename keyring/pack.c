@@ -62,9 +62,10 @@ static UInt32 packBodyLen, packRecLen;
 static void Keys_CalcPackedSize(UnpackedKeyType const *unpacked)
 {
     packBodyLen = unpacked->acctLen + 1
-         + unpacked->passwdLen + 1
-         + unpacked->notesLen + 1;
-
+	+ unpacked->passwdLen + 1
+	+ unpacked->notesLen + 1
+	+ sizeof (DateType);
+    
     if (packBodyLen & (kDESBlockSize-1))
 	packBodyLen = (packBodyLen & ~(kDESBlockSize-1)) + kDESBlockSize;
 
@@ -87,6 +88,7 @@ static char *Keys_PackBody(UnpackedKeyType const *u)
     Mem_CopyFromHandle(&ptr, u->acctHandle, u->acctLen+1);
     Mem_CopyFromHandle(&ptr, u->passwdHandle, u->passwdLen+1);
     Mem_CopyFromHandle(&ptr, u->notesHandle, u->notesLen+1);
+    MemMove(ptr, &u->lastChange, sizeof(DateType));
 
     return buf;
 }
@@ -185,7 +187,6 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
 {
     MemHandle recHandle;
     void	*recPtr;
-    Err		err;
 
     Keys_CalcPackedSize(unpacked);
     ErrFatalDisplayIf(packRecLen > 8000,
@@ -205,3 +206,4 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
     Keys_WriteRecord(unpacked, recPtr, recordKey);
     MemHandleUnlock(recHandle);
 }
+

@@ -51,8 +51,10 @@ static void KeyEditForm_GetFields(void);
 
 // If the form is active, all these are valid.
 static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
+static ControlPtr f_DateTrg;
 static ScrollBarPtr f_NotesScrollBar;
 static FormPtr f_KeyEditForm;
+static Boolean f_lastChangeDirty;
 
 #define k_NumFields 4
 static FieldPtr f_AllFields[k_NumFields];
@@ -147,6 +149,33 @@ static void KeyEditForm_UpdateTitle(void)
 }
 
 
+/* Set the text in the "set date" popup trigger to match the date in
+ * the record. */
+static void KeyEditForm_SetDateTrigger(void)
+{
+    static Char dateBuf[dateStringLength];
+    DateFormatType fmt;
+    Int16 year, month, day;
+    
+    fmt = (DateFormatType) PrefGetPreference(prefLongDateFormat);
+
+    year  = gRecord.lastChange.year + 1904;
+    month = gRecord.lastChange.month;
+    day   = gRecord.lastChange.day;
+
+    /* DateToAscii doesn't cope well if the date is unreasonable, so we
+     * filter it a bit. */
+    if (month < 1 || month > 12
+	|| day < 1 || day > 31) {
+	month = day = 1;
+    }
+
+    DateToAscii(month, day, year, fmt, dateBuf);
+    CtlSetLabel(f_DateTrg, dateBuf);
+}
+
+
+
 static void KeyEditForm_FromUnpacked(void)
 {
     FldFreeMemory(f_KeyNameFld);
@@ -157,6 +186,7 @@ static void KeyEditForm_FromUnpacked(void)
     FldSetTextHandle(f_PasswdFld, (MemHandle) gRecord.passwdHandle);
     FldFreeMemory(f_NotesFld);
     FldSetTextHandle(f_NotesFld, (MemHandle) gRecord.notesHandle);
+    KeyEditForm_SetDateTrigger();
 }
 
 
@@ -165,11 +195,13 @@ static void KeyEditForm_FromUnpacked(void)
  */
 static void KeyEditForm_Clear(void)
 {
-     Int16 i;
-
-     for (i = 0; i < k_NumFields; i++) {
-          FldDelete(f_AllFields[i], 0, (UInt16) -1);
-     }
+    Int16 i;
+    
+    for (i = 0; i < k_NumFields; i++)
+	FldDelete(f_AllFields[i], 0, (UInt16) -1);
+    
+    DateSecondsToDate(TimGetSeconds(), &gRecord.lastChange);
+    KeyEditForm_SetDateTrigger();
 }
 
 
@@ -369,6 +401,7 @@ static void KeyEditForm_MarkClean(void)
      for (i = 0; i < k_NumFields; i++) {
           FldSetDirty(f_AllFields[i], false);
      }
+     f_lastChangeDirty = false;
 }
 
 
@@ -377,6 +410,9 @@ static void KeyEditForm_MarkClean(void)
 static Boolean KeyEditForm_IsDirty(void)
 {
      Int16 i;
+
+     if (f_lastChangeDirty)
+	 return true;
 
      for (i = 0; i < k_NumFields; i++) {
           if (FldDirty(f_AllFields[i]))
@@ -406,6 +442,8 @@ static void KeyEditForm_OpenRecord(void)
 {
     if (gKeyRecordIndex != kNoRecord) 
         KeyEditForm_Load();
+    else
+	KeyEditForm_Clear();
 
     if (gPrefs.category != dmAllCategories)
 	gPrefs.category = gRecord.category;
@@ -440,6 +478,9 @@ void KeyEditForm_GotoRecord(UInt16 recordIdx)
 	return;
     }
 
+    if (gKeyRecordIndex != kNoRecord)
+	DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+    
     gKeyRecordIndex = recordIdx;
 
     if (gEditFormActive)
@@ -461,7 +502,9 @@ static void KeyEditForm_GetFields(void)
     
     f_AllFields[3] = f_PasswdFld =
          UI_GetObjectByID(f_KeyEditForm, PasswordField);
- 
+    
+    f_DateTrg = UI_GetObjectByID(f_KeyEditForm, DateTrigger);
+    
     f_NotesScrollBar = UI_GetObjectByID(f_KeyEditForm, NotesScrollbar);
 }
 
@@ -829,6 +872,38 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event)
 }
 
 
+static void KeyEditForm_ChooseDate(void) {
+    Boolean ok;
+    MemHandle handle;
+    Char *title;
+    Int16 year, month, day;
+
+    year  = gRecord.lastChange.year + 1904;
+    month = gRecord.lastChange.month;
+    day   = gRecord.lastChange.day;
+
+    /* Limit to protect against SelectDay aborting. */
+    if (month < 1 || month > 12
+	|| day < 1 || day > 31) {
+	month = day = 1;
+    }
+
+    title = MemHandleLock(handle = DmGetResource (strRsc, ChangeDateStr));
+    ok = SelectDay(selectDayByDay, &month, &day, &year, title);
+    MemHandleUnlock(handle);
+    DmReleaseResource(handle);
+
+    if (ok) {
+
+	gRecord.lastChange.year = year - 1904;
+	gRecord.lastChange.month = month;
+	gRecord.lastChange.day = day;
+	f_lastChangeDirty = true;
+	
+	KeyEditForm_SetDateTrigger();
+    }
+}
+
 
 static void KeyEditForm_CategorySelected(void)
 {
@@ -864,6 +939,9 @@ Boolean KeyEditForm_HandleEvent(EventPtr event)
             return true;
 	case GenerateBtn:
 	    KeyEditForm_Generate();
+	    return true;
+	case DateTrigger:
+	    KeyEditForm_ChooseDate();
 	    return true;
         case CategoryTrigger:
             KeyEditForm_CategorySelected();
