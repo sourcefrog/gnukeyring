@@ -89,20 +89,27 @@ $(DIST_BALL): $(DISTFILES)
 	$(TAR) -C .. -czf $(DIST_BALL) $(addprefix $(APP)/,$(DISTFILES))
 	ls -l $(DIST_BALL)
 
+# I hate accidentally editing the generated file, so the chmod 
+# tries to discourage it
 $(RCP): $(RCP).in Makefile
+	rm -f $@
 	(echo '// ******DYNAMICALLY GENERATED DO NOT EDIT********'; \
 	 sed $(SED_SUBST) $@.in) > $@
+	chmod -w $@
 
 $(EXE):       $(SRC:.c=.o) ;
 	$(CC) $(CFLAGS) $^ -o $(EXE)
 
 auto.h: en.resstamp
 
+# We try to avoid touching auto.h, because that will kick off
+# rebuilding a lot of source and it's often not necessary.
 %.resstamp: $(RCP) $(BITMAPS) resource.h 
 	[ -d res/$* ] || mkdir -p res/$*
 	-rm -f res/$*/*
 	-rm -f *.bin
-	$(PILRC) -H auto.h -q -L $* $(RCP) res/$*/
+	$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/
+	cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
 	touch $@
 
 %.s: %.c
