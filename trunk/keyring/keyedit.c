@@ -64,7 +64,6 @@ static UnpackedKeyType gRecord;
 
 static void KeyEditForm_Save(void);
 static void KeyEditForm_UpdateScrollbar(void);
-static void KeyEditForm_Page(int offset);
 static Boolean KeyEditForm_DeleteKey(Boolean saveBackup);
 static Boolean KeyEditForm_IsDirty(void);
 static void KeyEditForm_MarkClean(void);
@@ -524,11 +523,9 @@ static void KeyEditForm_UpdateScrollbar(void) {
 }
 
 
-static void KeyEditForm_Scroll(EventPtr event) {
-    Int32 lines;
+static void KeyEditForm_Dragged(EventPtr event) {
+    Int32 lines = event->data.sclExit.newValue - event->data.sclExit.value;
     WinDirectionType direction;
-    
-    lines = event->data.sclExit.newValue - event->data.sclExit.value;
 
     if (lines < 0) {
         lines = -lines;
@@ -541,10 +538,17 @@ static void KeyEditForm_Scroll(EventPtr event) {
 }
 
 
-static void KeyEditForm_Page(int offset) {
+/*
+ * Move backwards or forwards by one record.  Save and reload data if
+ * necessary.  If there is no such record, or if we're inserting a new
+ * record, then beep and do nothing else.
+ */
+static void KeyEditForm_FlipRecord(WinDirectionType dir)
+{
     UInt16 numRecs;
     UInt16 reserved;
-
+    Int16 offset = (dir == winDown) ? +1 : -1;
+    
     if (gKeyRecordIndex == kNoRecord) {
         /* You can't page while you're editing a new record. */
         SndPlaySystemSound(sndWarning);
@@ -570,6 +574,25 @@ static void KeyEditForm_Page(int offset) {
     
     KeyEditForm_OpenRecord();
 }
+
+
+/*
+ * If possible, scroll the notes field.  Otherwise, flip forward or
+ * backward by one record.
+ */
+static void KeyEditForm_PageButton(WinDirectionType dir)
+{
+    Int16 lines;
+    
+    if (FldScrollable(f_NotesFld, dir)) {
+        lines = FldGetVisibleLines(f_NotesFld);
+        FldScrollField(f_NotesFld, lines, dir);
+        KeyEditForm_UpdateScrollbar();
+    } else {
+        KeyEditForm_FlipRecord(dir);
+    }
+}
+
 
 
 static Boolean KeyEditForm_Arrow(int dir) {
@@ -613,7 +636,7 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
     switch (chr) {
     case pageUpChr:
     case pageDownChr:
-        KeyEditForm_Page(chr == pageDownChr ? +1 : -1);
+        KeyEditForm_PageButton(chr == pageDownChr ? winDown : winUp);
         return true;
 
     case nextFieldChr:
@@ -655,7 +678,7 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
     case fldChangedEvent:
         if (event->data.fldChanged.fieldID == ID_NotesField) {
             KeyEditForm_UpdateScrollbar();
-            result = true;
+            return true;
         }
         break;
 
@@ -682,7 +705,7 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 
     case sclRepeatEvent:
     case sclExitEvent:
-        KeyEditForm_Scroll(event);
+        KeyEditForm_Dragged(event);
         break;
 
     default:
