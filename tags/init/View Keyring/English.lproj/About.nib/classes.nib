@@ -1,0 +1,17 @@
+{
+    IBClasses = (
+        {
+            CLASS = AboutController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                blurb = NSTextView; 
+                copyright = NSTextField; 
+                icon = NSImageView; 
+                version = NSTextField; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
