@@ -1,0 +1,5 @@
+"Genera una clau" crea un no valor per a aquesta clau de forma aleatòria
+
+"Longitud" és el nombre de caràcters en la nova clau.
+
+"Incloure" especifica quins caràcters es poden incloure a la clau. Cal incloure almenys una classe. Si es selecciona "pronunciable", es generarà una clau pronunciable i en minúscules.

@@ -1,0 +1,12 @@
+glib { "MD Library" CrMD }
+export {
+MD2
+MD2_Final
+MD2_Init
+MD2_Update
+MD2_options
+MD5
+MD5_Final
+MD5_Init
+MD5_Update
+}
