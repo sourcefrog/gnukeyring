@@ -1,8 +1,7 @@
 -*- outline -*- 
 
 * Optionally check for password when entering the app, rather than when opening a key. 
-
-* Use a PHP for the index page
+* Use PHP for the index page?
 
 Include e.g. a file listing, so that we can avoid repeating the
 version number everywhere.
