@@ -13,3 +13,12 @@
 
  * Add in sprinklings of memory validation, and a magic menu to turn
    on memory checking.
+
+ * Add Record/UndoAll menu item
+
+ * Improved record export.
+
+ * Records without names are now displayed with an index number rather
+   than random hex.
+
+ 
