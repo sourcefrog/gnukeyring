@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,6 +111,9 @@ Err App_Start() {
 	if (!SetPasswd_Run())
 	    return 1;
     }
+
+    if ((err = KeyDB_MarkForBackup(gKeyDB)))
+	return err;
 
     FrmGotoForm(ListForm);
   

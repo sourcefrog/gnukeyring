@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,17 @@ void KeyDB_SaveNewRecord(UnpackedKeyType const *unpacked, Char const *name);
 void KeyDB_UpdateRecord(UnpackedKeyType const *unpacked, UInt idx);
 void KeyDB_CreateAppInfo(void);
 void KeyDB_SetPasswd(Char const *newPasswd);
+
 Err KeyDB_OpenExistingDB(DmOpenRef *dbp);
 Err KeyDB_CreateDB(DmOpenRef *dbp);
+Err KeyDB_MarkForBackup(DmOpenRef dbp);
+
 Boolean KeyDB_IsInitRequired(void);
 Boolean KeyDB_Verify(Char const *guess);
 void KeyDB_RepositionRecord(CharPtr name, UIntPtr idx);
+#ifdef REALLY_OBLITERATE
 void UnpackedKey_Obliterate(UnpackedKeyPtr u);
+#endif /* REALLY_OBLITERATE */
 
 
 void KeyRecord_Unpack(VoidHand record, UnpackedKeyType *u,
