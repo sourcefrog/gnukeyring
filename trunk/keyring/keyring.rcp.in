@@ -468,6 +468,17 @@ BEGIN
 END
 
 
+ALERT ID BetaAlert
+WARNING
+BEGIN
+  TITLE "Beta Software"
+
+  MESSAGE "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data."
+
+  BUTTONS "OK" 
+END
+
+
 ALERT ID CantUpgradeAlert
 ERROR
 BEGIN

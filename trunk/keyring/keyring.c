@@ -1,8 +1,9 @@
-/*
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+ *
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@
 #include "prefs.h"
 #include "listform.h"
 #include "error.h"
+#include "beta.h"
 
 // ======================================================================
 // Globals
@@ -73,6 +75,7 @@ void App_ReportSysError(UInt16 msgID, Err err) {
 
 static void App_LoadPrefs(void) {
     Int16 size = sizeof(KeyringPrefsType);
+    Int16 ret;
 
     /* Set up the defaults first, then try to load over the top.  That
      * way, if the structure is too short or not there, we'll be left
@@ -81,10 +84,10 @@ static void App_LoadPrefs(void) {
     gPrefs.timeoutSecs = 60;
     gPrefs.category = dmAllCategories;
     
-    PrefGetAppPreferences(kKeyringCreatorID,
-			  kGeneralPref,
-			  &gPrefs, &size,
-			  (Boolean) true);
+    ret = PrefGetAppPreferences(kKeyringCreatorID,
+                                kGeneralPref,
+                                &gPrefs, &size,
+                                (Boolean) true);
 }
 
 
@@ -118,7 +121,7 @@ static Err App_PrepareDB(void) {
     err = KeyDB_OpenExistingDB(&gKeyDB);
     if (err == dmErrCantFind) {
 	if ((err = KeyDB_CreateDB())
-	    || (err = KeyDB_OpenExistingDB(&gKeyDB))
+            || (err = KeyDB_OpenExistingDB(&gKeyDB))
 	    || (err = KeyDB_CreateRingInfo())
 	    || (err = KeyDB_CreateCategories()))
 	    goto failDB;
@@ -161,6 +164,7 @@ static Err App_Start(void) {
     Unlock_Reset();
 
     App_LoadPrefs();
+    Gkr_CheckBeta();
 
     if ((err = App_PrepareDB()))
         return err;
@@ -378,12 +382,3 @@ UInt32 PilotMain(UInt16 launchCode,
 
     return err;
 }
-
-/*
- * Local variables:
- * mode: c
- * c-indentation-style: "k&r"
- * c-basic-offset: 4
- * c-font-lock-extra-types: ("Err" "D?Word" "U?Int\\(8\\|16\\|32\\)" "Boolean" "\\(Form\\|Field\\)\\(Ptr\\)?" "EventType")
- * End:
- */
