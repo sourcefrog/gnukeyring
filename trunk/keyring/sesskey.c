@@ -44,6 +44,8 @@
 #include "keydb.h"
 
 
+static const UInt8 noKey[kDES3KeySize];
+
 /* Make up a new session key.  This is called only when creating a new
  * database -- calling it any other time will make the database
  * unreadable.  It's left in memory in the snib database, and can
@@ -53,10 +55,13 @@ Err SessKey_Generate(void)
     UInt8       tmpKey[kDES3KeySize];
     Int16       i;
 
+#if 1
     for (i = 0; i < kDES3KeySize; i++)
         tmpKey[i] = (UInt8) SysRandom(0);
-    
     Snib_SetSessKey(tmpKey);
+#else
+    Snib_SetSessKey(noKey);
+#endif
 
     return 0;
 }
@@ -72,6 +77,8 @@ Err SessKey_Load(Char *UNUSED(passwd))
     UInt8               *ptr;
     Err                 err;
 
+#if 1
+    ErrFatalDisplayIf(!g_Snib->expiryTime, "snib expired");
     ErrFatalDisplayIf(!g_Snib, __FUNCTION__ ": no snib");
 
     recHandle = DmQueryRecord(gKeyDB, kSessionKeyRec);
@@ -84,12 +91,12 @@ Err SessKey_Load(Char *UNUSED(passwd))
     ptr = MemHandleLock(recHandle);
     Snib_SetSessKey(ptr);
     MemHandleUnlock(recHandle);
-#if 0
+#else
     Snib_SetSessKey(noKey);
     err = 0;
 #endif
 
-    return err;
+    return 0;
 }
 
 

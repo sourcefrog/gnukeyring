@@ -46,10 +46,6 @@
 
 static FieldPtr    f_entryFld;
 
-void Unlock_Reset(void) {
-    Snib_Eradicate();
-}
-
 
 void Unlock_PrimeTimer(void) {
     Snib_SetExpiry(TimGetSeconds() + gPrefs.timeoutSecs);
