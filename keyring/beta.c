@@ -28,7 +28,7 @@
 #include "beta.h"
 
 /* True if this is a stable rather than a beta release of the app */
-#define kAppStableVers 1
+#define kAppStableVers 0
 
 /* ======================================================================
  *
