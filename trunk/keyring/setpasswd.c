@@ -21,17 +21,7 @@
  */
 
 
-#include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
-
-#include "keyring.h"
-#include "record.h"
-#include "passwd.h"
-#include "resource.h"
-#include "keydb.h"
-#include "crypto.h"
-#include "uiutil.h"
+#include "includes.h"
 
 /* Set Password dialog
  *

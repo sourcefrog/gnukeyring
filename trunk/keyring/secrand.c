@@ -138,12 +138,7 @@
  * Eastlake, Steve Crocker, and Jeff Schiller.
  */
 
-#include <PalmOS.h>
-#include "keyring.h"
-#include "crypto.h"
-#include "secrand.h"
-#include "uiutil.h"
-#include "resource.h"
+#include "includes.h"
 
 /*
  * Configuration information

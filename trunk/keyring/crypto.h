@@ -3,7 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,4 @@
 #define kDESKeySize             8
 #define k2DESKeySize            16
 #define kMD5HashSize            16
-
-Err DES3_Read(void * from, void * to, UInt32 len, UInt8 *cryptKey);
-Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32,
-               UInt8 *cryptKey);
 

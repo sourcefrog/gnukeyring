@@ -20,20 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
-
-#include "resource.h"
-#include "keyring.h"
-#include "keydb.h"
-#include "passwd.h"
-#include "uiutil.h"
-#include "memutil.h"
-#include "pwhash.h"
-#include "crypto.h"
-#include "snib.h"
-#include "reencrypt.h"
+#include "includes.h"
 
 // ======================================================================
 // Unlock form

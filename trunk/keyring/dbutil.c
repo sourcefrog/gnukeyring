@@ -20,12 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
-
-#include "keyring.h"
-#include "dbutil.h"
+#include "includes.h"
 
 /*
  * LEN is the length of the string.  If you want the terminating NUL

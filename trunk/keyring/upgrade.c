@@ -20,22 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
-
-#include "keyring.h"
-#include "memutil.h"
-#include "keydb.h"
-#include "crypto.h"
-#include "upgrade.h"
-#include "error.h"
-#include "resource.h"
-#include "uiutil.h"
-#include "auto.h"
-#include "pwhash.h"
-#include "passwd.h"
-#include "keydb.h"
+#include "includes.h"
 
 /*
  * TODO: In the future, when converting the database, write out to a

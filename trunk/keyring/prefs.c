@@ -27,17 +27,7 @@
  * TODO: Require that we're unlocked to set the preferences.
  */
 
-#include <PalmOS.h>
-
-#include "resource.h"
-#include "keyring.h"
-#include "memutil.h"
-#include "keydb.h"
-#include "uiutil.h"
-#include "prefs.h"
-#include "crypto.h"
-#include "auto.h"
-#include "passwd.h"
+#include "includes.h"
 
 // ======================================================================
 // Preferences

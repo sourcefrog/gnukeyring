@@ -20,26 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
 
-#include "resource.h"
-#include "keyring.h"
-#include "keyedit.h"
-#include "keydb.h"
-#include "uiutil.h"
-#include "util.h"
-#include "crypto.h"
-#include "generate.h"
-#include "record.h"
-#include "export.h"
-#include "category.h"
-#include "snib.h"
-#include "pack.h"
-#include "unpack.h"
-#include "auto.h"
-#include "sort.h"
-#include "listform.h"
-#include "passwd.h"
+#include "includes.h"
 
 /*
  * TODO: Newline in single-line fields should move down one, perhaps?

@@ -23,16 +23,7 @@
 /* TODO: Check that the terminating NULs in the strings are accounted
  * for correctly. */
 
-#include <PalmOS.h>
-
-#include "keyring.h"
-#include "keydb.h"
-#include "passwd.h"
-#include "pwhash.h"
-#include "error.h"
-#include "uiutil.h"
-#include "auto.h"
-#include "upgrade.h"
+#include "includes.h"
 
 
 Int16 gKeyDBCardNo;

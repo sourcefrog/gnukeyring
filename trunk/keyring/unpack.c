@@ -3,7 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-
-#include "keyring.h"
-#include "record.h"
-#include "unpack.h"
-#include "memutil.h"
-#include "resource.h"
-#include "auto.h"
-#include "crypto.h"
-#include "uiutil.h"
+#include "includes.h"
 
 
 /* Convert from a packed database record into an unpacked in-memory

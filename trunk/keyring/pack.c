@@ -3,7 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,19 +49,7 @@
  * end of the record.  Display an error dialog rather than crashing.
  */
 
-#include <PalmOS.h>
-
-#include "keyring.h"
-#include "record.h"
-#include "pack.h"
-#include "crypto.h"
-#include "auto.h"
-#include "resource.h"
-#include "memutil.h"
-#include "dbutil.h"
-#include "keydb.h"
-#include "uiutil.h"
-#include "snib.h"
+#include "includes.h"
 
 
 static UInt32 packBodyLen, packRecLen;

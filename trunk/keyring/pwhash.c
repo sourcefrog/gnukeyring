@@ -3,7 +3,7 @@
  * $Header$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,17 +40,7 @@
  * byte 0xFE.
  */
 
-#include <PalmOS.h>
-
-#include "keyring.h"
-#include "keydb.h"
-#include "crypto.h"
-#include "pwhash.h"
-#include "secrand.h"
-#include "resource.h"
-#include "keydb.h"
-#include "uiutil.h"
-#include "auto.h"
+#include "includes.h"
 
 #define kSaltSize		4 /* bytes */
 #define kMessageBufSize		64
