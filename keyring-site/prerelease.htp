@@ -4,33 +4,43 @@
 <file template="keyring.htt">
 
 <undef dlentry>
-<def name="dlentry" option="icon file desc">
+<def name="dlentry" option="icon file desc sig">
   <tr><td>
-  <a href="http://gnukeyring.sourceforge.net/keyring2-pre/${file}"><img src="myicons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
+  <a href="http://hoenicke.ath.cx/keyring2-pre/${file}"><img src="myicons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
   </td>
   <td>
-  <a href="http://gnukeyring.sourceforge.net/keyring2-pre/${file}.sig"><img src="myicons/sig.gif" border="0" alt="&nbsp;" align="middle"><code>GPG signature</code></a>
+  <if sig>
+    <a href="http://hoenicke.ath.cx/keyring2-pre/${file}.sig"><img src="myicons/sig.gif" border="0" alt="&nbsp;" align="middle"><code>GPG signature</code></a>
+  </if>
   </td>
   <td><use desc></td></tr>
 </def>
 
-<set cur_ver="2.0-pre2">
+<set cur_ver="2.0-pre3">
 <def name="zipentry"  option="code lang sig">
-  <dlentry icon="compressed.gif" 
-           file="keyring-${cur_ver}-${code}.zip" 
-           desc="${lang} PRC binary + libraries">
+  <if sig>
+    <dlentry icon="compressed.gif" 
+             file="keyring-${cur_ver}-${code}.zip" 
+             desc="${lang} PRC binary + libraries"
+	     sig>
+  <else>
+    <dlentry icon="compressed.gif" 
+             file="keyring-${cur_ver}-${code}.zip" 
+             desc="${lang} PRC binary + libraries">
+  </if>
 </def>
 
 <section title="pre-release information">
 
-<p>This is a prerelease of keyring and it may contain bugs that destroy
-the database or even require a hard reset.  So update your backup,
-before installing this.  And keep a backup of the Keys-Gtkr.pdb file
-in a seperate place in case you want to downgrade back to 1.2.2 later.</p>
+<p>This is a prerelease of keyring and it may contain bugs that
+destroy the database or even require a hard reset.  So <b>make a
+backup</b> before installing this.  And keep a backup of the
+Keys-Gtkr.pdb file in a seperate place in case you want to downgrade
+back to 1.2.2 later.</p>
 
 <p>If you choose "No" as Cipher you do not get any encryption.  This
-option is there only for test purposes, it will be removed in the</p>
-final release.
+option is there for test purposes only, it will be removed in the
+final release.</p>
 </section>
 
 <section title="download">
@@ -45,18 +55,18 @@ final release.
     <!--- dlentry  icon="compressed.gif" file="keyring-${cur_ver}.zip" 
 	      desc="Zip archive of all binaries"--->
     <dlentry  icon="compressed.gif" file="keyring-${cur_ver}.tar.gz" 
-	      desc="Tar-ball of sources">
-    <dlentry  icon="compressed.gif" file="keyring-link-${cur_ver}.tar.gz" 
-	      desc="Example code to decrypt data on PC">
+	      desc="Tar-ball of sources"sig >
+    <dlentry  icon="compressed.gif" file="keyring-link-2.0-pre1.tar.gz" 
+	      desc="Example code to decrypt data on PC" sig>
     <tr><td colspan="3">The following provides the source code for 
 	third party libraries.  You don't need these to compile keyring.
 	</td></tr>
     <dlentry  icon="compressed.gif" file="AESLib-3.1.tgz" 
-	      desc="AES Library (from Stuart Eichert)">
+	      desc="AES Library (from Stuart Eichert)" sig>
     <dlentry  icon="compressed.gif" file="SSLeay-0.8.1.tar.gz" 
-	      desc="crypto library from Eric A. Young">
+	      desc="crypto library from Eric A. Young" sig>
     <dlentry  icon="compressed.gif" file="pilotSSLeay-2.01.tar.gz" 
-	      desc="port of SSLeay to PalmOS from Ian Goldberg">
+	      desc="port of SSLeay to PalmOS from Ian Goldberg" sig>
   </table>
 
    Install keyring-xx.prc as well as the xxxLib.prc binaries you want
