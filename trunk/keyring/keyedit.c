@@ -56,11 +56,12 @@
  * need somewhere to keep it.  */
 static UnpackedKeyType gRecord;
 
-static void KeyEditForm_Save(FormPtr frm);
+static void KeyEditForm_Save(void);
 static void KeyEditForm_UpdateScrollbar(void);
 static void KeyEditForm_Page(int offset);
 static Boolean KeyEditForm_DeleteKey(Boolean saveBackup);
 static Boolean KeyEditForm_IsDirty(void);
+static void KeyEditForm_MarkClean(void);
 
 static Boolean keyDeleted;
 
@@ -261,8 +262,10 @@ static void KeyEditForm_MaybeSave(void) {
     // TODO: Delete record if all fields empty?
     KeyEditForm_ToUnpacked(&gRecord);
 
-    if (KeyEditForm_IsDirty())
-        KeyEditForm_Save(f_KeyEditForm);
+    if (KeyEditForm_IsDirty()) {
+        KeyEditForm_Save();
+        KeyEditForm_MarkClean();
+    }
 }
 
 
@@ -273,7 +276,8 @@ static void KeyEditForm_MaybeSave(void) {
  * Note that we're not *necessarily* leaving the form or even the
  * record at this point: pressing the Page buttons saves the record
  * too. */
-static void KeyEditForm_Save(FormPtr frm) {
+static void KeyEditForm_Save(void) 
+{
     FormPtr busyForm;
 
     busyForm = FrmInitForm(BusyEncryptForm);
@@ -286,8 +290,8 @@ static void KeyEditForm_Save(FormPtr frm) {
 
     // Reset title because we may have changed position
     // (but this is not necessary because we're about to leave!)
-    KeyEditForm_SetTitle(frm);
-    FrmSetActiveForm(frm);
+    KeyEditForm_SetTitle(f_KeyEditForm);
+    FrmSetActiveForm(f_KeyEditForm);
 }
 
 
@@ -310,6 +314,18 @@ static void Keys_UndoAll(void) {
     }
     KeyEditForm_Update(updateCategory);
     FrmDrawForm(f_KeyEditForm);
+}
+
+
+/*
+ * Mark all fields as clean; called just after we save
+ */
+static void KeyEditForm_MarkClean(void)
+{
+    FldSetDirty(f_KeyNameFld, false);
+    FldSetDirty(f_PasswdFld, false);
+    FldSetDirty(f_AcctFld, false);
+    FldSetDirty(f_NotesFld, false);
 }
 
 
