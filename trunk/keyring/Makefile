@@ -46,6 +46,7 @@ DISTFILES       = $(RCP) $(PRC) Makefile $(HELP_TXT) $(BITMAPS) \
 		  $(DOCS) $(wildcard *.c *.h)
 
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
+DIST_SIG        = $(DIST_BALL).asc
 TAR		= tar
 
 SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
@@ -105,6 +106,13 @@ install: $(PRC)
 hosting_dir = gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
 upload_doc: $(DOCS)
 	rsync --times -e ssh -v $(DOCS) $(hosting_dir) 
+
+$(DIST_SIG): $(DIST_BALL)
+	gpg -u 40C90109 -a -b $(DIST_BALL)
+
+distribute: $(DIST_BALL) $(DIST_SIG) $(PRC)
+	curl -T $(DIST_BALL) -T $(DIST_SIG) -T $(PRC) \
+		 ftp://download.sourceforge.net/incoming/
 
 # TODO: Also upload the release to the SourceForge download area
 
