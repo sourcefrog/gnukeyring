@@ -134,7 +134,6 @@ static Err Upgrade_From0(void)
  */
 Err Upgrade_HandleMissingHash(void)
 {
-     UInt16 	result;
      Char       *newPasswd;
 
      if (FrmAlert(alertID_PasswordHashMissing) != 0)   /* 0 = "OK" */
