@@ -292,6 +292,7 @@ static void KeyEditForm_Save(void)
     FormPtr busyForm;
 
     busyForm = FrmInitForm(BusyEncryptForm);
+    FrmSetActiveForm(busyForm);
     FrmDrawForm(busyForm);
 
     Keys_SaveRecord(&gRecord, gKeyRecordIndex, gRecordKey);
@@ -541,8 +542,8 @@ static void Edit_FormClose(void)
  */
 static void Edit_DeleteKey(Boolean saveBackup)
 {
-     /* We set f_keyDiscarded to make sure that we don't try to save this
-      * record as the form closes. */
+    /* We set f_keyDiscarded to make sure that we don't try to save this
+     * record as the form closes. */
     f_keyDiscarded = true;
 
     DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
@@ -582,7 +583,6 @@ static void Edit_MaybeDelete(void)
           return;
 
      alert = FrmInitForm(ConfirmDeleteForm);
-     // TODO: Set and read archive button
      buttonHit = FrmDoDialog(alert);
      saveBackup = CtlGetValue(UI_GetObjectByID(alert, SaveArchiveCheck));
      FrmDeleteForm(alert);

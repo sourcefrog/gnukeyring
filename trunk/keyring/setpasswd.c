@@ -103,7 +103,7 @@ Boolean SetPasswd_Run(void)
 {
     UInt8       oldKey[k2DESKeySize];
     Char *      newPasswd;
-    FormPtr	frm;
+    FormPtr	frm, oldFrm;
 
     if (!Unlock_GetKey(true, oldKey))
 	 return false;
@@ -117,11 +117,15 @@ Boolean SetPasswd_Run(void)
     /* This stores the checking-hash and also reencrypts and stores
      * the session key.
      */
+    oldFrm = FrmGetActiveForm();
     frm = FrmInitForm(BusyEncryptForm);
+    FrmSetActiveForm(frm);
     FrmDrawForm(frm);
     KeyDB_SetPasswd(oldKey, newPasswd);
     FrmEraseForm(frm);
     FrmDeleteForm(frm);
+    if (oldFrm)
+	FrmSetActiveForm(oldFrm);
 
     /* Eradicate the new and old passwords.
      */
