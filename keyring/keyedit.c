@@ -117,6 +117,7 @@ extern Boolean g_ReadOnly;
  * KeyEditForm_SetTitle(). -- dmgarner */
 static void KeyEditForm_UpdateTitle(void)
 {
+    MemHandle titleHandle;
     Char * titleTemplate;
     UInt16 pos, total;
     Char posStr[maxStrIToALen];
@@ -129,8 +130,9 @@ static void KeyEditForm_UpdateTitle(void)
     /* 1-based count */
     pos = 1 + DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
     total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
-        
-    titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
+    
+    titleHandle = DmGetResource(strRsc, TitleTemplateStr);
+    titleTemplate = MemHandleLock(titleHandle);
     ErrFatalDisplayIf(!titleTemplate, __FUNCTION__ ": no titleTemplate");
 
     StrIToA(posStr, pos);
@@ -140,6 +142,7 @@ static void KeyEditForm_UpdateTitle(void)
     FrmCopyTitle(f_KeyEditForm, keyFormTitle);
     MemPtrFree(keyFormTitle);
     MemPtrUnlock(titleTemplate);
+    DmReleaseResource(titleHandle);
 
     return;
 }
@@ -232,7 +235,7 @@ static void KeyEditForm_Load(void)
     FormPtr     busyForm;
 
     // Open r/o
-    record = DmQueryRecord(gKeyDB, gKeyRecordIndex);
+    record = DmGetRecord(gKeyDB, gKeyRecordIndex);
     ErrNonFatalDisplayIf(!record, "couldn't query record");
     recPtr = MemHandleLock(record);
     ErrNonFatalDisplayIf(!recPtr, "couldn't lock record");
@@ -271,6 +274,8 @@ static void KeyEditForm_Commit(void)
          KeyEditForm_ToUnpacked(&gRecord);
          KeyEditForm_Save();
          KeyEditForm_MarkClean();
+    } else {
+	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
     }
 }
 
@@ -289,7 +294,7 @@ static void KeyEditForm_Save(void)
     busyForm = FrmInitForm(BusyEncryptForm);
     FrmDrawForm(busyForm);
 
-    Keys_SaveRecord(&gRecord, &gKeyRecordIndex, gRecordKey);
+    Keys_SaveRecord(&gRecord, gKeyRecordIndex, gRecordKey);
     Key_SetCategory(gKeyRecordIndex, gRecord.category);
 
     FrmEraseForm(busyForm);
@@ -328,11 +333,12 @@ static void Edit_MaybeUndoAll(void)
           return;
 
      if (gKeyRecordIndex == kNoRecord) {
-          KeyEditForm_Clear();
+	 KeyEditForm_Clear();
      } else {
-          /* TODO: Check that this works OK if the record is
-           * newly-allocated and zero length. */
-          KeyEditForm_Load();
+	 /* TODO: Check that this works OK if the record is
+	  * newly-allocated and zero length. */
+	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+	 KeyEditForm_Load();
      }
      /* TODO: Put the category back to what it was when we entered. */
      KeyEditForm_UpdateAll();
@@ -538,6 +544,8 @@ static void Edit_DeleteKey(Boolean saveBackup)
      /* We set f_keyDiscarded to make sure that we don't try to save this
       * record as the form closes. */
     f_keyDiscarded = true;
+
+    DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
 
     /* I don't think there's any need to sort here, because nothing else
      * has moved. */
@@ -793,8 +801,8 @@ static void KeyEditForm_PageButton(WinDirectionType dir)
         FldScrollField(f_NotesFld, lines, dir);
         KeyEditForm_UpdateScrollbar();
     } else {
-         offset = (dir == winDown) ? +1 : -1;
-         Edit_TryFlip(offset);
+	offset = (dir == winDown) ? +1 : -1;
+	Edit_TryFlip(offset);
     }
 }
 

@@ -103,6 +103,8 @@ static void App_Stop(void)
 
     MemHandleUnlock(handleFontStar);
     DmReleaseResource(handleFontStar);
+    MemHandleUnlock(handleFontPW);
+    DmReleaseResource(handleFontPW);
 }
 
 
