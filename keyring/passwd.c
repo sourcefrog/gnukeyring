@@ -2,7 +2,7 @@
  *
  * $Id$
  *
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,6 @@
 #include "memutil.h"
 #include "pwhash.h"
 #include "crypto.h"
-#include "sesskey.h"
 #include "snib.h"
 
 // ======================================================================
@@ -86,7 +85,7 @@ Boolean UnlockForm_Run(void) {
 
 	    if (correct) {
 		Unlock_PrimeTimer();
-                SessKey_Load(entry);
+                Snib_StoreFromPasswd(entry);
 	    } else {
 		FrmAlert(WrongKeyAlert);
                 UnlockForm_SelAll();

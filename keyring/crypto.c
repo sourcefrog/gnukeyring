@@ -1,7 +1,7 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,6 @@
 // DES3 functions
 
 
-// static const UInt8 noKey[kDES3KeySize];
-
-
 #ifndef DISABLE_DES
 
 /*
@@ -45,20 +42,20 @@ static Err DES3_Block(void const *from, void *to, Boolean encrypt)
 {
     Err err;
     char other[kDESBlockSize];
-    UInt8 *kp = encrypt ? g_Snib->sessKey : g_Snib->sessKey + 2*kDESKeySize;
+    UInt8 *kp;
 
+    kp = g_Snib->recordKey;
     ErrFatalDisplayIf(!kp, "record key unready");
-
     err = EncDES((UInt8 *) from, kp, to, encrypt);
     if (err)
         return err;
-    kp += encrypt ? +kDESKeySize : -kDESKeySize;
 
+    kp = g_Snib->recordKey + kDESKeySize;
     err = EncDES((UInt8 *) to, kp, other, !encrypt);
     if (err)
         return err;
-    kp += encrypt ? +kDESKeySize : -kDESKeySize;
-
+    
+    kp = g_Snib->recordKey;
     err = EncDES((UInt8 *) other, kp, to, encrypt);
     if (err)
         return err;

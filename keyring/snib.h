@@ -1,8 +1,8 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "bsd"; c-basic-offset: 4; -*-
  *
  * $Id$
  * 
- * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Tightly Bound -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,8 @@ void Snib_Close(void);
 Err Snib_Init(void);
 
 void Snib_SetExpiry(UInt32 newTime);
-void Snib_SetSessKey(UInt8 const *newKey);
+void Snib_StorePasswdHash(UInt8 const *newHash);
+void Snib_FromPasswd(Char const *passwd);
 
 /*
  * There is only one record in this database, and it contains this
@@ -42,7 +43,7 @@ void Snib_SetSessKey(UInt8 const *newKey);
  */
 typedef struct {
     UInt32    expiryTime;
-    UInt8     sessKey[kDES3KeySize];
+    UInt8     recordKey[k2DESKeySize];
 } SnibStruct, *SnibPtr;
 
 extern SnibPtr g_Snib;
