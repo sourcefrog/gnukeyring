@@ -46,14 +46,14 @@ static ScrollBarPtr f_ScrollBar;
 static FormPtr f_ListForm;
 
 /* Number of rows that fit in the visible table space */
-static UInt16 f_VisRows;
+static Int16 f_VisRows;
 
 /* Pixel width of the table */
-static UInt16 f_TableWidth, f_TableHeight;
+static Int16 f_TableWidth, f_TableHeight;
 
 /* Number of records available to be shown in the table, after taking
  * into account categories and reserved records. */
-static UInt16 f_NumListed;
+static Int16 f_NumListed;
 
 /* Index of the first record displayed in the table.  Zero shows top
  * of table, etc. */
@@ -90,7 +90,7 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
 }
 
 
-static void ListForm_DrawToFit(Char * name, Int16 x, Int16 y)
+static void ListForm_DrawToFit(Char const * name, Int16 x, Int16 y)
 {
     Int16 titleLen, width, titleWidth;
     Int16 charsToDraw;
@@ -131,7 +131,7 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
      * stepped forward to the next.  However it's not worth optimizing
      * since it will likely change to be a table in the future. */
     MemHandle   rec = 0;
-    Char       *recPtr = 0, *scrStr;
+    Char const *recPtr = 0, *scrStr;
     Char        altBuf[10];
     Int16       idx = row;
 
@@ -175,10 +175,10 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
 
 static void ListForm_UpdateTable(void)
 {
-    UInt16 row;
-    UInt16 numRows;
-    UInt16 lineHeight;
-    UInt16 dataHeight;
+    Int16 row;
+    Int16 numRows;
+    Int16 lineHeight;
+    Int16 dataHeight;
 
     lineHeight = FntLineHeight();
 
@@ -313,7 +313,7 @@ static void ListForm_NewKey(void) {
 static void ListForm_Scroll(Int16 newPos) {
     if (newPos < 0)
         f_FirstIdx = 0;
-    else if ((UInt16) newPos > f_NumListed - f_VisRows)
+    else if (newPos > f_NumListed - f_VisRows)
         f_FirstIdx = f_NumListed - f_VisRows - 1;
     else
         f_FirstIdx = newPos;
@@ -331,7 +331,8 @@ static void ListForm_ScrollRepeat(EventPtr event) {
 
 
 static void ListForm_ScrollPage(WinDirectionType dir) {
-    int newPos = f_FirstIdx + (dir == winDown) ? f_VisRows : -f_VisRows;
+    Int16 newPos = f_FirstIdx +
+        ((dir == winDown) ? +f_VisRows : -f_VisRows); /* XXXXXX */
     ListForm_Scroll(newPos);
 }
 
@@ -381,11 +382,10 @@ Boolean ListForm_HandleEvent(EventPtr event) {
     case keyDownEvent:
         if (event->data.keyDown.chr == pageUpChr) {
             ListForm_ScrollPage(winUp);
-            result = true;
-        }
-        else if (event->data.keyDown.chr == pageDownChr) {
+            return true;
+        } else if (event->data.keyDown.chr == pageDownChr) {
             ListForm_ScrollPage(winDown);
-            result = true;
+            return true;
         }
         break;
 
