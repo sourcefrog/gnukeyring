@@ -21,6 +21,5 @@
 
 Boolean KeyEditForm_HandleEvent(EventPtr event);
 
-void KeyEditForm_GotoNew(void);
 void KeyEditForm_GotoRecord(UInt16 idx);
 

@@ -3,7 +3,7 @@
  * $Id$
  *
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,10 +59,10 @@ static FieldPtr    f_entryFld;
  * This routine must do two things: re-encrypt the session key and
  * store it back, and store a check hash of the new password.
  */
-void KeyDB_SetPasswd(Char *newPasswd)
+void KeyDB_SetPasswd(UInt8 *oldKey, Char *newPasswd)
 {
      PwHash_Store(newPasswd);
-     KeyDB_Reencrypt(newPasswd);
+     KeyDB_Reencrypt(oldKey, newPasswd);
      Unlock_PrimeTimer();
 }
 
@@ -84,13 +84,16 @@ static void UnlockForm_SelAll(void) {
 }
 
 
-Boolean UnlockForm_Run(void) {
+
+static Boolean UnlockForm_Run(UInt8 *keyHash) {
     UInt16 	result;
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(UnlockForm);
     Char * 	entry;
     UInt16 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
     Boolean 	done, correct;
+    Err         err;
+    Int16       len;
 
     do { 
         f_entryFld = FrmGetObjectPtr(frm, entryIdx);
@@ -105,8 +108,16 @@ Boolean UnlockForm_Run(void) {
 	    done = correct = PwHash_Check(entry);
 
 	    if (correct) {
-		Unlock_PrimeTimer();
-                Snib_StoreFromPasswd(entry);
+		len = StrLen(entry);
+		err = EncDigestMD5(entry, len, keyHash);
+		MemSet(entry, len, ' ');
+		if (err) {
+		    UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
+		    correct = false;
+		} else {
+		    Snib_StoreRecordKey(keyHash);
+		    Unlock_PrimeTimer();
+		}
 	    } else {
 		FrmAlert(WrongKeyAlert);
                 UnlockForm_SelAll();
@@ -119,23 +130,16 @@ Boolean UnlockForm_Run(void) {
 
     FrmDeleteForm(frm);
     FrmSetActiveForm(prevFrm);
-
     return correct;
 }
 
 
-/* Check whether a previously entered password is still valid. */
-Boolean Unlock_CheckTimeout() {
-    UInt32 now = TimGetSeconds();
-
-    if (now > g_Snib->expiryTime) {
-	return false;
-    }
-
-    // If the timeout is too far in the future, then adjust it: this
-    // makes it work OK if e.g. the clock has changed.
-    if (now + gPrefs.timeoutSecs < g_Snib->expiryTime)
-	Snib_SetExpiry(now + gPrefs.timeoutSecs);
-
-    return true;
+/* Get the encryption key, or return false if the user declined to
+ * enter the master password. */
+Boolean Unlock_GetKey(Boolean askAlways, UInt8 *key)
+{
+    /* First try to get the cached key */
+    if (!askAlways && Snib_RetrieveKey(key))
+	return true;
+    return UnlockForm_Run(key);
 }

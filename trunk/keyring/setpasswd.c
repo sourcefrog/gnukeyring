@@ -30,6 +30,7 @@
 #include "passwd.h"
 #include "resource.h"
 #include "keydb.h"
+#include "crypto.h"
 #include "uiutil.h"
 
 /* Set Password dialog
@@ -49,7 +50,12 @@ Boolean SetPasswd_Run(void)
     UInt16 	btn;
     Boolean 	match, result=false;
     FieldPtr 	masterFld, confirmFld;
+    MemHandle   handle;
+    UInt8       oldKey[k2DESKeySize];
     Char *masterPtr, *confirmPtr;
+
+    if (!Unlock_GetKey(true, oldKey))
+	 return false;
 
     frm = FrmInitForm(SetPasswdForm);
     FrmSetActiveForm(frm);
@@ -74,36 +80,32 @@ Boolean SetPasswd_Run(void)
 	goto doDialog;
     }
 
-    // TODO: Instead of copying, pull the handle out of the field and
-    // give it a null handle.  Also do this to the confirm field.
-    // When we're done with both of them, scribble over them and then
-    // free the handles.  This is not completely safe but it should
-    // help.  We could improve the odds by preallocating the handles
-    // to be bigger than any password the user could enter.
-
-    // We need to keep a copy of the password, because the field
-    // object containing it will be freed before we finish with it.
-    masterPtr = MemPtrNew(StrLen(confirmPtr) + 1);
-    ErrFatalDisplayIf(!masterPtr, __FUNCTION__ " out of memory");
-    StrCopy(masterPtr, confirmPtr);
-
-    // May as well release confirm form to free up memory
-    FrmDeleteForm(frm);
-    
-    frm = FrmInitForm(BusyEncryptForm);
-    FrmDrawForm(frm);
-
     /* This stores the checking-hash and also reencrypts and stores
-     * the session key. */
-    KeyDB_SetPasswd(masterPtr);
-    
-    MemPtrFree(masterPtr);
-    
+     * the session key.
+     */
+    KeyDB_SetPasswd(oldKey, masterPtr);
     result = true;
 
-    FrmEraseForm(frm);
-
  leave:
+
+    /* Eradicate anything that contains clear text passwords or
+     * the hash. 
+     */
+    MemSet(oldKey, sizeof(oldKey), 0);
+    handle = FldGetTextHandle(masterFld);
+    if (handle) {
+	 MemSet(MemHandleLock(handle), MemHandleSize(handle), 0);
+	 MemHandleUnlock(handle);
+    }
+    FldSetTextHandle(masterFld, handle);
+    handle = FldGetTextHandle(confirmFld);
+    if (handle) {
+	 MemSet(MemHandleLock(handle), MemHandleSize(handle), 0);
+	 MemHandleUnlock(handle);
+    }
+    FldSetTextHandle(confirmFld, handle);
+
+    FrmEraseForm(frm);
     FrmDeleteForm(frm);
     if (prevFrm)
 	FrmSetActiveForm(prevFrm);

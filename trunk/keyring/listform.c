@@ -305,25 +305,20 @@ static Boolean ListForm_TableSelect(EventPtr event)
     if (event->data.tblSelect.tableID != ID_KeyTable)
         return false;
 
-    if (Unlock_CheckTimeout() || UnlockForm_Run()) {
-        /* Map from a position within this category to an overall
-         * record index. */
-        
-        listIdx = f_FirstIdx + event->data.tblSelect.row;
-        idx = 0;
-        err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
-                                     dmSeekForward, gPrefs.category);
-        KeyEditForm_GotoRecord(idx);
-        FrmGotoForm(KeyEditForm);
-    }
+    /* Map from a position within this category to an overall
+     * record index. */
+    listIdx = f_FirstIdx + event->data.tblSelect.row;
+    idx = 0;
+    err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
+				 dmSeekForward, gPrefs.category);
+    ErrFatalDisplayIf(err, __FUNCTION__ ": selected item doesn't exist");
+    KeyEditForm_GotoRecord(idx);
     return true;
 }
 
 
 static void ListForm_NewKey(void) {
-     if (Unlock_CheckTimeout() || UnlockForm_Run()) {
-          KeyEditForm_GotoNew();
-     }
+     KeyEditForm_GotoRecord(kNoRecord);
 }
 
 

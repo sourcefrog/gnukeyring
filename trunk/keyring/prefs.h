@@ -2,7 +2,7 @@
  * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,3 +20,4 @@
  */
 
 void PrefsForm_Run(void);
+void PrefsForm_RunChecked(void);

@@ -3,7 +3,7 @@
  * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,106 +48,9 @@
 
 
 
-/*
- * If the keyring is unlocked, then this is the handle of a record
- * which contains the unencrypted session key.  */
-MemHandle        g_SnibHandle;
-SnibPtr          g_Snib;
-DmOpenRef        g_SnibDB;
-
 #define k_SnibDBName "Keys-Gtkr-Temp"
-
-#define k_SnibDBType 'GkyT'
-
-#define k_SnibVersion 1
-
-#define OFFSET(st, mem) ((char *) &(st->mem) - (char *) (st))
-
-/*
- * Try to open an existing session key database.  Check its version.
- * If the version is wrong, delete the db and return nothing.  */
-static Err Snib_TryExistingDB(void)
-{
-    Int16	cardNo;
-    LocalID	dbID;
-    Err		err;
-    UInt16      version;
-
-    cardNo = 0;
-    dbID = DmFindDatabase(cardNo, k_SnibDBName);
-    if (!dbID)
-	return DmGetLastErr();
-    
-    if ((err = DmDatabaseInfo(cardNo, dbID, 0, 0,
-			      &version,
-			      0, 0, 0, 0,
-			      0, 0, 0, 0)))
-	return err;
-
-    if (version != k_SnibVersion) {
-	if ((err = DmDeleteDatabase(cardNo, dbID)))
-	    return err;
-
-	/* Deleted because we can't use it. */
-	return 0;
-    }
-
-    g_SnibDB = DmOpenDatabase(cardNo, dbID, dmModeReadWrite);
-    if (!g_SnibDB)
-	return DmGetLastErr();
-
-    g_SnibHandle = DmGetRecord(g_SnibDB, 0);
-    if (!g_SnibHandle)
-	return DmGetLastErr();
-
-    g_Snib = MemHandleLock(g_SnibHandle);
-
-    return 0;
-}
-
-
-static Err Snib_CreateDB(void)
-{
-    Err		err;
-    UInt16	cardNo = 0;
-    Boolean	isResource = false;
-    LocalID	dbID;
-    UInt16	version = k_SnibVersion;
-    UInt16	pos = 0;
-
-    err = DmCreateDatabase(cardNo, k_SnibDBName,
-			   kKeyringCreatorID, k_SnibDBType,
-			   isResource);
-    if (err)
-	return err;
-
-    dbID = DmFindDatabase(cardNo, k_SnibDBName);
-    if (!dbID)
-	return DmGetLastErr();
-
-    if ((err = DmSetDatabaseInfo(cardNo, dbID,
-				 0, 0, &version, 0,
-				 0, 0, 0, 0,
-				 0, 0, 0)))
-	return err;
-
-    g_SnibDB = DmOpenDatabase(cardNo, dbID, dmModeReadWrite);
-    if (!g_SnibDB)
-	return DmGetLastErr();
-
-    g_SnibHandle = DmNewRecord(g_SnibDB, &pos, sizeof (SnibStruct));
-    if (!g_SnibHandle)
-	return DmGetLastErr();
-
-    g_Snib = MemHandleLock(g_SnibHandle);
-    if (!g_Snib)
-	return DmGetLastErr();
-
-    if ((err = DmSet(g_Snib, 0, sizeof (SnibStruct), 0)))
-	return err;
-    
-    return 0;
-}
+#define k_SnibFtrId 'Sn'
+#define k_SnibVersion 2
 
 /*
  * We store the unlocked session key in a temporary database
@@ -155,24 +58,17 @@ static Err Snib_CreateDB(void)
  */
 Err Snib_Init(void)
 {
-    Err err;
-    
-    ErrNonFatalDisplayIf(g_SnibDB, "g_SnibDB already open");
-
-    err = Snib_TryExistingDB();
-
-    if ((err == 0  &&  !g_SnibDB) || err == dmErrCantFind) {
-	err = Snib_CreateDB();
+#ifndef NO_DELETE_OLD_KEY
+    {
+	 Int16   cardNo = 0;
+	 LocalID dbID;
+	 /* Remove old key Database */
+	 dbID = DmFindDatabase(cardNo, k_SnibDBName);
+	 if (dbID)
+	      DmDeleteDatabase(cardNo, dbID);
     }
-    if (err)
-	goto out;
-
- out:
-    if (err) {
-	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
-    }
-
-    return err;
+#endif
+    return errNone;
 }
 
 
@@ -182,32 +78,69 @@ Err Snib_Init(void)
  */
 void Snib_Close(void)
 {
-    Err err;
-
-    MemHandleUnlock(g_SnibHandle);
-    
-    if ((err = DmReleaseRecord(g_SnibDB, 0, true))) {
-	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
-    }
-    
-    if ((err = DmCloseDatabase(g_SnibDB))) {
-	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
-    }
 }
 
 
 /*
  * Reset the expiry time to zero, and also destroy the session key.
+ * This method is called under special startup codes.  It must be in
+ * the main code segment and must not use global variables.
+ * It shouldn't do any time consuming things.
  */
-void Snib_Eradicate(void)
+void Snib_Eradicate()
 {
-    Err		err;
-    
-    err = DmSet(g_Snib, 0, sizeof (SnibStruct), 0);
+    Err err;
+    SnibPtr snib;
+
+    err = FtrGet(kKeyringCreatorID, k_SnibFtrId, (UInt32*) &snib);
+    if (err == ftrErrNoSuchFeature)
+	/* Key was already removed */
+	return;
+
+    if (!err) {
+	err = MemSet(snib, sizeof (SnibStruct), 0);
+	if (!err) {
+	    err = MemPtrFree(snib);
+	    if (!err)
+		err = FtrUnregister(kKeyringCreatorID, k_SnibFtrId);
+	}
+    }
+
+    if (err) {
+	/* I hope it is okay to display an error dialog.  This will
+	 * prevent other alarms to be triggered in a timely manner,
+	 * but this should never happen anyway.
+	 *
+	 * Also we really want to know when removing keys doesn't
+	 * work as this is safety critical.
+	 */
+	ErrNonFatalDisplayIf(err, "Can't eradicate key");
+    }
+}
+
+static SnibPtr Snib_GetSnib(Boolean create)
+{
+    Err err;
+    SnibPtr snib;
+
+    err = FtrGet(kKeyringCreatorID, k_SnibFtrId, (UInt32*) &snib);
+    if (!err)
+	return snib;
+    if (!create)
+	return NULL;
+
+    snib = MemPtrNew (sizeof (SnibStruct));
+    if (snib == NULL)
+	err = memErrNotEnoughSpace;
+    else
+	err = MemPtrSetOwner(snib, 0);
 
     if (err) {
 	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
+	return NULL;
     }
+    FtrSet(kKeyringCreatorID, k_SnibFtrId, (UInt32) snib);
+    return snib;
 }
 
 
@@ -216,42 +149,14 @@ void Snib_Eradicate(void)
  */
 void Snib_SetExpiry(UInt32 newTime)
 {
-    Err		err;
-    
-    err = DmWrite(g_Snib, OFFSET(g_Snib, expiryTime),
-		  &newTime, sizeof newTime);
+    UInt16  cardNo;
+    LocalID dbID;
+    SnibPtr snib = Snib_GetSnib (false);
 
-    if (err) {
-	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
-    }
+    snib->expiryTime = newTime;
+    SysCurAppDatabase(&cardNo, &dbID);
+    AlmSetAlarm(cardNo, dbID, 0, newTime, true);
 }
-
-
-
-/*
- * Calculate the hash of a password and store it in the snib database.
- * This is called as the keyring is unlocked, so that we always have
- * the hash available in the future for convenient access.
- */
-Err Snib_StoreFromPasswd(Char *passwd)
-{
-    UInt8 hash[kMD5HashSize];
-    Err err;
-    Int16 len;
-
-    len = StrLen(passwd);
-
-    err = EncDigestMD5(passwd, len, hash);
-    if (err) {
-         UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
-         return err;
-    }
-
-    Snib_StoreRecordKey(hash);
-
-    return 0;
-}
-
 
 /*
  * Store the record key (hash of master password) for use later in
@@ -259,12 +164,38 @@ Err Snib_StoreFromPasswd(Char *passwd)
  */
 void Snib_StoreRecordKey(UInt8 *newHash)
 {
-    Err		err;
+    Err err;
+    SnibPtr snib = Snib_GetSnib (true);
+    err = MemMove(snib->recordKey, newHash, k2DESKeySize);
     
-    err = DmWrite(g_Snib, OFFSET(g_Snib, recordKey[0]),
-		  newHash, k2DESKeySize);
-    
-    if (err) {
-	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
+    if (err)
+	 UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
+}
+
+
+/* Retrieve the key hash from the snib if it exists, and return TRUE.
+ * Otherwise, return FALSE.  */
+Boolean Snib_RetrieveKey(UInt8* keyHash) {
+    SnibPtr snib;
+    UInt32  now;
+    Err     err;
+
+    snib = Snib_GetSnib(false);
+    if (snib == NULL)
+	return false;
+
+    // If the timeout is too far in the future, then adjust it: this
+    // makes it work OK if e.g. the clock has changed.
+
+    now = TimGetSeconds();
+    if (now > snib->expiryTime) {
+	Snib_Eradicate ();
+	return false;
     }
+
+    if (now + gPrefs.timeoutSecs < snib->expiryTime)
+	Snib_SetExpiry(now + gPrefs.timeoutSecs);
+
+    err = MemMove(keyHash, snib->recordKey, k2DESKeySize);
+    return err == errNone;
 }

@@ -34,7 +34,7 @@
 
 /* Convert from a packed database record into an unpacked in-memory
  * representation.  Return true if conversion was successful. */
-void Keys_UnpackRecord(Char *recPtr, UnpackedKeyType *u)
+void Keys_UnpackRecord(Char *recPtr, UnpackedKeyType *u, UInt8 *recordKey)
 {
     Int16       remain;
     Char *      plainBuf;
@@ -60,7 +60,7 @@ void Keys_UnpackRecord(Char *recPtr, UnpackedKeyType *u)
     }
 
     cryptPtr = recPtr;
-    err = DES3_Read(cryptPtr, plainBuf, remain);
+    err = DES3_Read(cryptPtr, plainBuf, remain, recordKey);
     if (err) {
         /* TODO: If this failed, indicate to the caller that we
          * couldn't unpack the record. */

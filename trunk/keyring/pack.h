@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx);
+void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx, UInt8 *key);
 void Key_SetCategory(UInt16 idx, UInt16 category);
 Err KeyDB_CreateNew(UInt16 *idx);
 void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr,
