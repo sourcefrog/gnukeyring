@@ -1,9 +1,10 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "k&r" -*-
  *
  * $Id$
  * 
  * GNU Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ *
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,9 @@
 #include "resource.h"
 #include "keyring.h"
 #include "beta.h"
+
+/* True if this is a stable rather than a beta release of the app */
+#define kAppStableVers 1
 
 /* ======================================================================
  *
@@ -54,9 +58,10 @@ void Gkr_CheckBeta(void) {
                                 &lastVers, &size,
                                 useSavedPref);
 
-    if ((ret == noPreferenceFound)
-        || (size != sizeof lastVers)
-        || (lastVers != kAppVersion))
+    if (((ret == noPreferenceFound)
+	 || (size != sizeof lastVers)
+	 || (lastVers != kAppVersion))
+	&& !kAppStableVers)
         Gkr_BetaWarning();
 
     lastVers = kAppVersion;
