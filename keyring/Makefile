@@ -68,7 +68,7 @@ JAVA		= java
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 VERSION         = 1.2
-DEFINES		= -DBETA -DkAppVersion=0x1012
+DEFINES		= -DkAppVersion=0x1020
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
@@ -147,7 +147,7 @@ $(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS)
 	$(ZIP) -jq9 $@ $^
 
 $(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
-	(cat NEWS ; md5sum $(PRCS) $(DIST_BALL);echo ) > NEWS.tmp
+	(cat NEWS ; md5sum $(PRCS) $(DIST_BALL) $(SSLEAYLIBS);echo ) > NEWS.tmp
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
 	@ls -l $(DIST_BIN) $(DIST_BALL)
