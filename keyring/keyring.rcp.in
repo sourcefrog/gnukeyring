@@ -64,14 +64,14 @@ BEGIN
   "Account:" = "Account:"
   "Password:" = "Password:"
   "Confirm:"  = "Conferma:" 
-  "Changed:" = "Cambiato:"
+  "Changed:" = "Modificato:"
   "Done" = "Salva"
   "Preferences" = "Preferenze"
-  "Stay unlocked for:" = "Resta sbloccato per:"
+  "Stay unlocked for:" = "Rimani sbloccato per:"
   "No time" = "0 sec."
   "15 sec" = "15 sec."
-  "60 sec" = "1 Min."
-  "5 min" = "5 Min."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
   "Veil password" = "Maschera password"
   "Generate"="Genera"
 
@@ -101,7 +101,7 @@ BEGIN
   "@@PasswordMismatch" =  "Le password inserite non corrispondono."
   "@@langSpecificChars" =  "ä¥©"
 
-  "Not here yet" = "Non ancora implementato"
+  "Not here yet" = "Funzione non ancora implementata"
   "@@NotImplemented" = "Questa caratteristica non è ancora stata implementata."
 
   "^1: System error ^2" =  "^1: Errore di sistema ^2"
@@ -111,9 +111,9 @@ BEGIN
   "Delete current key record?" = "Eliminare il record corrente?"
 
   "@@BetaVersion"
-   = "Questa fighissima versione di Keyring, oltre ad essere beta è anche stata patchata da Paolo. Se perdete tutto affari vostri."
+   = "Questa versione di Keyring, è ancora in fase di beta testing. Conservare una copia di backup dei dati."
 
-  "This is free software.  No warranty." = "Free Software.  Nessuna garanzia." 
+  "This is free software.  No warranty." = "Questo è ree Software.  Nessuna garanzia." 
 
   "Released under the GNU GPL v2." = "Rilasciata secondo la GNU GPL v2." 
 
@@ -130,7 +130,7 @@ BEGIN
 
   "Undo" = "Annulla"
   "Undo All" = "Annulla tutto"
-  "Graffiti Help" = "Graffiti Help"
+  "Graffiti Help" = "Guida Graffiti"
   "Paste" = "Incolla"
   "Cut" = "Taglia"
   "Select All" = "Seleziona tutto"
@@ -146,6 +146,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/it/generate.txt"
   "@@KeyEditHelp" = "help/it/keyedit.txt"
+  "@@SetPasswdHelp" = "La master password protegge tutte le chiavi, e deve essere digitata per accedere al database. In caso venga dimenticata, il database non sarà più accessibile."
   "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "There is no data to export." = "Non ci sono dati da esportare."
