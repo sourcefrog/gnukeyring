@@ -406,6 +406,7 @@ Boolean ListForm_HandleEvent(EventPtr event)
         break;
 
     case fldChangedEvent:
+	ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
 	return true;
 
     default:
