@@ -50,7 +50,7 @@
         data = pdb;
         [data retain];
         if ([self parseData] == NO) {
-            [self dealloc]; // or release?
+            [self release];
             self = nil;
         }
     }
