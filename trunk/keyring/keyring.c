@@ -159,11 +159,14 @@ static Err App_Start(void) {
 
     FrmGotoForm(ListForm);
     
+    /* TODO: Make more sure that we don't leave the Snib open */
+
     return 0;
 }
 
 
 static void App_Stop(void) {
+    /* TODO: Make more sure that we don't leave the Snib open */
     App_SavePrefs();
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
