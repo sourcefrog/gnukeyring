@@ -3,7 +3,7 @@
  * Keyring -- store passwords securely on a handheld
  *
  * Copyright (C) 1999-2001 by Martin Pool <mbp@humbug.org.au>
- * Copyright (C) 2001-2003 by Jochen Hoenicke <hoenicke@users.sf.net>
+ * Copyright (C) 2001-2005 by Jochen Hoenicke <hoenicke@users.sf.net>
  * Copyright (C) 2003-2004 Alex Smolyanov <smol@users.sourceforge.net>
  * Copyright (C) 2003-2004 Alex Raschepkin <araschepkin@users.sourceforge.net>
  * 
@@ -1990,7 +1990,7 @@ BEGIN
 
   	LABEL "Copyright 1999-2002 by Martin Pool"
 		AUTOID AT (CENTER PREVBOTTOM+4)
-  	LABEL "(C) 2001-2003 by Jochen Hoenicke"
+  	LABEL "(C) 2001-2005 by Jochen Hoenicke"
 		AUTOID AT (CENTER PREVBOTTOM)
 	LABEL "This is free software.  No warranty." AUTOID AT (CENTER PREVBOTTOM+1) 
 	LABEL "Released under the GNU GPL v2." AUTOID AT (CENTER PREVBOTTOM) 
