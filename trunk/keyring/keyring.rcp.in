@@ -534,6 +534,17 @@ BEGIN
 END
 
 
+ALERT ID ID_SnibDatabaseAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Error accessing snib database: ^1 (^2)"
+
+	BUTTONS "OK"
+END
+
+
 ALERT ID ID_CreateDBAlert
 ERROR
 BEGIN
@@ -584,6 +595,28 @@ BEGIN
 	TITLE "Error"
 
 	MESSAGE "Error upgrading database: ^1"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID alertID_SortInfoMissing
+WARNING
+BEGIN
+    TITLE "Database Damaged"
+
+    MESSAGE "This database has been damaged by the PalmOS SortInfo bug.  Please enter your password to repair it."
+
+    BUTTONS "OK" "Cancel"
+END
+
+
+ALERT ID ID_CategoriesMissing
+WARNING
+BEGIN
+	TITLE "Database Upgrade"
+
+	MESSAGE "There are no categories defined in this database.  Default categories have been added."
 
 	BUTTONS "OK"
 END
@@ -663,7 +696,7 @@ END
 
 MENU ID ListMenuBar
 BEGIN
-	PULLDOWN "Database"
+	PULLDOWN "Keyring"
 	BEGIN
 		MENUITEM "Set Password..." ID SetPasswdCmd "S"
 	END
@@ -678,7 +711,7 @@ END
 
 MENU ID KeyEditMenuBar
 BEGIN
-	PULLDOWN "Record"
+	PULLDOWN "Key"
 	BEGIN
 		MENUITEM "Generate Password..." id GenerateCmd
 		MENUITEM "Export to Memo" id ExportMemoCmd

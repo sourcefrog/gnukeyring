@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -143,11 +143,14 @@ static Err App_Start(void) {
 	
     App_LoadPrefs();
     Gkr_CheckBeta();
+
     if ((err = Snib_Init()))
 	return err;
 
-    if ((err = Keyring_PrepareDB()))
+    if ((err = Keyring_PrepareDB())) {
+	Snib_Close();
         return err;
+    }
 
     FrmGotoForm(ListForm);
     

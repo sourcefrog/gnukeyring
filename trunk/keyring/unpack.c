@@ -41,12 +41,23 @@ void Keys_UnpackRecord(Char *recPtr, UnpackedKeyType *u)
     Char *      cryptPtr;
     Err         err;
 
+    MemSet(u, sizeof(UnpackedKeyType), (UInt8) 0);
+    
     remain = MemPtrSize(recPtr);
+    if (!remain) 
+         return;
     
     u->nameHandle = Mem_ReadString(&recPtr, &remain, &u->nameLen);
+    if (!remain) 
+         return;
 
     plainBuf = MemPtrNew(remain);
-    ErrFatalDisplayIf(!plainBuf, "Not enough memory to unpack record");
+    if (!remain)  {
+         FrmCustomAlert(ID_KeyDatabaseAlert,
+                        "not enough memory to unpack record",
+                        __FUNCTION__, "");
+         return;
+    }
 
     cryptPtr = recPtr;
     err = DES3_Read(cryptPtr, plainBuf, remain);

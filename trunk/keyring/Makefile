@@ -3,10 +3,10 @@
 # $Id$
 
 APP             = keyring
-ICONTEXT        ="Keyring"
+ICONTEXT        ="Tightly Bound"
 APPID           = "Gtkr"
 
-VERSION         = 0.13.0pr4
+VERSION         = 1.0pr5
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp

@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -53,7 +53,6 @@
 
 #define kSaltSize		4 /* bytes */
 #define kMessageBufSize		64
-#define kPwHashSize		(kSaltSize + kMD5HashSize)
 
 
 /*
@@ -61,19 +60,14 @@
  */
 static Err PwHash_Calculate(UInt8 *digest, UInt32 salt, Char *passwd)
 {
-    Int16		len, n;
-    UInt8		buffer[kMessageBufSize];
     Err		err;
+    UInt8	buffer[kMessageBufSize];
 
     /* Generate salt. */
+    MemSet(buffer, 64, 0);
     MemMove(buffer, &salt, kSaltSize);
-
-    len = StrLen(passwd);
-    n = len + 1 + kSaltSize;
-    if (n > kMessageBufSize)
-	n = kMessageBufSize;
-    MemMove(buffer + kSaltSize, passwd, n - kSaltSize);
-    MemSet(buffer + n, kMessageBufSize - n, 0xFE);
+    
+    StrNCopy(buffer + kSaltSize, passwd, kMessageBufSize - 1 - sizeof(Int32));
 
     err = EncDigestMD5(buffer, kMessageBufSize, digest);
     if (err) {
@@ -102,7 +96,7 @@ Err PwHash_Store(Char *newPasswd)
 
     PwHash_Calculate(digest, salt, newPasswd);
 
-    recHandle = DmResizeRecord(gKeyDB, kMasterHashRec, kPwHashSize);
+    recHandle = DmResizeRecord(gKeyDB, kMasterHashRec, sizeof (CheckHashType));
     if (!recHandle) {
 	err = DmGetLastErr();
 	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);

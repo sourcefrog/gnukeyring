@@ -164,7 +164,7 @@ Err Snib_Init(void)
 
  out:
     if (err) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
     }
 
     return err;
@@ -182,11 +182,11 @@ void Snib_Close(void)
     MemHandleUnlock(g_SnibHandle);
     
     if ((err = DmReleaseRecord(g_SnibDB, 0, true))) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
     }
     
     if ((err = DmCloseDatabase(g_SnibDB))) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
     }
 }
 
@@ -201,7 +201,7 @@ void Snib_Eradicate(void)
     err = DmSet(g_Snib, 0, sizeof (SnibStruct), 0);
 
     if (err) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
     }
 }
 
@@ -217,7 +217,7 @@ void Snib_SetExpiry(UInt32 newTime)
 		  &newTime, sizeof newTime);
 
     if (err) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
     }
 }
 
@@ -260,6 +260,6 @@ void Snib_StoreRecordKey(UInt8 *newHash)
 		  newHash, k2DESKeySize);
     
     if (err) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
     }
 }

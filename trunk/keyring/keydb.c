@@ -86,41 +86,6 @@ DmOpenRef       gKeyDB;
  * except that the data was stored in AppInfo or SortInfo rather than
  * in record 0. */
 
-Err KeyDB_CreateCategories(void) {
-    LocalID		appInfoID;
-    MemHandle h;
-    AppInfoPtr		appInfoPtr;
-
-    if (DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, 0, 0, 0, 0,
-		       0, 0, 0,
-		       &appInfoID, 0, 0, 0))
-	return dmErrInvalidParam;
-
-    if (appInfoID == 0) {
-	h = DmNewHandle(gKeyDB, sizeof(AppInfoType));
-	if (!h)
-	    return DmGetLastErr();
-                
-	appInfoID = MemHandleToLocalID(h);
-	DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID,
-			  0,0,0,0,
-			  0,0,0,
-			  &appInfoID, 0,0,0);
-    }
-    appInfoPtr = MemLocalIDToLockedPtr(appInfoID, gKeyDBCardNo);
-
-    /* Clear the app info block. */
-    DmSet(appInfoPtr, 0, sizeof(AppInfoType), 0);
-
-    /* Initialize the categories. */
-    CategoryInitialize(appInfoPtr, CategoryRsrc);
-
-    MemPtrUnlock(appInfoPtr);
-
-    return 0;
-}
-
-
 /*
  * Set the master password for the database.  This is called after the
  * user has entered a new password and it has been properly checked,
@@ -171,7 +136,7 @@ Err KeyDB_OpenExistingDB(void) {
  *
  * gKeyDB is open and refers to an empty database when this is called.
  */
-static Err KeyDB_CreateReservedRecords(void)
+Err KeyDB_CreateReservedRecords(void)
 {
     Err err;
     Int16 i, idx;
