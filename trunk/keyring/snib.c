@@ -54,7 +54,7 @@ static const char *k_SnibDBName = "Keys-Gtkr-Temp";
 
 static UInt32 k_SnibDBType = 'GkyT';
 
-static const UInt32 k_SnibVersion = 1;
+#define k_SnibVersion 1
 
 #define OFFSET(st, mem) ((char *) &(st->mem) - (char *) (st))
 
@@ -242,7 +242,7 @@ Err Snib_StoreFromPasswd(Char *passwd)
          return err;
     }
 
-    Snib_StorePasswdHash(hash);
+    Snib_StoreRecordKey(hash);
 
     return 0;
 }
@@ -252,7 +252,7 @@ Err Snib_StoreFromPasswd(Char *passwd)
  * Store the record key (hash of master password) for use later in
  * this session.
  */
-void Snib_StorePasswdHash(UInt8 *newHash)
+void Snib_StoreRecordKey(UInt8 *newHash)
 {
     Err		err;
     

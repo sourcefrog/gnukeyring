@@ -241,7 +241,7 @@ static void KeyEditForm_Load(void)
     FrmSetActiveForm(busyForm);
     FrmDrawForm(busyForm);
 
-    Keys_Unpack(record, &gRecord);
+    Keys_UnpackRecord(recPtr, &gRecord);
     MemHandleUnlock(record);
     KeyRecord_GetCategory(gKeyRecordIndex, &gRecord.category);
 

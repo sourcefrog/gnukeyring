@@ -1,4 +1,4 @@
-/* -*- c-file-style: "k&r"; -*- 
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -20,27 +20,4 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-extern Int16 gKeyDBCardNo;
-extern LocalID gKeyDBID;
-extern DmOpenRef gKeyDB;
-
-
-#define kMasterHashRec 0
-#define kNumHiddenRecs 1
-
-Err KeyDB_CreateCategories(void);
-
-Err KeyDB_CreateRingInfo(void);
-void KeyDB_SetPasswd(Char *newPasswd);
-
-Err KeyDB_OpenExistingDB(void);
-Err KeyDB_CreateDB(void);
-Err KeyDB_MarkForBackup(void);
-Err KeyDB_GetVersion(UInt16 *ver);
-Err KeyDB_SetVersion(void);
-
-
-enum KeyDB_State KeyDB_Examine(void);
-Boolean KeyDB_Verify(Char const *guess);
-
-Int16 Keys_IdxOffsetReserved(void);
+void KeyDB_Reencrypt(Char const *newPasswd);

@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 

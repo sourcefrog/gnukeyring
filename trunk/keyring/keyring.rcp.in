@@ -364,8 +364,8 @@ BEGIN
 	PUSHBUTTON "5 min" ID Expiry300Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
 		GROUP 1
 
-        CHECKBOX "Lock when switched off" ID ID_PowerOffLock 
-                AT (3 PREVBOTTOM+5 AUTO AUTO) FONT 1
+//        CHECKBOX "Lock when switched off" ID ID_PowerOffLock 
+//               AT (3 PREVBOTTOM+5 AUTO AUTO) FONT 1
 	
 	BUTTON "OK" OkBtn AT (5 PREVBOTTOM+4 AUTO AUTO) 
 	BUTTON "Cancel" CancelBtn AT (PREVRIGHT+6 PREVTOP AUTO AUTO)
@@ -421,7 +421,7 @@ BEGIN
 	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 PREVTOP 20 auto)
         PUSHBUTTON "䥩" ID ID_IncludeHigh AT (PREVRIGHT+1 PREVTOP 22 AUTO)
-        PUSHBUTTON "pronounceable syllables" ID ID_Syllables AT (44 PREVBOTTOM+1 PREVRIGHT-44 AUTO)
+//        PUSHBUTTON "pronounceable syllables" ID ID_Syllables AT (44 PREVBOTTOM+1 PREVRIGHT-44 AUTO)
 
 	BUTTON "Generate" id OkBtn at (3 PREVBOTTOM+7 auto auto)
 	button "Cancel" id CancelBtn at (prevright+5 prevtop auto auto)

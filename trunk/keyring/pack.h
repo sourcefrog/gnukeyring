@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -23,3 +23,5 @@
 void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx);
 void Key_SetCategory(UInt16 idx, UInt16 category);
 Err KeyDB_CreateNew(UInt16 *idx);
+void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr,
+		      UInt8 *key);
