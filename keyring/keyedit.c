@@ -50,6 +50,8 @@ static void Edit_DeleteKey(Boolean saveBackup);
 static void KeyEditForm_GetFields(void);
 
 static Boolean f_keyDiscarded;
+static Boolean f_keyCommitted;
+static Boolean f_editFormActive;
 
 // If the form is active, all these are valid.
 static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
@@ -263,7 +265,7 @@ static void KeyEditForm_Load(void)
  */
 static void KeyEditForm_Commit(void)
 {
-    if (f_keyDiscarded)
+    if (f_keyDiscarded || f_keyCommitted)
         return;
 
     if (KeyEditForm_IsEmpty()) {
@@ -277,6 +279,7 @@ static void KeyEditForm_Commit(void)
     } else {
 	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
     }
+    f_keyCommitted = true;
 }
 
 
@@ -388,16 +391,6 @@ static Boolean KeyEditForm_IsEmpty(void)
      return true;
 }
 
-void KeyEditForm_GotoRecord(UInt16 recordIdx)
-{
-    gKeyRecordIndex = recordIdx;
-     
-    if (Unlock_GetKey(false, gRecordKey)) {
-        FrmGotoForm(KeyEditForm);
-    }
-}
-        
-
 
 static void Key_SetNewRecordCategory(void)
 {
@@ -422,10 +415,47 @@ static void KeyEditForm_OpenRecord(void)
     }
 
     f_keyDiscarded = false;
+    f_keyCommitted = false;
+
+    if (gPrefs.category != dmAllCategories)
+	gPrefs.category = gRecord.category;
 
     FrmSetFocus(f_KeyEditForm,
                 FrmGetObjectIndex(f_KeyEditForm, ID_KeyNameField));
     KeyEditForm_UpdateAll();
+}
+
+
+/*
+ * Go to the record with the specified index.  It has to work
+ * regardless of the currently active form.  If key edit form is
+ * already active it commits the last record before attempting to
+ * switch the record.
+ * 
+ * If the timeout has passed then we do not allow a new record to be
+ * opened.  The user must either re-enter their password, or he gets
+ * transferred to the key list.
+ */
+void KeyEditForm_GotoRecord(UInt16 recordIdx)
+{
+    /* If we are active, commit the current record. */
+    if (f_editFormActive)
+	KeyEditForm_Commit();
+
+    /* Unlock or return immediately. 
+     */
+    if (!Unlock_GetKey(false, gRecordKey)) {
+	/* We leave the edit form */
+	FrmGotoForm(ListForm);
+	return;
+    }
+
+    gKeyRecordIndex = recordIdx;
+
+    if (f_editFormActive)
+	KeyEditForm_OpenRecord();
+    else
+        FrmGotoForm(KeyEditForm);
 }
 
 
@@ -486,6 +516,9 @@ static void Edit_PrepareFields(void)
 static void KeyEditForm_FormOpen(void)
 {
     UInt32      version;
+
+    f_editFormActive = true;
+    
     /* NotifyRegister is not present in 3.0.  We need to check for
      * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
      * call this.  It might be better to set an alarm to lock after
@@ -496,7 +529,7 @@ static void KeyEditForm_FormOpen(void)
 	&& version)
 	 SysNotifyRegister(gKeyDBCardNo, gKeyDBID, sysNotifySleepRequestEvent,
 			   KeyEditForm_Sleep, sysNotifyNormalPriority, NULL);
-    
+
     f_needsSort = false;
     KeyEditForm_GetFields();
     Edit_PrepareFields();
@@ -545,6 +578,7 @@ static void Edit_FormClose(void)
 			      sysNotifySleepRequestEvent,
 			      sysNotifyNormalPriority);
      }
+     f_editFormActive = false;
 }
 
 
@@ -593,13 +627,15 @@ static void Edit_MaybeDelete(void)
      if (App_CheckReadOnly())
           return;
 
-     alert = FrmInitForm(ConfirmDeleteForm);
-     buttonHit = FrmDoDialog(alert);
-     saveBackup = CtlGetValue(UI_GetObjectByID(alert, SaveArchiveCheck));
-     FrmDeleteForm(alert);
+     if (!KeyEditForm_IsEmpty()) {
+	 alert = FrmInitForm(ConfirmDeleteForm);
+	 buttonHit = FrmDoDialog(alert);
+	 saveBackup = CtlGetValue(UI_GetObjectByID(alert, SaveArchiveCheck));
+	 FrmDeleteForm(alert);
 
-     if (buttonHit == CancelBtn)
-          return;
+	 if (buttonHit == CancelBtn)
+	     return;
+     }
 
      Edit_DeleteKey(saveBackup);
 
@@ -709,111 +745,26 @@ static void KeyEditForm_Dragged(EventPtr event)
 
 
 /*
- * Open the record at the specified position in the current category.
- */
-static void Edit_OpenAtPosition(Int16 pos)
-{
-    gKeyRecordIndex = 0;
-    DmSeekRecordInCategory(gKeyDB, &gKeyRecordIndex, pos,
-                           dmSeekForward, gPrefs.category);
-    
-    KeyEditForm_OpenRecord();
-}
-
-
-/*
- * Seek forwards or backwards from the current record.
- */
-static void Edit_OpenAtOffset(Int16 offset)
-{
-     Int16 pos, dir;
-     
-     if (offset < 0) {
-          pos = -offset;
-          dir = dmSeekBackward;
-     } else {
-          pos = offset;
-          dir = dmSeekForward;
-     }
-          
-     DmSeekRecordInCategory(gKeyDB, &gKeyRecordIndex, pos, dir,
-                            gPrefs.category);
-    
-    KeyEditForm_OpenRecord();
-}     
-
-
-
-/*
- * Move backwards or forwards by one record.  The current record
- * has been committed, which may have caused f_keyDiscarded to be
- * set.
- *
- * If the timeout has passed then we do not allow a new record to be
- * opened.  The user must either re-enter their password, or stay
- * stuck on the same record.  They can always press Done to go back to
- * the list.
- */
-static void Edit_TryFlip(Int16 offset)
-{
-     UInt16 numRecs;
-     UInt16 pos;
-     UInt8  dummy[k2DESKeySize];
-     
-     pos = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
-     numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
-     
-     if ((pos == 0  &&  offset == -1) || (pos + offset == numRecs)) {
-          /* Bumped into the end */
-          SndPlaySystemSound(sndWarning);
-          return;
-     }
-
-     if (!Unlock_GetKey(false, dummy))
-          return; /* otherwise, stay on the same record. */
-     MemSet(dummy, sizeof(dummy), 0);
-
-     KeyEditForm_Commit();
-
-     if (f_keyDiscarded) {
-          if (numRecs <= 1) {
-               /* Deleted the last record in the category. */
-               KeyEditForm_Done();
-               return;
-          }
-
-          /* We have to do an absolute seek, because when a record is
-           * discarded it is also re-ordered.  Flipping forward from a
-           * discarded record stays at the same absolute position,
-           * because the remaining records have just shuffled
-           * forward. */
-          if (offset == -1) {
-               pos--;
-          }
-          Edit_OpenAtPosition(pos);
-     } else {
-          Edit_OpenAtOffset(offset);
-     }
-}
-
-
-
-/*
  * If possible, scroll the notes field.  Otherwise, flip forward or
  * backward by one record.  Before flipping records, commit changes
  * and act appropriately if the record was actually discarded.
  */
 static void KeyEditForm_PageButton(WinDirectionType dir)
 {
-    Int16 lines, offset;
-    
     if (FldScrollable(f_NotesFld, dir)) {
+	Int16 lines;
+
         lines = FldGetVisibleLines(f_NotesFld);
         FldScrollField(f_NotesFld, lines, dir);
         KeyEditForm_UpdateScrollbar();
     } else {
-	offset = (dir == winDown) ? +1 : -1;
-	Edit_TryFlip(offset);
+	UInt16 recIndex = gKeyRecordIndex;
+	Int16 direction;
+	
+	direction = (dir == winDown) ? dmSeekForward : dmSeekBackward;
+	if (DmSeekRecordInCategory(gKeyDB, &recIndex, 
+				   1, direction, gPrefs.category) == errNone)
+	    KeyEditForm_GotoRecord(recIndex);
     }
 }
 
