@@ -1,6 +1,6 @@
 $current_file="";
 $last_file="";
-$verbose = 0;
+$verbose = 1;
 if ($headername=="") {
     $headername="_PROTO_H_";
 }
@@ -102,17 +102,21 @@ while (<>)
 	}
 
 	if ($instring) {
-	    if ($_ =~ s/^([^\\\"]|\\.)*\"//) {
+	    if ($_ =~ s/^(([^\\\"]|\\.)*\")//) {
+		$definition .= "$1 " if (!$bracelevel);
 		$instring = 0;
 	    } else {
+		$definition .= "$_" if (!$bracelevel);
 		last;
 	    }
 	}
 
 	if ($inchar) {
-	    if ($_ =~ s/^([^\\\']|\\.)*\'//) {
+	    if ($_ =~ s/^(([^\\\']|\\.)*\')//) {
+		$definition .= "$1" if (!$bracelevel);
 		$inchar = 0;
 	    } else {
+		$definition .= "$_" if (!$bracelevel);
 		last;
 	    }
 	}
@@ -142,10 +146,12 @@ while (<>)
 	    $bracelevel--;
 	} elsif ($_ =~ s/^\/\*//) {
 	    $incomment = 1;
-	} elsif ($_ =~ s/^\"//) {
+	} elsif ($_ =~ s/^(\")//) {
 	    $instring = 1;
-	} elsif ($_ =~ s/^\'//) {
+	    $definition .= "$1" if (!$bracelevel);
+	} elsif ($_ =~ s/^(\')//) {
 	    $inchar = 1;
+	    $definition .= "$1" if (!$bracelevel);
 	} elsif ($_ =~ s/^\/\///) {
 	    last;
 	} elsif ($_ =~ s/^;//) {
