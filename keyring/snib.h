@@ -1,4 +1,4 @@
-/* -*- c-file-style: "bsd"; c-basic-offset: 4; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -34,8 +34,8 @@ void Snib_Close(void);
 Err Snib_Init(void);
 
 void Snib_SetExpiry(UInt32 newTime);
-void Snib_StorePasswdHash(UInt8 const *newHash);
-void Snib_FromPasswd(Char const *passwd);
+void Snib_StorePasswdHash(UInt8 *newHash);
+Err Snib_StoreFromPasswd(Char *passwd);
 
 /*
  * There is only one record in this database, and it contains this
