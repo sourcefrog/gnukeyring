@@ -1,6 +1,8 @@
 # Copyright (C) 1999, 2000 by Martin Pool
 # $Id$
 
+# FIXME: We don't know how to build auto.h to get started!
+
 APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
@@ -77,11 +79,20 @@ PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
 all: $(DOCS) $(PRCS) 
 
-include $(DEP)
+-include $(DEP)
 
-$(BASE)-%.prc: %.resstamp $(EXE) $(DEF)
+$(BASE)-%.prc: %.resstamp  $(EXE) $(DEF)
 	cd res/$* && $(BUILDPRC) -o ../../$@ ../../$(DEF) ../../$(EXE) *.bin
 	ls -l $@
+
+%.resstamp: $(BITMAPS) resource.h 
+%.resstamp: $(RCP)
+	[ -d res/$* ] || mkdir -p res/$*
+	-rm -f res/$*/*
+	-rm -f *.bin
+	$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/
+	cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
+	touch $@
 
 dist: $(DIST_BALL)
 
@@ -100,35 +111,23 @@ $(RCP): $(RCP).in Makefile
 $(EXE):       $(SRC:.c=.o) ;
 	$(CC) $(CFLAGS) $^ -o $(EXE)
 
-auto.h: en.resstamp
-
 # We try to avoid touching auto.h, because that will kick off
 # rebuilding a lot of source and it's often not necessary.
-%.resstamp: $(RCP) $(BITMAPS) resource.h 
-	[ -d res/$* ] || mkdir -p res/$*
-	-rm -f res/$*/*
-	-rm -f *.bin
-	$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/
-	cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
-	touch $@
+auto.h: en.resstamp
 
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
-%.d %.o: %.c ;
+%.d %.o: %.c auto.h
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
-	rm -rf *.o $(EXE) *.bin res/*/* *.grc *.prc *.stamp *.bin *.d *.stamp
+	rm -f *.o $(EXE) *.bin res/*/* *.grc *.prc *.resstamp *.bin *.d *.stamp
 
 sig: $(DIST_SIG)
 
 $(DIST_SIG): $(DIST_BALL)
 	gpg -u 40C90109 -a -b $(DIST_BALL)
-
-# TODO: Also upload the release to the SourceForge download area
-count: 
-	@cat *.[ch] *.rcp Makefile|wc -l
 
 tags: TAGS
 TAGS: *.c *.h
