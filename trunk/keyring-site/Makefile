@@ -3,7 +3,7 @@
 
 
 pages=index license screenshots download mirrors thanks plans faq	\
-      history conduits
+      history conduits lists
 
 latte_pages=$(addsuffix .latte, $(pages))
 html_pages=$(addsuffix .html, $(pages))
