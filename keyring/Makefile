@@ -28,7 +28,7 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 
 GLIBDEF         = ssl-md.def ssl-des.def
 
-HEADERS	        = keyring.h record.h error.h keydb.h listform.h 	\
+HEADERS	        = keyring.h record.h error.h \
 		  resource.h crypto.h pwhash.h snib.h includes.h
 
 OBJ		= $(subst .c,.o,$(SRC)) $(subst .def,-stubs.o,$(GLIBDEF))
@@ -44,6 +44,7 @@ PILRC           = pilrc
 TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
 AWK		= awk
+PERL		= perl
 
 # Note: 
 # Turning on debugger support (-g) costs about 100 bytes
@@ -79,7 +80,7 @@ HELP_TXT        = $(wildcard help/*/*.txt)
 SSLEAYLIBS      = $(wildcard pilotSSLeay/shlib/*.prc)
 SSLEAYINCS      = $(wildcard pilotSSLeay/include/*.h)
 SSLEAY          = $(SSLEAYINCS) $(SSLEAYLIBS)
-SCRIPTS         = script/mkproto.awk
+SCRIPTS         = script/mkproto.pl
 
 DOCS		= HACKING TODO TESTS 
 
@@ -112,6 +113,8 @@ DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
 default: $(BASE)-en.prc
 
 all: $(PRCS) 
+
+.SECONDARY:
 
 $(BASE)-%.prc: %.resstamp $(EXE)
 	cd res/$*; $(BUILDPRC) ../../$@ 'Keyring' Gtkr ../../$(EXE) *.bin
@@ -170,7 +173,7 @@ auto.h: en.resstamp
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
-%.o: %.c auto.h prototype.h
+%.o: %.c $(HEADERS) auto.h prototype.h
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
@@ -199,21 +202,16 @@ install-%: $(BASE)-%.prc
 
 MKPROTO_C = $(SRC)
 
-prototype.h: proto
-proto: .proto.stamp
+proto: prototype.h
+prototype.h: .proto.stamp; @true
 
-.proto.stamp: script/mkproto.awk $(MKPROTO_C)
-	$(AWK) -f script/mkproto.awk $(MKPROTO_C) \
-		>prototype.h.new
+.proto.stamp: script/mkproto.pl $(MKPROTO_C)
+	$(PERL) script/mkproto.pl $(MKPROTO_C) > prototype.h.new
 	@if test -f prototype.h && cmp -s prototype.h.new prototype.h; \
 	then rm -f prototype.h.new; \
-	echo No changes to prototypes; \
+	echo No changes to prototype.h; \
 	else \
 	echo Installing new prototype.h; \
 	mv prototype.h.new prototype.h; \
 	fi
 	@touch $@
-
-
-$(OBJ): $(HEADERS)
-

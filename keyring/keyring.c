@@ -26,11 +26,9 @@
 // Globals
 
 KeyringPrefsType gPrefs;
-
 Boolean gEditFormActive;
-Boolean gSleeping;
 
-
+static Boolean gSleeping;
 static MemHandle handleFontStar;
 static MemHandle handleFontPW;
 

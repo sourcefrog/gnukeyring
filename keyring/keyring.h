@@ -58,8 +58,8 @@
 #define kKeyringResumeSleepLaunch sysAppLaunchCmdCustomBase
 
 
-#define kMaxRecords             2000
-
+#define kMasterHashRec 0
+#define kNumHiddenRecs 1
 #define kNoRecord		((UInt16) -1)
 
 typedef struct {
@@ -69,15 +69,6 @@ typedef struct {
 
 typedef KeyringPrefsType *KeyringPrefsPtr;
 
-/*
- * All current preferences.  Read in at application startup, and
- * written out when they change.
- */
-extern KeyringPrefsType gPrefs;
-
 enum updateCodes {
     updateCategory = 1
 };
-
-extern Boolean gEditFormActive;
-extern Boolean gSleeping;

@@ -46,8 +46,9 @@ static UInt16 f_NumListed;
 /* Index of the first record displayed in the table.  Zero shows top
  * of table, etc. */
 UInt16 f_FirstIdx;
-UInt16 f_FirstIndex;
-UInt16 f_SelectedIdx;
+
+static UInt16 f_FirstIndex;
+static UInt16 f_SelectedIdx;
 
 static Int16 ListForm_RecordIdx(Int16 row)
 {
