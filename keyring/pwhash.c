@@ -42,20 +42,18 @@
 
 #include "includes.h"
 
-#define kSaltSize		4 /* bytes */
+#define kSaltSize		4
 #define kMessageBufSize		64
-
 
 /*
  * Generate the hash of a password, using specified salt.
  */
-static Err PwHash_Calculate(UInt8 *digest, UInt32 salt, Char *passwd)
+static Err PwHash_Calculate(UInt8 *digest, Char *salt, Char *passwd)
 {
     UInt8	buffer[kMessageBufSize];
 
-    /* Generate salt. */
     MemSet(buffer, kMessageBufSize, 0);
-    MemMove(buffer, &salt, kSaltSize);
+    MemMove(buffer, salt, kSaltSize);
     
     StrNCopy(buffer + kSaltSize, passwd, kMessageBufSize - 1 - kSaltSize);
 
@@ -76,11 +74,16 @@ Err PwHash_Store(Char *newPasswd)
     Char		digest[kMD5HashSize];
     MemHandle		recHandle;
     void		*recPtr;
-    UInt32		salt = 0;
+    Char		salt[kSaltSize];
     int                 i;
 
+    /* Store the new password in the snib */
+    MD5(newPasswd, StrLen(newPasswd), digest);
+    Snib_StoreRecordKey(digest);
+
+    /* Now create the verification hash */
     for (i = 0; i < 4; i++) {
-	salt = (salt << 8) | Secrand_GetByte();
+	salt[i] = Secrand_GetByte();
     }
 
     PwHash_Calculate(digest, salt, newPasswd);
@@ -96,7 +99,7 @@ Err PwHash_Store(Char *newPasswd)
 
     recPtr = MemHandleLock(recHandle);
 
-    DmWrite(recPtr, 0, &salt, kSaltSize);
+    DmWrite(recPtr, 0, salt, kSaltSize);
     DmWrite(recPtr, kSaltSize, digest, kMD5HashSize);
 
     MemHandleUnlock(recHandle);
@@ -105,7 +108,6 @@ Err PwHash_Store(Char *newPasswd)
 
     return 0;
 }
-
 
 /*
  * Check whether GUESS is the correct password for the database.
@@ -117,7 +119,6 @@ Boolean PwHash_Check(Char *guess)
     Boolean		result;
     Err			err;
     void		*recPtr;
-    UInt32		salt;
 
     /* Retrieve the hash record. */
     recHandle = DmQueryRecord(gKeyDB, kMasterHashRec);
@@ -128,8 +129,7 @@ Boolean PwHash_Check(Char *guess)
     }
     recPtr = MemHandleLock(recHandle);
 
-    MemMove(&salt, recPtr, kSaltSize);
-    PwHash_Calculate(digest, salt, guess);
+    PwHash_Calculate(digest, recPtr, guess);
     result = !MemCmp(digest, recPtr + kSaltSize, kMD5HashSize);
     
     MemHandleUnlock(recHandle);

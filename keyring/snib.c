@@ -161,13 +161,28 @@ static void Snib_ResetTimer(SnibPtr snib)
 void Snib_StoreRecordKey(UInt8 *newHash)
 {
     Err err;
-    SnibPtr snib = Snib_GetSnib (true);
 
-    err = MemMove(snib->recordKey, newHash, k2DESKeySize);
-    if (err)
-	 UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
+    if (gPrefs.timeoutSecs) {
+	SnibPtr snib = Snib_GetSnib (true);
+	
+	err = MemMove(snib->recordKey, newHash, k2DESKeySize);
+	if (err)
+	    UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
+	
+	Snib_ResetTimer(snib);
+    }
+}
 
-    Snib_ResetTimer(snib);
+
+void Snib_TimeoutChanged(void)
+{
+    if (gPrefs.timeoutSecs == 0) {
+	Snib_Eradicate ();
+    } else {
+	SnibPtr snib = Snib_GetSnib(false);
+	if (snib && TimGetSeconds() + gPrefs.timeoutSecs < snib->expiryTime)
+	    Snib_ResetTimer(snib);
+    }
 }
 
 
@@ -175,31 +190,16 @@ void Snib_StoreRecordKey(UInt8 *newHash)
  * Retrieve the key hash from the snib if it exists, and return TRUE.
  * Otherwise, return FALSE.
  **/
-Boolean Snib_RetrieveKey(UInt8* keyHash)
+Boolean Snib_RetrieveKey(CryptoKey keyHash)
 {
     SnibPtr snib;
     UInt32  now;
-    Err     err;
 
     snib = Snib_GetSnib(false);
     if (snib == NULL)
 	return false;
 
-    now = TimGetSeconds();
-    if (now > snib->expiryTime) {
-	/* This should only happen if the snib has just expired and
-	 * the alarm has not been received, yet.
-	 */
-	Snib_Eradicate ();
-	return false;
-    }
-
-    /* If the timeout is too far in the future, then adjust it: this
-     * makes it work OK if e.g. the timeout interval has been shortened.
-     */
-    if (now + gPrefs.timeoutSecs < snib->expiryTime)
-	Snib_ResetTimer(snib);
-
-    err = MemMove(keyHash, snib->recordKey, k2DESKeySize);
-    return err == errNone;
+    if (keyHash)
+	CryptoPrepareKey(snib->recordKey, keyHash);
+    return true;
 }

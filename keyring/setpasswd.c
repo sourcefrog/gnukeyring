@@ -121,7 +121,7 @@ Char * SetPasswd_Ask(void)
  */
 Boolean SetPasswd_Run(void)
 {
-    UInt8       oldKey[k2DESKeySize];
+    CryptoKey   oldKey;
     Char *      newPasswd;
     FormPtr	frm, oldFrm;
 

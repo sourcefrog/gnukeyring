@@ -58,6 +58,7 @@ void PrefsForm_Run(void)
     chosen = UI_ScanForFirst(frm, map);
     if (chosen != -1) {
 	gPrefs.timeoutSecs = chosen;
+	Snib_TimeoutChanged();
     }
     
  leave:
