@@ -406,6 +406,7 @@ Boolean ListForm_HandleEvent(EventPtr event)
     case menuEvent:
         if (!Common_HandleMenuEvent(event))
             App_NotImplemented();
+        ListForm_DrawLockBitmap();
         result = true;
         break;
 
