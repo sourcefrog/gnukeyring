@@ -329,16 +329,20 @@ static void KeyEditForm_UpdateAll(void)
  * existing key, reload it from the database.  If this is a new key,
  * go back to a blank form.
  */
-static void Keys_UndoAll(void) {
-    if (gKeyRecordIndex == kNoRecord) {
-        KeyEditForm_Clear();
-    } else {
-        /* TODO: Check that this works OK if the record is
-         * newly-allocated and zero length. */
-        KeyEditForm_Load();
-    }
-    /* TODO: Put the category back to what it was when we entered. */
-    KeyEditForm_UpdateAll();
+static void Edit_MaybeUndoAll(void)
+{
+     if (App_CheckReadOnly())
+          return;
+
+     if (gKeyRecordIndex == kNoRecord) {
+          KeyEditForm_Clear();
+     } else {
+          /* TODO: Check that this works OK if the record is
+           * newly-allocated and zero length. */
+          KeyEditForm_Load();
+     }
+     /* TODO: Put the category back to what it was when we entered. */
+     KeyEditForm_UpdateAll();
 }
 
 
@@ -540,34 +544,46 @@ static void Edit_DeleteKey(Boolean saveBackup)
 }
 
 
-/* Delete the record if the user is sure that's what they want.
+/*
+ * Delete the record if the user is sure that's what they want.
  * Return true if deleted and we should return to the list form,
- * otherwise false. */
-static Boolean KeyEditForm_MaybeDelete(void) {
-    // TODO: Check if the record is empty; if it is delete without
-    // seeking confirmation.
-    UInt16 buttonHit;
-    FormPtr alert;
-    Boolean saveBackup = false;
+ * otherwise false.
+ *
+ * TODO: Check if the record is empty; if it is delete without seeking
+ * confirmation.
+ */
+static void Edit_MaybeDelete(void)
+{
+     UInt16 buttonHit;
+     FormPtr alert;
+     Boolean saveBackup = false;
 
-    alert = FrmInitForm(ConfirmDeleteForm);
-    // TODO: Set and read archive button
-    buttonHit = FrmDoDialog(alert);
-    saveBackup = CtlGetValue(UI_GetObjectByID(alert, SaveArchiveCheck));
-    FrmDeleteForm(alert);
+     if (App_CheckReadOnly())
+          return;
 
-    if (buttonHit == CancelBtn)
-        return false;
+     alert = FrmInitForm(ConfirmDeleteForm);
+     // TODO: Set and read archive button
+     buttonHit = FrmDoDialog(alert);
+     saveBackup = CtlGetValue(UI_GetObjectByID(alert, SaveArchiveCheck));
+     FrmDeleteForm(alert);
 
-    Edit_DeleteKey(saveBackup);
+     if (buttonHit == CancelBtn)
+          return;
 
-    return true;
+     Edit_DeleteKey(saveBackup);
+
+     FrmGotoForm(ListForm);
 }
+
+
 
 static void KeyEditForm_Generate(void) {
     FormPtr     frm;
     MemHandle   h;
     FieldPtr    passwdFld;
+
+    if (App_CheckReadOnly())
+         return;
 
     h = Generate_Run();
     if (!h)
@@ -605,9 +621,8 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
         return true;
         
     case DeleteKeyCmd:
-        if (KeyEditForm_MaybeDelete())
-            FrmGotoForm(ListForm);
-        return true;
+         Edit_MaybeDelete();
+         return true;
 
     case GenerateCmd:
         KeyEditForm_Generate();
@@ -618,8 +633,8 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
         return true;
 
     case ID_UndoAllCmd:
-        Keys_UndoAll();
-        return true;
+         Edit_MaybeUndoAll();
+         return true;
         
     default:
         return false;

@@ -31,6 +31,7 @@
 // ======================================================================
 // User-interface utilities
 
+
 void UI_ReportSysError2(UInt16 msgID, Err err, char const *where) 
 {
     Char buf[256];

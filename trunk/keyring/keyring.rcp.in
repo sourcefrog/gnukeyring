@@ -604,6 +604,18 @@ BEGIN
 END
 
 
+
+ALERT ID alertID_ReadOnly
+ERROR
+BEGIN
+	TITLE "Keyring"
+
+	MESSAGE "This keyring may not be changed."
+
+	BUTTONS "OK"
+END
+
+
 ALERT ID alertID_ExportEmpty
 ERROR
 BEGIN

@@ -1,4 +1,5 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r" -*-
+ *
  * $Id$
  * 
  * GNU Keyring -- store passwords securely on a handheld
@@ -31,6 +32,13 @@
 #include "auto.h"
 
 static Char		categoryName[dmCategoryLength];
+
+/*
+ * At the moment we don't explicitly check for read-only databases,
+ * because there seems no easy way to tell the Category Manager not to
+ * display the Edit item.  We hope that it'll be smart enough to
+ * notice the database is read only.
+ */
 
 
 /*

@@ -117,23 +117,23 @@ void KeyDB_SetPasswd(Char *newPasswd)
  * you can try to create a new one.  
  */
 Err KeyDB_OpenExistingDB(void) {
-    Err err;
+     Err err;
     
-    // TODO: Give people the option to name the database, or to create
-    // it on different cards?
-    gKeyDB = DmOpenDatabaseByTypeCreator(kKeyDBType, kKeyringCreatorID,
-					 dmModeReadWrite);
-    if (!gKeyDB)
-	return DmGetLastErr();
+     // TODO: Give people the option to name the database, or to create
+     // it on different cards?
+     gKeyDB = DmOpenDatabaseByTypeCreator(kKeyDBType, kKeyringCreatorID,
+                                          dmModeReadWrite);
+     if (!gKeyDB)
+          return DmGetLastErr();
 
-    if ((err = DmOpenDatabaseInfo(gKeyDB, &gKeyDBID, NULL, NULL,
-				  &gKeyDBCardNo, NULL)))
-	return err;
+     if ((err = DmOpenDatabaseInfo(gKeyDB, &gKeyDBID, NULL, NULL,
+                                   &gKeyDBCardNo, NULL)))
+          return err;
 
-    /* XXX: Just for testing read-only support. */
-    g_ReadOnly = true;
+     /* XXX: Just for testing read-only support. */
+     // g_ReadOnly = true;
 
-    return 0;
+     return 0;
 }
 
 

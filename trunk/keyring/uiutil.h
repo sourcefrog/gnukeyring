@@ -36,3 +36,4 @@ void UI_UpdateCategoryName(FormPtr frm, UInt16 category);
 void UI_ReportSysError2(UInt16 msgID, Err err, char const *where);
 
 void App_NotImplemented(void);
+Boolean App_CheckReadOnly(void);
