@@ -1,0 +1,162 @@
+-*- outline -*- 
+
+* Use exceptions for error handling.
+
+* Sound
+
+* Check that when the category is changed, the title updates too
+
+* Click field captions to zoom in on that form
+
+* Beaming
+
+* Implement our own encryption algorithm
+
+So we can run on PalmOS2
+
+* Optionally check for password when entering the app, rather than when opening a key. 
+
+* Relock on power-on
+
+Option in the preferences dialog to do this, I think.
+
+* Attack tree
+Fill it out with more possible attacks.
+
+* Setting initial password
+
+** Require set password on first run
+This is the current behaviour, but is it the best?  
+
+** Default to empty
+But then people might not realize they have to set a password.  This
+would seem to encourage insecure behaviour. 
+
+** Require set password when creating first record
+Would this perhaps be a bit more friendly?
+
+* Button in list form to forget the password
+Useful?  Mutt has this.
+
+* Support categories, and store in appinfo
+I think there's a standard format for this.  We might have to change
+the appinfo from our current usage: perhaps the key information goes
+into some other location.  It'd be a shame to change it rather than
+just adding to it.
+
+* Different security settings and passwords per category
+... but if we do this perhaps we really want separate databases?
+
+DONE Generate random passwords matching certain conditions
+Upper/lower/punct/digits/spaces?  Break into words?  Length?
+
+* Script to decode records on PC
+
+* Soft arrows to flip through records
+
+Nah, not required.  It's easy enough to use the hardbuttons or to flip
+back to the list form.
+
+* PC conduit
+
+GNOME-pilot or JPilot? 
+
+On the flip side, it may be better *not* to offer this function: the
+security issues to do with opening this information on the PC are very
+scary.  PCs can be broken across the network, and a GUI module can
+never be audited properly.
+
+So on the whole I am inclined _not_ to implement this.
+
+* Lost passwords
+
+What can we offer people?  The best is probably a warning as they set
+their password that lost passwords cannot be recovered.
+
+If people do lose their password we should offer the choice to delete
+all records.  If they use the app launcher's "Delete" function then
+they lose the Keyring application as well as their data.
+
+* Hint for forgotten passwords
+
+Set when setting password, display from password dialog.
+
+* Keep example databases from various releases to test compatibility
+
+* Support multiple databases
+
+I think this is more important than having multiple categories in a
+single database, because we can only specify which database to hotsync
+and people are likely to want to classify databases according to
+different security requirements.
+
+Do this instead of categories??
+
+* Is there any useful way to support PalmOS global Find?
+Just search public names?
+
+* Zero-knowledge authentication
+
+Use a handheld as a token that talks to a custom PAM module to
+authenticate the user without ever typing a password.  One way to do
+this would be to implement S/Key on the handheld, and somehow securely
+get the seed onto the handheld. 
+
+OPIE (one-time passwords everywhere) might be another good
+alternative.
+
+This is a little out of the scope of Keyring.
+
+* If no password is set, don't encrypt or require password.
+Really?  Yes, probably this would be good: better than decrypting on
+the PC.
+
+* Upgrade dbs.
+
+* Discard records with all fields empty
+
+* Export/import memos
+
+* How to load in long data?
+
+* New version that does 0kp to authenticate to a custom PAM module.
+
+* Doodle to generate entropy, MD5 to hash
+
+Necessary?
+
+* Event loop timeout to show countdown?
+
+Perhaps show a little open-lock icon while unlocked, and a closed-lock
+while locked.  Perhaps clicking that icon ought to relock the keyring.
+
+* GNOME-Pilot or JPilot conduit/module.
+
+* Database info.  Multiple dbs?
+
+* Check password timeout when paging?
+
+* Keep temporary key in a locked DB
+
+This way we won't relock when switching applications.
+
+* Screenshots
+
+* Beep appropriately
+
+** Wrong password
+** Lock/unlock
+
+* Perhaps re-sort records after returning to list, not on save?
+
+* Better handling of error conditions
+Especially out of memory.
+
+* Store a password hint
+
+* Reminder to change the password
+
+for each record, put a reminder that it should be changed e.g. every N weeks.
+
+* Resize edit form fields when text is entered, like the address book
+
