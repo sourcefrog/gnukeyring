@@ -17,4 +17,4 @@ all: $(html_pages)
 	latte-html $(LATTE_FLAGS) -lstyle.latte -o $@ $< 
 
 upload: $(html_pages) $(extra)
-	for i in $(sites); do rsync --relative -l -v -e ssh $(html_pages) $(extra) $$i; done
+	for i in $(sites); do rsync --relative -l -v --times -z -e ssh $(html_pages) $(extra) $$i; done
