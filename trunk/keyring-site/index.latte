@@ -64,8 +64,8 @@ be changed through the "Set Password" command in the list view.
 For your convenience, the keyring can stay unlocked for a time after
 you enter your master password.  You can configure this behaviour
 through the "Preferences" command.  From 1.0 onwards, the timeout is
-	independent of whether you switch to other applications or
-	switch the computer off.
+independent of whether you switch to other applications or
+switch the computer off.
 
 When you need to set a password, \Product can generate a random
 password of specified length, optionally including letters, numbers or
@@ -95,7 +95,7 @@ do this.
     To keep your data secure:
 
     {\ul
-      {\li Choose a master password of at least 6 characters,
+      {\li Choose a master password of at least 8 characters,
       preferably including non-alphanumeric characters.}
 
       {\li Make backups only onto secure computers.}
@@ -125,21 +125,22 @@ checked against entered values.
     Enc(K1, Data)))}.  Each 8-byte data block is independently
     encrypted by the same key.
 
+    A strong random number generator gathering event entropy is used
+    to generate random passwords.
+
+    Categories and key names are not encrypted.
+
     PalmOS does not have memory protection between applications: a
     hostile application or PC-based conduit could read information
     from inside the Keyring database.  Keeping records encrypted
     provides some protection, but it is far from impossible.
 
-    The PalmOS pseudorandom number generator is used to generate
-    random passwords; it may be predictable.
-
-    Categories and key names are not encrypted.
-
     You should only Hotsync to trusted computers.  It would be
     possible to (for example) put a trojan on the PC that grabbed the
     handheld's memory image, or that installed a trojan onto the
     handheld.  To avoid trojan versions, please {\pagelink
-    \pageid=download download} from a {\pagelink \pageid=mirrors
-    mirror site} and check the MD5 checksum and GnuPG signature.
+    \pageid=download download} from the {\a
+    \href={http://sourceforge.net/project/showfiles.php?group_id=306}
+    official site} and check the MD5 checksum and GnuPG signature.
 
 } }
