@@ -35,6 +35,7 @@ BEGIN
   "@@WrongPassword" = "Password incorrect.  Please try again."
   "@@PasswordMismatch" = "The passwords you entered do not match."
   "@@NotImplemented" = "Sorry, that feature is not implemented yet."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@CouldntLaunchMemo" = "Couldn't launch the Memo Pad."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
@@ -108,6 +109,7 @@ BEGIN
 
   "Not here yet" = "Funzione non ancora implementata"
   "@@NotImplemented" = "Questa caratteristica non è ancora stata implementata."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
 
   "@@CouldntLaunchMemo" = "Impossibile avviare Memo Pad."
 
@@ -219,6 +221,8 @@ BEGIN
 
   "Not here yet" = "Noch nicht implementiert"
   "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
+  "Not Enough Features" = "Systemvoraussetzungen nicht erfüllt"
+  "@@NotEnoughFeatures" = "Diese Version von Keyring benötigt ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "aussprechbar"
 
@@ -330,6 +334,7 @@ BEGIN
 
   "Not here yet" = "Vuelva Vd. mañana"
   "@@NotImplemented" = "Esta característica no está implementada aun."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -428,6 +433,7 @@ BEGIN
 
   "Not here yet" = "Inte här ännu"
   "@@NotImplemented" = "Denna funktion är inte implementerad ännu."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -538,6 +544,7 @@ BEGIN
 
   "Not here yet" = "Nog niet geimplementeerd."
   "@@NotImplemented" = "Deze functie is nog niet geimplementeerd."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -645,6 +652,7 @@ BEGIN
 
   "Not here yet" = "Non disponible actuellement"
   "@@NotImplemented" = "Non implémenté."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -750,6 +758,7 @@ BEGIN
 
   "Not here yet" = "Ikke her enda"
   "@@NotImplemented" = "Denne funksjonen er enda ikke implementert."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -858,6 +867,7 @@ BEGIN
 
   "Not here yet" = "Ikkje her endå"
   "@@NotImplemented" = "Denne funksjonen er endå ikkje implementert."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -958,6 +968,7 @@ BEGIN
 
   "Not here yet" = "Ainda nao esta aqui"
   "@@NotImplemented" = "Ainda nao implementado"
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -1056,6 +1067,7 @@ BEGIN
 
   "Not here yet" = "Ikke her endnu"
   "@@NotImplemented" = "Denne funktion er endnu ikke implementeret."
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
@@ -1231,19 +1243,17 @@ BEGIN
 	label "@@choosepassword"
 		autoid at (5 15) font 0
 
-	label "Password:" 
-		autoid at (prevleft PREVBOTTOM+2) font 1
-
-	field id MasterKeyFld at (65 prevtop 85 15)
+	field id MasterKeyFld at (65 prevbottom+2 86 auto)
 		underlined maxchars 40
 
-	label "Confirm:" 
-		autoid at (5 prevbottom) font 1
+	label "Password:" autoid at (right@prevleft-2 prevtop) font 1
 
-	field id ConfirmFld at (65 prevtop 85 15)
+	field id ConfirmFld at (65 prevbottom+4 86 auto)
 		underlined maxchars 40
 
-	button "OK" OkBtn at (5 prevbottom+4 auto auto)
+	label "Confirm:" autoid at (right@prevleft-2 prevtop) font 1
+
+	button "OK" OkBtn at (5 prevbottom+8 auto auto)
 	button "Cancel" CancelBtn at (prevright+5 prevtop auto auto)
 
 	graffitistateindicator at (140 prevtop)
@@ -1505,7 +1515,7 @@ ERROR
 BEGIN
 	TITLE "Not Enough Features"
 
-	MESSAGE "This version of Keyring requires PalmOS 3.0 and the DES encryption feature (MS-Chap support).  It cannot run here."
+	MESSAGE "@@NotEnoughFeatures"
 
 	BUTTONS "OK"
 END
