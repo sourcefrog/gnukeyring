@@ -57,11 +57,7 @@ void KeyDB_Reencrypt(UInt8 *oldRecordKey, Char const *newPasswd)
     UnpackedKeyType	unpacked;
     UInt8		newRecordKey[kMD5HashSize];
 
-    err = EncDigestMD5((void *) newPasswd,
-		       StrLen(newPasswd),
-		       newRecordKey);
-    if (err)
-	UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
+    MD5((void *) newPasswd, StrLen(newPasswd), newRecordKey);
 
     for (idx = kNumHiddenRecs; idx < numRecs; idx++) {
 	// Skip deleted records.  Handling of archived records is a

@@ -46,11 +46,12 @@ static UInt16 f_NumListed;
 /* Index of the first record displayed in the table.  Zero shows top
  * of table, etc. */
 UInt16 f_FirstIdx;
+UInt16 f_FirstIndex;
 UInt16 f_SelectedIdx;
 
-static Int16 ListForm_RecordIdx(Int16 itemNum)
+static Int16 ListForm_RecordIdx(Int16 row)
 {
-    Int16       idx = 0;
+    Int16       idx = f_FirstIndex;
     Err         err;
 
     /* FIXME: We need to skip the first few reserved records, but that
@@ -64,7 +65,7 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
      *
      * Is there no "hidden" bit we can set to avoid all this?
      */
-    err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum, 
+    err = DmSeekRecordInCategory(gKeyDB, &idx, row, 
 				 dmSeekForward, gPrefs.category);
 
     return err == errNone ? idx : -1;
@@ -110,7 +111,7 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
     Char const *recPtr = 0, *scrStr;
     Int16       idx;
 
-    idx = ListForm_RecordIdx(row + f_FirstIdx); 
+    idx = ListForm_RecordIdx(row); 
     if (idx == -1) 
 	/* We reached the end of the table; return immediately. */
 	return;
@@ -183,9 +184,10 @@ static void ListForm_UpdateScrollBar(void)
     if (f_FirstIdx > max)
 	f_FirstIdx = max;
     SclSetScrollBar(f_ScrollBar, f_FirstIdx, 0, max, f_ScreenRows);
+    f_FirstIndex = 0;
+    DmSeekRecordInCategory(gKeyDB, &f_FirstIndex, f_FirstIdx, 
+			   dmSeekForward, gPrefs.category);
 }
-
-
 
 
 static void ListForm_UpdateCategory(void)

@@ -64,7 +64,6 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
     Boolean	done, correct;
     Boolean	veil = true;
     Int16	size = sizeof(veil);
-    Err         err;
     Int16       len;
 
     PrefGetAppPreferences(kKeyringCreatorID, prefID_VeilPassword,
@@ -87,14 +86,9 @@ static Boolean UnlockForm_Run(UInt8 *keyHash) {
 
 	    if (correct) {
 		len = StrLen(entry);
-		err = EncDigestMD5(entry, len, keyHash);
+		MD5(entry, len, keyHash);
 		MemSet(entry, len, ' ');
-		if (err) {
-		    UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
-		    correct = false;
-		} else {
-		    Snib_StoreRecordKey(keyHash);
-		}
+		Snib_StoreRecordKey(keyHash);
 	    } else {
 		FrmAlert(WrongKeyAlert);
 	    }

@@ -22,6 +22,8 @@
 
 #include <PalmOS.h>
 #include <TxtGlue.h>
+#include <md5.h>
+#include <des.h>
 #include "resource.h"
 #include "auto.h"
 #include "keyring.h"

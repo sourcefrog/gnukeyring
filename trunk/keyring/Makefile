@@ -26,17 +26,20 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  setpasswd.c pwhash.c snib.c reencrypt.c pack.c	\
 		  unpack.c sort.c secrand.c search.c
 
+GLIBDEF         = ssl-md.def ssl-des.def
+
 HEADERS	        = keyring.h record.h error.h keydb.h listform.h 	\
 		  resource.h crypto.h pwhash.h snib.h includes.h
 
-OBJ		= $(subst .c,.o,$(SRC))
+OBJ		= $(subst .c,.o,$(SRC)) $(subst .def,-stubs.o,$(GLIBDEF))
 BIN             = $(APP).bin
-DEF		= $(APP).def
+DEF		= $(APP).def $(GLIBDEF)
 EXE		= $(APP)
 
 EN_PRC          = $(BASE)-en.prc
 
 CC              = m68k-palmos-gcc
+STUBGEN         = m68k-palmos-stubgen
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
@@ -68,6 +71,7 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wlarger-than-260 -Wshadow -Wcast-align
 
 OPTIM		= -O2 -finline-functions -g
+INCLUDES        = -IpilotSSLeay/include
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
@@ -145,12 +149,15 @@ $(RCP): $(RCP_IN) Makefile $(RESOURCES)
 	 sed $(SED_SUBST) $(RCP_IN)) > $@
 	@chmod -w $@
 
-$(EXE):       $(SRC:.c=.o) ;
+$(EXE): $(OBJ) ;
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $(EXE)
 
 # We try to avoid touching auto.h, because that will kick off
 # rebuilding a lot of source and it's often not necessary.
 auto.h: en.resstamp
+
+%-stubs.c: %.def
+	$(STUBGEN) $<
 
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
