@@ -22,9 +22,9 @@
 /* This file looks after generating random passwords on request. */
 
 /*
- * TODO: Save length and class settings for next time.
- *
- * TODO: Are we accessing uninitialized memory here somewhere?
+ * TODO: Are we accessing uninitialized memory here somewhere?  I
+ * seemed to get different preferences when I ran with the memory
+ * shaker, but I might be wrong.
  */
 
 #include <PalmOS.h>
