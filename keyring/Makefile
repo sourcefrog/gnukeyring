@@ -28,11 +28,8 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  beta.c setpasswd.c pwhash.c snib.c reencrypt.c	\
 		  pack.c unpack.c sort.c secrand.c debug.c
 
-HEADERS	      = keyring.h passwd.h record.h				\
-		upgrade.h error.h keydb.h listform.h prefs.h		\
-		resource.h util.h crypto.h keyedit.h			\
-		memutil.h pwhash.h uiutil.h snib.h pack.h unpack.h	\
-		reencrypt.h sort.h secrand.h prototype.h
+HEADERS	        = keyring.h record.h error.h keydb.h listform.h 	\
+		  resource.h crypto.h pwhash.h snib.h includes.h
 
 OBJ		= $(subst .c,.o,$(SRC))
 BIN             = $(APP).bin
@@ -75,14 +72,15 @@ LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
 HELP_TXT        = $(wildcard help/*/*.txt)
+SCRIPTS         = script/mkproto.awk
 
 DOCS		= HACKING TODO TESTS 
 
 SRC_DIST        = $(RCP_IN) Makefile $(RESOURCES) \
 		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
-		  $(HELP_TXT)
+		  $(HELP_TXT) $(SCRIPTS)
 
-TOP_DIST	= $(PRCS) COPYING README INSTALL
+TOP_DIST	= COPYING README INSTALL
 
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
 DIST_ZIP	= $(APP)-$(VERSION).zip
@@ -124,8 +122,8 @@ dist: $(DIST_BALL) $(DIST_ZIP)
 tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL) $(DIST_ZIP): $(SRC_DIST) $(TOP_DIST)
 	rm -rf $(tmpdir)
-	mkdir -p $(tmpdir)/$(BASE)/src
-	cp --parents $(SRC_DIST) $(tmpdir)/$(BASE)/src
+	mkdir -p $(tmpdir)/$(BASE)
+	cp --parents $(SRC_DIST) $(tmpdir)/$(BASE)
 	cp $(TOP_DIST) $(tmpdir)/$(BASE)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	cd $(tmpdir) && $(ZIP) -rq9 ../$(DIST_ZIP) $(BASE)
@@ -154,9 +152,9 @@ auto.h: en.resstamp
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
-	rm -f *.o *.d $(EXE) $(RCP) *.bin res/*/* *.grc *.prc *.resstamp \
+	rm -f *.o *.d $(EXE) $(RCP) TAGS *.bin *.grc *.prc *.resstamp \
 	prototype.h *.bin *.d .*.stamp auto.h
-	rmdir res/*
+	rm -rf res
 
 tags: TAGS
 TAGS: *.c *.h
