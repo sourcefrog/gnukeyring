@@ -36,7 +36,8 @@ enum includes {
     kUpper = 2,
     kDigits = 4,
     kPunct = 8,
-    kHigh = 16
+    kHigh = 16,
+    kPronounceable = 32
 };
 
 static const Int16 lenMap[] = {
@@ -58,6 +59,7 @@ static const Int16 includeMapDefault[] = {
     kDigits, IncludeDigits,
     kPunct, IncludePunct,
     0, ID_IncludeHigh,
+    kPronounceable, ID_Syllables,
     -1
 };
 
@@ -67,6 +69,7 @@ static const Int16 includeMapPalmLatin[] = {
     kDigits, IncludeDigits,
     kPunct, IncludePunct,
     kHigh, ID_IncludeHigh,
+    kPronounceable, ID_Syllables,
     -1
 };
 
@@ -191,6 +194,27 @@ static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len)
     ptr[i] = 0;
 }
 
+/*
+ * http://www.eff.org//Privacy/Newin/New_nist/fips181.txt
+ */
+static void Generate_Word(Char * ptr, Int16 flags, Int16 len)
+{
+    
+    Char hyphenated[2 * MAX_PWLEN +1];
+    
+    (void) get_word(ptr, hyphenated, len);
+
+    /* nice thought, but not enough room for it -- FIXME put it in the
+     * "notes" field?
+    strcat(ptr, " (");
+    strcat(ptr, hyphenated);
+    strcat(ptr, ")");
+    */
+
+    /* FIXME should reset flags to "lower-case only", because that's
+     * all we deliver ... */
+
+}
 
 static MemHandle Generate_MakePassword(FormPtr frm)
 {
@@ -210,14 +234,19 @@ static MemHandle Generate_MakePassword(FormPtr frm)
 
     Generate_Save(&prefs);
 
-    h = MemHandleNew(prefs.len + 1); // plus nul
+    h = MemHandleNew(prefs.len * 3 + 3 + 1); /* "password (pa-ss-wo-rd)\0" */
     if (!h) {
 	FrmAlert(OutOfMemoryAlert);
 	return NULL;
     }
     
     ptr = MemHandleLock(h);
-    Generate_Garbage(ptr, prefs.classes, prefs.len);
+
+    if(prefs.classes & kPronounceable) {
+	Generate_Word(ptr, prefs.classes, prefs.len);
+    } else {
+	Generate_Garbage(ptr, prefs.classes, prefs.len);
+    }
 
     MemHandleUnlock(h);
     return h;

@@ -33,7 +33,16 @@ Nice -----------------------------------------------------------------
 
 (4) Database info dialog.
 
+(4) Internationalised text for pronounceable passwords: in help text for
+    generate dialog and for button text resource.
+
 Possible -------------------------------------------------------------
+
+(5) Make the buttons in the "generate" dialog behave like radio buttons;
+    the "pronounceable" one should be mutually exclusive to all the other
+    character class buttons, but state for these should be remembered.  At
+    the moment the pronounceable button simply ignores the setting of these
+    other buttons.
 
 (5) Nag people to make a backup if they haven't done so for some
     time.  
@@ -53,7 +62,8 @@ or perhaps don't export them at all.
 
 * Advice on secure passwords
 
-  minimum length; use of accented/extended characters
+  minimum length; use of accented/extended characters; impact of pronounceable
+  passwords (full dictionary of all these can be surprisingly short)
 
 * Update pos when changing categories
 
@@ -64,8 +74,6 @@ or perhaps don't export them at all.
 * Text entry slow?
 
 * Generate button when setting master password?
-
-* Generate pronounceable passwords?
 
 * Beaming
 
@@ -83,6 +91,9 @@ will have a pointer to the next state (hopefully just one byte) and a
 probability measure (also probably one byte).  There's also a little
 overhead for each character we emit.  So this is about 10k of data.
 I'm not sure if it's that useful.
+
+Alternatively, the FIPS 181 algorithm (see fips181.txt) gives a reasonable
+simulation of this, at a cost of about 5k total overhead (code + data).
 
 * Sound
 
@@ -177,7 +188,9 @@ get the seed onto the handheld.
 OPIE (one-time passwords everywhere) might be another good
 alternative.
 
-This is a little out of the scope of Keyring.
+This is a little out of the scope of Keyring.  See PilOTP at
+http://astro.uchicago.edu/home/web/valdes/pilot/pilOTP/ for a nice one-time
+password generator.
 
 * If no password is set, don't encrypt or require password.
 Really?  Yes, probably this would be good: better than decrypting on

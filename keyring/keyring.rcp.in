@@ -37,6 +37,7 @@ BEGIN
   "@@NotImplemented" = "Sorry, that feature is not implemented yet."
   "@@CouldntLaunchMemo" = "Couldn't launch the Memo Pad."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
@@ -103,6 +104,7 @@ BEGIN
   "@@WrongPassword" = "Password errata.  Si prega di riprovare"
   "@@PasswordMismatch" =  "Le password inserite non corrispondono."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "Not here yet" = "Funzione non ancora implementata"
   "@@NotImplemented" = "Questa caratteristica non è ancora stata implementata."
@@ -217,6 +219,7 @@ BEGIN
   "Not here yet" = "Noch nicht implementiert"
   "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@CouldntLaunchMemo" =  "Die Merkzettel Anwendung konnte nicht gestartet werden."
 
@@ -327,6 +330,7 @@ BEGIN
   "Not here yet" = "Vuelva Vd. mañana"
   "@@NotImplemented" = "Esta característica no está implementada aun."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
@@ -424,6 +428,7 @@ BEGIN
   "Not here yet" = "Inte här ännu"
   "@@NotImplemented" = "Denna funktion är inte implementerad ännu."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@CouldntLaunchMemo" =  "Kunde inte starta Memo Pad."
 
@@ -533,6 +538,7 @@ BEGIN
   "Not here yet" = "Nog niet geimplementeerd."
   "@@NotImplemented" = "Deze functie is nog niet geimplementeerd."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@CouldntLaunchMemo" =  "Kan de memo applicatie niet starten."
 
@@ -638,6 +644,7 @@ BEGIN
   "Not here yet" = "Pas encore mis en application"
   "@@NotImplemented" = "Cette function n'est pas encore mis en application."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@CouldntLaunchMemo" =  "N'a pas pu lancer le bloc-notes."
 
@@ -742,6 +749,7 @@ BEGIN
   "Not here yet" = "Ikke her enda"
   "@@NotImplemented" = "Denne funksjonen er enda ikke implementert."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@CouldntLaunchMemo" =  "Kunne ikke starte Memo Pad."
 
@@ -849,6 +857,7 @@ BEGIN
   "Not here yet" = "Ikkje her endå"
   "@@NotImplemented" = "Denne funksjonen er endå ikkje implementert."
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
@@ -948,6 +957,7 @@ BEGIN
   "Not here yet" = "Ainda nao esta aqui"
   "@@NotImplemented" = "Ainda nao implementado"
   "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
@@ -1126,7 +1136,7 @@ BEGIN
 end
 
 
-FORM ID GenerateForm AT (2 62 156 96)  /* (2 50 156 108) */
+FORM ID GenerateForm AT (2 50 156 108)
 HELPID GenerateHelp
 MODAL
 BEGIN
@@ -1149,7 +1159,7 @@ BEGIN
 	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 prevtop 20 auto)
         PUSHBUTTON "@@langSpecificChars" ID ID_IncludeHigh AT (prevright+1 prevtop 22 AUTO)
-/*        PUSHBUTTON "pronounceable syllables" ID ID_Syllables AT (44 PREVBOTTOM+1 PREVRIGHT-44 AUTO) */
+        PUSHBUTTON "@@pronounceable" ID ID_Syllables AT (46 PREVBOTTOM+1 PREVRIGHT-46 AUTO)
 
 	BUTTON "Generate" id OkBtn at (3 PREVBOTTOM+7 auto auto)
 	button "Cancel" id CancelBtn at (prevright+5 prevtop auto auto)
