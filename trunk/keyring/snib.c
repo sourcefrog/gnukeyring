@@ -98,6 +98,21 @@ void Snib_Eradicate(void)
 	 */
 	ErrNonFatalDisplayIf(err, "Can't eradicate key");
     }
+
+    /* Send a update form event to redisplay the lock state, if this
+     * application's list form is active.
+     */
+    {
+	UInt16 card;
+	LocalID dbID;
+	UInt32 creator;
+	SysCurAppDatabase(&card, &dbID);
+	DmDatabaseInfo(card, dbID, NULL, NULL, NULL, NULL,
+		       NULL, NULL, NULL, NULL, NULL, NULL, &creator);
+	if (creator == kKeyringCreatorID
+	    && FrmGetActiveFormID() == ListForm)
+	    FrmUpdateForm(ListForm, frmRedrawUpdateCode);
+    }
 }
 
 static SnibPtr Snib_GetSnib(Boolean create)

@@ -171,6 +171,23 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
         MemHandleUnlock(rec);
 }
 
+static void ListForm_DrawLockBitmap(void) {
+    MemHandle bmpH;
+    BitmapPtr bmpP;
+    UInt8 dummy[k2DESKeySize];
+    Boolean locked;
+
+    locked = !Snib_RetrieveKey(dummy);
+    MemSet(dummy, sizeof(dummy), 0);
+
+    bmpH = (MemHandle) DmGetResource
+        (bitmapRsc, locked ? LockBitmap : UnlockBitmap);
+    ErrFatalDisplayIf(!bmpH, "Missing bitmap");
+    bmpP = MemHandleLock((MemHandle)bmpH);
+    WinDrawBitmap(bmpP, 151, 1);
+    MemPtrUnlock(bmpP);
+    DmReleaseResource((MemHandle) bmpH);
+}
 
 /*
  * Update the table control, after querying the database to see how
@@ -266,6 +283,7 @@ static void ListForm_Update(void)
     ListForm_UpdateScrollBar();
     
     FrmDrawForm(f_ListForm);
+    ListForm_DrawLockBitmap();
 }
 
 
@@ -362,6 +380,10 @@ Boolean ListForm_HandleEvent(EventPtr event)
     switch (event->eType) {
     case ctlSelectEvent:
         switch (event->data.ctlSelect.controlID) {
+        case LockBtn:
+            Snib_Eradicate();
+            break;
+
         case NewKeyBtn:
             ListForm_NewKey();
             result = true;
@@ -375,6 +397,10 @@ Boolean ListForm_HandleEvent(EventPtr event)
 
     case frmOpenEvent:
         ListForm_FormOpen();
+        return true;
+
+    case frmUpdateEvent:
+        ListForm_Update();
         return true;
 
     case menuEvent:

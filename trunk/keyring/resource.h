@@ -41,6 +41,8 @@
 #define NoteBitmap			1104
 #define FieldsBitmap			1105
 #define KeyBitmap                       1106
+#define LockBitmap                      1107
+#define UnlockBitmap                    1108
 
 #define DoneBtn				1202
 #define CountDownTrigger		1204
