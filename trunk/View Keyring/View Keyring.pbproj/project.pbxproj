@@ -248,7 +248,7 @@
 				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "$(HOME)/Applications";
+				INSTALL_PATH = .;
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = "View Keyring";
 				SECTORDER_FLAGS = "";
@@ -259,7 +259,7 @@
 			);
 			isa = PBXApplicationTarget;
 			name = "View Keyring";
-			productInstallPath = "$(HOME)/Applications";
+			productInstallPath = .;
 			productName = "View Keyring";
 			productReference = 1758732AFF379DA111CA2CBB;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
