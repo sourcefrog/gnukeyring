@@ -136,7 +136,6 @@ static Int16 Export_Finish(DmOpenRef dbp, Int16 idx, Int16 size, void *recPtr)
 	return 0;
     }
     
- outCloseDb:
     DmCloseDatabase(dbp);
     return 1;
 }
@@ -144,7 +143,6 @@ static Int16 Export_Finish(DmOpenRef dbp, Int16 idx, Int16 size, void *recPtr)
 
 /* Jump to the just-created memo. */
 static int Export_JumpToMemo(LocalID memoDbID, UInt16 memoDbCard, Int16 idx) {
-    Int16 button;
     UInt16		appCard = 0;
     Err			err;
     LocalID		appID;
