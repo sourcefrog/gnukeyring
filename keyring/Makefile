@@ -7,6 +7,7 @@ ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
 VERSION         = 0.13.0dev3
+BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
@@ -68,7 +69,7 @@ DIST_SIG        = $(DIST_BALL).asc
 TAR		= tar
 
 SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
-		   -e "s/__DIST_BALL__/$(DIST_BALL)/g"
+		   -e "s/__DATE__/$(BUILD_DATE)/g"
 
 BASE		= $(APP)-$(VERSION)
 
