@@ -1528,9 +1528,9 @@ BEGIN
 	END
 END
 
-ICON "keyring-22.xbm"
-SMALLICON "keyring-15.xbm"
-BITMAP ID KeyBitmap "keyring-22.xbm"
+ICONFAMILY "keyring-22-1.pbm" "" "" "keyring-22-8.ppm" TRANSPARENT 255 255 255
+SMALLICON "keyring-15-1.pbm"
+BITMAPFAMILY ID KeyBitmap "keyring-22-1.pbm" "" "" "keyring-22-8.ppm" TRANSPARENT 255 255 255 COMPRESS
 BITMAP ID LockBitmap "lock.xbm"
 BITMAP ID UnlockBitmap "unlock.xbm"
 
