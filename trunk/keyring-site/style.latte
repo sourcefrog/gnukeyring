@@ -37,7 +37,7 @@
 }
 
 {\def {\anchor \=id}
-  {\a \name=\id {\a \href={\concat # \id} {\c-raquo}}}}
+  {\a \name=\id }{\a \href={\concat # \id} {\c-raquo}}}
   
 {\def {\centerquote \=attrib \=attriblink \&rest}
   {\table \align=center \width=50% \border=0 {\tr {\td
@@ -101,14 +101,17 @@
   {
   {\set! \currentpageid 
      {\or \pageid \pagetitle}}
-  {\head {\title \Product: {\or \pagetitle \pageid}}
+  {\head 
+     {\meta \http-equiv=Content-Type
+	    \content={text/html; charset=iso-8859-1}}
+     {\title \Product: {\or \pagetitle \pageid}}
      {\meta \name=author \content={Martin Pool}}
      {\meta \name=keywords
       \content={GNU Keyring, PalmOS, security,
                 secrets, encryption, crypto, triple DES, PalmPilot, Visor,
                 WorkPad, handheld, passwords, pin}}
      {\link \href=style.css \rel=stylesheet \type=\"text/css\"}}
-  {\body \bgcolor=#000000 \text=#dddddd \link=#ff0000 \vlink=#dd0000 }
+  {\body \bgcolor=#000000 \text=#dddddd \link=#ff0000 \vlink=#dd0000
    {\center
      {\h1 \Product}
 
@@ -150,15 +153,20 @@
 
    {\br} {\br}
 
-   {\font \size=-2
-    {\rule}
+   {\rule}
 
+   {\font \size=-2 
    {\externallink \href=https://sourceforge.net/projects/gnukeyring
     {\img \alt=SourceForge \align=right
      \src={http://sourceforge.net/sflogo.php?group_id=306&type=1}
-     \border=0}}
+     \border=0}}}
 
-   Copyright {\c-copy} 1999, 2000, 2001, 2002 by {\externallink
+   {\font \size=-2 
+   Copyright {\c-copy} 1999, 2000, 2001, 2002 by
+    {\externallink
+      \href={http://sourceforge.net/users/hoenicke} Jochen Hoenicke} 
+    <{\a \href=https://sourceforge.net/sendmessage.php?touser=18252 hoenicke.users.sourceforge.net}> and
+    {\externallink
       \href={http://sourcefrog.net/mbp/} Martin Pool} 
     <{\a \href=https://sourceforge.net/sendmessage.php?touser=521 mbp.users.sourceforge.net}>.
     {\br}
@@ -166,7 +174,7 @@
                http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gnukeyring/keyring-site/
                \__FILE__}
       {\tt \rcsid}}
-   {\br \clear=all}}}}
+   {\br \clear=all}}}}}
 
 {\def \cur_ver 1.1}
 
@@ -174,7 +182,7 @@
   {\let {{\filename {\concat keyring- \cur_ver \namepart}}}
     {\a
      \href={\concat http://prdownloads.sourceforge.net/gnukeyring/ \filename ?download} 
-      {\img \src={icons/\icon} \border=0} {\tt \filename}
+      {\img \src={icons/\icon} \border=0 \alt={\ }} {\tt \filename}
     }
   }
 }
@@ -182,7 +190,7 @@
 {\def {\download \filename \icon} 
   {\a
    \href={\concat http://download.sourceforge.net/gnukeyring/ \filename} 
-   {\img \src={icons/\icon} \border=0} {\tt \filename}
+   {\img \src={icons/\icon} \border=0 \alt={\ }} {\tt \filename}
   }
 }
 
