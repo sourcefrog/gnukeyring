@@ -436,15 +436,37 @@ static void KeyEditForm_FormOpen(void) {
 }
 
 
+static void Edit_SortAndFollow(void) {
+     UInt32 uniqueId;
+     Boolean followRecord;
+
+     /* TODO: We need to update gKeyRecordIndex as the "current"
+      * record may now have a different index. */
+     followRecord = (gKeyRecordIndex != kNoRecord) && !f_keyDiscarded;
+
+     if (followRecord)
+          DmRecordInfo(gKeyDB, gKeyRecordIndex, NULL, &uniqueId, NULL);
+
+     Keys_Sort();
+
+     if (followRecord)
+          DmFindRecordByID(gKeyDB, uniqueId, &gKeyRecordIndex);
+}
+
+
 static void Edit_FormClose(void) {
      KeyEditForm_Commit();
      if (f_needsSort) {
-          Keys_Sort();
+          Edit_SortAndFollow();
      }
 
      /* This is not necessarily a reasonable index, but the list form
       * will check it before use. */
-     f_FirstIdx = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
+     if (f_keyDiscarded)
+          f_FirstIdx = 0;
+     else
+          f_FirstIdx = DmPositionInCategory(gKeyDB, gKeyRecordIndex,
+                                            gPrefs.category);
 }
 
 
@@ -469,6 +491,8 @@ static void KeyEditForm_DeleteKey(Boolean saveBackup)
         DmMoveRecord(gKeyDB, gKeyRecordIndex, DmNumRecords(gKeyDB));
         // gKeyRecordIndex now refers to the next record.  That's probably OK.
     }
+
+    gKeyRecordIndex = kNoRecord;
 }
 
 
