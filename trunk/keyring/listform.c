@@ -30,13 +30,31 @@
 #include "category.h"
 #include "listform.h"
 #include "keydb.h"
+#include "auto.h"
 
 // =====================================================================
 // List form
 
-/* TODO: Try to avoid calling DmNumRecordsInCategory quite so often:
- * once we know how many records there are we should remember it!  */
+/*
+ * TODO: As a possible optimization, scroll the bitmap of the table
+ * rather than redrawing it.  See ListViewScroll in the MemoPad
+ * source.
+ */
 
+static TablePtr f_Table;
+static ScrollBarPtr f_ScrollBar;
+static FormPtr f_ListForm;
+
+/* Number of rows that fit in the visible table space */
+static UInt16 f_VisRows;
+
+/* Number of records available to be shown in the table, after taking
+ * into account categories and reserved records. */
+static UInt16 f_NumListed;
+
+/* Index of the first record displayed in the table.  Zero shows top
+ * of table, etc. */
+static Int16 f_FirstIdx;
 
 static Int16 ListForm_RecordIdx(Int16 itemNum)
 {
@@ -67,6 +85,11 @@ static Int16 ListForm_RecordIdx(Int16 itemNum)
     return idx;
 }
 
+
+
+
+
+#if 0
 static void ListForm_ListDraw(Int16 itemNum,
                               RectanglePtr bounds,
                               Char * UNUSED(*data))
@@ -119,12 +142,123 @@ static void ListForm_ListDraw(Int16 itemNum,
     if (recPtr)
         MemHandleUnlock(rec);
 }
+#endif
 
 
-static void ListForm_FormOpen(void) {
-    FrmUpdateForm(FrmGetActiveFormID(), ~0);
-    FrmDrawForm(FrmGetActiveForm());
+static void ListForm_DrawCell(TablePtr UNUSED(table),
+                              Int16 row, Int16 UNUSED(col), 
+                              RectanglePtr bounds)
+{
+    /* We keep deleted records at the end, so the first N records will
+     * be ones we can draw. */
+
+    /* This could be faster if we remembered the current position and
+     * stepped forward to the next.  However it's not worth optimizing
+     * since it will likely change to be a table in the future. */
+    MemHandle   rec = 0;
+    Char       *recPtr = 0, *scrStr;
+    UInt16      len;
+    Char        altBuf[10];
+    Int16       idx = row;
+
+    ErrFatalDisplayIf(row > 10000, __FUNCTION__ ": unreasonable itemnum");
+
+    idx = ListForm_RecordIdx(row + f_FirstIdx); 
+    if (idx == -1) { 
+        scrStr = "<err>"; 
+         goto draw; 
+      } 
+
+    rec = DmQueryRecord(gKeyDB, idx);
+    if (!rec) {
+        scrStr = "<no-record>";
+        goto draw;
+    }
+    
+    recPtr = MemHandleLock(rec); 
+    if (!recPtr) {
+        scrStr = "<no-ptr>";
+        goto draw;
+    }
+    
+    if (!*recPtr) {
+        // If there is no name, use the record index instead
+        altBuf[0] = '#';
+        StrIToA(altBuf + 1, idx);
+        scrStr = altBuf;
+    } else {
+        scrStr = recPtr;
+    }
+
+ draw:
+    /* TODO: Maybe add ellipsis if too wide? */
+    len = StrLen(scrStr);
+    WinDrawChars(scrStr, len, bounds->topLeft.x + 2, bounds->topLeft.y);
+    
+    if (recPtr)
+        MemHandleUnlock(rec);
 }
+
+
+
+static void ListForm_UpdateTable(void)
+{
+    UInt16 row;
+    UInt16 numRows;
+    UInt16 lineHeight;
+    UInt16 dataHeight;
+    UInt16 tableHeight;
+    RectangleType r;
+
+    TblGetBounds(f_Table, &r);
+    tableHeight = r.extent.y;
+
+    lineHeight = FntLineHeight();
+
+    /* Get the total number of rows allocated.  Then mark ones which
+     * are off the bottom of the screen as not usable. */
+    numRows = TblGetNumberOfRows(f_Table);
+    dataHeight = 0;
+    for (row = 0; row < numRows; row++) {
+        if ((tableHeight >= dataHeight + lineHeight)
+            && (row + f_FirstIdx < f_NumListed)) {
+            /* Row is usable */
+            TblSetRowHeight(f_Table, row, lineHeight);
+            TblSetItemStyle(f_Table, row, 0, customTableItem);
+            TblSetRowUsable(f_Table, row, true);
+            f_VisRows = row;
+        } else {
+            TblSetRowUsable(f_Table, row, false);
+        }
+        dataHeight += lineHeight;
+    }
+    TblSetColumnUsable(f_Table, 0, true);
+    
+    TblSetCustomDrawProcedure(f_Table, 0,
+                              (TableDrawItemFuncPtr) ListForm_DrawCell);
+
+    TblHasScrollBar(f_Table, true);
+}
+
+
+static void ListForm_UpdateScrollBar(void)
+{
+    /*
+     * Connect the scrollbar to the list.  The list cannot change
+     * while this form is displayed: insertion, deletion, and renaming
+     * all happen from inside the key details form.  Therefore, we
+     * don't have to update the size of the scroll bar.
+     */
+    Int16 max;
+
+    max = f_NumListed - f_VisRows - 1;
+    if (max < 0) {
+        /* Less than one page of records. */
+        max = 0;
+    }
+    SclSetScrollBar(f_ScrollBar, f_FirstIdx, 0, max, f_VisRows);
+}
+
 
 
 /*
@@ -132,30 +266,55 @@ static void ListForm_FormOpen(void) {
  * current category and omitting the records reserved for the master
  * password hash and the encrypted session key.
  */
-static Int16 ListForm_GetNumListed(void) {
-    return DmNumRecordsInCategory(gKeyDB, gPrefs.category) -
+static void ListForm_CountNumListed(void)
+{
+    f_NumListed = DmNumRecordsInCategory(gKeyDB, gPrefs.category) -
         Keys_IdxOffsetReserved();
 }
 
 
+static void ListForm_UpdateCategory(void)
+{
+    Category_UpdateName(f_ListForm, gPrefs.category);
+}
+
+
+static void ListForm_Update(void)
+{
+    ListForm_CountNumListed();
+
+    ListForm_UpdateTable();
+    ListForm_UpdateCategory();
+    ListForm_UpdateScrollBar();
+    
+    FrmDrawForm(f_ListForm);
+}
+
+
+static void ListForm_FormOpen(void) {
+    f_ListForm = FrmGetActiveForm();
+    f_Table = UI_GetObjectByID(f_ListForm, ID_KeyTable);
+    f_ScrollBar = UI_GetObjectByID(f_ListForm, ID_KeyTableScrollBar);
+
+    ListForm_Update();
+}
+
+
+#if 0
 static Boolean ListForm_Update(int updateCode) {
     FormPtr             frm;
     ListPtr             list;
-    UInt16              numRows;
-    ScrollBarPtr        scl;
     UInt16              top, visRows, max;
 
     frm = FrmGetActiveForm();
     list = (ListPtr) UI_GetObjectByID(frm, KeysList);
-    numRows = ListForm_GetNumListed();
+    ListForm_CountNumListed();
     
-    LstSetListChoices(list, 0, numRows);
+    LstSetListChoices(list, 0, f_NumListed);
     LstSetDrawFunction(list, ListForm_ListDraw);
 
-    visRows = LstGetVisibleItems(list);
-    
     // Select most-recently-used record, if any.
-    if (gKeyPosition >= numRows) {
+    if (gKeyPosition >= f_NumListed) {
         gKeyPosition = gKeyRecordIndex = kNoRecord;
         top = 0;
     } else {
@@ -165,15 +324,7 @@ static Boolean ListForm_Update(int updateCode) {
         top = list->topItem;
     }
 
-    // Connect the scrollbar to the list.  The list cannot change
-    // while this form is displayed: insertion, deletion, and renaming
-    // all happen from inside the key details form.  Therefore, we
-    // don't have to update the size of the scroll bar.
-    scl = (ScrollBarPtr) UI_GetObjectByID(frm, KeysListScrollBar);
-    list->attr.hasScrollBar = 1;
-    max = numRows-visRows;
-
-    SclSetScrollBar(scl, top, 0, max, visRows);
+    ListForm_InitScrollBar();
 
     if (updateCode & updateCategory) {
         // Set up the category name in the trigger
@@ -184,8 +335,33 @@ static Boolean ListForm_Update(int updateCode) {
     
     return true;
 }
+#endif
 
 
+static Boolean ListForm_TableSelect(EventPtr event)
+{
+    Int16       listIdx, idx;
+    Err         err;
+    if (event->data.tblSelect.tableID != ID_KeyTable)
+        return false;
+
+    if (Unlock_CheckTimeout() || UnlockForm_Run()) {
+        /* Map from a position within this category to an overall
+         * record index. */
+        
+        listIdx = f_FirstIdx + event->data.tblSelect.row + Keys_IdxOffsetReserved();
+        idx = 0;
+        err = DmSeekRecordInCategory(gKeyDB, &idx, listIdx,
+                                     dmSeekForward, gPrefs.category);
+        gKeyRecordIndex = idx;
+        gKeyPosition = listIdx;
+        FrmGotoForm(KeyEditForm);
+    }
+    return true;
+}
+
+
+#if 0
 static Boolean ListForm_ListSelect(EventPtr event) {
     Int16       listIdx, idx;
     Err         err;
@@ -206,6 +382,7 @@ static Boolean ListForm_ListSelect(EventPtr event) {
     }
     return true;
 }
+#endif
 
 
 static void ListForm_NewKey(void) {
@@ -216,28 +393,40 @@ static void ListForm_NewKey(void) {
 }
 
 
+/*
+ * Scroll if possible.  Update table and scrollbar.
+ */
+static void ListForm_Scroll(Int16 newPos) {
+    if (newPos < 0)
+        f_FirstIdx = 0;
+    else if ((UInt16) newPos > f_NumListed - f_VisRows)
+        f_FirstIdx = f_NumListed - f_VisRows - 1;
+    else
+        f_FirstIdx = newPos;
+
+    ListForm_UpdateScrollBar();
+    TblMarkTableInvalid(f_Table);
+    TblRedrawTable(f_Table);
+}
+
+
 static void ListForm_ScrollRepeat(EventPtr event) {
-    ListPtr list = (ListPtr) UI_ObjectFromActiveForm(KeysList);
-   
     int new = event->data.sclRepeat.newValue;
-    int old = event->data.sclRepeat.value;
-    WinDirectionType dir = new > old ? winDown : winUp;
-    int count = new > old ? new - old : old - new;
-    LstScrollList(list, dir, count);
+    ListForm_Scroll(new);
 }
 
 
 static void ListForm_ScrollPage(WinDirectionType dir) {
-    ListPtr list = (ListPtr) UI_ObjectFromActiveForm(KeysList);
-    ScrollBarPtr scl = (ScrollBarPtr)
-        UI_ObjectFromActiveForm(KeysListScrollBar);
-    UInt16 visRows = LstGetVisibleItems(list);
-    Int16 value, min, max, pageSize;
+    int newPos = f_FirstIdx + (dir == winDown) ? f_VisRows : -f_VisRows;
+    ListForm_Scroll(newPos);
+}
 
-    LstScrollList(list, dir, visRows);
-    SclGetScrollBar(scl, &value, &min, &max, &pageSize);
-    value += (dir == winDown) ? visRows : -visRows;
-    SclSetScrollBar(scl, value, min, max, pageSize);
+
+static void ListForm_CategoryTrigger(void)
+{
+    if (Category_Selected(&gPrefs.category, true)) {
+        ListForm_Update();
+    }
 }
 
 
@@ -253,23 +442,18 @@ Boolean ListForm_HandleEvent(EventPtr event) {
             break;
 
         case CategoryTrigger:
-            Category_Selected(&gPrefs.category, true);
-            break;
+            ListForm_CategoryTrigger();
+            return true;
         }
         break;
 
     case frmOpenEvent:
         ListForm_FormOpen();
-        result = true;
-        break;
+        return true;
 
-    case frmUpdateEvent:
-        result = ListForm_Update(event->data.frmUpdate.updateCode);
-        break;
-
-    case lstSelectEvent:
-        result = ListForm_ListSelect(event);
-        break;
+/*      case lstSelectEvent: */
+/*          result = ListForm_ListSelect(event); */
+/*          break; */
 
     case menuEvent:
         if (!Common_HandleMenuEvent(event))
@@ -280,6 +464,9 @@ Boolean ListForm_HandleEvent(EventPtr event) {
     case sclRepeatEvent:
         ListForm_ScrollRepeat(event);
         break;
+
+    case tblSelectEvent:
+        return ListForm_TableSelect(event);
 
     case keyDownEvent:
         if (event->data.keyDown.chr == pageUpChr) {

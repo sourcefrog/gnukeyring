@@ -28,6 +28,7 @@
 #include "category.h"
 #include "uiutil.h"
 #include "keydb.h"
+#include "auto.h"
 
 static Char		categoryName[dmCategoryLength];
 
@@ -57,11 +58,7 @@ Boolean Category_Selected(Int16 *category, Boolean showAll) {
 				    categoryName,
 				    1, 0);
 
-    if (categoryEdited || *category != oldCategory) {
-	FrmUpdateForm(FrmGetActiveFormID(), updateCategory);
-	return true;
-    }
-    return false;
+    return (categoryEdited || *category != oldCategory);
 }
 
 
