@@ -46,6 +46,7 @@
 #include "keydb.h"
 #include "crypto.h"
 #include "pwhash.h"
+#include "secrand.h"
 #include "resource.h"
 #include "keydb.h"
 #include "uiutil.h"
@@ -92,7 +93,7 @@ Err PwHash_Store(Char *newPasswd)
     void		*recPtr;
     UInt32		salt;
 
-    salt = ((UInt32) SysRandom(0)) << 16 | SysRandom(0);
+    salt = Secrand_GetBits(32);
 
     PwHash_Calculate(digest, salt, newPasswd);
 

@@ -22,8 +22,6 @@ Advise use of accented characters as they're much harder to guess.
 
 or perhaps don't export them at all.
 
-* Don't use SysRandom
-
 * Advice on secure passwords
 
 minimum length; use of accented/extended characters
