@@ -1,8 +1,8 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool
+ * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,21 +28,29 @@
 #define kKeyringCreatorID	'Gtkr'
 #define kAppName		"GNU Keyring"
 
-/* The database version we use. */
-#define kDatabaseVersion	1
+/* The database version we use:
+ *
+ * v0 had the session key stored in the AppInfo block, and could not
+ * support Categories
+ *
+ * v1 had the session key stored in the SortInfo block, which was a mistake
+ *
+ * v2 has the session key and master password checksum stored in
+ * hidden records.
+ */
+#define kDatabaseVersion	2
 
 /* The app and preferences version */
-#define kAppVersion		66
+#define kAppVersion		130
 
 #define kLockExpiryPref		0
 #define kGeneralPref		1
 #define kGeneratePref		2
+#define kLastVersionPref        3
 
 #define kPasswdHashSize		16
 
 #define kNoRecord		((UInt16) -1)
-
-#define kBlockSize		8
 
 
 /* Application info */
@@ -53,7 +61,7 @@ typedef struct {
     /* THIS FIELD IS NO LONGER USED -- USE THE DATABASE VERSION INSTEAD! */
     UInt16 	appInfoVersion;
 } KeyringInfoType;
-typedef KeyringInfoType *KeyringInfoPtr;
+typedef KeyringInfoType *KeyringInfoPtr;\
 
 
 typedef struct {

@@ -2,8 +2,8 @@
  *
  * $Id$
  * 
- * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool
+ * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,27 +124,11 @@ static UInt32 KeyRecord_CalcPackedLength(UnpackedKeyType const *unpacked)
     /* All the fields except for the name are encrypted into DES
      * 8-byte blocks, so we have to round up to the next full block
      * size. */
-    if (encSize & (kBlockSize-1))
-	encSize = (encSize & ~(kBlockSize-1)) + kBlockSize;
+    if (encSize & (kDESBlockSize-1))
+	encSize = (encSize & ~(kDESBlockSize-1)) + kDESBlockSize;
 
     return encSize + plainSize;
 }
-
-
-#ifdef REALLY_OBLITERATE
-/* Scribble over all text in memory referenced by the unpacked
- * structure, so that unencrypted information is not left in
- * memory. */
-void UnpackedKey_Obliterate(UnpackedKeyPtr u) {
-    Mem_ObliterateHandle(u->nameHandle);
-    Mem_ObliterateHandle(u->acctHandle);
-    Mem_ObliterateHandle(u->passwdHandle);
-    Mem_ObliterateHandle(u->notesHandle);
-    u->lastChange.year = 0;
-    u->lastChange.month = 0;
-    u->lastChange.day = 0;
-}
-#endif /* REALLY_OBLITERATE */
 
 
 void UnpackedKey_Free(UnpackedKeyPtr u) {
