@@ -1444,9 +1444,9 @@ unichar convertWestern(const unsigned char *buf, int *i, int length)
     if (c <= 0x80) {
         return western_0x0000_0x0080[c];
     } else if (c >= 0x82 && c <= 0x9c) {
-        return western_0x0082_0x009c[c];
+        return western_0x0082_0x009c[c - 0x0082];
     } else if (c >= 0x9e) {
-        return western_0x009e_0x00ff[c];
+        return western_0x009e_0x00ff[c - 0x009e];
     }
     return REPLACEMENT_CHARACTER;
 }
