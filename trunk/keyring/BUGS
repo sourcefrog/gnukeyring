@@ -4,17 +4,4 @@ Bugs are stored in the SourceForge DTS for now: go to
 
   http://www.sourceforge.net/bugs/?group_id=306
 
-
-* Crashes when paging out of a record whose name has been changed.
-"crypto.c: not block padded".  
-
-This leaves a corrupted record whose name begins with "XXXXX",
-indicating that the problem might be something to do with
-obliteration.
-
-The problem seems to occur when pressing Down from the last record.
-
-* Crash on leaving the edit form after editing, with "resizing record"
-  dialog. 
-
-* Need to run under POSE!
+$Id$
