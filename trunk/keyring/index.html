@@ -76,9 +76,7 @@ WorkPad) handheld computer.  This information might include:
 
 	  <p>
 	    <a href="http://sourceforge.net/project/filelist.php?group_id=306">Download the prc file or source tarball
-	      from SourceForge</a>.
-	    
-	    Keyring Project Page</a>.</p>
+	      from SourceForge</a>.</p>
 	      
 	  <p>Install the keyring.prc</tt></a>
 	    binary on your handheld.  GNU Keyring will create a blank
@@ -206,34 +204,52 @@ href="http://gnukeyring.sourceforge.net/">http://gnukeyring.sourceforge.net/</a>
 	  </td>
 
 	<td valign=top>
-<p>GNU Keyring is written and maintained by Martin Pool <a
-href="mailto:mbp@humbug.org.au">&lt;mbp@humbug.org.au&gt;</a>.  
+	  <p>GNU Keyring is written and maintained by Martin Pool
+	    <a href="mailto:mbp@humbug.org.au">&lt;mbp@humbug.org.au&gt;</a>.  
+	    
+	  <p>GNU Keyring is not shareware, but if you like this program please
+	    consider <a href="http://www.gnu.org/help/help.html">how you can help
+	      the GNU project</a>.
 
-<p>GNU Keyring is not shareware, but if you like this program please
-consider <a href="http://www.gnu.org/help/help.html">how you can help
-the GNU project</a>.
+	  <p>You should be able to find up-to-date information about this
+	    program at 
+	    <a href="http://www.freshmeat.net/appindex/1999/11/14/942590261.html">Freshmeat</a> 
+	    or 
+	    <a href="http://gnukeyring.sourceforge.net/">SourceForge</a>
 
-<p>You should be able to find up-to-date information about this
-program at 
-  <a href="http://www.freshmeat.net/appindex/1999/11/14/942590261.html">Freshmeat</a> 
-or 
-  <a href="http://gnukeyring.sourceforge.net/">SourceForge</a>
-
-<p>Please report bugs using the SourceForge bug tracking system: <a
-href="http://www.sourceforge.net/bugs/?group_id=306">GNU Keyring Bug
-Tracking</a>.
-
-
-<a name="Changes">
-	  </td>
+	  <p>Please report bugs using the SourceForge bug tracking system:
+	    <a href="http://www.sourceforge.net/bugs/?group_id=306">GNU Keyring Bug
+	      Tracking</a>.
+	</td>
       </tr>
 
       <tr>
-	<td valign=top><h2>Release History</h2>
+	<td valign=top><h2>FAQ</h2></td>
+	<td valign=top>
+	  
+	  <p><em>I have begun using keyring, and am trying to verify that
+	      my encrypted data is being backed up on the pc during the
+	      hotsync process.  How can I ensure that this is happening?</em>
+
+	  <p>Have a look in the backup directory of your desktop
+	    software.  You should see a file called Keys-Gtkr.pdb --
+	    this is the data.  The date on that file will tell you
+	    when the file was last backed up.  If you're using Unix,
+	    you can use the `pilot-file' command to see the encrypted
+	    records inside it and their individual modification times.
+	    Because the keys are encrypted you can't look inside it at
+	    the moment, but there may be support for editing on a PC
+	    in the future.
+	  </p>
 	</td>
+      </tr>
+      
+      <tr>
+	<td valign=top><a name="Changes"><h2>Release History</h2></td>
+      </td>
 	<td valign=top>
 	  <dl>
-
+	    
 	    <dt>0.7.4</dt>
 	    <dd>(2000-02-04)
 
