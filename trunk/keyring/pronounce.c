@@ -13,11 +13,8 @@ to be OK.
 #include "includes.h"
 #include <string.h>
 
-#define TRUE                  1
-#define FALSE                 0
-
 #define RULE_SIZE             (sizeof(rules)/sizeof(struct unit))
-#define ALLOWED(flag)  (digram[units_in_syllable[current_unit - 1]][unit] & (flag))
+#define IS_FLAG(flag)         (digram[last_unit]][unit] & (flag))
 
 #define MAX_UNACCEPTABLE      20
 #define MAX_RETRIES           (4 * (int) pwlen + RULE_SIZE)
@@ -28,23 +25,23 @@ to be OK.
 #define ALTERNATE_VOWEL       01
 #define NO_SPECIAL_RULE       0
 
-#define BEGIN                 0200
-#define NOT_BEGIN             0100
-#define BREAK                 040
-#define PREFIX                020
-#define ILLEGAL_PAIR          010
-#define SUFFIX                04
-#define END                   02
-#define NOT_END               01
+#define BEGIN                 0200  /* digram should begin a new syllable */
+#define NOT_BEGIN             0100  /* digram must not start a syllable */
+#define BREAK                 040   /* digram should be splitted into two syllables */
+#define PREFIX                020   /* digram requires a vocal in front */
+#define ILLEGAL_PAIR          010   /* digram must not occur */
+#define SUFFIX                0     /* Not needed any more. */
+#define END                   02    /* digram should end a syllable */
+#define NOT_END               01    /* digram must not end a syllable */
 #define ANY_COMBINATION       0
 
 struct unit
 {
-  char unit_code[5];
-  unsigned short int flags;
+  Char unit_code[3];
+  UInt8 flags;
 };
 
-static struct unit rules[] = {
+static const struct unit rules[] = {
   {"a", VOWEL},
   {"b", NO_SPECIAL_RULE},
   {"c", NO_SPECIAL_RULE},
@@ -81,7 +78,7 @@ static struct unit rules[] = {
   {"ck", NOT_BEGIN_SYLLABLE}
 };
 
-static int digram[][RULE_SIZE] = {
+static UInt8 digram[][RULE_SIZE] = {
   {
   /* aa */ ILLEGAL_PAIR,
   /* ab */ ANY_COMBINATION,
@@ -1275,772 +1272,6 @@ static int digram[][RULE_SIZE] = {
   }
 };
 
- /*
-  * This is the routine that returns a random word.  Both word and
-  * hyphenated_word must be pre-allocated. This algorithm was
-  * initially worded out by Morrie Gasser in 1975.  Any changes here
-  * are minimal so that as many word combinations can be produced as
-  * possible (and thus keep the words random).  It collects random
-  * syllables until a predetermined word length is found.  If a retry
-  * threshold is reached, another word is tried.  Given that the
-  * random number generator is uniformly distributed, eventually a
-  * word will be found if the retry limit is adequately large enough.
-  */
-int get_word (char * word, char * hyphenated_word, unsigned short int pwlen)
-{
-  register unsigned short int word_length;
-  register unsigned short int syllable_length;
-  char new_syllable[MAX_PWLEN + 1];
-  unsigned short int syllable_units[MAX_PWLEN + 1];
-  register unsigned short int word_size;
-  register unsigned short int word_place;
-  unsigned short int word_units[MAX_PWLEN + 1];
-  int unsigned short syllable_size;
-  int unsigned tries;
-
-  /* 
-   * Check for zero length words.  This is technically not an error,
-   * so we take the short cut and return a null word and a length of
-   * 0.
-   */
-  if (pwlen == 0)
-    {
-      word[0] = '\0';
-      hyphenated_word[0] = '\0';
-      return (0);
-    }
-  
-  /*
-   * Keep count of retries.
-   */
-  tries = 0;
-
-  /*
-   * The length of the word in characters.
-   */
-  word_length = 0;
-
-  /*
-   * The length of the word in character units (each of which is one
-   * or two characters long.
-   */
-  word_size = 0;
-
-  /*
-   * Find syllables until the entire word is constructed.
-   */
-  while (word_length < pwlen)
-    {
-      /*
-       * Get the syllable and find its length.
-       */
-      (void) get_syllable (new_syllable, pwlen - word_length,
-                           syllable_units, &syllable_size);
-      syllable_length = strlen (new_syllable);
-
-      /*
-       * Append the syllable units to the word units.
-       */
-      for (word_place = 0; word_place <= syllable_size; word_place++)
-        word_units[word_size + word_place] = syllable_units[word_place];
-      word_size += syllable_size + 1;
-
-      /* 
-       * If the word has been improperly formed, throw out the
-       * syllable.  The checks performed here are those that must be
-       * formed on a word basis.  The other tests are performed
-       * entirely within the syllable.  Otherwise, append the syllable
-       * to the word and append the syllable to the hyphenated version
-       * of the word.
-       */
-      if (improper_word (word_units, word_size) ||
-          ((word_length == 0) &&
-           have_initial_y (syllable_units, syllable_size)) ||
-          ((word_length + syllable_length == pwlen) &&
-           have_final_split (syllable_units, syllable_size)))
-        word_size -= syllable_size + 1;
-      else
-        {
-          if (word_length == 0)
-            {
-              (void) strcpy (word, new_syllable);
-              (void) strcpy (hyphenated_word, new_syllable);
-            }
-          else
-            {
-              (void) strcat (word, new_syllable);
-              (void) strcat (hyphenated_word, "-");
-              (void) strcat (hyphenated_word, new_syllable);
-            }
-          word_length += syllable_length;
-        }
-
-      /* 
-       * Keep track of the times we have tried to get syllables.  If
-       * we have exceeded the threshold, reinitialize the pwlen and
-       * word_size variables, clear out the word arrays, and start
-       * from scratch.
-       */
-      tries++;
-      if (tries > MAX_RETRIES)
-        {
-          word_length = 0;
-          word_size = 0;
-          tries = 0;
-          (void) strcpy (word, "");
-          (void) strcpy (hyphenated_word, "");
-        }
-    }
-
-  return ((int) word_length);
-}
-
-
-
-/*
- * Check that the word does not contain illegal combinations
- * that may span syllables.  Specifically, these are:
- *   1. An illegal pair of units between syllables.
- *   2. Three consecutive vowel units.
- *   3. Three consecutive consonant units.
- * The checks are made against units (1 or 2 letters), not against
- * the individual letters, so three consecutive units can have
- * the length of 6 at most.
- */
-int improper_word (register unsigned short int * units, register unsigned short int word_size)
-{
-  register unsigned short int unit_count;
-  register int failure;
-
-  failure = FALSE;
-
-  for (unit_count = 0; !failure && (unit_count < word_size); unit_count++)
-    {
-      /* 
-       * Check for ILLEGAL_PAIR.  This should have been caught for
-       * units within a syllable, but in some cases it would have gone
-       * unnoticed for units between syllables (e.g., when
-       * saved_unit's in get_syllable() were not used).
-       */
-      if ((unit_count != 0) &&
-          (digram[units[unit_count - 1]][units[unit_count]] & ILLEGAL_PAIR))
-        failure = TRUE;
-
-      /* 
-       * Check for consecutive vowels or consonants.  Because the
-       * initial y of a syllable is treated as a consonant rather than
-       * as a vowel, we exclude y from the first vowel in the vowel
-       * test.  The only problem comes when y ends a syllable and two
-       * other vowels start the next, like fly-oint.  Since such words
-       * are still pronounceable, we accept this.
-       */
-      if (!failure && (unit_count >= 2))
-        {
-          /*
-           * Vowel check.
-           */
-          if ((((rules[units[unit_count - 2]].flags & VOWEL) &&
-                !(rules[units[unit_count - 2]].flags &
-                  ALTERNATE_VOWEL)) &&
-               (rules[units[unit_count - 1]].flags & VOWEL) &&
-               (rules[units[unit_count]].flags & VOWEL)) ||
-              /*
-               * Consonant check.
-               */
-              (!(rules[units[unit_count - 2]].flags & VOWEL) &&
-               !(rules[units[unit_count - 1]].flags & VOWEL) &&
-               !(rules[units[unit_count]].flags & VOWEL)))
-            failure = TRUE;
-        }
-    }
-
-  return (failure);
-}
-
-
-/*
- * Treating y as a vowel is sometimes a problem.  Some words get
- * formed that look irregular.  One special group is when y starts a
- * word and is the only vowel in the first syllable.  The word ycl is
- * one example.  We discard words like these.
- */
-int have_initial_y (register unsigned short int * units, register unsigned short int unit_size)
-{
-  register unsigned short int unit_count;
-  register unsigned short int vowel_count;
-  register unsigned short int normal_vowel_count;
-
-  vowel_count = 0;
-  normal_vowel_count = 0;
-
-  for (unit_count = 0; unit_count <= unit_size; unit_count++)
-    /*
-     * Count vowels.
-     */
-    if (rules[units[unit_count]].flags & VOWEL)
-      {
-        vowel_count++;
-
-        /*
-         * Count the vowels that are not: 1. y, 2. at the start of
-         * the word.
-         */
-        if (!(rules[units[unit_count]].flags & ALTERNATE_VOWEL)
-            || (unit_count != 0))
-          normal_vowel_count++;
-      }
-
-  return ((vowel_count <= 1) && (normal_vowel_count == 0));
-}
-
-
-/*
- * Besides the problem with the letter y, there is one with a silent e
- * at the end of words, like face or nice.  We allow this silent e,
- * but we do not allow it as the only vowel at the end of the word or
- * syllables like ble will be generated.
- */
-int have_final_split (register unsigned short int * units, register unsigned short int unit_size)
-{
-  register unsigned short int unit_count;
-  register unsigned short int vowel_count;
-
-  vowel_count = 0;
-
-  /*
-   *    Count all the vowels in the word.
-   */
-  for (unit_count = 0; unit_count <= unit_size; unit_count++)
-    if (rules[units[unit_count]].flags & VOWEL)
-      vowel_count++;
-
-  /*
-   * Return TRUE iff the only vowel was e, found at the end if the
-   * word.
-   */
-  return ((vowel_count == 1) &&
-          (rules[units[unit_size]].flags & NO_FINAL_SPLIT));
-}
-
-
-/*
- * Generate next unit to password, making sure that it follows
- * these rules:
- *   1. Each syllable must contain exactly 1 or 2 consecutive
- *      vowels, where y is considered a vowel.
- *   2. Syllable end is determined as follows:
- *        a. Vowel is generated and previous unit is a
- *           consonant and syllable already has a vowel.  In
- *           this case, new syllable is started and already
- *           contains a vowel.
- *        b. A pair determined to be a "break" pair is encountered.
- *           In this case new syllable is started with second unit
- *           of this pair.
- *        c. End of password is encountered.
- *        d. "begin" pair is encountered legally.  New syllable is
- *           started with this pair.
- *        e. "end" pair is legally encountered.  New syllable has
- *           nothing yet.
- *   3. Try generating another unit if:
- *        a. third consecutive vowel and not y.
- *        b. "break" pair generated but no vowel yet in current
- *           or previous 2 units are "not_end".
- *        c. "begin" pair generated but no vowel in syllable
- *           preceding begin pair, or both previous 2 pairs are
- *          designated "not_end".
- *        d. "end" pair generated but no vowel in current syllable
- *           or in "end" pair.
- *        e. "not_begin" pair generated but new syllable must
- *           begin (because previous syllable ended as defined in
- *           2 above).
- *        f. vowel is generated and 2a is satisfied, but no syllable
- *           break is possible in previous 3 pairs.
- *        g. Second and third units of syllable must begin, and
- *           first unit is "alternate_vowel".
- */
-char * get_syllable (char * syllable, unsigned short int pwlen, unsigned short int * units_in_syllable, unsigned short int * syllable_length)
-{
-  register unsigned short int unit;
-  register short int current_unit;
-  register unsigned short int vowel_count;
-  register int rule_broken;
-  register int want_vowel;
-  register int want_another_unit;
-  int unsigned tries;
-  int unsigned short last_unit;
-  int short length_left;
-  unsigned short int hold_saved_unit;
-  static unsigned short int saved_unit;
-  static unsigned short int saved_pair[2];
-
-  /*
-   * This is needed if the saved_unit is tries and the syllable then
-   * discarded because of the retry limit. Since the saved_unit is OK
-   * and fits in nicely with the preceding syllable, we will always
-   * use it.
-   */
-  hold_saved_unit = saved_unit;
-  last_unit = 0;
-
-  /*
-   * Loop until valid syllable is found.
-   */
-  do
-    {
-      /* 
-       * Try for a new syllable.  Initialize all pertinent syllable
-       * variables.
-       */
-      tries = 0;
-      saved_unit = hold_saved_unit;
-      (void) strcpy (syllable, "");
-      vowel_count = 0;
-      current_unit = 0;
-      length_left = (short int) pwlen;
-      want_another_unit = TRUE;
-
-      /*
-       * This loop finds all the units for the syllable.
-       */
-      do
-        {
-          want_vowel = FALSE;
-
-          /*
-           * This loop continues until a valid unit is found for the
-           * current position within the syllable.
-           */
-          do
-            {
-              /* 
-               * If there are saved_unit's from the previous syllable,
-               * use them up first.
-               */
-              if (saved_unit != 0)
-                {
-                  /* 
-                   * If there were two saved units, the first is
-                   * guaranteed (by checks performed in the previous
-                   * syllable) to be valid.  We ignore the checks and
-                   * place it in this syllable manually.
-                   */
-                  if (saved_unit == 2)
-                    {
-                      units_in_syllable[0] = saved_pair[1];
-                      if (rules[saved_pair[1]].flags & VOWEL)
-                        vowel_count++;
-                      current_unit++;
-                      (void) strcpy (syllable,
-                                     rules[saved_pair[1]].unit_code);
-                      length_left -= strlen (syllable);
-                    }
-
-                  /* 
-                   * The unit becomes the last unit checked in the
-                   * previous syllable.
-                   */
-                  unit = saved_pair[0];
-
-                  /*
-                   * The saved units have been used.  Do not try to
-                   * reuse them in this syllable (unless this
-                   * particular syllable is rejected at which point we
-                   * start to rebuild it with these same saved units.
-                   */
-                  saved_unit = 0;
-                }
-              else
-                /* 
-                 * If we don't have to scoff the saved units, we
-                 * generate a random one.  If we know it has to be a
-                 * vowel, we get one rather than looping through until
-                 * one shows up.
-                 */
-              if (want_vowel)
-                unit = random_unit (VOWEL);
-              else
-                unit = random_unit (NO_SPECIAL_RULE);
-
-              length_left -= (short int) strlen (rules[unit].unit_code);
-
-              /*
-               * Prevent having a word longer than expected.
-               */
-              if (length_left < 0)
-                rule_broken = TRUE;
-              else
-                rule_broken = FALSE;
-
-              /*
-               * First unit of syllable.  This is special because the
-               * digram tests require 2 units and we don't have that
-               * yet.  Nevertheless, we can perform some checks.
-               */
-              if (current_unit == 0)
-                {
-                  /* 
-                   * If the shouldn't begin a syllable, don't use it.
-                   */
-                  if (rules[unit].flags & NOT_BEGIN_SYLLABLE)
-                    rule_broken = TRUE;
-                  else
-                    /* 
-                     * If this is the last unit of a word, we have a
-                     * one unit syllable.  Since each syllable must
-                     * have a vowel, we make sure the unit is a vowel.
-                     * Otherwise, we discard it.
-                     */
-		    if (length_left == 0)
-		      {
-			if (rules[unit].flags & VOWEL)
-			  want_another_unit = FALSE;
-			else
-			  rule_broken = TRUE;
-		      }
-                }
-              else
-                {
-                  /* 
-                   * There are some digram tests that are universally
-                   * true.  We test them out.
-                   */
-
-                  /*
-                   * Reject ILLEGAL_PAIRS of units.
-                   */
-                  if ((ALLOWED (ILLEGAL_PAIR)) ||
-                      /*
-                       * Reject units that will be split between
-                       * syllables when the syllable has no vowels in
-                       * it.
-                       */
-                      (ALLOWED (BREAK) && (vowel_count == 0)) ||
-                      /*
-                       * Reject a unit that will end a syllable when
-                       * no previous unit was a vowel and neither is
-                       * this one.
-                       */
-                      (ALLOWED (END) && (vowel_count == 0) &&
-                       !(rules[unit].flags & VOWEL)))
-                    rule_broken = TRUE;
-
-                  if (current_unit == 1)
-                    {
-                      /*
-                       * Reject the unit if we are at te starting
-                       * digram of a syllable and it does not fit.
-                       */
-                      if (ALLOWED (NOT_BEGIN))
-                        rule_broken = TRUE;
-                    }
-                  else
-                    {
-                      /* 
-                       * We are not at the start of a syllable.  Save
-                       * the previous unit for later tests.
-                       */
-                      last_unit = units_in_syllable[current_unit - 1];
-
-                      /*
-                       * Do not allow syllables where the first letter
-                       * is y and the next pair can begin a syllable.
-                       * This may lead to splits where y is left alone
-                       * in a syllable.  Also, the combination does
-                       * not sound to good even if not split.
-                       */
-                      if (((current_unit == 2) &&
-                           (ALLOWED (BEGIN)) &&
-                           (rules[units_in_syllable[0]].flags &
-                            ALTERNATE_VOWEL)) ||
-                          /*
-                           * If this is the last unit of a word, we
-                           * should reject any digram that cannot end
-                           * a syllable.
-                           */
-                          (ALLOWED (NOT_END) && (length_left == 0)) ||
-                          /*
-                           * Reject the unit if the digram it forms
-                           * wants to break the syllable, but the
-                           * resulting digram that would end the
-                           * syllable is not allowed to end a
-                           * syllable.
-                           */
-                          (ALLOWED (BREAK) &&
-                           (digram[units_in_syllable
-                                   [current_unit - 2]]
-                            [last_unit] & NOT_END)) ||
-                          /*
-                           * Reject the unit if the digram it forms
-                           * expects a vowel preceding it and there is
-                           * none.
-                           */
-                          (ALLOWED (PREFIX) &&
-                           !(rules[units_in_syllable
-                                   [current_unit - 2]].flags & VOWEL)))
-                        rule_broken = TRUE;
-
-                      /*
-                       * The following checks occur when the current
-                       * unit is a vowel and we are not looking at a
-                       * word ending with an e.
-                       */
-                      if (!rule_broken &&
-                          (rules[unit].flags & VOWEL) &&
-                          ((length_left > 0) ||
-                           !(rules[last_unit].flags & NO_FINAL_SPLIT)))
-			{
-
-			  /*
-			   * Don't allow 3 consecutive vowels in a
-			   * syllable.  Although some words formed
-			   * like this are OK, like beau, most are
-			   * not.
-			   */
-			  if ((vowel_count > 1) &&
-			      (rules[last_unit].flags & VOWEL))
-			    rule_broken = TRUE;
-			  else
-			    /*
-			     * Check for the case of
-			     * vowels-consonants-vowel, which is only
-			     * legal if the last vowel is an e and we
-			     * are the end of the word (wich is not
-			     * happening here due to a previous check.
-			     */
-			    if ((vowel_count != 0) &&
-				!(rules[last_unit].flags & VOWEL))
-			      {
-				/*
-				 * Try to save the vowel for the next
-				 * syllable, but if the syllable left
-				 * here is not proper (i.e. the
-				 * resulting last digram cannot
-				 * legally end it), just discard it
-				 * and try for another.
-				 */
-				if (digram[units_in_syllable
-					   [current_unit - 2]]
-				    [last_unit] & NOT_END)
-				  rule_broken = TRUE;
-				else
-				  {
-				    saved_unit = 1;
-				    saved_pair[0] = unit;
-				    want_another_unit = FALSE;
-				  }
-			      }
-			}
-                    }
-
-                  /*
-                   * The unit picked and the digram formed are legal.
-                   * We now determine if we can end the syllable.  It
-                   * may, in some cases, mean the last unit(s) may be
-                   * deferred to the next syllable.  We also check
-                   * here to see if the digram formed expects a vowel
-                   * to follow.
-                   */
-                  if (!rule_broken && want_another_unit)
-                    {
-                      /*
-                       * This word ends in a silent e.
-                       */
-                      if (((vowel_count != 0) &&
-                           (rules[unit].flags & NO_FINAL_SPLIT) &&
-                           (length_left == 0) &&
-                           !(rules[last_unit].flags & VOWEL)) ||
-                          /*
-                           * This syllable ends either because the
-                           * digram is an END pair or we would
-                           * otherwise exceed the length of the word.
-                           */
-                          (ALLOWED (END) || (length_left == 0)))
-                        want_another_unit = FALSE;
-                      else
-                        /*
-                         * Since we have a vowel in the syllable
-                         * already, if the digram calls for the end of
-                         * the syllable, we can legally split it
-                         * off. We also make sure that we are not at
-                         * the end of the dangerous because that
-                         * syllable may not have vowels, or it may not
-                         * be a legal syllable end, and the retrying
-                         * mechanism will loop infinitely with the
-                         * same digram.
-                         */
-                      if ((vowel_count != 0) && (length_left > 0))
-                        {
-                          /*
-                           * If we must begin a syllable, we do so if
-                           * the only vowel in THIS syllable is not
-                           * part of the digram we are pushing to the
-                           * next syllable.
-                           */
-                          if (ALLOWED (BEGIN) &&
-                              (current_unit > 1) &&
-                              !((vowel_count == 1) &&
-                                (rules[last_unit].flags & VOWEL)))
-                            {
-                              saved_unit = 2;
-                              saved_pair[0] = unit;
-                              saved_pair[1] = last_unit;
-                              want_another_unit = FALSE;
-                            }
-                          else if (ALLOWED (BREAK))
-                            {
-                              saved_unit = 1;
-                              saved_pair[0] = unit;
-                              want_another_unit = FALSE;
-                            }
-                        }
-                      else if (ALLOWED (SUFFIX))
-                        want_vowel = TRUE;
-                    }
-                }
-
-              tries++;
-
-              /*
-               * If this unit was illegal, redetermine the amount of
-               * letters left to go in the word.
-               */
-              if (rule_broken)
-                length_left += (short int) strlen (rules[unit].unit_code);
-            }
-          while (rule_broken && (tries <= MAX_RETRIES));
-
-          /*
-           * The unit fit OK.
-           */
-          if (tries <= MAX_RETRIES)
-            {
-              /* 
-               * If the unit were a vowel, count it in.  However, if
-               * the unit were a y and appear at the start of the
-               * syllable, treat it like a constant (so that words
-               * like year can appear and not conflict with the 3
-               * consecutive vowel rule.
-               */
-              if ((rules[unit].flags & VOWEL) &&
-                  ((current_unit > 0) ||
-                   !(rules[unit].flags & ALTERNATE_VOWEL)))
-                vowel_count++;
-
-              /* 
-               * If a unit or units were to be saved, we must adjust
-               * the syllable formed.  Otherwise, we append the
-               * current unit to the syllable.
-               */
-              switch (saved_unit)
-                {
-                case 0:
-                  units_in_syllable[current_unit] = unit;
-                  (void) strcat (syllable, rules[unit].unit_code);
-                  break;
-                case 1:
-                  current_unit--;
-                  break;
-                case 2:
-                  (void) strcpy (&syllable[strlen (syllable) -
-                                           strlen (rules[last_unit].
-                                                   unit_code)], "");
-                  length_left += (short int) strlen
-                    (rules[last_unit].unit_code);
-                  current_unit -= 2;
-                  break;
-                }
-            }
-          else
-            /*
-             * Whoops!  Too many tries.  We set rule_broken so we can
-             * loop in the outer loop and try another syllable.
-             */
-            rule_broken = TRUE;
-
-          /*
-           * ...and the syllable length grows.
-           */
-          *syllable_length = current_unit;
-
-          current_unit++;
-        }
-      while ((tries <= MAX_RETRIES) && want_another_unit);
-    }
-  while (rule_broken ||
-         illegal_placement (units_in_syllable, *syllable_length));
-
-  return (syllable);
-}
-
-
-/*
- * This routine goes through an individual syllable and checks for
- * illegal combinations of letters that go beyond looking at digrams.
- * We look at things like 3 consecutive vowels or consonants, or
- * syllables with consonants between vowels (unless one of them is the
- * final silent e).
- */
-int illegal_placement (register unsigned short int * units, register unsigned short int pwlen)
-{
-  register unsigned short int vowel_count;
-  register unsigned short int unit_count;
-  register int failure;
-
-  vowel_count = 0;
-  failure = FALSE;
-
-  for (unit_count = 0; !failure && (unit_count <= pwlen); unit_count++)
-    {
-      if (unit_count >= 1)
-        {
-          /* 
-           * Don't allow vowels to be split with consonants in a
-           * single syllable.  If we find such a combination (except
-           * for the silent e) we have to discard the syllable).
-           */
-          if ((!(rules[units[unit_count - 1]].flags & VOWEL) &&
-               (rules[units[unit_count]].flags & VOWEL) &&
-               !((rules[units[unit_count]].flags &
-                  NO_FINAL_SPLIT) &&
-                 (unit_count == pwlen)) && (vowel_count != 0)) ||
-              /*
-               * Perform these checks when we have at least 3 units.
-               */
-              ((unit_count >= 2) &&
-               /*
-                * Disallow 3 consecutive consonants.
-                */
-               ((!(rules[units[unit_count - 2]].flags & VOWEL) &&
-                 !(rules[units[unit_count - 1]].flags &
-                   VOWEL) && !(rules[units[unit_count]].flags & VOWEL)) ||
-                /*
-                 * Disallow 3 consecutive vowels, where the first is
-                 * not a y.
-                 */
-                (((rules[units[unit_count - 2]].flags &
-                   VOWEL) &&
-                  !((rules[units[0]].flags &
-                     ALTERNATE_VOWEL) &&
-                    (unit_count == 2))) &&
-                 (rules[units[unit_count - 1]].flags &
-                  VOWEL) && (rules[units[unit_count]].flags & VOWEL)))))
-            failure = TRUE;
-        }
-
-      /* 
-       * Count the vowels in the syllable.  As mentioned somewhere
-       * above, exclude the initial y of a syllable.  Instead, treat
-       * it as a consonant.
-       */
-      if ((rules[units[unit_count]].flags & VOWEL) &&
-          !((rules[units[0]].flags & ALTERNATE_VOWEL) &&
-            (unit_count == 0) && (pwlen != 0)))
-        vowel_count++;
-    }
-
-  return (failure);
-}
-
 
 
 /*
@@ -2064,8 +1295,12 @@ int illegal_placement (register unsigned short int * units, register unsigned sh
  * may be altered (and the array size may be changed) in this
  * procedure without affecting the digram table or any other programs
  * using the random_word subroutine.
+ *
+ * FIXME:  Do we really want this?  Passwords would be much safer if
+ * the characters are more equally distributed, but they may be harder
+ * to remember.
  */
-static unsigned short int numbers[] = {
+static const UInt8 numbers[] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   1, 1, 1, 1, 1, 1, 1, 1,
   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -2112,38 +1347,682 @@ static unsigned short int numbers[] = {
  * obtained.  The routines that use vowel_numbers will adjust to the
  * size difference automatically.
  */
-static unsigned short int vowel_numbers[] = {
+static const UInt8 vowel_numbers[] = {
   0, 0, 4, 4, 4, 8, 8, 14, 14, 19, 19, 23
 };
-
-/* FIXME ignoring low limit right now */
-int get_random (int lwlim, int hilim)
-{
-  return(Secrand_GetByte() % hilim);
-}
 
 /*
  * Select a unit (a letter or a consonant group).  If a vowel is
  * expected, use the vowel_numbers array rather than looping through
  * the numbers array until a vowel is found.
  */
-unsigned short int random_unit (register unsigned short int type)
+static UInt16 random_unit (register UInt16 type)
 {
-  register unsigned short int number;
-
-  /* 
-   * Sometimes, we are asked to explicitly get a vowel (i.e., if a
-   * digram pair expects one following it).  This is a shortcut to do
-   * that and avoid looping with rejected consonants.
-   */
-  if (type & VOWEL)
-    number = vowel_numbers[get_random (0, sizeof (vowel_numbers)
-                                       / sizeof (unsigned short int))];
-  else
+    register UInt8 rand;
+    
     /* 
-     * Get any letter according to the English distribution.
+     * Sometimes, we are asked to explicitly get a vowel (i.e., if a
+     * digram pair expects one following it).  This is a shortcut to do
+     * that and avoid looping with rejected consonants.
      */
-    number = numbers[get_random (0, sizeof (numbers) / sizeof
-                                 (unsigned short int))];
-  return (number);
+    if (type & VOWEL)
+    {
+	while ((rand = Secrand_GetByte()) > 12*21) 
+	{
+	    /* regenerate random. */
+	}
+	return vowel_numbers[rand % 12];
+    }
+    else
+    {
+	while ((rand = Secrand_GetByte()) > 
+	       sizeof (numbers) / sizeof (UInt16)) 
+	{
+	    /* regenerate random. */
+	}
+	/* 
+	 * Get any letter according to the English distribution.
+	 */
+	return numbers[rand];
+    }
 }
+
+
+#if 0
+/*
+ * This is the routine that returns a random word.  Both word and
+ * hyphenated_word must be pre-allocated. This algorithm was
+ * initially worded out by Morrie Gasser in 1975.  Any changes here
+ * are minimal so that as many word combinations can be produced as
+ * possible (and thus keep the words random).  It collects random
+ * syllables until a predetermined word length is found.  If a retry
+ * threshold is reached, another word is tried.  Given that the
+ * random number generator is uniformly distributed, eventually a
+ * word will be found if the retry limit is adequately large enough.
+ */
+int Pron_GetWord (char * word, char * hyphenated_word, UInt16 pwlen)
+{
+    register UInt16 word_length;
+    register UInt16 syllable_length;
+    char new_syllable[MAX_PWLEN + 1];
+    UInt16 syllable_units[MAX_PWLEN + 1];
+    register UInt16 word_size;
+    register UInt16 word_place;
+    UInt16 word_units[MAX_PWLEN + 1];
+    UInt16 syllable_size;
+    UInt16 tries;
+    
+    /* 
+     * Check for zero length words.  This is technically not an error,
+     * so we take the short cut and return a null word and a length of
+     * 0.
+     */
+    if (pwlen == 0)
+    {
+	word[0] = '\0';
+	hyphenated_word[0] = '\0';
+	return (0);
+    }
+    
+    /*
+     * Keep count of retries.
+     */
+    tries = 0;
+    
+    /*
+     * The length of the word in characters.
+     */
+    word_length = 0;
+    
+    /*
+     * The length of the word in character units (each of which is one
+     * or two characters long.
+     */
+    word_size = 0;
+    
+    /*
+     * Find syllables until the entire word is constructed.
+     */
+    while (word_length < pwlen)
+    {
+	/*
+	 * Get the syllable and find its length.
+	 */
+	(void) get_syllable (new_syllable, pwlen - word_length,
+			     syllable_units, &syllable_size);
+	syllable_length = StrLen (new_syllable);
+	
+	/* 
+	 * If the word has been improperly formed, throw out the
+	 * syllable.  The checks performed here are those that must be
+	 * formed on a word basis.  The other tests are performed
+	 * entirely within the syllable.  Otherwise, append the syllable
+	 * to the word and append the syllable to the hyphenated version
+	 * of the word.
+	 */
+	if (Pron_ProperExtension (word_units, word_size,
+				  syllable_units, syllable_size)
+	    && (word_length + syllable_length < pwlen
+		|| Pron_ProperEnding(syllable_units, syllable_size))) {
+	    
+	    if (word_size == 0)
+	    {
+		strcpy (word, new_syllable);
+		strcpy (hyphenated_word, new_syllable);
+	    }
+	    else
+	    {
+		strcat (word, new_syllable);
+		strcat (hyphenated_word, "-");
+		strcat (hyphenated_word, new_syllable);
+	    }
+	    word_length += syllable_length;
+	    
+	    for (word_place = 0; word_place <= syllable_size; word_place++)
+		word_units[word_size + word_place] = syllable_units[word_place];
+	    word_size += syllable_size + 1;
+	}
+	    
+	/* 
+	 * Keep track of the times we have tried to get syllables.  If
+	 * we have exceeded the threshold, reinitialize the pwlen and
+	 * word_size variables, clear out the word arrays, and start
+	 * from scratch.
+	 */
+	tries++;
+	if (tries > MAX_RETRIES)
+	{
+	    word_length = 0;
+	    word_size = 0;
+	    tries = 0;
+	    strcpy (word, "");
+	    strcpy (hyphenated_word, "");
+        }
+    }
+	
+    return ((int) word_length);
+}
+
+
+
+/*
+ * Check that the word can be extended by syllable. Specifically, this
+ * checks:
+ *   1. An illegal pair of units between syllables.
+ *   2. Three consecutive vowel units.
+ *   3. Three consecutive consonant units.
+ *
+ * The checks are made against units (1 or 2 letters), not against
+ * the individual letters, so three consecutive units can have
+ * the length of 6 at most.
+ */
+Boolean Pron_ProperExtension (register UInt16 * word, 
+			      register UInt16 word_size,
+			      register UInt16 * syllable, 
+			      register UInt16 syllable_size)
+{
+    if (word_size == 0) 
+	return Pron_ProperStart (syllable, syllable_size);
+    
+    /* 
+     * Check for ILLEGAL_PAIR between the syllables.
+     */
+    if (digram[word[word_size - 1]][syllable[0]] & ILLEGAL_PAIR)
+	return false;
+
+    /* 
+     * Check for consecutive vowels or consonants.  Because the
+     * initial y of a syllable is treated as a consonant rather than
+     * as a vowel, we exclude y from the first vowel in the vowel
+     * test.  The only problem comes when y ends a syllable and two
+     * other vowels start the next, like fly-oint.  Since such words
+     * are still pronounceable, we accept this.
+     */
+    if ((rules[syllable[0]].flags & 
+	 rules[word[word_size - 1]].flags & VOWEL)) {
+	/*
+	 * Vowel check. 
+	 */
+	if (word_size >= 2 && 
+	    (rules[word[word_size - 2]].flags
+	     & (VOWEL | ALTERNATE_VOWEL)) == VOWEL)
+	    return false;
+
+	if (syllable_size >= 2
+	    && (rules[syllable[1]].flags & VOWEL)
+	    && !(rules[word[word_size - 1]].flags & ALTERNATE_VOWEL))
+	    return false;
+    } else if (!((rules[syllable[0]].flags | 
+		  rules[word[word_size - 1]].flags) & VOWEL)) {
+	/*
+	 * Consonant check.
+	 */
+	if (word_size >= 2
+	    && !(rules[word[word_size - 2]].flags & VOWEL))
+	    return false;
+
+	if (syllable_size >= 2
+	    && !(rules[syllable[1]].flags & VOWEL))
+	    return false;
+    }
+
+    return true;
+}
+
+
+/*
+ * Treating y as a vowel is sometimes a problem.  Some words get
+ * formed that look irregular.  One special group is when y starts a
+ * word and is the only vowel in the first syllable.  The word ycl is
+ * one example.  We discard words like these.
+ */
+static Boolean Pron_ProperStart(register UInt16 * units, 
+				register UInt16 unit_size)
+{
+    if (!(rules[units[0]].flags & ALTERNATE_VOWEL))
+	return true;
+
+    return (unit_size > 1 
+	    && (rules[units[1]].flags & VOWEL))
+}
+
+
+/*
+ * Besides the problem with the letter y, there is one with a silent e
+ * at the end of words, like face or nice.  We allow this silent e,
+ * but we do not allow it as the only vowel at the end of the word or
+ * syllables like ble will be generated.
+ */
+static Boolean Pron_ProperEnding (register UInt16 * units, 
+				  register UInt16 unit_size)
+{
+  register UInt16 unit_count;
+  register UInt16 vowel_count;
+
+  vowel_count = 0;
+
+  if (!(rules[units[unit_size-1]].flags & NO_FINAL_SPLIT))
+      return true;
+
+  return (unit_size > 1
+	  && (rules[units[unit_size-2]].flags & VOWEL));
+}
+#endif
+
+/*
+ * Generate next unit to password, making sure that it follows
+ * these rules:
+ *   1. Each syllable must contain exactly 1 or 2 consecutive
+ *      vowels, where y is considered a vowel.
+ *   2. Syllable end is determined as follows:
+ *        a. Vowel is generated and previous unit is a
+ *           consonant and syllable already has a vowel.  In
+ *           this case, new syllable is started and already
+ *           contains a vowel.
+ *        b. A pair determined to be a "break" pair is encountered.
+ *           In this case new syllable is started with second unit
+ *           of this pair.
+ *        c. End of password is encountered.
+ *        d. "begin" pair is encountered legally.  New syllable is
+ *           started with this pair.
+ *        e. "end" pair is legally encountered.  New syllable has
+ *           nothing yet.
+ *   3. Try generating another unit if:
+ *        a. third consecutive vowel and not y.
+ *        b. "break" pair generated but no vowel yet in current
+ *           or previous 2 units are "not_end".
+ *        c. "begin" pair generated but no vowel in syllable
+ *           preceding begin pair, or both previous 2 pairs are
+ *          designated "not_end".
+ *        d. "end" pair generated but no vowel in current syllable
+ *           or in "end" pair.
+ *        e. "not_begin" pair generated but new syllable must
+ *           begin (because previous syllable ended as defined in
+ *           2 above).
+ *        f. vowel is generated and 2a is satisfied, but no syllable
+ *           break is possible in previous 3 pairs.
+ *        g. Second and third units of syllable must begin, and
+ *           first unit is "alternate_vowel".
+ */
+void Pron_GetSyllable (Char *syllable, UInt16 pwlen, 
+			 PronStateType *state)
+{
+    Int16  syll_length;
+    UInt16 vowel_count, unit_ptr;
+    UInt16 next_vowel;
+    UInt16 tries;
+    Int16  last_unit, unit;
+    Int8   last_flags, flags;
+    Int16  length_left;
+    Int16  new_length_left;
+    UInt16 saved_unit;
+
+    /* 
+     * Try for a new syllable.  Initialize all pertinent syllable
+     * variables.
+     */
+
+    tries = 0;
+    vowel_count = 0;
+    length_left = pwlen;
+    next_vowel = NO_SPECIAL_RULE;
+    syll_length = state->saved_units;
+    unit_ptr = state->unit_length + syll_length;
+    last_flags = flags = 0;
+    saved_unit = 0;
+    syllable[0] = 0;
+    
+    if (unit_ptr == 0)
+	last_unit = -1;
+    else
+	last_unit = state->units[unit_ptr - 1];
+
+    /* 
+     * If there are saved_unit's from the previous syllable,
+     * we have to update flags.
+     */
+    if (syll_length > 0) {
+	if ((rules[last_unit].flags & VOWEL) &&
+	    !(rules[last_unit].flags & ALTERNATE_VOWEL))
+	    vowel_count++;
+			     
+	length_left -= StrLen(rules[last_unit].unit_code);
+	if (syll_length > 1) {
+	    UInt8 llunit = state->units[unit_ptr-2];
+	    if ((rules[llunit].flags & VOWEL))
+		vowel_count++;
+	    length_left -= StrLen(rules[llunit].unit_code);
+	    last_flags = digram[llunit][last_unit];       
+	}
+    }
+
+
+    /*
+     * This loop finds all the units for the syllable.
+     */
+    while (length_left > 0)
+    {
+	/*
+	 * This label is jumped to until a valid unit is found for the
+	 * current position within the syllable.
+	 */
+    retry_unit:
+
+	if (tries++ > MAX_RETRIES)
+	    goto retry_syllable;
+	
+	/* 
+	 * If we don't have to scoff the saved units, we
+	 * generate a random one.  If we know it has to be a
+	 * vowel, we get one rather than looping through until
+	 * one shows up.
+	 */
+
+	if (/* We have only one letter left and need a vowel */
+	    (length_left == 1 && vowel_count == 0)
+	    /* We have two consonants, next must be vowel */
+	    || (unit_ptr >= 2
+		&& !((rules[state->units[unit_ptr-2]].flags
+		      | rules[last_unit].flags) & VOWEL)))
+	    next_vowel = VOWEL;
+	else
+	    next_vowel = NO_SPECIAL_RULE;
+
+	unit = random_unit (next_vowel);
+	new_length_left = length_left - (Int16) StrLen (rules[unit].unit_code);
+	
+	/*
+	 * Prevent having a word longer than expected.
+	 */
+	if (new_length_left < 0)
+	    goto retry_unit;
+	
+	/* Always check for illegal pairs, triple vocals and triple
+         * consonants 
+	 */
+	if (unit_ptr > 0 && (digram[last_unit][unit] & ILLEGAL_PAIR))
+	    goto retry_unit;
+
+	if (unit_ptr >= 2) {
+	    if ((rules[unit].flags & VOWEL)
+		&& (rules[last_unit].flags & VOWEL)
+		&& (rules[state->units[unit_ptr-2]].flags
+		    & (VOWEL | ALTERNATE_VOWEL)) == VOWEL)
+		goto retry_unit;
+	}
+	
+	/* Reject syllables ending with a single e and containing no
+	 * other syllables
+	 */
+	if (new_length_left == 0
+	    && vowel_count == 0
+	    && (rules[unit].flags & NO_FINAL_SPLIT))
+	    goto retry_unit;
+	
+	/*
+	 * First unit of syllable.  This is special because the
+	 * digram tests require 2 units and we don't have that
+	 * yet.  Nevertheless, we can perform some checks.
+	 */
+	if (syll_length == 0)
+	{
+	    /* 
+	     * If the shouldn't begin a syllable, don't use it.
+	     */
+	    if (rules[unit].flags & NOT_BEGIN_SYLLABLE)
+		goto retry_unit;
+	}
+	else
+	{
+	    /* 
+	     * There are some digram tests that are universally
+	     * true.  We test them out.
+	     */
+	    flags = digram[last_unit][unit];
+	    
+	    /*
+	     * Reject units that will be split between
+	     * syllables when the syllable has no vowels in
+	     * it.
+	     */
+	    if ((flags & BREAK) && (vowel_count == 0))
+		goto retry_unit;
+
+	    /*
+	     * Reject a unit that will end a syllable when
+	     * no previous unit was a vowel and neither is
+	     * this one.
+	     */
+	    if ((flags & END) && (vowel_count == 0) && 
+		!(rules[unit].flags & VOWEL))
+		goto retry_unit;
+	    
+	    /*
+	     * If this is the last unit of a word, we
+	     * should reject any digram that cannot end
+	     * a syllable.
+	     */
+	    if (new_length_left == 0 && (flags & NOT_END))
+		goto retry_unit;
+	    
+	    if (syll_length == 1)
+	    {
+		/*
+		 * Reject the unit if we are at the starting
+		 * digram of a syllable and it does not fit.
+		 */
+		if ((flags & NOT_BEGIN))
+		    goto retry_unit;
+	    }
+	    else
+	    {
+		/*
+		 * Do not allow syllables where the first letter
+		 * is y and the next pair can begin a syllable.
+		 * This may lead to splits where y is left alone
+		 * in a syllable.  Also, the combination does
+		 * not sound to good even if not split.
+		 */
+		if (((syll_length == 2) &&
+		     ((flags & BEGIN)) &&
+		     (rules[state->units[0]].flags & ALTERNATE_VOWEL)))
+		    goto retry_unit;
+
+		/*
+		 * Reject the unit if the digram it forms
+		 * wants to break the syllable, but the
+		 * resulting digram that would end the
+		 * syllable is not allowed to end a
+		 * syllable.
+		 */
+		if ((flags & BREAK) && (last_flags & NOT_END))
+		    goto retry_unit;
+
+		/*
+		 * Reject the unit if the digram it forms
+		 * expects a vowel preceding it and there is
+		 * none.
+		 */
+		if ((flags & PREFIX) &&
+		    !(rules[state->units
+			   [unit_ptr - 2]].flags & VOWEL))
+		    goto retry_unit;
+		
+		/*
+		 * The following checks occur when the current
+		 * unit is a vowel and we are not looking at a
+		 * word ending with an e.
+		 */
+		if ((vowel_count != 0) &&
+		    (rules[unit].flags & VOWEL) &&
+		    !(rules[last_unit].flags & VOWEL))
+		{
+		    /*
+		     * Check for the case of
+		     * vowels-consonants-vowel, which is only
+		     * legal if the last vowel is an e and we
+		     * are the end of the word (wich is not
+		     * happening here due to a previous check.
+		     */
+		    if (new_length_left > 0 ||
+			!(rules[last_unit].flags & NO_FINAL_SPLIT))
+		    {
+			/*
+			 * Try to save the vowel for the next
+			 * syllable, but if the syllable left
+			 * here is not proper (i.e. the
+			 * resulting last digram cannot
+			 * legally end it), just discard it
+			 * and try for another.
+			 */
+			if ((last_flags & NOT_END))
+			    goto retry_unit;
+
+			saved_unit = 1;
+			state->units[unit_ptr] = unit;
+			break;
+		    }
+		}
+	    }
+    		    
+	    /*
+	     * The unit picked and the digram formed are legal.
+	     * We now determine if we can end the syllable.  It
+	     * may, in some cases, mean the last unit(s) may be
+	     * deferred to the next syllable.  We also check
+	     * here to see if the digram formed expects a vowel
+	     * to follow.
+	     */
+    
+	    /*
+	     * Since we have a vowel in the syllable
+	     * already, if the digram calls for the end of
+	     * the syllable, we can legally split it
+	     * off. We also make sure that we are not at
+	     * the end of the dangerous because that
+	     * syllable may not have vowels, or it may not
+	     * be a legal syllable end, and the retrying
+	     * mechanism will loop infinitely with the
+	     * same digram.
+	     */
+	    if ((vowel_count != 0) && (new_length_left > 0))
+	    {
+		/*
+		 * If we must begin a syllable, we do so if
+		 * the only vowel in THIS syllable is not
+		 * part of the digram we are pushing to the
+		 * next syllable.
+		 */
+		if ((flags & BEGIN) &&
+		    (syll_length > 1) &&
+		    !((vowel_count == 1) &&
+		      (rules[last_unit].flags & VOWEL)))
+		{
+		    saved_unit = 2;
+		    state->units[unit_ptr] = unit;
+
+		    /* remove last_unit from current syllable. */
+		    syll_length--;
+		    unit_ptr--;
+		    break;
+		}
+		else if ((flags & BREAK))
+		{
+		    saved_unit = 1;
+		    state->units[unit_ptr] = unit;
+		    break;
+		}
+	    }
+	}
+	
+	/* 
+	 * If the unit is a vowel, count it in.  However, if
+	 * the unit is a y and appears at the start of the
+	 * syllable, treat it like a consonant (so that words
+	 * like year can appear and not conflict with the 3
+	 * consecutive vowel rule.
+	 */
+	if ((rules[unit].flags & VOWEL) &&
+	    ((syll_length > 0) ||
+	     !(rules[unit].flags & ALTERNATE_VOWEL)))
+	    vowel_count++;
+	
+	/*
+	 * Append the unit to the syllable and update length_left,
+	 * syll_length and last_unit.
+	 */
+	state->units[unit_ptr] = unit;
+	syll_length++;
+	unit_ptr++;
+	length_left = new_length_left;
+	last_unit = unit;
+	last_flags = flags;
+
+	if ((flags & END))
+	    break;
+    }
+
+    /* Create the textual form of the syllable */
+    while (state->unit_length < unit_ptr)
+	StrCat(syllable, rules[state->units[state->unit_length++]].unit_code);
+
+    state->unit_length = unit_ptr;
+    state->saved_units = saved_unit;
+    return;
+
+ retry_syllable:
+    StrCat(syllable, "!ERR!");
+}
+
+
+/*
+ * This is the routine that returns a random word.  Both word and
+ * hyphenated_word must be pre-allocated. This algorithm was
+ * initially worded out by Morrie Gasser in 1975.  Any changes here
+ * are minimal so that as many word combinations can be produced as
+ * possible (and thus keep the words random).  It collects random
+ * syllables until a predetermined word length is found.
+ */
+void Pron_GetWord (char * word, char * hyphenated_word, UInt16 pwlen)
+{
+    register UInt16 word_length;
+    PronStateType state;
+    
+    MemSet(&state, sizeof(state), 0);
+    word[0] = '\0';
+    hyphenated_word[0] = '\0';
+    
+    /*
+     * The length of the word in characters.
+     */
+    word_length = 0;
+    
+    /*
+     * Find syllables until the entire word is constructed.
+     */
+    while (word_length < pwlen)
+    {
+	/*
+	 * Get the syllable and find its length.
+	 */
+	Char * syllable = word + word_length;
+	Pron_GetSyllable (syllable, pwlen - word_length, &state);
+
+	if (word_length > 0)
+	    StrCat (hyphenated_word, "-");
+	StrCat (hyphenated_word, syllable);
+	word_length += StrLen (syllable);
+	if (word_length < pwlen) {
+	    StrCopy(word+word_length, "-");
+	    word_length++;
+	}
+    }
+}
+
+/*
+ * local variables:
+ * mode: c
+ * c-basic-offset: 4
+ * eval: (c-set-offset 'substatement-open 0)
+ * end:
+ */
