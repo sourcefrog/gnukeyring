@@ -221,7 +221,7 @@ BEGIN
 
   "Not here yet" = "Noch nicht implementiert"
   "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
-  "Not Enough Features" = "Systemvoraussetzungen nicht erfüllt"
+  "Not Enough Features" = "Systemfehler"
   "@@NotEnoughFeatures" = "Diese Version von Keyring benötigt ^1."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "aussprechbar"
