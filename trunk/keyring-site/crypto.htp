@@ -15,7 +15,7 @@ MD5 hash of the password and a random 32-bit salt is stored and
 checked against entered values.  
 
     <p>The master password is also used to generate a record encryption key.
-    The 128-bit MD5 hash of the master password is spilt into two
+    The 128-bit MD5 hash of the master password is split into two
     64-bit keys, <em>K1</em> and <em>K2</em>.  (DES ignores the top bit of
     each byte, so the key has 112 effective unknown bits.) These are
     used to generate record data encrypted as <em>Enc(K1, Dec(K2,
@@ -69,10 +69,11 @@ being edited.
 
    <p>Note that this figure only applies to amateur crackers, not to
    someone with access to a super computer.  A good password uses at
-   least 8 random letters, digits and punctuation characters.  Keyring
-   for PalmOS supports passwords of up to 40 characters.  I use a 10
-   character random password including letters, digits, punctuation
-   and accentuated characters.
+   least 8 random letters, digits and punctuation characters.  The author 
+   uses a 10 character random password including letters, digits, punctuation
+   and accentuated characters (the latter makes encryption with a PC
+   conduit more difficult, though).  Keyring for PalmOS supports passwords 
+   of up to 40 characters. 
 
    <p>Categories and key names are not encrypted.  This makes it possible
    to browse the key database without entering the password.  You should be
@@ -87,12 +88,13 @@ being edited.
    This problem can only be avoided by not installing applications from
    suspicious sources. 
 
-   <p>Keyring for PalmOS uses ECB so every 8 byte block is encrypted
-   the same way.
+   <p>Keyring for PalmOS uses ECB, which means that every 8 byte block
+   is encrypted the same way.
    This way an attacker can see from the encrypted database which
-   blocks have the same contents.  He cannot, however, guess the
-   encryption key from a known plaintext/encrypted pair.
-   This problem should be fixed with the new crypto algorithm, see below.
+   blocks have the same contents, e.g. the same account or the same password.
+   However, he doesn't know the content of this block.  It's also
+   impossible to guess the encryption key from a known plaintext/encrypted
+   pair. This problem should be fixed with the new crypto algorithm, see below.
 
    <p>There was a serious bug in version 1.0 that Keyring never removed 
    the cached database key, even when the timeout was long over.  It even
