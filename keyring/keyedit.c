@@ -51,6 +51,13 @@
  *
  * TODO: Resort the database when editing is finished.  It's probably
  * simplest not to sort until returning to the list.
+ *
+ * FIXME: Position in the form title is wrong after changing
+ * categories.  Do we want to stay in the originally selected category?
+ *
+ * TODO: When the category is changed, don't re-encrypt the record.
+ * Instead just move it into the new category and update the position
+ * indicator.
  */
 
 
@@ -158,12 +165,11 @@ static void KeyEditForm_UpdateTitle(void)
 }
 
 
-static void KeyEditForm_FromUnpacked(FormPtr frm, UnpackedKeyType *u) {
-    ErrFatalDisplayIf(frm != f_KeyEditForm, "fraudulent FormPtr");
-    FldSetTextHandle(f_KeyNameFld, (MemHandle) u->nameHandle);
-    FldSetTextHandle(f_AcctFld, (MemHandle) u->acctHandle);
-    FldSetTextHandle(f_PasswdFld, (MemHandle) u->passwdHandle);
-    FldSetTextHandle(f_NotesFld, (MemHandle) u->notesHandle);
+static void KeyEditForm_FromUnpacked(void) {
+    FldSetTextHandle(f_KeyNameFld, (MemHandle) gRecord.nameHandle);
+    FldSetTextHandle(f_AcctFld, (MemHandle) gRecord.acctHandle);
+    FldSetTextHandle(f_PasswdFld, (MemHandle) gRecord.passwdHandle);
+    FldSetTextHandle(f_NotesFld, (MemHandle) gRecord.notesHandle);
 }
 
 
@@ -244,7 +250,7 @@ static void KeyEditForm_Load(void)
     FrmDeleteForm(busyForm);
     FrmSetActiveForm(f_KeyEditForm);
 
-    KeyEditForm_FromUnpacked(f_KeyEditForm, &gRecord);
+    KeyEditForm_FromUnpacked();
     KeyEditForm_UpdateScrollbar();
 
     /* NotifyRegister is not present in 3.0.  We need to check for
