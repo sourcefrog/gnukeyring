@@ -1,0 +1,7 @@
+# Automatically added by dh_installdocs
+if [ "$1" = "configure" ]; then
+	if [ -d /usr/doc -a ! -e /usr/doc/keyring-link -a -d /usr/share/doc/keyring-link ]; then
+		ln -sf ../share/doc/keyring-link /usr/doc/keyring-link
+	fi
+fi
+# End automatically added section
