@@ -24,22 +24,15 @@
  * for correctly. */
 
 #include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
 
 #include "keyring.h"
-#include "memutil.h"
 #include "keydb.h"
-#include "crypto.h"
-#include "record.h"
 #include "passwd.h"
-#include "resource.h"
-#include "pwhash.h"
 #include "error.h"
 #include "uiutil.h"
 #include "auto.h"
-#include "reencrypt.h"
 #include "upgrade.h"
+
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
@@ -95,76 +88,22 @@ Boolean g_ReadOnly;
 
 
 
-/*
- * Get everything going: either open an existing DB (converting if
- * necessary), or create a new one, or return an error.
- */
-Err KeyDB_Init(void)
+
+Int16 Keys_IdxOffsetReserved(void)
 {
-    Err		err;
-    UInt16	ver;
-    
-    /* If the database doesn't already exist, then we require the user
-     * to set their password. */
-    err = KeyDB_OpenExistingDB();
-    
-    /* TODO: Check for dmErrReadOnly, dmErrROMBased and offer to open
-     * the database read only.  If so, and the version is old, then
-     * complain that we can't upgrade it. */
-    
-    if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
-	return err;		/* error already reported */
-    } else if (err) {
-	goto failDB;
-    } else {
-	/* So, we opened a database OK.  Now, is it old, new, or just right? */
-	if ((err = KeyDB_GetVersion(&ver)))
-	    goto failDB;
-	if (ver < kDatabaseVersion) {
-	    if (Keyring_OfferUpgrade()) {
-		if ((err = UpgradeDB(ver)))
-		    return err;
-
-	        /* We always mark the database here, because we may
-		 * have converted from an old version of keyring that
-		 * didn't do that. */
-		if ((err = KeyDB_MarkForBackup()))
-		    goto failDB;
-
-	    } else {
-		return 1;
-	    }
-	} else if (ver > kDatabaseVersion) {
-             Keyring_TooNew();
-             return 1;
-	}
-    }
-
-    return 0;
-
- failDB:
-    UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
-    return err;
+    if (gPrefs.category == 0 || gPrefs.category == dmAllCategories) 
+	return kNumHiddenRecs;
+    else
+	return 0;
 }
 
 
 
-/*
- * Set the master password for the database.  This is called after the
- * user has entered a new password and it has been properly checked,
- * so all it has to do is the database updates.  This routine is also
- * called when we're setting the initial master password for a newly
- * created database.
- *
- * This routine must do two things: re-encrypt the session key and
- * store it back, and store a check hash of the new password.
- */
-void KeyDB_SetPasswd(Char *newPasswd)
+static Boolean KeyDB_OfferReadOnly(void)
 {
-     PwHash_Store(newPasswd);
-     KeyDB_Reencrypt(newPasswd);
-     Unlock_PrimeTimer();
+    return FrmAlert(alertID_OfferReadOnly) == 0;	/* button 0 = ok */
 }
+
 
 
 /*
@@ -173,7 +112,7 @@ void KeyDB_SetPasswd(Char *newPasswd)
  * Will return an error if the database does not exist, in which case
  * you can try to create a new one.  
  */
-Err KeyDB_OpenExistingDB(void) {
+static Err KeyDB_OpenExistingDB(void) {
      Err err;
     
      // TODO: Give people the option to name the database, or to create
@@ -187,8 +126,28 @@ Err KeyDB_OpenExistingDB(void) {
                                    &gKeyDBCardNo, NULL)))
           return err;
 
-     /* XXX: Just for testing read-only support. */
-     // g_ReadOnly = true;
+     g_ReadOnly = false;
+
+     return 0;
+}
+
+
+static Err KeyDB_OpenReadOnly(void)
+{
+     Err err;
+    
+     // TODO: Give people the option to name the database, or to create
+     // it on different cards?
+     gKeyDB = DmOpenDatabaseByTypeCreator(kKeyDBType, kKeyringCreatorID,
+                                          dmModeReadOnly);
+     if (!gKeyDB)
+          return DmGetLastErr();
+
+     if ((err = DmOpenDatabaseInfo(gKeyDB, &gKeyDBID, NULL, NULL,
+                                   &gKeyDBCardNo, NULL)))
+          return err;
+
+     g_ReadOnly = true;
 
      return 0;
 }
@@ -237,7 +196,8 @@ Err KeyDB_CreateReservedRecords(void)
 }
 
 
-Err KeyDB_SetVersion(void) {
+Err KeyDB_SetVersion(void) 
+{
     UInt16 version = kDatabaseVersion;
     return DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID,
 			     NULL, NULL,
@@ -247,7 +207,32 @@ Err KeyDB_SetVersion(void) {
 }
 
 
-Err KeyDB_CreateDB(void) {
+/* Set the backup bit.  It seems that without this the Windows desktop
+ * software doesn't make the backup properly */
+static Err KeyDB_MarkForBackup(void) {
+    UInt16 attr;
+    
+    /* TODO: Here or elsewhere set the database version! */
+    
+    DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL, &attr, NULL, NULL,
+		   NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    attr |= dmHdrAttrBackup;
+    DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL, &attr, NULL, NULL,
+		      NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+    return 0;
+}
+
+
+static Err KeyDB_GetVersion(UInt16 *ver) {
+    return DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, 0, 0,
+			  ver,
+			  0, 0, 0, 0,
+			  0, 0, 0, 0);
+}
+
+
+static Err KeyDB_CreateDB(void) {
     Err err;
 
     gKeyDBCardNo = 0;
@@ -290,35 +275,75 @@ Err KeyDB_CreateDB(void) {
 }
 
 
-/* Set the backup bit.  It seems that without this the Windows desktop
- * software doesn't make the backup properly */
-Err KeyDB_MarkForBackup(void) {
-    UInt16 attr;
-    
-    /* TODO: Here or elsewhere set the database version! */
-    
-    DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL, &attr, NULL, NULL,
-		   NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    attr |= dmHdrAttrBackup;
-    DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID, NULL, &attr, NULL, NULL,
-		      NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
-    return 0;
-}
 
 
-Err KeyDB_GetVersion(UInt16 *ver) {
-    return DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, 0, 0,
-			  ver,
-			  0, 0, 0, 0,
-			  0, 0, 0, 0);
-}
-
-
-Int16 Keys_IdxOffsetReserved(void)
+/*
+ * Get everything going: either open an existing DB (converting if
+ * necessary), or create a new one, or return an error.
+ */
+Err KeyDB_Init(void)
 {
-    if (gPrefs.category == 0 || gPrefs.category == dmAllCategories) 
-	return kNumHiddenRecs;
-    else
-	return 0;
+     Err                err;
+     UInt16     ver;
+    
+     /* If the database doesn't already exist, then we require the user
+      * to set their password. */
+     err = KeyDB_OpenExistingDB();
+    
+     /* TODO: Check for dmErrReadOnly, dmErrROMBased and offer to open
+      * the database read only.  If so, and the version is old, then
+      * complain that we can't upgrade it. */
+
+     if (err == dmErrReadOnly || err == dmErrROMBased) {
+          if (!KeyDB_OfferReadOnly())
+               return appCancelled;
+
+          if ((err = KeyDB_OpenReadOnly()))
+               goto failDB;
+          
+          if ((err = KeyDB_GetVersion(&ver)))
+               goto failDB;
+          
+          if (ver > kDatabaseVersion) {
+               Keyring_TooNew();
+               return appCancelled;
+          } else if (ver != kDatabaseVersion) {
+               FrmAlert(alertID_UpgradeReadOnly);
+               return appCancelled;
+          }
+
+          /* OK! */
+     } else if (err == dmErrCantFind && (err = KeyDB_CreateDB())) {
+          return err;           /* error already reported */
+     } else if (err) {
+          goto failDB;
+     } else {
+          /* So, we opened a database OK.  Now, is it old, new, or just right? */
+          if ((err = KeyDB_GetVersion(&ver)))
+               goto failDB;
+          if (ver < kDatabaseVersion) {
+               if (Keyring_OfferUpgrade()) {
+                    if ((err = UpgradeDB(ver)))
+                         return err;
+
+                    /* We always mark the database here, because we may
+                     * have converted from an old version of keyring that
+                     * didn't do that. */
+                    if ((err = KeyDB_MarkForBackup()))
+                         goto failDB;
+
+               } else {
+                    return 1;
+               }
+          } else if (ver > kDatabaseVersion) {
+               Keyring_TooNew();
+               return appCancelled;
+          }
+     }
+
+     return 0;
+
+ failDB:
+     UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+     return err;
 }

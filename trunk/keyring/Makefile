@@ -22,7 +22,7 @@ HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
 		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
 		resource.h util.h crypto.h export.h keyedit.h		\
 		memutil.h pwhash.h uiutil.h snib.h pack.h unpack.h	\
-		reencrypt.h sort.h
+		reencrypt.h sort.h 
 
 # 		  libdes/des_enc.c
 

@@ -33,6 +33,7 @@
 #include "pwhash.h"
 #include "crypto.h"
 #include "snib.h"
+#include "reencrypt.h"
 
 // ======================================================================
 // Unlock form
@@ -44,6 +45,26 @@
 
 
 static FieldPtr    f_entryFld;
+
+
+
+
+/*
+ * Set the master password for the database.  This is called after the
+ * user has entered a new password and it has been properly checked,
+ * so all it has to do is the database updates.  This routine is also
+ * called when we're setting the initial master password for a newly
+ * created database.
+ *
+ * This routine must do two things: re-encrypt the session key and
+ * store it back, and store a check hash of the new password.
+ */
+void KeyDB_SetPasswd(Char *newPasswd)
+{
+     PwHash_Store(newPasswd);
+     KeyDB_Reencrypt(newPasswd);
+     Unlock_PrimeTimer();
+}
 
 
 void Unlock_PrimeTimer(void) {
