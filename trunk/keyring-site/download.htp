@@ -1,0 +1,73 @@
+<set chapter="download">
+<set rcsid="$$Id$$">
+
+<file template="keyring.htt">
+
+
+<set cur_ver="1.2.1">
+
+<def name="dlentry" option="icon file desc">
+  <tr><td>
+  <a href="http://prdownloads.sourceforge.net/gnukeyring/${file}"><img src="icons/$icon" border="0" alt="&nbsp;" align="center"><code><use file></code></a>
+  </td><td><use desc></td></tr>
+</def>
+<def name="zipentry"  option="code lang">
+  <dlentry icon="binary.gif" 
+           file="keyring-${cur_ver}-${code}.zip" 
+           desc="${lang} PRC binary + support files">
+</def>
+
+<section title="download">
+
+  <use gplstatement>
+
+<!--- use beta_warning --->
+
+  <table>
+    <zipentry code="en" lang="English">
+    <zipentry code="da" lang="Danish">
+    <zipentry code="de" lang="German">
+    <zipentry code="es" lang="Spanish">
+    <zipentry code="fr" lang="French">
+    <zipentry code="it" lang="Italian">
+    <zipentry code="ja" lang="Japanese">
+    <zipentry code="nb" lang="Norwegian (Bokmål)">
+    <zipentry code="nn" lang="Norwegian (nynorsk)">
+    <zipentry code="nl" lang="Dutch">
+    <zipentry code="pt" lang="Portuguese">
+    <zipentry code="sv" lang="Swedish">
+    <!--- dlentry  icon="compressed.gif" file="keyring-${cur_ver}.zip" 
+	      desc="Zip archive of all binaries"--->
+    <dlentry  icon="compressed.gif" file="keyring-${cur_ver}.tar.gz" 
+	      desc="Tar-ball of sources">
+    <dlentry  icon="text.gif" file="keyring-${cur_ver}.news" 
+	      desc="Release notes, MD5 checksums and GPG signature">
+  </table>
+
+  Older versions are available from the 
+  <a href="http://sourceforge.net/project/showfiles.php?group_id=306">SourceForge download site</a>.
+
+   Install keyring-xx.prc as well as the two xxxLib.prc binaries on your
+   handheld.  <Product> will
+   create a blank database the first time it runs.  <Product> ought to
+   run on any device with PalmOS 3.0 or later, but please let me know
+   how you go.  I test it on a PalmVx with PalmOS 3.5.2.
+   It is reported that <Product> runs on Palm Tungsten with PalmOS 5.0.
+
+   If you already have a previous version of <Product> installed on your
+   handheld you can simply hotsync the new prc file to upgrade.  Keep
+   a backup of your key database in case something goes wrong.
+
+   The current version does not work on PalmOS 2.0.
+
+  <rule>
+
+  You might be interested in
+   <a href="http://sourceforge.net/softwaremap/trove_list.php?form_cat=223"
+    other PalmOS projects on SourceForge}.  
+
+  The current version of the development source is also available from 
+  <a href="http://sourceforge.net/cvs/?group_id=306">CVS in SourceForge</a>.
+  You can also browse the source through 
+  <cvslink file="" desc="ViewCVS">
+</section>

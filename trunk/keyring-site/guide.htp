@@ -1,0 +1,80 @@
+<set chapter="user's guide">
+<set rcsid="$$Id$$">
+
+<file template="keyring.htt">
+
+<def name=screenshot option="filename caption">
+  <a href="snaps/$filename"><img src="snaps/$filename" alt="$caption"></a>
+</def>
+
+<section title="user's guide">
+
+  <p>Keyring for PalmOS stores records called &quot;keys&quot;, each
+  of which can contain
+
+  <ul><li>A non-secret name for the key</li>
+  <li>An account name</li>
+  <li>A password</li>
+  <li>Free-form notes</li></ul>
+
+</section>
+
+<section title="master password">
+
+<p>The first time you start keyring it will ask you for a <em>master
+password</em>.  If you're a first time user who wants to test keyring
+just leave the password empty.  But if you store confidential
+information in keyring you should use a good password.  A random
+digit/letter/punctuation combination of at least 8 characters is
+strongly suggested.  Of course you can also use longer passwords of up
+to 40 characters.
+
+<p>The master password protects all your data.  To view or edit
+records, you must enter the master password.  You can change it at any
+time through the &quot;Set Password&quot; menu command in the list
+view.  If you should ever loose your password there is no way to
+recover your data except by trying all possible passwords brute-force.
+Keyring doesn't restrict the number of password guesses because this
+would have no effect for an attacker who would try to open the backup
+database on his PC.
+</section>
+
+<section title="locking and unlocking">
+
+<p>Keyring can remember your master password for a limited time, which
+can be specified in the preferences dialog.  When you enter your
+password the database is unlocked and will be locked again
+automatically when after the time elapsed.  The small lock icon in the
+top right corner tells you the state and allows you to quickly lock the
+database.
+
+<p>When you view or edit a record and the password times out the
+record will be closed the next time your palm is turned off, whether
+automatically or manually.  Due to Palm OS limitation this doesn't
+work when you are in a dialog, though.
+</section>
+
+<section title="day use">
+
+<p>The name is shown in the list view even when the database is
+locked, so it should contain enough information to let you identify
+the record, but nothing confidential.  If no name is assigned, a
+stable unique ID is shown instead.
+
+<p><screenshot filename="list_categories.png" caption="List of passwords and categories">
+
+<p>You can quickly jump to an entry by entering the first character
+via Graffiti.  You can also search via the Palm OS search dialog.
+This will do a full-text search only if your database is unlocked and
+keyring is active.
+
+<p>Click on an entry to view or edit the contents.  When you need to
+set a password, Keyring for Palm OS can generate a random password of
+specified length, optionally including letters, numbers or symbols.
+Use the &quot;Generate&quot; button in the key edit form to do this.
+
+<p><screenshot filename="snap01.png" caption="Editing a key">
+   <screenshot filename="generate01.png" caption="Generating a new password">
+  <screenshot filename="exported01.png" caption="Key exported to the memo pad">
+
+</section>

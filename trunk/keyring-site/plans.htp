@@ -1,0 +1,49 @@
+<set chapter="development plans">
+<set rcsid="$$Id$$">
+
+<opt verbose>
+<file template="keyring.htt">
+
+<block head>
+  <centerquote source="anonymous">
+     A program is only complete when its last user is dead.
+  </centerquote>
+</block>
+
+<section title="next release">
+  Still have to think about it....
+  <ul>
+    <li>Provide a Java PC interface.</li>
+  </ul>
+</section>
+
+<section title="later versions">
+  <ul>
+    <li>Fields in the edit screen 
+	<patchlink id=209629 bugname="grow to fit their contents">
+        (like Address Book),
+        or buttons to zoom onto fields so that longer entries may be
+        edited (like Mail)</li>
+    <li>Keep multiple key databases on the same handheld and choose
+    between them,  each one having it's own password.</li>
+    <li>Beaming of records, or whole categories of records</li>
+    <li><patchlink id=205112 bugname="Choose from the PalmOS standard fonts"></li>
+    <li><patchlink id=214373 bugname="Import from Memo Pad"></li>
+    <li>Reminders to change passwords.</li>
+    <li>More national language translations, or translations of these
+    web pages.  Volunteers?</li>
+  </ul>
+</section>
+<section title="possibilities">
+  (<externallink 
+    href="https://sourceforge.net/tracker/?atid=350306&amp;group_id=306&amp;func=browse"
+    name="Add your comments"> if you want them!)
+
+  <ul>
+    <li>Import/Export whole categories.</li>
+<!---    <li>Check how \Product can run on PalmOS 2.0 again.</li>--->
+    <li>Encrypt databases of other applications.</li>
+    <li>Port to <externallink href="http://www.pocketlinux.com/"
+         name="PocketLinux">.</li>
+  </ul>
+</section>

@@ -1,0 +1,24 @@
+<set chapter="how to help">
+<set rcsid="$$Id$$">
+
+<file template="keyring.htt">
+
+<section title="how to help">
+  You can help make Keyring better!  Here's how:
+ 
+  <ul>
+    <li> If you speak a language other than English, download the
+	 latest <cvslink file="keyring/keyring.rcp.in" desc="resource file">
+         and translate the resources into another language.</li>
+    <li> Send email to say thankyou.</li>
+    <li> Send a patch to fix a
+     <a href="https://sourceforge.net/bugs/?group_id=306">bug</a>
+     or implement a new feature.
+    </li>
+  </ul>
+
+  You can either send your changes to the <pagelink id="lists"
+  name="gnukeyring-discuss"> mailing list, or to the <a
+  href="https://sourceforge.net/patch/?group_id=306">SourceForge
+  patch manager</a>.
+</section>

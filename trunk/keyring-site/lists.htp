@@ -1,0 +1,25 @@
+<set chapter="lists">
+<set rcsid="$$Id$$">
+
+<file template="keyring.htt">
+
+<def name=listlinks option="name">
+  [<a href="http://sourceforge.net/mailarchive/forum.php?forum=${name}"
+   >archives</a>,
+   <a href="http://lists.sourceforge.net/mailman/listinfo/${name}"
+   >subscribe</a>]
+</def>
+
+<block content>
+  <p>There are two mailing lists for <Product>.
+
+  <p><b>gnukeyring-announce</b>: Moderated.  Low-volume announcements 
+    of new <Product> releases or other important news. 
+    <listlinks name="gnukeyring-announce">
+
+  <p><b>gnukeyring-discuss</b>: Discussion between people using or 
+    developing <Product>.  <listlinks name="gnukeyring-discuss">
+
+  <p>List facilities are kindly provided by 
+  <externallink href="https://sourceforge.net/" name="SourceForge">.
+</block>
