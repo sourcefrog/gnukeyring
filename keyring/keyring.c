@@ -36,7 +36,6 @@
 #include "error.h"
 #include "beta.h"
 #include "auto.h"
-#include "memdebug.h"
 
 /* TODO: Call MemSetDebugMode!!  Let people turn this on and off at
  * runtime through some kind of magic keystroke. */
@@ -316,16 +315,6 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	FldUndo(fld);
 	result = true;
 	break;
-
-    case MemAllHeapsCmd:
-    case MemFillFreeCmd:
-    case MemScrambleOnAllCmd:
-    case MemScrambleOnChangeCmd:
-    case MemCheckOnAllCmd:
-    case MemCheckOnChangeCmd:
-    case MemRecordMinDynHeapFreeCmd:
-	App_SetMemDebug(itemId);
-	return true;
     }
 
     return result;
