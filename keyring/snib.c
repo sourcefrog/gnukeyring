@@ -39,7 +39,12 @@
  * We want to make fairly sure that this data cannot be stolen off the
  * handheld, so we destroy it on timeout.  At the moment that's only
  * when the timer expires, but eventually we should have a timer to
- * check it.  */
+ * check it.
+ *
+ * FIXME: if the Keyring database is restored from backup, then the
+ * application can be confused by a mismatched snib.  Therefore
+ * ideally there would be some kind of cross-checking between them.
+ */
 
 
 
