@@ -409,22 +409,24 @@ Err KeyDB_Init(void)
 
      /* So, we opened a database OK.  Now, is it old, new, or
 	just right? */
-     if ((err = KeyDB_GetVersion(&ver)))
-	 goto failDB;
+     if ((err = KeyDB_GetVersion(&ver))) {
+	 UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	 goto closeDB;
+     }
      if (ver < kDatabaseVersion) {
 	 if (g_ReadOnly) {
 	     FrmAlert(alertID_UpgradeReadOnly);
-	     return appCancelled;
+	     goto closeDB;
 	 }
 
 	 if ((err = UpgradeDB(ver))) {
 	     if (err != appErrMisc && err != appCancelled)
 		 UI_ReportSysError2(UpgradeFailedAlert, err, __FUNCTION__);
-	     return err;
+	     goto closeDB;
 	 }
      } else if (ver > kDatabaseVersion) {
 	 FrmAlert(TooNewAlert);
-	 return appCancelled;
+	 goto closeDB;
      }
 
      if (!g_ReadOnly) {
@@ -442,6 +444,11 @@ Err KeyDB_Init(void)
 
  failDB:
      UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+     return err;
+
+ closeDB:
+     DmCloseDatabase(gKeyDB);
+     gKeyDB = 0;
      return err;
 }
 
