@@ -33,6 +33,33 @@
 // =====================================================================
 // List form
 
+
+static Int16 ListForm_RecordIdx(Int16 itemNum)
+{
+    Int16	idx = 0;
+    Err		err;
+
+    /* FIXME: We need to skip the first few reserved records, but that
+     * depends on the category: if it is zero (if that's their
+     * category) or all, then we must increase the itemNum; otherwise
+     * not.
+     *
+     * Also, we need to selectively reduce the number of records in
+     * the list by that amount, and also compensate when mapping list position
+     * to record idx.
+     *
+     * Is there no "hidden" bit we can set to avoid all this?
+     */
+    err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum,
+				 dmSeekForward, gPrefs.category);
+
+    if (err != errNone) {
+	return -1;
+    } 
+
+    return idx;
+}
+
 static void ListForm_ListDraw(Int16 itemNum,
 			      RectanglePtr bounds,
 			      Char * UNUSED(*data))
@@ -43,30 +70,21 @@ static void ListForm_ListDraw(Int16 itemNum,
     /* This could be faster if we remembered the current position and
      * stepped forward to the next.  However it's not worth optimizing
      * since it will likely change to be a table in the future. */
-    MemHandle rec = 0;
-    Char * recPtr = 0, *scrStr;
+    MemHandle	rec = 0;
+    Char       *recPtr = 0, *scrStr;
     UInt16	len;
-    Char altBuf[30];
-    UInt16 idx;
-    Err		err;
+    Char	altBuf[10];
+    Int16	idx;
 
-    ErrFatalDisplayIf(!gKeyDB, __FUNCTION__ ": !gKeyDB");
     ErrFatalDisplayIf(itemNum > 10000, __FUNCTION__ ": unreasonable itemnum");
 
-    /* FIXME: We need to skip the first few reserved records, but that
-     * depends on the category: if it is zero (if that's their
-     * category) or all, then we must increase the itemNum; otherwise
-     * not. */
-    idx = 0;
-    err = DmSeekRecordInCategory(gKeyDB, &idx, itemNum,
-				 dmSeekForward, gPrefs.category);
-    if (err != errNone) {
-	scrStr = "<err>";
+    idx = ListForm_RecordIdx(itemNum);
+    if (idx == -1) {
+    	scrStr = "<err>";
 	goto draw;
-    } 
+    }
 
     rec = DmQueryRecord(gKeyDB, idx);
-	
     if (!rec) {
 	scrStr = "<no-record>";
 	goto draw;
@@ -79,12 +97,9 @@ static void ListForm_ListDraw(Int16 itemNum,
     }
     
     if (!*recPtr) {
-	// If there is no name, use the uniqueid instead
-	UInt32 uniqueID;
-	
-	DmRecordInfo(gKeyDB, idx, 0, &uniqueID, 0);
-	altBuf[0] = 23;		// shortcut symbol
-	StrIToH(altBuf + 1, uniqueID);
+	// If there is no name, use the record index instead
+	altBuf[0] = '#';
+	StrIToA(altBuf + 1, idx);
 	scrStr = altBuf;
     } else {
 	scrStr = recPtr;
