@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 by Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,6 +162,20 @@ static void ListForm_ScrollRepeat(EventPtr event) {
 }
 
 
+static void ListForm_ScrollPage(DirectionType dir) {
+    ListPtr list = (ListPtr) UI_ObjectFromActiveForm(KeysList);
+    ScrollBarPtr scl = (ScrollBarPtr)
+        UI_ObjectFromActiveForm(KeysListScrollBar);
+    UInt visRows = LstGetVisibleItems(list);
+    Short value, min, max, pageSize;
+
+    LstScrollList(list, dir, visRows);
+    SclGetScrollBar(scl, &value, &min, &max, &pageSize);
+    value += (dir == down) ? visRows : -visRows;
+    SclSetScrollBar(scl, value, min, max, pageSize);
+}
+
+
 Boolean ListForm_HandleEvent(EventPtr event) {
     Boolean result = false;
     
@@ -194,6 +208,17 @@ Boolean ListForm_HandleEvent(EventPtr event) {
     case sclRepeatEvent:
 	ListForm_ScrollRepeat(event);
 	break;
+
+    case keyDownEvent:
+        if (event->data.keyDown.chr == pageUpChr) {
+            ListForm_ScrollPage(up);
+            result = true;
+        }
+        else if (event->data.keyDown.chr == pageDownChr) {
+            ListForm_ScrollPage(down);
+            result = true;
+        }
+        break;
 
     default:
 	;	
