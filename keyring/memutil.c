@@ -1,4 +1,5 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
  * Tightly Bound -- store passwords securely on a handheld
@@ -25,40 +26,12 @@
 
 #include "keyring.h"
 #include "memutil.h"
-
-#ifndef REALLY_OBLITERATE
-#  define OBLIT_USED __attribute__((unused))
-#endif /* !REALLY_OBLITERATE */
+#include "auto.h"
+#include "uiutil.h"
 
 // ======================================================================
 // Memory and database management routines
 
-/* Scribble over all memory allocated to a handle.  It's OK to pass a null
- * handle */
-void Mem_ObliterateHandle(MemHandle h OBLIT_USED) {
-#if REALLY_OBLITERATE
-    Char * ptr;
-
-    if (!h)
-	return;
-
-    ptr = MemHandleLock(h);
-    Mem_ObliteratePtr(ptr);
-   
-    MemHandleUnlock(h);
-#endif /* REALLY_OBLITERATE */
-}
-
-
-void Mem_ObliteratePtr(void * ptr OBLIT_USED) {
-#if REALLY_OBLITERATE
-    UInt32 size = MemPtrSize(ptr);
-    if (!size)
-	return;
-    MemSet(ptr, size-1, 'X');
-    ((Char *) ptr)[size-1] = '\0';
-#endif /* REALLY_OBLITERATE */
-}
 
 
 /* Return handle of a new chunk containing a copy of the string at
@@ -105,6 +78,12 @@ static MemHandle Mem_StrToHandle(Char * srcPtr, Int16 *remain, Int16 *len) {
  */
 MemHandle Mem_ReadString(Char **ptr, Int16 *remain, Int16 * len) {
     MemHandle h;
+
+    if (*remain <= 0) {
+        FrmCustomAlert(ID_KeyDatabaseAlert,
+                       "record underflow", __FUNCTION__, "");
+        return NULL;
+    }
     
     h = Mem_StrToHandle(*ptr, remain, len);
 
@@ -121,7 +100,7 @@ void Mem_ReadChunk(Char * *ptr, UInt32 len, void * dest) {
 }
 
 
-void Mem_CopyFromHandle(Char * *dest, MemHandle h, UInt32 len)
+void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len)
 {
     if (h) {
 	Char * p = MemHandleLock(h);
