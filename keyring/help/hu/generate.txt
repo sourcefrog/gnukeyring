@@ -1,0 +1,5 @@
+A generálással egy véletlen jelszót készíthetsz ehhez a bejegyzéshez.
+
+A hosszúság a jelszó karaktereinek száma.
+
+Az engedélyezett karaktercsoportokból állít össze egy véletlen jelszót. Ha a kiejthetõ opció be van kapcsolva, akkor kisbetûs, kiejthetõ lesz a jelszó.
