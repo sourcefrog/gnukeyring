@@ -22,7 +22,13 @@
 /* FIXME: MemoPad limits memos to 4kb.  We should use that too, and
  * make sure that we never write out more text than can be accepted.
  * I think we're safe, because all our edit fields have smaller
- * lengths */
+ * lengths.
+ *
+ * FIXME: - Selecting a record to export to memo results in
+ * "...possible memory leak...". The only time in my limited Palm
+ * programming I ran into this was because all forms weren't closed
+ * before exiting my app.  I'm not sure this is really a problem, as
+ * memory should be given back by the fact Keyring has exited.  -- Dell */
 
 #include <PalmOS.h>
 #include <Password.h>

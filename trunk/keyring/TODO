@@ -1,7 +1,5 @@
 -*- outline -*- 
 
-* Use exceptions for error handling.
-
 * Sound
 
 * Check that when the category is changed, the title updates too
@@ -12,10 +10,12 @@
 
 * Implement our own encryption algorithm
 
-So we can run on PalmOS2
+So we can run on PalmOS2.
 
-* Optionally check for password when entering the app, rather than when opening a key. 
+Perhaps build a separate version of the app, so that people who have
+OS3 or later don't need to waste memory storing it.
 
+* Optionally check for password when entering the app, rather than when opening a key
 * Relock on power-on
 
 Option in the preferences dialog to do this, I think.
@@ -51,6 +51,8 @@ DONE Generate random passwords matching certain conditions
 Upper/lower/punct/digits/spaces?  Break into words?  Length?
 
 * Script to decode records on PC
+
+* Use exceptions for error handling?
 
 * Soft arrows to flip through records
 
@@ -135,14 +137,6 @@ while locked.  Perhaps clicking that icon ought to relock the keyring.
 * Database info.  Multiple dbs?
 
 * Check password timeout when paging?
-
-* Keep temporary key in a locked DB
-
-This way we won't relock when switching applications.
-
-* Screenshots
-
-* Beep appropriately
 
 ** Wrong password
 ** Lock/unlock
