@@ -87,3 +87,40 @@ Boolean Category_Selected(Int16 *category, Boolean showAll)
     return categoryEdited;
 }
 
+
+Err KeyDB_CreateCategories(void)
+{
+    LocalID		appInfoID;
+    MemHandle h;
+    AppInfoPtr		appInfoPtr;
+
+    if (DmDatabaseInfo(gKeyDBCardNo, gKeyDBID, 0, 0, 0, 0,
+		       0, 0, 0,
+		       &appInfoID, 0, 0, 0))
+	return dmErrInvalidParam;
+
+    if (appInfoID == 0) {
+	h = DmNewHandle(gKeyDB, sizeof(AppInfoType));
+	if (!h)
+	    return DmGetLastErr();
+                
+	appInfoID = MemHandleToLocalID(h);
+	DmSetDatabaseInfo(gKeyDBCardNo, gKeyDBID,
+			  0,0,0,0,
+			  0,0,0,
+			  &appInfoID, 0,0,0);
+    }
+    appInfoPtr = MemLocalIDToLockedPtr(appInfoID, gKeyDBCardNo);
+
+    /* Clear the app info block. */
+    DmSet(appInfoPtr, 0, sizeof(AppInfoType), 0);
+
+    /* Initialize the categories. */
+    CategoryInitialize(appInfoPtr, CategoryRsrc);
+
+    MemPtrUnlock(appInfoPtr);
+
+    return 0;
+}
+
+

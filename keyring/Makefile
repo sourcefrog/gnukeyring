@@ -8,8 +8,8 @@
 # $Header$
 
 APP             = keyring
-ICONTEXT        = "KeyringTest"
-APPID           = "GtkR"
+ICONTEXT        = "Keyring"
+APPID           = "Gtkr"
 
 # XXX: You may have to edit this to match your SDK installation
 #PALM_BASE       = /usr/local/include/palmos3.5
@@ -24,21 +24,16 @@ RESOURCES	= fontPW.txt fontstar.txt $(BITMAPS)
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
-		  setpasswd.c pwhash.c snib.c reencrypt.c sort.c	\
-		  secrand.c search.c pronounce.c sha1.c			\
+		  setpasswd.c pwhash.c snib.c reencrypt.c pack.c	\
+		  unpack.c sort.c secrand.c search.c pronounce.c
 
-ASMGEN          = sha1-m68k.pl
+GLIBDEF         = ssl-md.def ssl-des.def
 
-#GLIBDEF         = ssl-md.def ssl-des.def
-GLIBDEF         = ssl-des.def
+HEADERS	        = keyring.h record.h error.h \
+		  resource.h crypto.h pwhash.h snib.h includes.h        \
+		  pronounce.h
 
-HEADERS	        = sections.h sha1.h keyring.h record.h error.h    \
-		  resource.h crypto.h pwhash.h snib.h includes.h  \
-		  pronounce.h AESLib-noinline.h AESLib-inline.h
-
-OBJ		= $(subst .c,.o,$(SRC)) $(subst .def,-stubs.o,$(GLIBDEF)) \
-		  $(subst .pl,.o,$(ASMGEN)) \
-		  $(APP)-sections.o 
+OBJ		= $(subst .c,.o,$(SRC)) $(subst .def,-stubs.o,$(GLIBDEF))
 BIN             = $(APP).bin
 DEF		= $(APP).def $(GLIBDEF)
 EXE		= $(APP)
@@ -47,8 +42,6 @@ EN_PRC          = $(BASE)-en.prc
 
 CC              = m68k-palmos-gcc
 STUBGEN         = m68k-palmos-stubgen
-MULTIGEN        = m68k-palmos-multigen
-OBJCOPY         = m68k-palmos-objcopy
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
@@ -76,32 +69,29 @@ JAVA		= java
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 2.0-pre1
-DEFINES		= -DBETA -DkAppVersion=0x1991
+VERSION         = 1.2.2
+DEFINES		= -DkAppVersion=0x1022
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
-		-Wlarger-than-384 -Wshadow -Wcast-align
+		-Wlarger-than-260 -Wshadow -Wcast-align
 
-OPTIM		= -O2 -g -mdebug-labels
+OPTIM		= -O2 #-g -mdebug-labels
 INCLUDES        = -IpilotSSLeay/include
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
 HELP_TXT        = $(wildcard help/*/*.txt)
-AESLIBS         = COPYING.AESLib AESLib-SDK/PRC/AESLib.prc
-SSLEAYLIBS      = $(wildcard pilotSSLeay/shlib/DESLib.prc)
+SSLEAYLIBS      = $(wildcard pilotSSLeay/shlib/*.prc)
 SSLEAYINCS      = $(wildcard pilotSSLeay/include/*.h)
 SSLEAY          = $(SSLEAYINCS) $(SSLEAYLIBS)
 SCRIPTS         = script/mkproto.pl
 
-DOCS		= HACKING TODO TESTS doc/fips181.txt \
-		  doc/rfc-2104.txt doc/rfc-2898.txt doc/rfc-3174.txt
+DOCS		= HACKING TODO TESTS 
 
 SRC_DIST        = $(RCP_IN) Makefile $(RESOURCES) \
-		  $(DOCS) $(SRC) $(ASMGEN) $(HEADERS) $(DEF) \
+		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
 		  $(subst .def,-stubs.c,$(GLIBDEF)) \
-		  $(HELP_TXT) $(SCRIPTS) prondata.c \
-		  $(SSLEAY) $(AESLIBS)
+		  $(HELP_TXT) $(SCRIPTS) $(SSLEAY)
 
 TOP_DIST	= COPYING README INSTALL NEWS
 
@@ -115,7 +105,6 @@ ZIP		= zip
 SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 		   -e "s/__DATE__/$(BUILD_DATE)/g"
 
-DEFAULTLANG     = de
 
 # For a list of ISO language codes, see
 # http://www.loc.gov/standards/iso639-2/englangn.html
@@ -127,21 +116,20 @@ LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it \
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
-RESSTAMPS = $(foreach lang, $(LANGUAGES), $(lang).resstamp)
 
-default: $(BASE)-$(DEFAULTLANG).prc
+default: $(BASE)-en.prc
 
 all: $(PRCS) 
 
-$(PRCS): $(BASE)-%.prc: $(EXE) %.resstamp
-	cd res/$*; $(BUILDPRC) -o ../../$@ ../../$(APP).def ../../$(EXE) *.bin
+$(BASE)-%.prc: %.resstamp $(EXE)
+	cd res/$*; $(BUILDPRC) ../../$@ 'Keyring' Gtkr ../../$(EXE) *.bin
 
-$(RESSTAMPS): %.resstamp: $(BITMAPS) resource.h $(RCP) prondata.o
+%.resstamp: $(BITMAPS) resource.h 
+%.resstamp: $(RCP)
 	@[ -d res/$* ] || mkdir -p res/$*
 	@-rm -f res/$*/*
 	@-rm -f *.bin
 	$(PILRC) -allowEditID -H auto.h.tmp -q $(shell [ "$*" = ja ] && echo -Fj) -L $* $(RCP) res/$*/ >/dev/null
-	$(OBJCOPY) -Obinary prondata.o res/$*/PRON03e8.bin
 	@if cmp -s auto.h auto.h.tmp; then rm -f auto.h.tmp; \
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
@@ -157,11 +145,11 @@ $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	rm -fr $(tmpdir)
 
-$(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS) $(AESLIBS)
+$(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS)
 	$(ZIP) -jq9 $@ $^
 
 $(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
-	(cat NEWS ; md5sum $(PRCS) $(DIST_BALL) $(SSLEAYLIBS) $(AESLIBS);echo ) > NEWS.tmp
+	(cat NEWS ; md5sum $(PRCS) $(DIST_BALL) $(SSLEAYLIBS);echo ) > NEWS.tmp
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
 	@ls -l $(DIST_BIN) $(DIST_BALL)
@@ -174,45 +162,34 @@ $(RCP): $(RCP_IN) Makefile $(RESOURCES)
 	 sed $(SED_SUBST) $(RCP_IN)) > $@
 	@chmod -w $@
 
-$(APP)-sections.o $(APP)-sections.ld: $(APP).def
-	$(MULTIGEN) $(APP).def
-	$(CC) -c $(APP)-sections.s
-
-$(EXE): $(OBJ) $(APP)-sections.ld ;
-	@echo $(CC) $(OPTIM) $^ $(LIBS) -o $(EXE)
-	@$(CC) $(CFLAGS) $^ $(LIBS) -o $(EXE)
+$(EXE): $(OBJ) ;
+	$(CC) $(CFLAGS) $^ $(LIBS) -o $(EXE)
 
 # Rules for building overlays
 #
 # XXX The java program to build the overlays is still under construction
 # mail me (hoenicke at users.sf.net) if you're interested in the source.
 #
-$(DIST_OVL_ZIP): $(PRCS) $(SSLEAYLIBS) $(AESLIBS)
+$(DIST_OVL_ZIP): $(PRCS) $(SSLEAYLIBS)
 	@[ -d ovl ] || mkdir ovl
 	CLASSPATH=script/astroinfo-pdb.jar $(JAVA) \
 	net.sf.astroinfo.pdb.CreateOverlay ovl/$(BASE) \
 	$(LOCALES:<%=$(BASE)-%.prc)
-	$(ZIP) -jq9 $(BASE).zip ovl/* $(SSLEAYLIBS) $(AESLIBS)
+	$(ZIP) -jq9 $(BASE).zip ovl/* $(SSLEAYLIBS)
 
 # We try to avoid touching auto.h, because that will kick off
 # rebuilding a lot of source and it's often not necessary.
-auto.h: $(DEFAULTLANG).resstamp
+auto.h: en.resstamp
 
 %-stubs.c: %.def
 	$(STUBGEN) $<
-
-%.o: %.pl
-	$(PERL) $< > $*.s
-	$(CC) -c $*.s -o $@
-	@rm $*.s
 
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
 $(OBJ): $(HEADERS) auto.h prototype.h
 %.o: %.c
-	@echo $(CC) $(OPTIM) $< -o $*.o
-	@$(CC) $(CFLAGS) -c $< -o $*.o
+	$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
 	rm -f *.o *.d $(EXE) $(RCP) TAGS *.bin *.grc *.prc *.resstamp \

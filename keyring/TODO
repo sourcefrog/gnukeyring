@@ -47,20 +47,11 @@ Possible -------------------------------------------------------------
     This is only good if the pilot-xfer program resets the backup
     time when it makes a backup.  I'm not sure if it does.
 
-* Advise use of accented characters as they're much harder to guess.
-
-* Prevent people from choosing no options in the Generate dialog.
-
 * Scroll to show newly-inserted items
 
 * Export using localized field headings
 
 or perhaps don't export them at all.
-
-* Advice on secure passwords
-
-  minimum length; use of accented/extended characters; impact of pronounceable
-  passwords (full dictionary of all these can be surprisingly short)
 
 * Update pos when changing categories
 
@@ -68,53 +59,52 @@ or perhaps don't export them at all.
 
 * Newline in single-line fields should move down one field
 
+
+--- Enforcing good passwords: ---
+
+* Prevent people from choosing no options in the Generate dialog?
+
+* Advice on secure passwords
+
+  minimum length; use of accented/extended characters; impact of
+  pronounceable passwords (full dictionary of all these can be
+  surprisingly short)
+
+* Reminder to change the password
+
+for each record, put a reminder that it should be changed e.g. every N weeks.
+
 * Generate button when setting master password?
 
+* Setting initial password,  three possibilities:
+ 1. Require set password on first run
+    This is the current behaviour, but is it the best?  
+    Maybe it scares people who just want to try it.
+
+ 2. Default to empty
+    But then people might not realize they have to set a password.  This
+    would seem to encourage insecure behaviour. 
+
+ 3. Require set password when creating first record
+    Would this perhaps be a bit more friendly?  You play around much
+    without creating a record though.
+    
+* Safe way to change password and re-encrypt.  
+  Currently if reencryption crashes half of the database gets
+  unusable.  Maybe we should write to a new database, and only if
+  everything succeeded remove old database and rename new one.
+
 * Beaming
-
-* Safe way to change password and re-encrypt
-
-* Markov chain generation
-
-Generating a state table from a large amount of English text shows
-about 4900 three-character states occurred from the 19000 possible,
-which sounds about right.  We saw 252000 total transitions, so it
-should be quite balanced.
-
-To store this we'd need roughly 4900 elements in a list, each of which
-will have a pointer to the next state (hopefully just one byte) and a
-probability measure (also probably one byte).  There's also a little
-overhead for each character we emit.  So this is about 10k of data.
-I'm not sure if it's that useful.
-
-Alternatively, the FIPS 181 algorithm (see fips181.txt) gives a reasonable
-simulation of this, at a cost of about 5k total overhead (code + data).
-
-* Sound
 
 * Click field captions to zoom in on that form
-
-* Beaming
 
 * Check if we can run on PalmOS2.
 Does anyone still use these old devices?
 
-Problems: PalmOS2 doesn't support custom fonts
+Problems: PalmOS2 doesn't support custom fonts.
 
 * Attack tree
 Fill it out with more possible attacks.
-
-* Setting initial password
-
-** Require set password on first run
-This is the current behaviour, but is it the best?  
-
-** Default to empty
-But then people might not realize they have to set a password.  This
-would seem to encourage insecure behaviour. 
-
-** Require set password when creating first record
-Would this perhaps be a bit more friendly?
 
 * Support categories, and store in appinfo
 I think there's a standard format for this.  We might have to change
@@ -136,14 +126,15 @@ back to the list form.
 
 * PC conduit
 
-GNOME-pilot or JPilot? 
+There are already some (third-party supplied) conduits for keyring.
 
-On the flip side, it may be better *not* to offer this function: the
+On the flip side, it may be better *not* to use this function: the
 security issues to do with opening this information on the PC are very
 scary.  PCs can be broken across the network, and a GUI module can
 never be audited properly.
 
-So on the whole I am inclined _not_ to implement this.
+So on the whole I am inclined _not_ to implement this.  Though I may
+help others with file format and cryptographic issues.
 
 * Lost passwords
 
@@ -154,9 +145,14 @@ If people do lose their password we should offer the choice to delete
 all records.  If they use the app launcher's "Delete" function then
 they lose the Keyring application as well as their data.
 
+One may also try to brute-force lost passwords.  For most kinds of
+(badly chosen) passwords or if you can remember most of it this can be
+really effective.
+
 * Hint for forgotten passwords
 
-Set when setting password, display from password dialog.
+Set when setting password, display from password dialog.  But you can
+also put a hint into a Memo sheet if you need that.
 
 * Keep example databases from various releases to test compatibility
 
@@ -188,8 +184,7 @@ Really?  Yes, probably this would be good: better than decrypting on
 the PC.
 
 * Import memos
-
-* How to load in long data?
+  Other way how to load in long data?
 
 * New version that does 0kp to authenticate to a custom PAM module.
 
@@ -198,24 +193,6 @@ the PC.
 
 * Event loop timeout to show countdown?
 
-* GNOME-Pilot or JPilot conduit/module.
-
-* Database info.  Multiple dbs?
-
-* Check password timeout when paging?
-
-** Wrong password
-** Lock/unlock
-
-* Perhaps re-sort records after returning to list, not on save?
-
-* Better handling of error conditions
-Especially out of memory.
+* Better handling of error conditions.  Especially out of memory.
 
 * Store a password hint
-
-* Reminder to change the password
-
-for each record, put a reminder that it should be changed e.g. every N weeks.
-
-* Resize edit form fields when text is entered, like the address book

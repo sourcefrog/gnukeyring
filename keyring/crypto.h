@@ -21,15 +21,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-typedef struct {
-    UInt16 cipher;
-    UInt16 blockSize;
-    union {
-	des_key_schedule des[3];
-	struct {
-	    aes_ctx enc;
-	    aes_ctx dec;
-	    UInt16  refNum;
-	} aes;
-    } key;
-} CryptoKey;
+
+/* Sizes in bytes */
+#define kDESBlockSize		8
+#define kDESKeySize             8
+#define k2DESKeySize            16
+#define kMD5HashSize            16
+
+typedef des_key_schedule CryptoKey[2];
