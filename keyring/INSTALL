@@ -1,5 +1,8 @@
 Installing GNU Keyring for PalmOS
-Copyright (C) 1999-2002 by Martin Pool <mbp@users.sourceforge.net> and others.
+
+Copyright 1999-2002 The GNU Keyring Sourceforge Team
+
+  http://gnukeyring.sourceforge.net/
 
 Download and unpack the prc files directly from the sourceforge download
 page.  There are several Palm program files, one for each of the supported 
@@ -17,13 +20,13 @@ languages:
   sv	Swedish
 
 Install the appropriate application using your Palm Desktop or
-pilot-link software.
+pilot-link software.  Also install MDLib.prc and DESLib.prc.
 
 Under Linux, amongst other programs, you can use the Pilot-Link
 package.  After installing and configuring that package, use a command
 like:
 
-  $ pilot-link -i keyring-1.1-en.prc
+  $ pilot-link -i keyring-1.1-en.prc MDLib.prc DESLib.prc
 
 to install the application.
 
