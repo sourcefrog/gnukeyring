@@ -71,7 +71,7 @@ static UInt32 packBodyLen, packRecLen;
  * Calculate and store into packRecLen and packBodyLen the amount of
  * database space this key will use.
  */
-static void Keys_CalcPackedSize(UnpackedKeyType const *unpacked)
+void Keys_CalcPackedSize(UnpackedKeyType const *unpacked)
 {
     packBodyLen = unpacked->acctLen + 1
          + unpacked->passwdLen + 1
