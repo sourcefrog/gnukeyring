@@ -1285,8 +1285,7 @@ BEGIN
   "@@accel_Graffiti" = "G"
 END
 
-//
-======================================================================
+// ======================================================================
 // Finnish translation contributed by Kai K‰pˆl‰
 
 TRANSLATION "fi"
@@ -1347,14 +1346,11 @@ BEGIN
   "Delete current key record?" = "Poistetaanko nykyinen avain?"
 
   "@@BetaVersion"
-   = "T‰m‰ on Keyringin betaversio, jossa voi olla toimintavirheit‰.
-Muista varmuuskopioida t‰rke‰t tietosi!"
+   = "T‰m‰ on Keyringin betaversio, jossa voi olla toimintavirheit‰. Muista varmuuskopioida t‰rke‰t tietosi!"
 
-  "This is free software.  No warranty." = "T‰m‰ on ilmainen ja vapaa
-ohjelma. Ei takuuta!" 
+  "This is free software.  No warranty." = "T‰m‰ on ilmainen ja vapaa ohjelma. Ei takuuta!" 
 
-  "Released under the GNU GPL v2." = "Julkaistu lisenssit GNU GPL v2
-alaisuudessa." 
+  "Released under the GNU GPL v2." = "Julkaistu lisenssit GNU GPL v2 alaisuudessa." 
 
   "Save archive copy on PC" = "Tallenna kopio PC:n"
 
@@ -1385,9 +1381,7 @@ alaisuudessa."
 
   "@@GenerateHelp" = "help/fi/generate.txt"
   "@@KeyEditHelp" = "help/fi/keyedit.txt"
-  "@@SetPasswdHelp" = "P‰‰salasana suojaa kaikkia tietojasi, eik‰
-ilman sit‰ p‰‰se k‰siksi tietoihin. Mik‰li unohdat sen, et voi
-mitenk‰‰n k‰ytt‰‰ tietoja."
+  "@@SetPasswdHelp" = "P‰‰salasana suojaa kaikkia tietojasi, eik‰ ilman sit‰ p‰‰se k‰siksi tietoihin. Mik‰li unohdat sen, et voi mitenk‰‰n k‰ytt‰‰ tietoja."
 
   "There is no data to export." = "Ei ole tietoja l‰hetett‰v‰ksi."
 
