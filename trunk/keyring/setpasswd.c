@@ -54,7 +54,7 @@ Char * SetPasswd_Ask(void)
 	encoding = charEncodingPalmLatin;
 
     /* If encoding is not latin, use default system fonts. */
-    if (encoding == charEncodingPalmLatin) {
+    if (gPrefs.useCustomFonts && encoding == charEncodingPalmLatin) {
 	FldSetFont(masterFld, fntPassword);
 	FldSetFont(confirmFld, fntPassword);
     }

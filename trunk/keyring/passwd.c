@@ -28,7 +28,7 @@
 static void UnlockForm_SetFont(FormPtr frm, Boolean veil) {
     FontID font;
     if (veil) {
-	font = fntStar;
+	font = gPrefs.useCustomFonts ? fntStar : symbolFont;
     } else {
 	UInt32 encoding;
 	if (FtrGet(sysFtrCreator, sysFtrNumEncoding, &encoding))
@@ -36,10 +36,10 @@ static void UnlockForm_SetFont(FormPtr frm, Boolean veil) {
 	    encoding = charEncodingPalmLatin;
 
 	/* If encoding is not latin, use default fonts. */
-	if (encoding != charEncodingPalmLatin)
-	    font = stdFont;
-	else
+	if (gPrefs.useCustomFonts && encoding == charEncodingPalmLatin)
 	    font = fntPassword;
+	else
+	    font = stdFont;
     }
     FldSetFont(UI_GetObjectByID(frm, MasterKeyFld), font);
 }

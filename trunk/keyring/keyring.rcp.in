@@ -186,6 +186,7 @@ BEGIN
   "15 sec" = "15 Sek."
   "60 sec" = "1 Min."
   "5 min" = "5 Min."
+  "Use keyring fonts" = "Benutze Keyring-Schrift"
   "Veil password" = "Verschleiere Passwort"
 
   "Cancel" = "Abbrechen"
@@ -547,7 +548,7 @@ BEGIN
   "Save archive copy on PC" = "Bewaar een kopie op de PC"
 
   "@@BetaVersion"
-   = "Dit is een beta test versie van GNU Keyring. Het is mogelijk dat het bugs bevat. Maak alstublieft een kopie van onmisbare gegevens."
+   = "Dit is een beta test versie van Keyring. Het is mogelijk dat het bugs bevat. Maak alstublieft een kopie van onmisbare gegevens."
 
   "This is free software.  No warranty." = "Gratis software. Geen garantie." 
 
@@ -654,7 +655,7 @@ BEGIN
   "Save archive copy on PC" = "Archiver la copie sur le PC?"
 
   "@@BetaVersion"
-   = "Ceci est une version pilote d'essai de GNU Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de toutes données importantes."
+   = "Ceci est une version pilote d'essai de Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de toutes données importantes."
 
   "This is free software.  No warranty." = "Ce logiciel est gratuit et libre de droits. Il n'y a aucune garantie."
 
@@ -1193,7 +1194,7 @@ BEGIN
 END
 
 
-FORM ID ID_PrefsForm AT (2 96 156 62)
+FORM ID ID_PrefsForm AT (2 83 156 75)
 MODAL
 BEGIN
 	TITLE "Preferences"
@@ -1209,8 +1210,11 @@ BEGIN
 	PUSHBUTTON "5 min" ID Expiry300Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
 		GROUP 1
 
+	CHECKBOX "Use Keyring fonts" ID KeyringFontsCheck
+		AT (3 PREVBOTTOM+2 AUTO AUTO) FONT 1
+
 /*        CHECKBOX "Lock when switched off" ID ID_PowerOffLock 
-               AT (3 PREVBOTTOM+5 AUTO AUTO) FONT 1
+               AT (3 PREVBOTTOM+1 AUTO AUTO) FONT 1
 */
 	
 	BUTTON "OK" OkBtn AT (5 PREVBOTTOM+6 AUTO AUTO) 
@@ -1284,7 +1288,7 @@ BEGIN
 	LABEL "Enter your password:" AUTOID AT (3 15) FONT 1
 
 	FIELD ID MasterKeyFld AT (3 prevbottom+1 150 auto)
-		UNDERLINED MAXCHARS 40 FONT fntStar
+		UNDERLINED MAXCHARS 40
 
         CHECKBOX "Veil password" ID VeilPasswordCheck
                 AT (3 PREVBOTTOM+1 AUTO AUTO)

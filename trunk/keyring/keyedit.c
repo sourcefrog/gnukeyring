@@ -505,7 +505,7 @@ static void KeyEditForm_PrepareFields(void)
 	encoding = charEncodingPalmLatin;
 
     /* If encoding is latin use our special password font. */
-    if (encoding == charEncodingPalmLatin) {
+    if (gPrefs.useCustomFonts && encoding == charEncodingPalmLatin) {
 	FldSetFont(f_AllFields[k_Acct], fntPassword);
 	FldSetFont(f_AllFields[k_Passwd], fntPassword);
     }
