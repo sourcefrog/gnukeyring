@@ -1,1 +1,0 @@
-Sie können festlegen, wie lange der Zugriff auf den Keyring erlaubt bleibt, nachdem sie ihr Passwort eingegeben haben.  Wenn sie zu einer anderen Anwendung wechseln, wird der Keyring automatisch gesperrt.

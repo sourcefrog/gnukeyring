@@ -30,13 +30,14 @@
 #include "keydb.h"
 #include "uiutil.h"
 #include "prefs.h"
+#include "auto.h"
 
 // ======================================================================
 // Preferences
 
 void PrefsForm_Run(void) {
     FormPtr 	prevFrm = FrmGetActiveForm();
-    FormPtr	frm = FrmInitForm(PrefsForm);
+    FormPtr	frm = FrmInitForm(ID_PrefsForm);
     UInt16	btn;
     Int16		chosen;
     
