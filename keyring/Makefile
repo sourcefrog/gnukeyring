@@ -67,7 +67,7 @@ JAVA		= java
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.2-pre3
+VERSION         = 1.2
 DEFINES		= -DBETA -DkAppVersion=0x1012
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
@@ -132,7 +132,7 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
 
-dist: $(DIST_BALL) $(DIST_ZIP) $(DIST_NEWS)
+dist: $(DIST_BALL) $(DIST_BIN) $(DIST_NEWS)
 
 tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
@@ -146,8 +146,8 @@ $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 $(BASE)-%.zip: $(TOP_DIST) $(BASE)-%.prc $(SSLEAYLIBS)
 	$(ZIP) -jq9 $@ $^
 
-$(DIST_NEWS): NEWS $(DIST_ZIP) $(DIST_BALL)
-	(cat NEWS ; md5sum $(DIST_ZIP) ovl/* $(DIST_BALL);echo ) > NEWS.tmp
+$(DIST_NEWS): NEWS $(DIST_BIN) $(DIST_BALL)
+	(cat NEWS ; md5sum $(PRCS) $(DIST_BALL);echo ) > NEWS.tmp
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
 	@ls -l $(DIST_BIN) $(DIST_BALL)
@@ -168,7 +168,7 @@ $(EXE): $(OBJ) ;
 # XXX The java program to build the overlays is still under construction
 # mail me (hoenicke at users.sf.net) if you're interested in the source.
 #
-$(DIST_ZIP): $(PRCS) $(SSLEAYLIBS)
+$(DIST_OVL_ZIP): $(PRCS) $(SSLEAYLIBS)
 	@[ -d ovl ] || mkdir ovl
 	CLASSPATH=script/astroinfo-pdb.jar $(JAVA) \
 	net.sf.astroinfo.pdb.CreateOverlay ovl/$(BASE) \
