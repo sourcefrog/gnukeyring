@@ -396,7 +396,14 @@ Boolean ListForm_HandleEvent(EventPtr event)
         return ListForm_SelectIndex(f_FirstIdx + event->data.tblSelect.row);
 
     case keyDownEvent:
-        if (event->data.keyDown.chr == pageUpChr) {
+	if (TxtCharIsHardKey(event->data.keyDown.modifiers, 
+			     event->data.keyDown.chr)) {
+	    /* Select next category if hard key was pressed */
+	    gPrefs.category = CategoryGetNext (gKeyDB, gPrefs.category);
+	    ListForm_Update();
+	    ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
+	    return true;
+	} else if (event->data.keyDown.chr == pageUpChr) {
             ListForm_Scroll(f_FirstIdx > f_ScreenRows ? 
 			    f_FirstIdx - f_ScreenRows : 0);
             return true;

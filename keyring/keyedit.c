@@ -184,13 +184,6 @@ static void KeyEditForm_SetDateTrigger(void)
     CtlSetLabel(f_DateTrg, dateBuf);
 }
 
-
-
-static void KeyEditForm_FromUnpacked(void)
-{
-}
-
-
 /*
  * Wipe out all the fields on this form.
  */
@@ -363,19 +356,6 @@ static void KeyEditForm_Save(void)
 
     FrmSetActiveForm(f_KeyEditForm);
 }
-
-
-static void KeyEditForm_MaybeUndoAll(void)
-{
-     if (App_CheckReadOnly())
-          return;
-
-     if (gKeyRecordIndex != kNoRecord)
-	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
-
-     KeyEditForm_FillData();
-}
-
 
 /*
  * Mark all fields as clean; called just after we save
@@ -831,6 +811,10 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event)
 {
     const int chr = event->data.keyDown.chr;
     
+    if (TxtCharIsHardKey(event->data.keyDown.modifiers, chr)) {
+	FrmGotoForm(ListForm);
+	return true;
+    }
     switch (chr) {
     case pageUpChr:
     case pageDownChr:
