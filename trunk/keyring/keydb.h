@@ -1,7 +1,7 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * GNU Keyring for PalmOS -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify

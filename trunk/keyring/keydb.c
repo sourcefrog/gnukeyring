@@ -1,9 +1,9 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  *
  * $Id$
  * 
- * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool
+ * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +40,31 @@ LocalID gKeyDBID;
 
 static Err KeyDB_OpenRingInfo(KeyringInfoPtr *);
 
-// ======================================================================
-// Key database
-
-
+/* ======================================================================
+ * Key database
+ *
+ * All the keys are kept in a single PalmOS database.  Each record
+ * begins with an unencrypted name, which is followed by a
+ * 3DES-encrypted block containing all the other fields.
+ *
+ * We encrypt the records not with the master password itself, but
+ * rather with a session key stored in record 0 of the database.  The
+ * session key is just random noise.  The session key is stored
+ * encrypted by the MD5 hash of the master password.
+ *
+ * We also need to be able to tell whether the user has entered the
+ * right master password, since we want to give them an error message
+ * rather than just display random garbage.  Therefore the MD5 hash of
+ * the master password is also stored.  (This makes dictionary attacks
+ * just a little easier, but they wouldn't be that hard anyhow.)  This
+ * goes into record #1.
+ *
+ * Once the session key is set, it is never changed throughout the
+ * life of the database.  If the user changes their master password,
+ * then we re-encrypt the session key with the new password and store
+ * that as record 0.  This is (I think) as close to atomic as we can
+ * get under PalmOS.  It would be a bad thing if e.g. the system
+ * crashed while we were changing it, and the session key was lost. */
 
 static void KeyDB_HashNewPasswd(Char const *newPasswd,
 				KeyringInfoPtr ai)
@@ -86,8 +107,12 @@ static Boolean KeyDB_CheckPasswdHash(Char const *guess, KeyringInfoPtr ki) {
 }
 
 
-/* Return a locked pointer to the ring info block stored in the
- * database's SortInfo pointer. */
+/*
+ * Return a locked pointer to the ring info block stored in the
+ * database's SortInfo pointer.
+ *
+ * XXX: It seems the SortInfo is not backed up (!!!) and so we can't
+ * restore from backups.  Bugger.  */
 Err KeyDB_CreateRingInfo(void) {
     LocalID		KeyringInfoID;
     MemHandle		KeyringInfoHand;
