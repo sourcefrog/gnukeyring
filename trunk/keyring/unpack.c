@@ -75,8 +75,6 @@ void Keys_Unpack(MemHandle record, UnpackedKeyType *u,
     /*     Mem_ReadChunk(&ptr, sizeof(DateType), &u->lastChange); */
     /*     MemPtrFree(plainBuf); */
 
-    u->lastChangeDirty = false;
-
     MemHandleUnlock(record);
 }
 

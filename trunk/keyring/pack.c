@@ -143,6 +143,16 @@ static MemHandle Keys_PrepareExisting(UInt16 *idx, Int16 recLen)
 }
 
 
+static void Keys_SaveCategory(UInt16 idx, UnpackedKeyType const *u)
+{
+    UInt16 attr;
+
+    DmRecordInfo(gKeyDB, idx, &attr, NULL, NULL);
+    attr = (attr & ~dmRecAttrCategoryMask) | u->category;
+    DmSetRecordInfo(gKeyDB, idx, &attr, NULL);
+}
+
+
 /*
  * Basic procedure to save a record:
  *
@@ -189,6 +199,8 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
     recPtr = MemHandleLock(recHandle);
     Keys_WriteRecord(unpacked, recPtr);
     MemHandleUnlock(recHandle);
+
+    Keys_SaveCategory(*idx, unpacked);
 
     err = DmReleaseRecord(gKeyDB, *idx, true);
     if (err)

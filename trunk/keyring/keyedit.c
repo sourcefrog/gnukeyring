@@ -40,10 +40,7 @@
 #include "auto.h"
 
 
-/* TODO: Show position and do paging within category
- *
- * TODO: Make the default category be set correctly when making a new
- * record. */
+/* TODO: Show position and do paging within category */
 
 
 /* This keeps an unpacked version of the record currently being
@@ -318,9 +315,6 @@ static Boolean KeyEditForm_IsDirty(FormPtr frm) {
     if (gRecord.categoryDirty)
         return true;
 
-    if (gRecord.lastChangeDirty)
-        return true;
-    
     if (FldDirty(f_KeyNameFld))
         return true;
     
@@ -343,8 +337,6 @@ static Boolean KeyEditForm_IsDirty(FormPtr frm) {
 static void KeyEditForm_New(void) {
     /* All of the text fields allocate their own memory as they go.
      * The others we have to set up by hand. */
-    gRecord.lastChangeDirty = false;
-
     gRecord.categoryDirty = false;
     if (gPrefs.category == dmAllCategories)
         gRecord.category = dmUnfiledCategory;
