@@ -48,9 +48,6 @@ static UInt16 f_NumListed;
 UInt16 f_FirstIdx;
 UInt16 f_SelectedIdx;
 
-/* Width of '.' character in pixels */
-static Int16 f_DotWidth;
-
 static Int16 ListForm_RecordIdx(Int16 itemNum)
 {
     Int16       idx = 0;
@@ -162,9 +159,14 @@ static void ListForm_DrawLockBitmap(void) {
  */
 static void ListForm_UpdateTable(void)
 {
+    UInt16 row;
     f_NumListed = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
-    ErrNonFatalDisplayIf(f_NumListed > 30000,
-                         "unreasonable numListed");
+
+    /* Mark all rows upto f_NumListed as usable.
+     */
+    for (row = 0; row < f_ScreenRows; row++) {
+	TblSetRowUsable(f_Table, row, row < f_NumListed);
+    }
 }
 
 
@@ -218,11 +220,10 @@ static void ListForm_InitTable(void)
     /* Get the total number of rows allocated.  */
     f_ScreenRows = TblGetNumberOfRows(f_Table);
 
-    /* Mark all rows as usable.
+    /* Mark all rows as custom
      */
     for (row = 0; row < f_ScreenRows; row++) {
 	TblSetItemStyle(f_Table, row, 0, customTableItem);
-	TblSetRowUsable(f_Table, row, true);
     }
     TblSetColumnUsable(f_Table, 0, true);
     
@@ -239,7 +240,7 @@ static void ListForm_FormOpen(void)
     f_Table = UI_GetObjectByID(f_ListForm, ID_KeyTable);
     f_ScrollBar = UI_GetObjectByID(f_ListForm, ID_KeyTableScrollBar);
     f_LookUp = UI_GetObjectByID(f_ListForm, LookUpFld);
-    f_SelectedIdx = 0xffff;
+    f_SelectedIdx = kNoRecord;
 
     ListForm_InitTable();
     ListForm_Update();
@@ -299,7 +300,7 @@ static void ListForm_LookUpItem(Char *item)
     Char *recPtr;
     Int16 compare;
     if (!item || !(itemLen = StrLen(item))) {
-	f_SelectedIdx = 0xffff;
+	f_SelectedIdx = kNoRecord;
 	ListForm_UpdateSelection();
 	return;
     }
@@ -322,7 +323,7 @@ static void ListForm_LookUpItem(Char *item)
 		if (matchLen == itemLen)
 		    f_SelectedIdx = catpos;
 		else
-		    f_SelectedIdx = 0xffff;
+		    f_SelectedIdx = kNoRecord;
 		ListForm_Scroll(catpos);
 		ListForm_UpdateSelection();
 		break;
@@ -396,7 +397,7 @@ Boolean ListForm_HandleEvent(EventPtr event)
             ListForm_Scroll(f_FirstIdx + f_ScreenRows);
             return true;
         } else if (event->data.keyDown.chr == chrLineFeed) {
-	    if (f_SelectedIdx != 0xffff)
+	    if (f_SelectedIdx != kNoRecord)
 		return ListForm_SelectIndex(f_SelectedIdx);
 	} else if (FldHandleEvent (f_LookUp, event)) {
 	    /* user entered a new char... */
