@@ -1,5 +1,5 @@
 Keyring for PalmOS
-Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
+Copyright (C) 1999-2002 by Martin Pool <mbp@users.sourceforge.net> and others.
 
 Keyring lets you securely store secret keys and confidential
 information on a PalmOS handheld computer.  This information might
