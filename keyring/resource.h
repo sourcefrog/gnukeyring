@@ -95,7 +95,6 @@
 #define EditUndo			1403
 #define EditSelectAll			1404
 
-#define ConfirmDeleteStr		1501
 #define GenerateHelp			1502
 #define PreferencesHelp			1503
 #define KeyEditHelp			1504

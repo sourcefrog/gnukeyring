@@ -8,7 +8,6 @@ APPID           = "Gtkr"
 VERSION         = 0.9.1
 
 RCP             = $(APP).rcp
-PRC             = $(APP)-$(VERSION).prc
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
 		  crypto.c passwd.c uiutil.c generate.c prefs.c \
 		  export.c dbutil.c
@@ -26,7 +25,6 @@ TXT2BITM        = txt2bitm
 # OBJRES          = m68k-palmos-obj-res
 BUILDPRC        = build-prc
 
-HELP_TXT	= delete-confirm.txt generate-help.txt preferences-help.txt
 BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
 
 # Note: 
@@ -47,7 +45,7 @@ DOCS		= $(TOP_DOCS) \
 		  doc/Blatant-Plug-Insert-4-Cheap.jpg \
 		  doc/keyring.css
 
-DISTFILES       = $(RCP) $(PRC) Makefile $(HELP_TXT) $(BITMAPS) \
+DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
 		  $(DOCS) $(wildcard *.c *.h)
 
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
@@ -57,15 +55,19 @@ TAR		= tar
 SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 		   -e "s/__DIST_BALL__/$(DIST_BALL)/g"
 
-all: $(DOCS) $(PRC) 
+BASE		= $(APP)-$(VERSION)
+
+LANGUAGES = en de
+
+PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
+
+all: $(DOCS) $(PRCS) 
 
 include .dependencies
 
-PRC: $(PRC)
-
-$(PRC):   $(EXE) $(DEF)      bin.stamp
-	$(BUILDPRC) -o $(PRC) $(DEF) $(EXE) *.bin 
-	ls -l *.prc
+$(BASE)-%.prc: res/%/resstamp $(EXE) $(DEF)
+	cd res/$* && $(BUILDPRC) -o ../../$@ ../../$(DEF) ../../$(EXE) *.bin
+	ls -l $@
 
 dist: $(DIST_BALL)
 
@@ -73,23 +75,18 @@ $(DIST_BALL): $(DISTFILES)
 	$(TAR) -C .. -czf $(DIST_BALL) $(addprefix $(APP)/,$(DISTFILES))
 	ls -l $(DIST_BALL)
 
-.SUFFIXES: .in
-
-keyring.rcp: keyring.rcp.in Makefile
+$(RCP): $(RCP).in Makefile
 	(echo '// ******DYNAMICALLY GENERATED DO NOT EDIT********'; \
 	 sed $(SED_SUBST) $@.in) > $@
-
-#grc.stamp:    $(APP) ;
-#	$(OBJRES) $(APP)
-#	touch $@
 
 $(EXE):       $(SRC:.c=.o) ;
 	$(CC) $(CFLAGS) $^ -o $(EXE)
 
-bin.stamp:    $(RCP) $(BITMAPS) resource.h $(HELP_TEXT)
-	[ -d res ] || mkdir res
-	-rm *.bin
-	$(PILRC) -q $(RCP) 
+res/%/resstamp: $(RCP) $(BITMAPS) resource.h 
+	[ -d res/$* ] || mkdir res/$*
+	-rm -f res/$*/*
+	-rm -f *.bin
+	$(PILRC) -q -L $* $(RCP) res/$*/
 	touch $@
 
 %.o %.d: %.c ;
@@ -99,12 +96,7 @@ depend dep: ;
 	$(CC) -M $(SRC) > .dependencies
 
 clean:
-	rm -rf *.o $(EXE) *.bin *.grc *.prc *.stamp *.bin *.d *.stamp
-
-.PHONY: install
-
-install: $(PRC)
-	pilot-xfer -i $(PRC)
+	rm -rf *.o $(EXE) *.bin res/*/* *.grc *.prc *.stamp *.bin *.d *.stamp
 
 # Only useful for the maintainer
 .PHONY: _upload

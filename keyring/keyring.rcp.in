@@ -18,6 +18,112 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+/* International translations; must appear first */
+
+
+TRANSLATION "en"
+BEGIN 
+  "@@choosepassword" = "Please choose a password:"
+  "@@generate1" = "Generate a new random "
+  "@@generate2" = "password:"
+  "@@OutOfMemory" = "Not enough dynamic memory to proceed."
+  "@@WrongPassword" = "Password incorrect.  Please try again."
+  "@@PasswordMismatch" = "The passwords you entered do not match. Please try again"
+  "@@NotImplemented" = "Sorry, that feature is not implemented yet."
+
+  "@@GenerateHelp" = "help/en/generate.txt"
+  "@@PreferencesHelp" = "help/en/preferences.txt"
+  "@@KeyEditHelp" = "help/en/keyedit.txt"
+
+END
+
+
+// ======================================================================
+// German translation contributed by Stefan H. Holek 
+
+TRANSLATION "de"
+BEGIN
+  "New" = "Neu"
+  "Key ______ of ______" = "Schlüssel ______ v. ______" 
+  "Name:" = "Name:"
+  "Account:" = "Konto:"
+  "Password:" = "Passwort:"
+  "Confirm:"  = "Bestätigen:" 
+  "Changed:" = "Geändert:"
+  "Done" = "Fertig"
+  "Preferences" = "Einstellungen"
+  "Stay unlocked for:" = "Sperren nach:"
+  "No time" = "0 Sek."
+  "15 sec" = "15 Sek."
+  "60 sec" = "1 Min."
+  "5 min" = "5 Min."
+
+  "Cancel" = "Abbrechen"
+
+  "Set Keyring Password" =  "Keyring Passwort festlegen"
+
+  "@@choosepassword" = "Bitte wählen sie ein Passwort:"
+
+  "Generate Password" = "Passwort Generieren"
+  "@@generate1" = "Ein neues Passwort "
+  "@@generate2" = "generieren:"
+
+  "Length:" = "Länge:"
+  "Include:" = "Zeichen:"
+  "Generate" = "Generieren"
+
+  "Unlock" =  "Entsperren"
+
+  "Enter your password:" = "Geben sie ihr Passwort ein:"
+
+  "Encrypting..." = "Verschlüsseln..."
+  "Decrypting..." = "Entschlüsseln..."
+
+  "@@OutOfMemory" =  "Nicht genügend dynamic memory."
+  "@@WrongPassword" = "Passwort falsch.  Bitte versuchen sie es nocheinmal."
+  "@@PasswordMismatch" =  "Passworte stimmen nicht überein.  Bitte versuchen sie es nocheinmal."
+
+  "Not here yet" = "Noch nicht implementiert"
+  "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
+
+  "^1: System error ^2" =  "^1: Systemfehler ^2"
+  "Couldn't launch the Memo Pad" =  "Die Merkzettel Anwendung konnte nicht gestartet werden."
+
+  "Delete Key" = "Schlüssel löschen"
+  "Delete current key record?" = "Aktuellen Schlüssel löschen?"
+  "Save archive copy on PC" = "Archivkopie auf dem PC speichern"
+
+  "Database" = "Datenbank"
+  "Set Password..." = "Passwort festlegen..."
+  "Options" = "Optionen"
+  "Edit" = "Bearbeiten"
+
+  "Preferences..." =  "Einstellungen..."
+  "About GNU Keyring" =  "GNU Keyring-Info"
+
+  "Undo" = "Rückgängig"
+"Graffiti Help" = "Graffiti-Hilfe"
+"Paste" = "Einfügen"
+"Cut" = "Ausschneiden"
+"Select All" = "Alles auswählen"
+"Key %d of %d" = "Schlüssel %d v. %d"
+"Copy" = "Kopieren"
+"Keyboard" = "Tastatur"
+"New Key" = "Neuer Schlüssel"
+
+  "Record" =  "Eintrag"
+  "Generate Password..." = "Passwort generieren..."
+  "Export to Memo" = "Als Merkzettel exportieren"
+  "Delete..." = "Eintrag löschen..."
+
+  "@@GenerateHelp" = "help/de/generate.txt"
+  "@@PreferencesHelp" = "help/de/preferences.txt"
+  "@@KeyEditHelp" = "help/en/keyedit.txt"
+END
+
+
+
 #include "resource.h"
 
 VERSION ID 1000 "__VERSION__"
@@ -105,12 +211,8 @@ MODAL
 BEGIN
 	title "Set Keyring Password"
 
-	label "Please choose a password to"
+	label "@@choosepassword"
 		autoid at (5 30) font 0
-	label "protect your keys: they cannot"
-		autoid at (prevleft prevbottom) font 0
-	label "be recovered without it."
-		autoid at (prevleft prevbottom) font 0
 
 	label "Password:" 
 		autoid at (prevleft 103) font 1
@@ -190,9 +292,7 @@ END
 ALERT ID OutOfMemoryAlert
 ERROR
 BEGIN
-	TITLE "Error"
-
- 	MESSAGE "Not enough dynamic memory to proceed.  Sorry."
+ 	MESSAGE "@@OutOfMemory"
 	
 	BUTTONS "OK"
 END
@@ -203,7 +303,7 @@ ERROR
 BEGIN
 	TITLE "Password"
 
-	MESSAGE "Password incorrect.  Please try again."
+	MESSAGE "@@WrongPassword"
 
 	BUTTONS "OK"
 END
@@ -214,7 +314,7 @@ ERROR
 BEGIN
 	TITLE "Password"
 
-	MESSAGE "The passwords you entered do not match. Please try again"
+	MESSAGE "@@PasswordMismatch"
 
 	BUTTONS "OK"
 END
@@ -235,7 +335,7 @@ END
 ALERT ID SysErrAlert
 ERROR
 BEGIN
-	MESSAGE "^1: system error ^2"
+	MESSAGE "^1: System error ^2"
 
 	BUTTONS "OK"
 END
@@ -251,7 +351,6 @@ END
 
 
 FORM ID ConfirmDeleteForm AT (2 94 156 64)
-HELPID ConfirmDeleteStr
 MODAL
 BEGIN
 	TITLE "Delete Key"
@@ -270,7 +369,7 @@ END
 FORM ID AboutForm AT (2 2 156 156)
 MODAL
 BEGIN
-	TITLE "About GNU Keyring"
+	TITLE "GNU Keyring"
 
 	FORMBITMAP AT (48 15) BITMAP GnuBitmap
 
@@ -338,7 +437,6 @@ STRING ID EmptyTitleStr "New Key"
 
 
 // Help messages
-STRING ID ConfirmDeleteStr FILE "delete-confirm.txt"
-string id GenerateHelp file "generate-help.txt"
-string id PreferencesHelp file "preferences-help.txt"
-string id KeyEditHelp file "keyedit-help.txt"
+string id GenerateHelp file "@@GenerateHelp"
+string id PreferencesHelp file "@@PreferencesHelp"
+string id KeyEditHelp file "@@KeyEditHelp"
