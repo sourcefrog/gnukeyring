@@ -431,8 +431,13 @@ static void KeyEditForm_OpenRecord(void) {
 
     if (gKeyRecordIndex != kNoRecord) 
         KeyEditForm_Load();
-    else
+    else {
         KeyEditForm_New();
+        KeyDB_CreateNew(&gKeyRecordIndex);
+        /* TODO: If this fails, do something. */
+    }
+
+    gKeyPosition = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
 
     FldGetAttributes(f_NotesFld, &attr);
     attr.hasScrollBar = true;
@@ -466,7 +471,6 @@ static void KeyEditForm_FormOpen(void) {
 
 static void KeyEditForm_DeleteKey(Boolean saveBackup)
 {
-    Boolean isNewRecord;
     UnpackedKeyType unpacked;
     
     // Unpack and obliterate values so they're not left in memory.
@@ -478,12 +482,7 @@ static void KeyEditForm_DeleteKey(Boolean saveBackup)
     // record as the form closes.
     keyDeleted = true;
 
-    isNewRecord = (gKeyRecordIndex == kNoRecord);
-
-    if (isNewRecord) {
-        // just quit without saving
-        ;
-    } else if (saveBackup) {
+    if (saveBackup) {
         DmArchiveRecord(gKeyDB, gKeyRecordIndex);
     } else {
         DmDeleteRecord(gKeyDB, gKeyRecordIndex);
@@ -607,12 +606,6 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
 {
     UInt16 numRecs;
     Int16 offset = (dir == winDown) ? +1 : -1;
-    
-    if (gKeyRecordIndex == kNoRecord) {
-        /* You can't page while you're editing a new record. */
-        SndPlaySystemSound(sndWarning);
-        return;
-    }
     
     KeyEditForm_Commit();
 
