@@ -27,14 +27,15 @@
 
 KeyringPrefsType gPrefs;
 
-MemHandle handleFontStar;
-MemHandle handleFontPW;
+Boolean gEditFormActive;
+Boolean gSleeping;
 
+
+static MemHandle handleFontStar;
+static MemHandle handleFontPW;
 
 // ======================================================================
 // Application methods
-
-
 
 static void App_LoadPrefs(void) {
     Int16 size = sizeof(KeyringPrefsType);
@@ -156,6 +157,18 @@ static void App_EventLoop(void)
     do {
 	EvtGetEvent(&event, (Int32) evtWaitForever);
 	Secrand_AddEventRandomness(&event);
+
+	if (event.eType == keyDownEvent) {
+	    if (event.data.keyDown.chr == vchrAutoOff
+		|| event.data.keyDown.chr == vchrPowerOff) {
+		gSleeping = true;
+		if (gEditFormActive && Snib_GetSnib(false) == NULL) {
+		    FrmCloseAllForms();
+		    FrmGotoForm(ListForm);
+		}
+	    }
+	} else if (event.eType != nilEvent)
+	    gSleeping = false;
 	
 	if (!SysHandleEvent(&event))
 	    if (!MenuHandleEvent(0, &event, &error))
@@ -235,6 +248,7 @@ UInt32 PilotMain(UInt16 launchCode,
 		 void *cmdPBP,
 		 UInt16 UNUSED(launchFlags))
 {
+    struct EventType keyev;
     Err err = 0;
 
     if ((err = RomVersionCompatible()))
@@ -244,7 +258,6 @@ UInt32 PilotMain(UInt16 launchCode,
 	/* We were relaunched by the sleep notify handler.
 	 * Enqueue event to resume sleeping 
 	 */
-	struct EventType keyev;
 	keyev.eType = keyDownEvent;
 	keyev.data.keyDown.chr = resumeSleepChr;
 	keyev.data.keyDown.keyCode = 0;
@@ -294,12 +307,21 @@ UInt32 PilotMain(UInt16 launchCode,
 
 	/* This is the expiry alarm, or the time changed */
 	Snib_Eradicate ();
+	if ((launchFlags & sysAppLaunchFlagSubCall) && gSleeping) {
+	    /* We were relaunched by the sleep notify handler.
+	     * Enqueue event to resume sleeping 
+	     */
+	    keyev.eType = keyDownEvent;
+	    keyev.data.keyDown.chr = vchrAutoOff;
+	    keyev.data.keyDown.keyCode = 0;
+	    keyev.data.keyDown.modifiers = commandKeyMask;
+	    EvtAddEventToQueue(&keyev);
+	}
 	break;
     }
 
     /* TODO: We should handle: sysAppLaunchCmdSaveData,
-     * sysAppLaunchCmdFind,
-     * sysAppLaunchCmdGoTo, sysAppLaunchCmdSystemLock, ... */
+     * sysAppLaunchCmdSystemLock, ... */
 
     return err;
 }
