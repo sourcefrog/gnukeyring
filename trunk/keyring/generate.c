@@ -197,12 +197,12 @@ static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len)
 /*
  * http://www.eff.org//Privacy/Newin/New_nist/fips181.txt
  */
-static void Generate_Word(Char * ptr, Int16 flags, Int16 len)
+static void Generate_Word(Char * ptr, Int16 UNUSED(flags), Int16 len)
 {
     
     Char hyphenated[2 * MAX_PWLEN +1];
     
-    (void) get_word(ptr, hyphenated, len);
+    Pron_GetWord(ptr, hyphenated, len);
 
     /* nice thought, but not enough room for it -- FIXME put it in the
      * "notes" field?

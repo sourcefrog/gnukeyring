@@ -12,7 +12,7 @@ APPID           = "Gtkr"
 
 # XXX: You may have to edit this to match your SDK installation
 #PALM_BASE       = /usr/local/include/palmos3.5
-#C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI
+#C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI:$(PALM_BASE)/Libraries/PalmOSGlue:$(PALM_BASE)/Dynamic:$(PALM_BASE)/Libraries
 #export C_INCLUDE_PATH
 
 RCP             = $(APP).rcp
@@ -56,7 +56,7 @@ PERL		= perl
 
 # Adding -O3 seems to make a difference to execution time as many
 # functions are inlined.  However, it also generates code that
-# greviously confuses gdb.  So, for debugging we turn optimization 
+# grievously confuses gdb.  So, for debugging we turn optimization 
 # off altogether and for ship versions we turn it right up.
 
 # TODO: Switch optimization based on version number?
@@ -65,7 +65,7 @@ PERL		= perl
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.2-pre1
+VERSION         = 1.2-pre2
 DEFINES		= -DBETA -DkAppVersion=0x1011
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
@@ -113,8 +113,6 @@ DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
 default: $(BASE)-en.prc
 
 all: $(PRCS) 
-
-.SECONDARY:
 
 $(BASE)-%.prc: %.resstamp $(EXE)
 	cd res/$*; $(BUILDPRC) ../../$@ 'Keyring' Gtkr ../../$(EXE) *.bin
@@ -173,7 +171,8 @@ auto.h: en.resstamp
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
-%.o: %.c $(HEADERS) auto.h prototype.h
+$(OBJ): $(HEADERS) auto.h prototype.h
+%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
