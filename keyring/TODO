@@ -1,5 +1,20 @@
 -*- outline -*- 
 
+* Markov chain generation
+
+Generating a state table from a large amount of English text shows
+about 4900 three-character states occurred from the 19000 possible,
+which sounds about right.  We saw 252000 total transitions, so it
+should be quite balanced.
+
+To store this we'd need roughly 4900 elements in a list, each of which
+will have a pointer to the next state (hopefully just one byte) and a
+probability measure (also probably one byte).  There's also a little
+overhead for each character we emit.  So this is about 10k of data.
+I'm not sure if it's that useful.
+
+* Provide our own RNG.  Gather entropy from events.
+
 * Sound
 
 * Check that when the category is changed, the title updates too
@@ -46,9 +61,6 @@ just adding to it.
 
 * Different security settings and passwords per category
 ... but if we do this perhaps we really want separate databases?
-
-DONE Generate random passwords matching certain conditions
-Upper/lower/punct/digits/spaces?  Break into words?  Length?
 
 * Script to decode records on PC
 

@@ -1,3 +1,7 @@
+
+DONE Generate random passwords matching certain conditions
+Upper/lower/punct/digits/spaces?  Break into words?  Length?
+
 * Keep temporary key in a locked DB
 
 This way we won't relock when switching applications.
