@@ -50,7 +50,6 @@
 - (void)windowDidLoad
 {
     NSDictionary *theDict = [[NSBundle mainBundle] localizedInfoDictionary];
-    NSScrollView *t;
 
     [copyright setStringValue: [theDict objectForKey: @"NSHumanReadableCopyright"]];
     [version setStringValue: [theDict objectForKey: @"CFBundleShortVersionString"]];
@@ -59,14 +58,7 @@
     // so we have to call setDrawsBackground: on the textview and the enclosing
     // (don't know how far up) scrollview.
     [blurb setDrawsBackground: NO];
-    for (t = (NSScrollView *)[blurb superview];
-         t != nil;
-         t = (NSScrollView *)[t superview]) {
-        if ([t isKindOfClass: [NSScrollView class]]) {
-            [t setDrawsBackground: NO];
-            break;
-        }
-    }
+    [[blurb enclosingScrollView] setDrawsBackground: NO];
 
     [self hiliteAndActivateURLs: blurb];
     [icon setImage: [NSApp applicationIconImage]];
