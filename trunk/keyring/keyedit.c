@@ -393,10 +393,13 @@ void KeyEditForm_GotoNew(void) {
 }
 
 
+static void KeyEditForm_FindMyPosition(void) {
+    gKeyPosition = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
+}
+
 
 void KeyEditForm_GotoRecord(UInt16 recordIdx) {
     gKeyRecordIndex = recordIdx;
-    gKeyPosition = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
 }
         
 
@@ -424,7 +427,7 @@ static void KeyEditForm_OpenRecord(void) {
         /* TODO: If this fails, do something. */
     }
 
-    gKeyPosition = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
+    KeyEditForm_FindMyPosition();
 
     FldGetAttributes(f_NotesFld, &attr);
     attr.hasScrollBar = true;
@@ -594,6 +597,7 @@ static void KeyEditForm_FlipRecord(WinDirectionType dir)
     UInt16 numRecs;
     Int16 offset = (dir == winDown) ? +1 : -1;
 
+    /* TODO: Cache this too. */
     numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
 
     if ((gKeyPosition == 0  &&  offset == -1)
@@ -696,7 +700,9 @@ static void KeyEditForm_CategorySelected(void) {
             gPrefs.category = gRecord.category;
         }
         Key_SetCategory(gKeyRecordIndex, gRecord.category);
+        KeyEditForm_FindMyPosition();
         KeyEditForm_UpdateCategory();
+        KeyEditForm_UpdateTitle();
     }
 }
 
