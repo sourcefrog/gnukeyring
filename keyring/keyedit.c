@@ -629,20 +629,20 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event)
         return true;
         
     case DeleteKeyCmd:
-         Edit_MaybeDelete();
-         return true;
+	Edit_MaybeDelete();
+	return true;
 
     case GenerateCmd:
         KeyEditForm_Generate();
         return true;
 
     case ExportMemoCmd:
-         Edit_MaybeExport();
+	Edit_MaybeExport();
         return true;
 
     case ID_UndoAllCmd:
-         Edit_MaybeUndoAll();
-         return true;
+	Edit_MaybeUndoAll();
+	return true;
         
     default:
         return false;
@@ -883,11 +883,14 @@ Boolean KeyEditForm_HandleEvent(EventPtr event)
         case DoneBtn:
             KeyEditForm_Done();
             return true;
+	case GenerateBtn:
+	    KeyEditForm_Generate();
+	    return true;
         case CategoryTrigger:
             KeyEditForm_CategorySelected();
             return true;
         default:
-             return false;
+	    return false;
         }
 
     case fldChangedEvent:
