@@ -5,7 +5,7 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.9.0
+VERSION         = 0.9.0-dev
 
 RCP             = $(APP).rcp
 PRC             = $(APP)-$(VERSION).prc
@@ -28,8 +28,6 @@ BUILDPRC        = build-prc
 
 HELP_TXT	= delete-confirm.txt generate-help.txt preferences-help.txt
 BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
-
-SDK		= /usr/local/palmdev/sdk3.5
 
 # Note: 
 # Turning on debugger support (-g) costs about 100 bytes
@@ -77,9 +75,9 @@ $(DIST_BALL): $(DISTFILES)
 
 .SUFFIXES: .in
 
-%: %.in Makefile
-	sed $(SED_SUBST) $@.in > $@
-
+keyring.rcp: keyring.rcp.in Makefile
+	(echo '// ******DYNAMICALLY GENERATED DO NOT EDIT********'; \
+	 sed $(SED_SUBST) $@.in) > $@
 
 #grc.stamp:    $(APP) ;
 #	$(OBJRES) $(APP)
