@@ -58,55 +58,50 @@ static const Int16 includeMap[] = {
 };
 
 
+typedef struct {
+    Int16 len;
+    Int16 classes;
+} GeneratePrefsType;
+typedef GeneratePrefsType *GeneratePrefsPtr;
+
+
 /* Return the user's saved preferences for password generation, or
  * otherwise the defaults. */
-static void Generate_LoadOrDefault(Int16 * plen,
-				   Int16 * pclasses) 
+static void Generate_LoadOrDefault(GeneratePrefsPtr prefs)
 {
-    Int16 data[2];
-    const Int16 expectedSize = 2 * sizeof(Int16);
-    Int16 size = expectedSize;
-    Int16 gotSize;
+    Int16 size = sizeof *prefs;
+
+    prefs->len = 8;
+    prefs->classes = kLower;
     
-    gotSize = PrefGetAppPreferences(kKeyringCreatorID,
-				    kGeneratePref,
-				    data,
-				    &size,
-				    true);
-    if (gotSize == noPreferenceFound
-	|| gotSize != expectedSize
-	|| size != expectedSize) {
-	*plen = 8;
-	*pclasses = kLower;
-    } else {
-	*plen = data[0];
-	*pclasses = data[1];
-    }
+    PrefGetAppPreferences(kKeyringCreatorID,
+			  kGeneratePref,
+			  prefs,
+			  &size,
+			  true);
 }
 
 	
 
 
 /* Save the user's preference for password generation. */
-static void Generate_Save(Int16 len, Int16 classes) {
-    Int16 data[2] = {len, classes};
-
+static void Generate_Save(GeneratePrefsPtr prefs) {
     PrefSetAppPreferences(kKeyringCreatorID,
 			  kGeneratePref,
 			  kAppVersion,
-			  data,
-			  2*sizeof(Int16),
+			  prefs,
+			  sizeof *prefs,
 			  true);
 }
 
 
 static void Generate_Init(FormPtr frm) {
-    Int16 len, classes;
+    GeneratePrefsType prefs;
     
-    Generate_LoadOrDefault(&len, &classes);
+    Generate_LoadOrDefault(&prefs);
 
-    UI_ScanAndSet(frm, lenMap, len);
-    UI_UnionSet(frm, includeMap, classes);
+    UI_ScanAndSet(frm, lenMap, prefs.len);
+    UI_UnionSet(frm, includeMap, prefs.classes);
 }
 
 
@@ -143,34 +138,35 @@ static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
 
 
 static MemHandle Generate_MakePassword(FormPtr frm) {
-    Int16		reqLength, reqFlags;
+    GeneratePrefsType prefs;
     MemHandle	h;
     Char *	ptr;
 
-    reqLength = UI_ScanForFirst(frm, lenMap);
-    if (reqLength <= 0  ||  reqLength > 2000) {
+    prefs.len = UI_ScanForFirst(frm, lenMap);
+    if (prefs.len <= 0  ||  prefs.len > 2000) {
 	// unreasonable or none
 	return 0;
     }
 
-    reqFlags = UI_ScanUnion(frm, includeMap);
-    if (reqFlags == 0)
+    prefs.classes = UI_ScanUnion(frm, includeMap);
+    if (prefs.classes == 0)
 	return 0;
 
-    Generate_Save(reqLength, reqFlags);
+    Generate_Save(&prefs);
 
-    h = MemHandleNew(reqLength + 1); // plus nul
+    h = MemHandleNew(prefs.len + 1); // plus nul
     if (!h) {
 	FrmAlert(OutOfMemoryAlert);
 	return NULL;
     }
     
     ptr = MemHandleLock(h);
-    Generate_Garbage(ptr, reqFlags, reqLength);
+    Generate_Garbage(ptr, prefs.classes, prefs.len);
 
     MemHandleUnlock(h);
     return h;
 }
+
 
 MemHandle Generate_Run(void) {
     FormPtr 	prevFrm, frm;
