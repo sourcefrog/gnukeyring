@@ -40,6 +40,10 @@
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
 
+// Reference to the keys database
+DmOpenRef       gKeyDB;
+
+
 /* ======================================================================
  * Key database
  *
@@ -120,7 +124,12 @@ void KeyDB_SetPasswd(Char *newPasswd)
 }
 
 
-/* Will return an error if the database does not exist. */
+/*
+ * Try to open an existing key database.
+ * 
+ * Will return an error if the database does not exist, in which case
+ * you can try to create a new one.  
+ */
 Err KeyDB_OpenExistingDB(void) {
     Err err;
     

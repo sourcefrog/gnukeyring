@@ -46,9 +46,6 @@
 // ======================================================================
 // Globals
 
-// Reference to the keys database
-DmOpenRef       gKeyDB;
-
 /* Index of the current record in the database as a whole. */
 UInt16		gKeyRecordIndex = kNoRecord;
 
