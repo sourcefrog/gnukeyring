@@ -414,6 +414,17 @@ BEGIN
 END
 
 
+ALERT ID alertID_SortInfoMissing
+WARNING
+BEGIN
+    TITLE "Database Damaged"
+
+    MESSAGE "This database is damaged.  If it was created by Keyring 0.11 and you just restored it from backup, then it has been affected by the PalmOS SortInfo bug.  Please set your password to repair it."
+
+    BUTTONS "OK" "Cancel"
+END
+
+
 FORM ID ConfirmDeleteForm AT (2 94 156 64)
 MODAL
 BEGIN
