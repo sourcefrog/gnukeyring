@@ -34,6 +34,8 @@
 #include "record.h"
 #include "passwd.h"
 #include "resource.h"
+#include "auto.h"
+#include "error.h"
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
@@ -149,6 +151,22 @@ static Err KeyDB_StorePasswdHash(Char const *newPasswd) {
 
     if ((err = KeyDB_OpenRingInfo(&dbPtr)))
 	return err;
+
+    if (!dbPtr) {
+        /* May be missing if we suffered SortInfo damage; since we've
+         * already explained to the user, go ahead and create it
+         * again. */
+        if ((err = KeyDB_CreateRingInfo()))
+            return err;
+
+        if ((err = KeyDB_OpenRingInfo(&dbPtr)))
+            return err;
+
+        if (!dbPtr) {
+            FrmAlert(UpgradeFailedAlert);
+            return appErrMisc;
+        }
+    }
     
     MemSet(&kiBuf, sizeof(kiBuf), 0);
     kiBuf.appInfoVersion = kAppVersion;	/* no longer checked, here for compatibility */
@@ -246,9 +264,12 @@ void KeyDB_SetPasswd(Char const *newPasswd) {
 
 
 
-/* Return locked pointer to keyring info; or null if there is no
- * keyring info present.  The pointer is into the database, so it
- * can't be written directly, only through DmWrite and friends. */
+/* Get a locked pointer to keyring info; or make *PP NULL if there is
+ * no keyring info present.  The pointer is into the database, so it
+ * can't be written directly, only through DmWrite and friends.
+ *
+ * If the SortInfo bug has smitten us, then we'll return no error but
+ * have PP NULL. */
 Err KeyDB_OpenRingInfo(KeyringInfoPtr *pp) {
     LocalID		kiID;
     Err			err;
@@ -270,12 +291,38 @@ Err KeyDB_OpenRingInfo(KeyringInfoPtr *pp) {
 }
 
 
+/* Handle a database that's missing its SortInfo data, having been
+ * restored from a broken backup.  We temporarily allow this access,
+ * and explain that the user should reset their password.  Return true
+ * if access should be allowed, false to abort. */
+static Boolean KeyDB_HandleMissingSortInfo(void)
+{
+    return FrmAlert(alertID_SortInfoMissing) == 0; /* 0 = "OK" */
+}
+
+
+/*
+ * Check whether GUESS is the right password for this database, and return
+ * accordingly.
+ *
+ * Deep ugliness happens here to cope with the PalmOS SortInfo bug.
+ * If there is no SortInfo block in the database, we display a dialog
+ * explaining the problem, assume the user's password is correct, and
+ * continue anyhow.
+ */
 Boolean KeyDB_Verify(Char const *guess) {
     KeyringInfoPtr	ptr;
     Boolean    		result;
     Err			err;
 
     err = KeyDB_OpenRingInfo(&ptr);
+    if (err) {
+        App_ReportSysError(KeyDatabaseAlert, err);
+        return false;
+    }
+    if (!ptr) {
+        return KeyDB_HandleMissingSortInfo();
+    }
     result = KeyDB_CheckPasswdHash(guess, ptr);
     MemPtrUnlock(ptr);
     return result;
