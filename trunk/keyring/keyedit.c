@@ -440,6 +440,10 @@ static void KeyEditForm_Generate(void) {
 
 static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
     switch (event->data.menu.itemID) {
+    case HelpCmd:
+	FrmHelp(KeyEditHelp);
+	return true;
+	
     case DeleteKeyCmd:
 	if (KeyEditForm_MaybeDeleteKey())
 	    FrmGotoForm(ListForm);

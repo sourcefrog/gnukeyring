@@ -322,7 +322,8 @@ BEGIN
 
 	PULLDOWN "Options"
 	BEGIN
-		MENUITEM "Preferences..." ID PrefsCmd "P"
+		MENUITEM "Preferences..." ID PrefsCmd "R"
+		MENUITEM "Tips..."	ID HelpCmd
 		MENUITEM "About Keyring" ID AboutCmd
 	END
 END
@@ -340,4 +341,4 @@ STRING ID EmptyTitleStr "New Key"
 STRING ID ConfirmDeleteStr FILE "delete-confirm.txt"
 string id GenerateHelp file "generate-help.txt"
 string id PreferencesHelp file "preferences-help.txt"
-
+string id KeyEditHelp file "keyedit-help.txt"
