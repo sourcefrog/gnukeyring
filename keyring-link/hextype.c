@@ -2,33 +2,27 @@
  *
  * $Id$
  * 
- * GNU Keyring -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@sourcefrog.net>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You may use, modify, and redistribute this code without limitation
+ * except that this copyright notice must be preserved.
  */
 
 #include <stdio.h>
-#include <ctype.h>
 
 #include "hextype.h"
 
 
-void hextype(FILE *f, unsigned char const *d, size_t len)
+/*
+ * Print out in a debugging form the LEN bytes of data starting at P.
+ * Format is 16 bytes per line, with a little gap after the first
+ * eight.  On the far left is the relative position, then the hex,
+ * then the ascii characters if they are printable.
+ */
+void hextype(FILE *f, const void *p, size_t len)
 {
     int               i, j;
+    unsigned char const *d = (unsigned char const *) p;
 
     for (i = 0; i < len; ) {
 	fprintf(f, "%4x: ", i);
