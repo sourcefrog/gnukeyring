@@ -20,10 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+Char *SetPasswd_Ask(void);
 Boolean SetPasswd_Run(void);
 
 Boolean UnlockForm_HandleEvent(EventPtr event);
 Boolean Unlock_GetKey(Boolean askAlways, UInt8 *key);
-void Unlock_SetExpiry(UInt32 newExpiry);
-void Unlock_Reset(void);
-void Unlock_PrimeTimer(void);
+

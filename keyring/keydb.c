@@ -28,6 +28,7 @@
 #include "keyring.h"
 #include "keydb.h"
 #include "passwd.h"
+#include "pwhash.h"
 #include "error.h"
 #include "uiutil.h"
 #include "auto.h"
@@ -274,6 +275,11 @@ static Err KeyDB_GetVersion(UInt16 *ver) {
 
 static Err KeyDB_CreateDB(void) {
     Err err;
+    Char *newPasswd;
+
+    newPasswd = SetPasswd_Ask();
+    if (newPasswd == NULL)
+	return appCancelled;
 
     gKeyDBCardNo = 0;
     if ((err = DmCreateDatabase(gKeyDBCardNo, kKeyDBName,
@@ -298,8 +304,9 @@ static Err KeyDB_CreateDB(void) {
     if ((err = KeyDB_CreateCategories()))
 	goto outErr;
     
-    if (!SetPasswd_Run())
-	return appCancelled;
+    PwHash_Store(newPasswd);
+    MemSet(newPasswd, StrLen(newPasswd), 0);
+    MemPtrFree(newPasswd);
 
     if ((err = KeyDB_MarkForBackup()))
 	goto outErr;

@@ -473,22 +473,27 @@ static void Secrand_ExtractEntropy(UInt32 buf[HASH_BUFFER_SIZE])
 }
 
 /*
- * This function is exported.  It returns an UInt32 number with nbits
+ * This function is exported.  It returns an UInt32 number with n bits
  * strong random bits, suitable for password generation etc.
  */
 UInt32 Secrand_GetBits(int nbits)
 {
     static UInt32 bitbucket[HASH_BUFFER_SIZE];
-    static int    usedBits = 32 * HASH_BUFFER_SIZE;
+    static Int16  usedBits = 32 * HASH_BUFFER_SIZE;
     UInt32 *ptr;
-    int bitsAtPtr;
+    Int16  bitsAtPtr;
     UInt32 result = 0;
 
-    ptr       = bitbucket + (usedBits >> 4);
+    /* ptr points to next position that has randomness left
+     * bitsAtPtr tells how many low bits at ptr are random.
+     */
+    ptr       = bitbucket + (usedBits >> 5);
     bitsAtPtr = 32 - (usedBits & 31);
 
     for (;;) {
 	if (usedBits == 32 * HASH_BUFFER_SIZE) {
+	    /* We used up the whole pool, so refresh it.
+	     */
 	    Secrand_ExtractEntropy(bitbucket);
 	    usedBits = 0;
 	    ptr = bitbucket;
@@ -496,14 +501,15 @@ UInt32 Secrand_GetBits(int nbits)
 	}
 
 	if (nbits > bitsAtPtr) {
-	    result = (result << bitsAtPtr) | (*ptr & ((1 << bitsAtPtr) - 1));
+	    result = (result << bitsAtPtr) | *ptr;
 	    usedBits += bitsAtPtr;
 	    nbits -= bitsAtPtr;
-	    ptr++;
+	    *ptr++ = 0;
 	    bitsAtPtr = 32;
 	} else {
-	    result = (result << nbits)
-		| ((*ptr & ((1<< bitsAtPtr) - 1)) >> (bitsAtPtr - nbits));
+	    bitsAtPtr -= nbits;
+	    result = (result << nbits) | (*ptr >> bitsAtPtr);
+	    *ptr &= (1L << bitsAtPtr) - 1;
 	    usedBits += nbits;
 	    return result;
 	}

@@ -41,21 +41,17 @@
  * TODO: "Generate" button when setting master password.
  */
 
-
-/* Return true if set, false if cancelled. */
-Boolean SetPasswd_Run(void)
+/* Return a locked MemPtr to the entered password or NULL if cancelled. */
+Char * SetPasswd_Ask(void)
 {
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm;
     UInt16 	btn;
-    Boolean 	match, result=false;
+    Boolean 	match;
     FieldPtr 	masterFld, confirmFld;
     MemHandle   handle;
-    UInt8       oldKey[k2DESKeySize];
+    MemPtr      result = NULL;
     Char *masterPtr, *confirmPtr;
-
-    if (!Unlock_GetKey(true, oldKey))
-	 return false;
 
     frm = FrmInitForm(SetPasswdForm);
     FrmSetActiveForm(frm);
@@ -80,18 +76,18 @@ Boolean SetPasswd_Run(void)
 	goto doDialog;
     }
 
-    /* This stores the checking-hash and also reencrypts and stores
-     * the session key.
+    /* Copy the master password in a locked MemPtr. 
+     * I hate copying confidential information around,
+     * but a locked Pointer can't move, so it should be save.
      */
-    KeyDB_SetPasswd(oldKey, masterPtr);
-    result = true;
+    result = MemPtrNew(StrLen(masterPtr) + 1);
+    StrCopy(result, masterPtr);
 
  leave:
 
     /* Eradicate anything that contains clear text passwords or
      * the hash. 
      */
-    MemSet(oldKey, sizeof(oldKey), 0);
     handle = FldGetTextHandle(masterFld);
     if (handle) {
 	 MemSet(MemHandleLock(handle), MemHandleSize(handle), 0);
@@ -109,5 +105,39 @@ Boolean SetPasswd_Run(void)
     FrmDeleteForm(frm);
     if (prevFrm)
 	FrmSetActiveForm(prevFrm);
-    return result;
+    return (Char *) result;
+}
+
+/* Return true if set, false if cancelled. */
+Boolean SetPasswd_Run(void)
+{
+    UInt8       oldKey[k2DESKeySize];
+    Char *      newPasswd;
+    FormPtr	frm;
+
+    if (!Unlock_GetKey(true, oldKey))
+	 return false;
+
+    newPasswd = SetPasswd_Ask();
+
+    /* Check whether user cancelled new password dialog */
+    if (newPasswd == NULL)
+	return false;
+
+    /* This stores the checking-hash and also reencrypts and stores
+     * the session key.
+     */
+    frm = FrmInitForm(BusyEncryptForm);
+    FrmDrawForm(frm);
+    KeyDB_SetPasswd(oldKey, newPasswd);
+    FrmEraseForm(frm);
+    FrmDeleteForm(frm);
+
+    /* Eradicate the new and old passwords.
+     */
+    MemSet(newPasswd, StrLen(newPasswd), 0);
+    MemSet(oldKey, sizeof(oldKey), 0);
+
+    MemPtrFree(newPasswd);
+    return true;
 }

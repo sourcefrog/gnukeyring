@@ -71,16 +71,6 @@ Err Snib_Init(void)
     return errNone;
 }
 
-
-/*
- * Release all records and close the database, we're leaving Keyring
- * (but may be coming back.)
- */
-void Snib_Close(void)
-{
-}
-
-
 /*
  * Reset the expiry time to zero, and also destroy the session key.
  * This method is called under special startup codes.  It must be in
@@ -147,29 +137,30 @@ static SnibPtr Snib_GetSnib(Boolean create)
 /*
  * Set a new expiry time.
  */
-void Snib_SetExpiry(UInt32 newTime)
+static void Snib_ResetTimer(SnibPtr snib)
 {
     UInt16  cardNo;
     LocalID dbID;
-    SnibPtr snib = Snib_GetSnib (false);
 
-    snib->expiryTime = newTime;
+    snib->expiryTime = TimGetSeconds() + gPrefs.timeoutSecs;
     SysCurAppDatabase(&cardNo, &dbID);
-    AlmSetAlarm(cardNo, dbID, 0, newTime, true);
+    AlmSetAlarm(cardNo, dbID, 0, snib->expiryTime, true);
 }
 
 /*
  * Store the record key (hash of master password) for use later in
- * this session.
+ * this session.  Also resets the timer.
  */
 void Snib_StoreRecordKey(UInt8 *newHash)
 {
     Err err;
     SnibPtr snib = Snib_GetSnib (true);
+
     err = MemMove(snib->recordKey, newHash, k2DESKeySize);
-    
     if (err)
 	 UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
+
+    Snib_ResetTimer(snib);
 }
 
 
@@ -184,17 +175,20 @@ Boolean Snib_RetrieveKey(UInt8* keyHash) {
     if (snib == NULL)
 	return false;
 
-    // If the timeout is too far in the future, then adjust it: this
-    // makes it work OK if e.g. the clock has changed.
-
     now = TimGetSeconds();
     if (now > snib->expiryTime) {
+	/* This should only happen if the snib has just expired and
+	 * the alarm has not been received, yet.
+	 */
 	Snib_Eradicate ();
 	return false;
     }
 
+    /* If the timeout is too far in the future, then adjust it: this
+     * makes it work OK if e.g. the timeout interval has been shortened.
+     */
     if (now + gPrefs.timeoutSecs < snib->expiryTime)
-	Snib_SetExpiry(now + gPrefs.timeoutSecs);
+	Snib_ResetTimer(snib);
 
     err = MemMove(keyHash, snib->recordKey, k2DESKeySize);
     return err == errNone;

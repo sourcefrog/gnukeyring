@@ -30,10 +30,8 @@
  * so that people will be able to switch apps without needing to log
  * in again.  But we don't do that yet. */
 
-void Snib_Close(void);
 Err Snib_Init(void);
 
-void Snib_SetExpiry(UInt32 newTime);
 void Snib_StoreRecordKey(UInt8 *newHash);
 Boolean Snib_RetrieveKey(UInt8* keyHash);
 
