@@ -26,3 +26,5 @@ void Mem_CopyFromHandle(Char **dest, MemHandle h, UInt32 len);
 
 void Mem_ObliteratePtr(void * p);
 void Mem_ObliterateHandle(MemHandle h);
+
+void DB_WriteStringFromHandle(Char * dest, UInt32 *off, MemHandle h, UInt32 len);

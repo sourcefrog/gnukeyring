@@ -26,58 +26,101 @@
 #include "resource.h"
 #include "keyring.h"
 #include "keyedit.h"
-#include "callback.h"
 #include "keydb.h"
-#include "uiutil.h"
 #include "util.h"
-#include "generate.h"
+#include "memutil.h"
+
+#define kMaxExport (16<<10)
 
 
-static void ExportKey_Failure()
+static void Export_Failure()
 {
     FrmAlert(MemoDatabaseErrorAlert);
 }
 
 
-/* Export the current key to a MemoPad record. */
-void ExportKey(UnpackedKeyType UNUSED(unpacked))
+/* Convert a record to text form, and return a pointer to a
+ * newly-allocated buffer containing it.  The caller should free the
+ * buffer after use.  Returns 0 if unsuccessful. */
+UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
+		     void *memoRecord)
 {
-    DmOpenRef	dbp;
-    Int16		idx;
+    UInt32	off;
+
+    off = 0;
+    DB_WriteStringFromHandle(memoRecord, &off, keyRecord->nameHandle,
+			     keyRecord->nameLen + 1);
+    return (UInt16) off;
+}
+
+
+/* Write out a text buffer as a new memo. */
+static void* Export_CreateMemo(DmOpenRef *dbp, Int16 *pidx)
+{    
     UInt32	recLen;
-    Char const	*result = "Hallo!";
     Err		err;
     MemHandle	newHandle;
     void *     recPtr;
-    Boolean	dirty = true;
-    
-    dbp = DmOpenDatabaseByTypeCreator('DATA', 'memo', dmModeReadWrite);
-    if (!dbp) {
-	ExportKey_Failure();
-	return;
-    }
 
-    recLen = StrLen(result) + 1;
+    if (!(*dbp = DmOpenDatabaseByTypeCreator('DATA', 'memo', dmModeReadWrite)))
+	goto failOut;
 
-    idx = dmMaxRecordIndex;
-    newHandle = DmNewRecord(dbp, &idx, recLen);
-    if (!newHandle) {
-	ExportKey_Failure();
-	goto outCloseDb;
-    }
+    recLen = kMaxExport;
+    *pidx = dmMaxRecordIndex;
+    newHandle = DmNewRecord(*dbp, pidx, recLen);
+    if (!newHandle) 
+	goto failClose;
 
     recPtr = MemHandleLock(newHandle);
+    if (!recPtr) 
+	goto failDelete;
+	
+    return recPtr;
+    
 
-    err = DmWrite(recPtr, 0, result, recLen);
-    if (err) {
-	ExportKey_Failure();
-	/* but we just continue on and release it anyhow. */
-	/* TODO: perhaps we should delete the record? */
-    }
+ failDelete:
+    DmDeleteRecord(*dbp, *pidx);    
+    
+ failClose:
+    DmCloseDatabase(*dbp);
+
+ failOut:
+    return NULL;
+}
+
+
+
+static Int16 Export_Finish(DmOpenRef dbp, Int16 idx, Int16 size, void *recPtr)
+{
+    Boolean	dirty = true;
+    
     MemPtrUnlock(recPtr);
-
     DmReleaseRecord(dbp, idx, dirty);
 
+    if (!(DmResizeRecord(dbp, idx, size))) {	
+	return 0;
+    }
+    
  outCloseDb:
     DmCloseDatabase(dbp);
+    return 1;
+}
+
+
+
+/* Export the current key to a MemoPad record. */
+void ExportKey(UnpackedKeyType *keyRecord)
+{
+    void	*memoRecord;
+    Int16	idx;
+    Int16	size;
+    DmOpenRef dbp;
+
+    if (!(memoRecord = Export_CreateMemo(&dbp, &idx))) {
+	Export_Failure();
+    } else if (!(size = Export_BuildText(keyRecord, memoRecord))) {
+	Export_Failure();
+    } else if (!Export_Finish(dbp, idx, size, memoRecord)) {
+	Export_Failure();
+    }
 }

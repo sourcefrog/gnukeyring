@@ -20,6 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/* TODO: Check that the terminating NULs in the strings are accounted
+ * for correctly. */
+
 #include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
