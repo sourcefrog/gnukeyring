@@ -41,9 +41,11 @@
  * v2 was in 0.13.0pr1 [NOT SUPPORTED]
  *
  * v3 has the session key and master password checksum stored in
- * hidden records. [NOT SUPPORTED]
+ * hidden records [NOT SUPPORTED].
  *
- * v4 (0.13.0pr4) doesn't use session keys. */
+ * v4 has the master password checking hash stored in record 0
+ * and encrypts using the direct hash of the master password.  This is
+ * quite similar to v1.  */
 #define kDatabaseVersion	4
 
 /* The app and preferences version */
