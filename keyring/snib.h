@@ -34,7 +34,7 @@ void Snib_Close(void);
 Err Snib_Init(void);
 
 void Snib_SetExpiry(UInt32 newTime);
-void Snib_StorePasswdHash(UInt8 *newHash);
+void Snib_StoreRecordKey(UInt8 *newHash);
 Err Snib_StoreFromPasswd(Char *passwd);
 
 /*

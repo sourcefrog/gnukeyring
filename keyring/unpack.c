@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -34,37 +34,32 @@
 
 /* Convert from a packed database record into an unpacked in-memory
  * representation.  Return true if conversion was successful. */
-void Keys_Unpack(MemHandle record, UnpackedKeyType *u)
+void Keys_UnpackRecord(Char *recPtr, UnpackedKeyType *u)
 {
     Int16       remain;
-    Char *      ptr;
     Char *      plainBuf;
     Char *      cryptPtr;
     Err         err;
 
-    ptr = MemHandleLock(record);    
-    remain = MemHandleSize(record);
+    remain = MemPtrSize(recPtr);
     
-    u->nameHandle = Mem_ReadString(&ptr, &remain, &u->nameLen);
+    u->nameHandle = Mem_ReadString(&recPtr, &remain, &u->nameLen);
 
     plainBuf = MemPtrNew(remain);
     ErrFatalDisplayIf(!plainBuf, "Not enough memory to unpack record");
 
-    cryptPtr = ptr;
+    cryptPtr = recPtr;
     err = DES3_Read(cryptPtr, plainBuf, remain);
     if (err) {
-        /* TODO: If this failed, indicate to the caller that we couldn't unpack the record. */
+        /* TODO: If this failed, indicate to the caller that we
+         * couldn't unpack the record. */
         UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
     }
 
-    ptr = plainBuf;
-    u->acctHandle = Mem_ReadString(&ptr, &remain, &u->acctLen);
-    u->passwdHandle = Mem_ReadString(&ptr, &remain, &u->passwdLen);
-    u->notesHandle = Mem_ReadString(&ptr, &remain, &u->notesLen);
+    recPtr = plainBuf;
+    u->acctHandle = Mem_ReadString(&recPtr, &remain, &u->acctLen);
+    u->passwdHandle = Mem_ReadString(&recPtr, &remain, &u->passwdLen);
+    u->notesHandle = Mem_ReadString(&recPtr, &remain, &u->notesLen);
 
     MemPtrFree(plainBuf); 
-
-    MemHandleUnlock(record);
 }
-
-

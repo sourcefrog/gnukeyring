@@ -1,4 +1,6 @@
 
+* Build date in about box
+
 DONE Generate random passwords matching certain conditions
 Upper/lower/punct/digits/spaces?  Break into words?  Length?
 

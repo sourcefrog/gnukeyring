@@ -1,4 +1,5 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r"; -*-
+ *
  * $Id$
  * 
  * Tightly Bound -- store passwords securely on a handheld
@@ -38,24 +39,25 @@
  * Decrypt or encrypt a block using the session key, which must already be
  * unlocked.
  */
-static Err DES3_Block(void const *from, void *to, Boolean encrypt)
+static Err DES3_Block(void const *from, void *to, Boolean encrypt,
+                      UInt8 *cryptKey)
 {
     Err err;
     char other[kDESBlockSize];
     UInt8 *kp;
 
-    kp = g_Snib->recordKey;
+    kp = cryptKey;
     ErrFatalDisplayIf(!kp, "record key unready");
     err = EncDES((UInt8 *) from, kp, to, encrypt);
     if (err)
         return err;
 
-    kp = g_Snib->recordKey + kDESKeySize;
+    kp = cryptKey + kDESKeySize;
     err = EncDES((UInt8 *) to, kp, other, !encrypt);
     if (err)
         return err;
     
-    kp = g_Snib->recordKey;
+    kp = cryptKey;
     err = EncDES((UInt8 *) other, kp, to, encrypt);
     if (err)
         return err;
@@ -72,7 +74,7 @@ Err DES3_Read(void * from, void * to, UInt32 len)
 			 __FUNCTION__ ": not block padded");
 
     do {
-        DES3_Block(from, to, false);
+        DES3_Block(from, to, false, g_Snib->recordKey);
 
 	to += kDESBlockSize;
 	from += kDESBlockSize;
@@ -83,7 +85,8 @@ Err DES3_Read(void * from, void * to, UInt32 len)
 }
 
 
-Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len)
+Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len,
+               UInt8 *cryptKey)
 {
     UInt8	third[kDESBlockSize];
     Err		err = 0;
@@ -92,7 +95,7 @@ Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len)
 			 __FUNCTION__ ": not block padded");
 
     do {
-        err = DES3_Block(from, third, true);
+        err = DES3_Block(from, third, true, cryptKey);
 
         DmWrite(recPtr, off, third, kDESBlockSize);
 
@@ -111,7 +114,8 @@ Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32 len)
  * Encrypt (or not!) and write out
  */
 Err DES3_Write(void *recPtr, UInt32 off,
-                char const *src, UInt32 len)
+               char const *src, UInt32 len,
+               UInt8 *UNUSED(key))
 {
     return DmWrite(recPtr, off, src, len);
 }

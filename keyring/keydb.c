@@ -38,6 +38,7 @@
 #include "error.h"
 #include "uiutil.h"
 #include "auto.h"
+#include "reencrypt.h"
 
 Int16 gKeyDBCardNo;
 LocalID gKeyDBID;
@@ -121,18 +122,6 @@ Err KeyDB_CreateCategories(void) {
 
 
 /*
- * Walk through the database, and for each record decrypt it using the
- * old session key from the snib, and then store it back encrypted by
- * the new session key.  Finally update the snib to hold the hash of
- * the new password.
- */
-static void KeyDB_ReEncrypt(Char * UNUSED(newPasswd))
-{
-     /* XXXX */
-}
-
-
-/*
  * Set the master password for the database.  This is called after the
  * user has entered a new password and it has been properly checked,
  * so all it has to do is the database updates.  This routine is also
@@ -145,7 +134,7 @@ static void KeyDB_ReEncrypt(Char * UNUSED(newPasswd))
 void KeyDB_SetPasswd(Char *newPasswd)
 {
      PwHash_Store(newPasswd);
-     KeyDB_ReEncrypt(newPasswd);
+     KeyDB_Reencrypt(newPasswd);
      Unlock_PrimeTimer();
 }
 

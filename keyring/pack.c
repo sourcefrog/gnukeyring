@@ -1,4 +1,4 @@
-/* -*- c-file-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -61,6 +61,7 @@
 #include "dbutil.h"
 #include "keydb.h"
 #include "uiutil.h"
+#include "snib.h"
 
 
 static UInt32 packBodyLen, packRecLen;
@@ -104,7 +105,12 @@ static char *Keys_PackBody(UnpackedKeyType const *u)
 }
 
 
-static void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr)
+/*
+ * Encrypt and store an unpacked record into an open and locked
+ * database record.
+ */
+void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr,
+                      UInt8 *cryptKey)
 {
     UInt32     off = 0;
     void       *bodyBuf;
@@ -112,7 +118,7 @@ static void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr)
     DB_WriteStringFromHandle(recPtr, &off, unpacked->nameHandle,
                              unpacked->nameLen + 1); /* NUL */
     bodyBuf = Keys_PackBody(unpacked);
-    DES3_Write(recPtr, off, bodyBuf, packBodyLen);
+    DES3_Write(recPtr, off, bodyBuf, packBodyLen, cryptKey);
     MemPtrFree(bodyBuf);
 }
 
@@ -216,7 +222,7 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
 	return;
     
     recPtr = MemHandleLock(recHandle);
-    Keys_WriteRecord(unpacked, recPtr);
+    Keys_WriteRecord(unpacked, recPtr, g_Snib->recordKey);
     MemHandleUnlock(recHandle);
 
     err = DmReleaseRecord(gKeyDB, *idx, true);
