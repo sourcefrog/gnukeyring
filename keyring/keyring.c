@@ -54,8 +54,8 @@ static void App_LoadPrefs(void) {
 				    (Boolean) true);
 
 #ifdef BETA
-    /* If this is a beta version and it previous version was different
-     * give a alarm.
+    /* If this is a beta version and the previous version was different
+     * open the beta alert dialog.
      */
     if (version != kAppVersion)
 	FrmAlert(BetaAlert);
@@ -256,7 +256,7 @@ UInt32 PilotMain(UInt16 launchCode,
     if ((err = RomVersionCompatible()))
 	return err;
 
-#if 0
+#ifdef NOTIFY_SLEEP_HANDLER
     if (launchCode == kKeyringResumeSleepLaunch) {
 	/* We were relaunched by the sleep notify handler.
 	 * Enqueue event to resume sleeping 
@@ -320,8 +320,9 @@ UInt32 PilotMain(UInt16 launchCode,
 	/* This is the expiry alarm, or the time changed */
 	Snib_Eradicate ();
 	if ((launchFlags & sysAppLaunchFlagSubCall) && gSleeping) {
-	    /* We were relaunched by the sleep notify handler.
-	     * Enqueue event to resume sleeping 
+	    /* We were sleeping before alarm occured.  Enqueue an
+	     * AutoOff character to go to sleeping mode again.  This
+	     * will also close the key edit form.
 	     */
 	    keyev.eType = keyDownEvent;
 	    keyev.data.keyDown.chr = vchrAutoOff;
