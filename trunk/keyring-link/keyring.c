@@ -30,8 +30,8 @@
 
 #include <netinet/in.h>
 
-#include <libpisock/pi-file.h>
-#include <libpisock/pi-dlp.h>
+#include <pi-file.h>
+#include <pi-dlp.h>
 
 #include <openssl/ssl.h>
 #include <openssl/des.h>
@@ -58,12 +58,12 @@
  */
 
 
+static unsigned int keyring_dumpheader(struct pi_file *pif);
 static void keyring_dumpfile(struct pi_file *pif, const char *);
+extern void keyring5_dumpfile(struct pi_file *pif, const char *pass);
 
 #define kKeyDBType		0x476b7972  /* 'Gkyr' as 68k-endian int */
 #define kKeyringCreatorID	0x47746b72  /* 'Gtkr' as 68k-endian int */
-
-#define kDatabaseVersion	4
 
 #define kSaltSize               4
 
@@ -73,12 +73,12 @@ static void keyring_dumpfile(struct pi_file *pif, const char *);
 
 des_key_schedule key1, key2;
 
-int verbose = 0;
-
+static int verbose = 0;
 
 int main(int argc, char **argv) 
 {
     struct pi_file *pif;
+    unsigned int version;
 
     if (!argv[1] || !argv[2]) {
 	rs_fatal("usage: keyring DATAFILE PASSWORD");
@@ -88,7 +88,17 @@ int main(int argc, char **argv)
 	rs_fatal("couldn't open \"%s\": %s", argv[1], strerror(errno));
     }
 
-    keyring_dumpfile(pif, argv[2]);
+    version = keyring_dumpheader(pif);
+    
+    if (version == 4) {
+	keyring_dumpfile(pif, argv[2]);
+    } else if (version == 5) {
+	keyring5_dumpfile(pif, argv[2]);
+    } else {
+	rs_fatal("database version is %d, but this program can only handle "
+		 "version 4 and 5");
+    }
+
 
     pi_file_close(pif);
 
@@ -118,7 +128,7 @@ static int keyring_verify(const unsigned char *rec0, size_t rec_len,
 }
 
 
-static void keyring_dumpheader(struct pi_file *pif)
+static unsigned int keyring_dumpheader(struct pi_file *pif)
 {
     struct DBInfo      db_info;
 
@@ -132,11 +142,6 @@ static void keyring_dumpheader(struct pi_file *pif)
 		 db_info.type, (long) kKeyDBType);
     }
 
-    if (db_info.version != kDatabaseVersion) {
-	rs_fatal("database version is %d, but this program can only handle "
-		 "version %d",
-		 db_info.version, kDatabaseVersion);
-    }
 
     printf("Database: %.34s\n", db_info.name);
 
@@ -145,6 +150,8 @@ static void keyring_dumpheader(struct pi_file *pif)
     printf("Modify: %s", ctime(&db_info.modifyDate));
     printf("Backup: %s",
 	   (db_info.backupDate > 0) ? ctime(&db_info.backupDate) : "none\n");
+
+    return db_info.version;
 }
 
 
@@ -294,8 +301,6 @@ static void keyring_dumpfile(struct pi_file *pif,
     void               *pdata;
     size_t             data_len;
     
-    keyring_dumpheader(pif);
-
     if (pi_file_read_record(pif, 0, &pdata, &data_len, &attr, &category, &uid)
 	== -1) {
 	rs_fatal("failed to read first record!");
