@@ -193,7 +193,6 @@ void Snib_TimeoutChanged(void)
 Boolean Snib_RetrieveKey(CryptoKey keyHash)
 {
     SnibPtr snib;
-    UInt32  now;
 
     snib = Snib_GetSnib(false);
     if (snib == NULL)
