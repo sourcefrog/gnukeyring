@@ -67,7 +67,7 @@ PERL		= perl
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 VERSION         = 1.2-pre2
-DEFINES		= -DBETA -DkAppVersion=0x1011
+DEFINES		= -DBETA -DkAppVersion=0x1012
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
