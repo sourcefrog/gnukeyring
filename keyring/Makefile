@@ -45,6 +45,7 @@ BITMAPS         = keyring-15-1.pbm keyring-22-1.pbm keyring-22-8.ppm    \
 		  keyring-64-8.ppm keyring-22.xcf keyring-64.xcf \
                   lock-1.pbm lock-8.ppm lock-hi-8.ppm \
                   unlock-1.pbm unlock-8.ppm unlock-hi-8.ppm
+WIDEBITMAPS     = keyring-32-1.pbm keyring-32-8.ppm
 RESOURCES	= fontPW.txt fontstar.txt $(BITMAPS)
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
@@ -140,7 +141,7 @@ all: $(PRCS)
 $(PRCS): $(BASE)-%.prc: $(EXE) %.resstamp
 	cd res/$*; $(BUILDPRC) -o ../../$@ ../../$(APP).def ../../$(EXE) *.bin
 
-$(RESSTAMPS): %.resstamp: $(BITMAPS) resource.h $(RCP) prondata.o
+$(RESSTAMPS): %.resstamp: $(BITMAPS) resource.h $(RCP) prondata.o $(WIDEBITMAPS)
 	@[ -d res/$* ] || mkdir -p res/$*
 	@-rm -f res/$*/*
 	@-rm -f *.bin
@@ -149,6 +150,14 @@ $(RESSTAMPS): %.resstamp: $(BITMAPS) resource.h $(RCP) prondata.o
 	@if cmp -s auto.h auto.h.tmp; then rm -f auto.h.tmp; \
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
+
+# Convert keyring icons to 32 pixel width, so it is easier to center them
+# in the about box.
+# Due to a bug in convert, we have to do it in two steps.
+$(WIDEBITMAPS): keyring-32-%: keyring-22-%
+	convert -border 6x1 -bordercolor white $< tmp$*
+	convert -shave 1x1 tmp$* $@
+	@rm tmp$*
 
 dist: $(DIST_BALL) $(DIST_BIN) $(DIST_NEWS)
 
