@@ -28,17 +28,18 @@
 #include "keydb.h"
 #include "uiutil.h"
 #include "util.h"
+#include "crypto.h"
 #include "generate.h"
 #include "record.h"
 #include "export.h"
 #include "category.h"
-#include "crypto.h"
 #include "snib.h"
 #include "pack.h"
 #include "unpack.h"
 #include "auto.h"
 #include "sort.h"
 #include "listform.h"
+#include "passwd.h"
 
 /*
  * TODO: Newline in single-line fields should move down one, perhaps?
@@ -63,7 +64,7 @@ static void KeyEditForm_UpdateScrollbar(void);
 static Boolean KeyEditForm_IsDirty(void);
 static Boolean KeyEditForm_IsEmpty(void);
 static void KeyEditForm_MarkClean(void);
-static void KeyEditForm_DeleteKey(Boolean saveBackup);
+static void Edit_DeleteKey(Boolean saveBackup);
 static void KeyEditForm_GetFields(void);
 
 static Boolean f_keyDiscarded;
@@ -264,7 +265,7 @@ static void KeyEditForm_Commit(void) {
         return;
 
     if (KeyEditForm_IsEmpty()) {
-         KeyEditForm_DeleteKey(false); /* no backup */
+         Edit_DeleteKey(false); /* no backup */
          KeyEditForm_MarkClean();
     } else if (KeyEditForm_IsDirty()) {
          f_needsSort = true;
@@ -478,7 +479,7 @@ static void Edit_FormClose(void) {
 /*
  * Delete the current record, and set f_keyDiscarded.
  */
-static void KeyEditForm_DeleteKey(Boolean saveBackup)
+static void Edit_DeleteKey(Boolean saveBackup)
 {
      /* We set f_keyDiscarded to make sure that we don't try to save this
       * record as the form closes. */
@@ -520,7 +521,7 @@ static Boolean KeyEditForm_MaybeDelete(void) {
     if (buttonHit == CancelBtn)
         return false;
 
-    KeyEditForm_DeleteKey(saveBackup);
+    Edit_DeleteKey(saveBackup);
 
     return true;
 }
@@ -632,13 +633,40 @@ static void Edit_OpenAtPosition(Int16 pos)
 }
 
 
+/*
+ * Seek forwards or backwards from the current record.
+ */
+static void Edit_OpenAtOffset(Int16 offset)
+{
+     Int16 pos, dir;
+
+     if (offset < 0) {
+          pos = -offset;
+          dir = dmSeekBackward;
+     } else {
+          pos = offset;
+          dir = dmSeekForward;
+     }
+          
+     DmSeekRecordInCategory(gKeyDB, &gKeyRecordIndex, pos, dir,
+                            gPrefs.category);
+    
+    KeyEditForm_OpenRecord();
+}     
+
+
 
 /*
  * Move backwards or forwards by one record.  The current record
  * has been committed, which may have caused f_keyDiscarded to be
  * set.
+ *
+ * If the timeout has passed then we do not allow a new record to be
+ * opened.  The user must either re-enter their password, or stay
+ * stuck on the same record.  They can always press Done to go back to
+ * the list.
  */
-static void KeyEditForm_TryRecordFlip(Int16 offset)
+static void Edit_TryFlip(Int16 offset)
 {
      UInt16 numRecs;
      UInt16 pos;
@@ -652,6 +680,9 @@ static void KeyEditForm_TryRecordFlip(Int16 offset)
           return;
      }
 
+     if (!(Unlock_CheckTimeout() || UnlockForm_Run()))
+          return; /* otherwise, stay on the same record. */
+
      KeyEditForm_Commit();
 
      if (f_keyDiscarded) {
@@ -661,13 +692,18 @@ static void KeyEditForm_TryRecordFlip(Int16 offset)
                return;
           }
 
-          if (offset == -1)
+          /* We have to do an absolute seek, because when a record is
+           * discarded it is also re-ordered.  Flipping forward from a
+           * discarded record stays at the same absolute position,
+           * because the remaining records have just shuffled
+           * forward. */
+          if (offset == -1) {
                pos--;
-     } else { 
-          pos += offset;
+          }
+          Edit_OpenAtPosition(pos);
+     } else {
+          Edit_OpenAtOffset(offset);
      }
-     
-     Edit_OpenAtPosition(pos);
 }
 
 
@@ -687,7 +723,7 @@ static void KeyEditForm_PageButton(WinDirectionType dir)
         KeyEditForm_UpdateScrollbar();
     } else {
          offset = (dir == winDown) ? +1 : -1;
-         KeyEditForm_TryRecordFlip(offset);
+         Edit_TryFlip(offset);
     }
 }
 
