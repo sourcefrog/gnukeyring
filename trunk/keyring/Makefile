@@ -7,26 +7,25 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.13.0pr1
+VERSION         = 0.13.0dev2
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
-		  beta.c setpasswd.c pwhash.c sesskey.c			\
-		  pack.c unpack.c
+		  beta.c setpasswd.c pwhash.c snib.c sesskey.c		\
+		  pack.c unpack.c 
 
 HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
 		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
-		resource.h						\
+		resource.h sesskey.h					\
 		util.h crypto.h export.h keyedit.h memutil.h		\
-		pwhash.h uiutil.h sesskey.h pack.h unpack.h
+		pwhash.h uiutil.h snib.h pack.h unpack.h
 
 # 		  libdes/des_enc.c
 
 DEP             = $(subst .c,.d,$(SRC))
 OBJ		= $(subst .c,.o,$(SRC))
-#GRC             = $(APP).grc
 BIN             = $(APP).bin
 DEF		= $(APP).def
 EXE		= $(APP)
@@ -37,7 +36,6 @@ xNM		= m68k-palmos-nm
 CC              = m68k-palmos-gcc
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
-# OBJRES          = m68k-palmos-obj-res
 BUILDPRC        = build-prc
 
 BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
@@ -79,7 +77,9 @@ LANGUAGES = en de es
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
-all: $(DOCS) $(PRCS) 
+default: $(BASE)-en.prc
+
+all: $(PRCS) 
 
 -include $(DEP)
 
@@ -120,7 +120,7 @@ auto.h: en.resstamp
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
-%.d %.o: %.c auto.h
+%.o: %.c auto.h
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
