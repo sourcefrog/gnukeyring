@@ -8,8 +8,8 @@ pages=index license screenshots download mirrors thanks plans faq	\
 latte_pages=$(addsuffix .latte, $(pages))
 html_pages=$(addsuffix .html, $(pages))
 extra=robots.txt Blatant-Plug-Insert-4-Cheap-Dark.jpg snaps/*.png
-cvs_logs=$(addsuffix -log.txt, $(pages))
-site_files=$(html_pages) $(cvs_logs) $(extra)
+# cvs_logs=$(addsuffix -log.txt, $(pages))
+site_files=$(html_pages) $(extra)
 
 sites=linuxcare.com.au:/var/www/projects/gnukeyring \
 	gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
