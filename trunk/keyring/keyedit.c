@@ -1,8 +1,8 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
- * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool
+ * GNU Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,27 +89,6 @@ static Boolean keyDeleted;
  * database itself when packing and unpacking. */
 
 
-/* Set the text in the "set date" popup trigger to match the date in
- * the record. */
-static void KeyEditForm_SetDateTrigger(ControlPtr triggerPtr,
-				       UnpackedKeyType *u)
-{
-    static Char dateBuf[dateStringLength];
-    DateFormatType fmt;
-    int		year, month, day;
-    
-    fmt = (DateFormatType) PrefGetPreference(prefLongDateFormat);
-
-    /* DateToAscii doesn't cope well if the date is unreasonable, so we
-     * filter it a bit. */
-    year = limit(kYearMin, u->lastChange.year + 1904, kYearMax);
-    month = limit(1, u->lastChange.month, 12);
-    day = limit(1, u->lastChange.day, 31);
-    
-    DateToAscii(month, day, year, fmt, dateBuf);
-    CtlSetLabel(triggerPtr, dateBuf);
-}
-
 
 /* Update the form title to reflect the current record.  If this is a
  * new record, it will be something like "New Record".  If it's an
@@ -167,7 +146,6 @@ static void KeyEditForm_FromUnpacked(FormPtr frm, UnpackedKeyType *u) {
 		     (MemHandle) u->passwdHandle);
     FldSetTextHandle(UI_GetObjectByID(frm, NotesField),
 		     (MemHandle) u->notesHandle);
-    KeyEditForm_SetDateTrigger(UI_GetObjectByID(frm, DateTrigger), u);
 }
 
 
@@ -193,6 +171,20 @@ static void KeyEditForm_ToUnpacked(FormPtr frm, UnpackedKeyType *u) {
     // date is stored in the struct when it is edited
 }
 
+static void KeyEditForm_Done(void) {
+    FrmGotoForm(ListForm);
+}
+
+static Err KeyEditForm_Wakeup(SysNotifyParamType *np) {
+    if(np->notifyType == sysNotifyLateWakeupEvent) {
+	SysNotifyUnregister(gKeyDBCardNo,
+			    gKeyDBID,
+			    sysNotifyLateWakeupEvent,
+			    sysNotifyNormalPriority);
+	KeyEditForm_Done();
+    }
+    return 0;
+}
 
 // If we're editing an existing record, then open it and use it to
 // fill the form.
@@ -220,6 +212,12 @@ static void KeyEditForm_Load(FormPtr frm) {
 
     KeyEditForm_FromUnpacked(frm, &gRecord);
     KeyEditForm_UpdateScrollbar();
+    SysNotifyRegister(gKeyDBCardNo,
+		      gKeyDBID,
+		      sysNotifyLateWakeupEvent,
+		      KeyEditForm_Wakeup,
+		      sysNotifyNormalPriority,
+		      NULL);
 }
 
 
@@ -315,9 +313,6 @@ static void KeyEditForm_New(void) {
     /* All of the text fields allocate their own memory as they go.
      * The others we have to set up by hand. */
     gRecord.lastChangeDirty = false;
-    DateSecondsToDate(TimGetSeconds(), &gRecord.lastChange);
-    KeyEditForm_SetDateTrigger(UI_ObjectFromActiveForm(DateTrigger),
-			       &gRecord);
 
     gRecord.categoryDirty = false;
     if (gPrefs.category == dmAllCategories)
@@ -362,39 +357,6 @@ static void KeyEditForm_FormOpen(void) {
     KeyEditForm_Update(updateCategory);
 }
 
-
-static void KeyEditForm_Done(void) {
-    FrmGotoForm(ListForm);
-}
-
-
-static void KeyEditForm_ChooseDate(void) {
-    Boolean ok;
-    Int16 year, month, day;
-    DatePtr date = &gRecord.lastChange;
-
-    /* Limit to protect against SelectDay aborting. */
-    year = limit(kYearMin, date->year + 1904, kYearMax);
-    month = limit(1, date->month, 12);
-    day = limit(1, date->day, 31);
-    
-    ok = SelectDay(selectDayByDay,
-		   &month,
-		   &day,
-		   &year,
-		   "Choose Date");
-    if (ok) {
-	ControlPtr triggerPtr;
-
-	date->year = year - 1904;
-	date->month = month;
-	date->day = day;
-	gRecord.lastChangeDirty = true;
-	
-	triggerPtr = UI_ObjectFromActiveForm(DateTrigger);
-	KeyEditForm_SetDateTrigger(triggerPtr, &gRecord);
-    }
-}
 
 
 /* Delete the record if the user is sure that's what they want. */
@@ -635,10 +597,6 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
     switch (event->eType) {
     case ctlSelectEvent:
 	switch (event->data.ctlSelect.controlID) {
-	case DateTrigger:
-	    KeyEditForm_ChooseDate();
-	    result = true;
-	    break;
 	case DoneBtn:
 	    KeyEditForm_Done();
 	    result = true;
