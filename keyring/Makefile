@@ -6,7 +6,7 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.13.0dev4
+VERSION         = 0.13.0pr4
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
@@ -50,13 +50,13 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 # On the other hand -O0 seems to make gcc not treat constants
 # properly. Foo. 
 
-DEFINES		= -DPALM_KEYRING
+DEFINES		= 
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wsign-compare -Wstrict-prototypes	\
 		-Wmissing-prototypes -Winline		\
 		-Wlarger-than-256 -Wshadow -Wcast-align	
-# OPTIM		= -O3 -finline-functions
-OPTIM		= -g
+OPTIM		= -O3 -finline-functions
+# OPTIM		= -g
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD 
 
 HELP_TXT        = $(wildcard help/*/*.txt)
