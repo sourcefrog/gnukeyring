@@ -8,6 +8,25 @@
 {
   {\h2 frequently asked questions}
 
+  {\faqentry \faqid=bad_download
+    { {\buglink \bugid=119744 When I try to install \Product, my
+        handheld or PC crashes.  }
+      
+     You may have suffered an error in downloading GNU Keyring.  If
+     you have the md5sum tool, please download the release notes and
+     use this command to check the files
+
+     {\pre md5sum -v -c keyring-12.345-news.txt}
+
+     If the files are corrupt, please try clearing your browser's
+     cache, downloading them using a different browser, turning on or
+     off your web proxy, or downloading from a different machine.
+
+     If all else fails, {\a \href=http://sourceforge.net/users/mbp/
+     send me mail} and I will email you a copy of the file.  
+
+   } }
+
   {\faqentry \faqid=check_backup
       {I have begun using Keyring, and am trying to verify that
        my encrypted data is being backed up on the pc during the
