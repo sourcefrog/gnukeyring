@@ -110,7 +110,7 @@ Boolean Unlock_CheckTimeout() {
     ULong now = TimGetSeconds();
 
     if (now > gExpiry) {
-#ifdef ENABLE_OBLITERATE
+#ifdef REALLY_OBLITERATE
 	Unlock_ObliterateKey();
 #endif
 	return false;
@@ -183,7 +183,9 @@ Boolean SetPasswd_Run(void) {
     FrmDrawForm(frm);
 
     KeyDB_SetPasswd(masterPtr);
+#ifdef REALLY_OBLITERATE
     Mem_ObliteratePtr(masterPtr);
+#endif /* REALLY_OBLITERATE */
     MemPtrFree(masterPtr);
     result = true;
 

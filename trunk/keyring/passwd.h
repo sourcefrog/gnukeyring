@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,9 @@
  */
 
 Boolean SetPasswd_Run(void);
+#ifdef REALLY_OBLITERATE
 void Unlock_ObliterateKey(void);
+#endif /* REALLY_OBLITERATE */
 
 Boolean UnlockForm_HandleEvent(EventPtr event);
 Boolean UnlockForm_Run(void);

@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@ static ULong KeyRecord_CalcPackedLength(UnpackedKeyType const *unpacked)
 }
 
 
+#ifdef REALLY_OBLITERATE
 /* Scribble over all text in memory referenced by the unpacked
  * structure, so that unencrypted information is not left in
  * memory. */
@@ -71,6 +72,7 @@ void UnpackedKey_Obliterate(UnpackedKeyPtr u) {
     u->lastChange.month = 0;
     u->lastChange.day = 0;
 }
+#endif /* REALLY_OBLITERATE */
 
 
 static void UnpackedKey_Free(UnpackedKeyPtr u) {
@@ -536,3 +538,21 @@ Err KeyDB_CreateDB(DmOpenRef *dbp) {
 	return 0;
 }
 
+
+Err KeyDB_MarkForBackup(DmOpenRef dbp) {
+    LocalID dbID;
+    Word attr;
+    UInt cardNo;
+    
+    // Set the backup bit.  It seems that without this the Windows
+    // desktop software doesn't make the backup properly
+    
+    DmOpenDatabaseInfo(dbp, &dbID, NULL, NULL, &cardNo, NULL);
+    DmDatabaseInfo(cardNo, dbID, NULL, &attr, NULL, NULL,
+		   NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    attr |= dmHdrAttrBackup;
+    DmSetDatabaseInfo(cardNo, dbID, NULL, &attr, NULL, NULL,
+		      NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+    return 0;
+}
