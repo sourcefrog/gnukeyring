@@ -340,7 +340,7 @@ BEGIN
 	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 PREVTOP 20 auto)
         PUSHBUTTON "䥩" ID ID_IncludeHigh AT (PREVRIGHT+1 PREVTOP 22 AUTO)
-        PUSHBUTTON "umami salazar" ID ID_Syllables AT (44 PREVBOTTOM+1 PREVRIGHT-44 AUTO)
+        PUSHBUTTON "pronounceable syllables" ID ID_Syllables AT (44 PREVBOTTOM+1 PREVRIGHT-44 AUTO)
 
 	BUTTON "Generate" id OkBtn at (3 PREVBOTTOM+7 auto auto)
 	button "Cancel" id CancelBtn at (prevright+5 prevtop auto auto)
