@@ -141,6 +141,12 @@ BEGIN
   "@@GenerateHelp" = "help/de/generate.txt"
   "@@KeyEditHelp" = "help/de/keyedit.txt"
 
+  "There is no data to export." = "Keine Daten zum Exportieren vorhanden."
+
+  "Unfiled" = "Nicht abgelegt"
+  "Phone" = "Telekommunikation"
+  "Banking" = "Banken"
+
   "@accel_Undo" = "U"
   "@accel_Cut" = "X"
   "@accel_Copy" = "C"
