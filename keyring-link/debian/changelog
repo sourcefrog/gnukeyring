@@ -1,9 +1,0 @@
-keyring-link (0.1.1-1) unstable; urgency=low
-
-  * Initial Release.
-
- -- Martin Pool <mbp@wistful.humbug.org.au>  Wed, 28 Mar 2001 02:26:20 +1000
-
-Local variables:
-mode: debian-changelog
-End:
