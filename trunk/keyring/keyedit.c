@@ -213,6 +213,7 @@ static GUI_SECTION void KeyEdit_ToUnpacked(void)
 	+ EVEN(FldGetTextLength(f_AllFields[k_Passwd]))
 	+ EVEN(FldGetTextLength(f_AllFields[k_Notes]))
 	+ 4 + 5 * sizeof(FieldHeaderType) + 2;
+    UInt16 category = gRecord->category;
 
     MemSet(gRecord->plainText, MemPtrSize(gRecord->plainText), 0);
     MemPtrFree(gRecord->plainText);
@@ -221,6 +222,7 @@ static GUI_SECTION void KeyEdit_ToUnpacked(void)
     gRecord = MemPtrNew(sizeof(UnpackedKeyType) + 4*sizeof(UInt16));
     gRecord->numFields = 0;
     gRecord->plainText = MemPtrNew(plainLen);
+    gRecord->category  = category;
 
     offset = 0;
     for (i = 0; i < 5; i++) {
