@@ -51,12 +51,11 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  export.c record.c category.c				\
 		  setpasswd.c pwhash.c snib.c reencrypt.c sort.c	\
 		  secrand.c search.c pronounce.c sha1.c			\
-		  upgrade.c
+		  upgrade.c # md5.c
 
-ASMGEN          = sha1-m68k.pl
+ASMGEN          = sha1-m68k.pl # md5-m68k.pl
 
-GLIBDEF         = ssl-md.def ssl-des.def
-#GLIBDEF         = ssl-des.def
+GLIBDEF         = ssl-des.def ssl-md.def
 
 HEADERS	        = sections.h sha1.h keyring.h record.h error.h    \
 		  resource.h crypto.h pwhash.h snib.h includes.h  \
