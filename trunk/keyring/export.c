@@ -22,9 +22,7 @@
 /* FIXME: MemoPad limits memos to 4kb.  We should use that too, and
  * make sure that we never write out more text than can be accepted.
  * I think we're safe, because all our edit fields have smaller
- * lengths.
- *
- * TODO: Get rid of the lame attribution at the end.  */
+ * lengths */
 
 #include <PalmOS.h>
 #include <Password.h>
@@ -63,8 +61,10 @@ static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
     /* XXX: Ugh, ugly.  Try rewriting this more concisely. */
 
     off = 0;
+
+    /* NB it's OK to call this with a null handle. */
     DB_WriteStringFromHandle(memoRecord, &off, keyRecord->nameHandle,
-			     keyRecord->nameLen);
+                             keyRecord->nameLen);
     if (keyRecord->acctHandle) {
 	DB_WriteString(memoRecord, &off, "\nAccount: ");
 	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->acctHandle,
@@ -80,7 +80,6 @@ static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->notesHandle,
 				 keyRecord->notesLen);
     }
-    DB_WriteString(memoRecord, &off, "\n(Exported from GNU Keyring)");
 
     DmWrite(memoRecord, off, "", 1); /* write nul */
     off++;
