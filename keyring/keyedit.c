@@ -74,10 +74,9 @@ static Boolean KeyEditForm_IsDirty(void);
 static Boolean KeyEditForm_IsEmpty(void);
 static void KeyEditForm_MarkClean(void);
 static void KeyEditForm_DeleteKey(Boolean saveBackup);
-static void KeyEditForm_FindMyPosition(void);
 static void KeyEditForm_GetFields(void);
 
-static Boolean keyDeleted;
+static Boolean f_keyDiscarded;
 
 // If the form is active, all these are valid.
 static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
@@ -86,10 +85,6 @@ static FormPtr f_KeyEditForm;
 
 /* Index of the current record in the database as a whole. */
 UInt16		gKeyRecordIndex = kNoRecord;
-
-/* Index of the current record within the currently-displayed
- * category. */
-UInt16		gKeyPosition = kNoRecord;
 
 /* Holds the string to be copied into the title.  Must be big enough
  * to handle the largest possible expansion. */
@@ -144,11 +139,12 @@ static void KeyEditForm_UpdateTitle(void)
 {
     Char * titleTemplate;
     UInt16 pos, total;
-
+    
     ErrNonFatalDisplayIf(gKeyRecordIndex == kNoRecord,
                          __FUNCTION__ ": no record");
 
-    pos = gKeyPosition + 1;
+    /* 1-based count */
+    pos = 1 + DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
     total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
         
     titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
@@ -206,6 +202,7 @@ static void KeyEditForm_Done(void) {
     FrmGotoForm(ListForm);
 }
 
+
 /*  static Err KeyEditForm_Wakeup(SysNotifyParamType *np) { */
 /*      if(np->notifyType == sysNotifyLateWakeupEvent) { */
 /*      SysNotifyUnregister(gKeyDBCardNo, */
@@ -262,10 +259,13 @@ static void KeyEditForm_Load(void)
 }
 
 
-/* Save the record if any fields are dirty, and also update
- * gRecord from the field values. */
+/*
+ * Save the record if any fields are dirty, and also update gRecord
+ * from the field values.  If the record has been left empty, then
+ * delete it rather than saving an empty record.
+ */
 static void KeyEditForm_Commit(void) {
-    if (keyDeleted)
+    if (f_keyDiscarded)
         return;
 
     if (KeyEditForm_IsEmpty()) {
@@ -276,8 +276,6 @@ static void KeyEditForm_Commit(void) {
         KeyEditForm_Save();
         KeyEditForm_MarkClean();
     }
-
-    KeyEditForm_FindMyPosition();
 }
 
 
@@ -372,15 +370,11 @@ static Boolean KeyEditForm_IsEmpty(void)
 
 /* Called from the list form when creating a new record. */
 void KeyEditForm_GotoNew(void) {
-    gKeyRecordIndex = gKeyPosition = kNoRecord;
+    gKeyRecordIndex = kNoRecord;
     
     FrmGotoForm(KeyEditForm);
 }
 
-
-static void KeyEditForm_FindMyPosition(void) {
-    gKeyPosition = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
-}
 
 
 void KeyEditForm_GotoRecord(UInt16 recordIdx) {
@@ -410,9 +404,7 @@ static void KeyEditForm_OpenRecord(void) {
         /* TODO: If this fails, do something. */
     }
 
-    KeyEditForm_FindMyPosition();
-
-    keyDeleted = false;
+    f_keyDiscarded = false;
 
     FrmSetFocus(f_KeyEditForm,
                 FrmGetObjectIndex(f_KeyEditForm, ID_KeyNameField));
@@ -452,18 +444,14 @@ static void KeyEditForm_FormOpen(void) {
 }
 
 
+/*
+ * Delete the current record, and set f_keyDiscarded.
+ */
 static void KeyEditForm_DeleteKey(Boolean saveBackup)
 {
-    UnpackedKeyType unpacked;
-    
-    // Unpack and obliterate values so they're not left in memory.
-    // XXX: This sounds kind of unnecessary -- can we avoid it, since
-    // we're not obliterating field data?
-    KeyEditForm_ToUnpacked(&unpacked);
-
-    // We set keyDeleted to make sure that we don't try to save this
-    // record as the form closes.
-    keyDeleted = true;
+     /* We set f_keyDiscarded to make sure that we don't try to save this
+      * record as the form closes. */
+    f_keyDiscarded = true;
 
     if (saveBackup) {
         DmArchiveRecord(gKeyDB, gKeyRecordIndex);
@@ -582,58 +570,74 @@ static void KeyEditForm_Dragged(EventPtr event) {
 
 
 /*
- * Move backwards or forwards by one record.  Save and reload data if
- * necessary.  If there is no such record, or if we're inserting a new
- * record, then beep and do nothing else.
+ * Open the record at the specified position in the current category.
  */
-static void KeyEditForm_FlipRecord(WinDirectionType dir)
+static void Edit_OpenAtPosition(Int16 pos)
 {
-    UInt16 numRecs;
-    Int16 offset = (dir == winDown) ? +1 : -1;
-
-    /* TODO: Cache this too. */
-    numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
-
-    if ((gKeyPosition == 0  &&  offset == -1)
-        || (gKeyPosition + offset == numRecs)) {
-        /* Bumped into the end */
-        SndPlaySystemSound(sndWarning);
-        return;
-    }
-    
-    KeyEditForm_Commit();
-
-    /* If we just deleted the current record, then moving forward a
-     * page should actually stay at the same position, because the
-     * next record will have shuffled down.  We won't have explicitly
-     * deleted it of course, but we might have left an empty
-     * record. */
-    if (keyDeleted && offset == +1)
-         ;
-    else
-         gKeyPosition += offset;
-
     gKeyRecordIndex = 0;
-    DmSeekRecordInCategory(gKeyDB, &gKeyRecordIndex, gKeyPosition,
+    DmSeekRecordInCategory(gKeyDB, &gKeyRecordIndex, pos,
                            dmSeekForward, gPrefs.category);
     
     KeyEditForm_OpenRecord();
 }
 
 
+
+/*
+ * Move backwards or forwards by one record.  The current record
+ * has been committed, which may have caused f_keyDiscarded to be
+ * set.
+ */
+static void KeyEditForm_TryRecordFlip(Int16 offset)
+{
+     UInt16 numRecs;
+     UInt16 pos;
+     
+     pos = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
+     numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
+     
+     if ((pos == 0  &&  offset == -1) || (pos + offset == numRecs)) {
+          /* Bumped into the end */
+          SndPlaySystemSound(sndWarning);
+          return;
+     }
+
+     KeyEditForm_Commit();
+
+     if (f_keyDiscarded) {
+          if (numRecs <= 1) {
+               /* Deleted the last record in the category. */
+               KeyEditForm_Done();
+               return;
+          }
+
+          if (offset == -1)
+               pos--;
+     } else { 
+          pos += offset;
+     }
+     
+     Edit_OpenAtPosition(pos);
+}
+
+
+
 /*
  * If possible, scroll the notes field.  Otherwise, flip forward or
- * backward by one record.  */
+ * backward by one record.  Before flipping records, commit changes
+ * and act appropriately if the record was actually discarded.
+ */
 static void KeyEditForm_PageButton(WinDirectionType dir)
 {
-    Int16 lines;
+    Int16 lines, offset;
     
     if (FldScrollable(f_NotesFld, dir)) {
         lines = FldGetVisibleLines(f_NotesFld);
         FldScrollField(f_NotesFld, lines, dir);
         KeyEditForm_UpdateScrollbar();
     } else {
-        KeyEditForm_FlipRecord(dir);
+         offset = (dir == winDown) ? +1 : -1;
+         KeyEditForm_TryRecordFlip(offset);
     }
 }
 
@@ -693,6 +697,7 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
 }
 
 
+
 static void KeyEditForm_CategorySelected(void) {
     Boolean categoryChanged;
 
@@ -702,11 +707,11 @@ static void KeyEditForm_CategorySelected(void) {
             gPrefs.category = gRecord.category;
         }
         Key_SetCategory(gKeyRecordIndex, gRecord.category);
-        KeyEditForm_FindMyPosition();
         KeyEditForm_UpdateCategory();
         KeyEditForm_UpdateTitle();
     }
 }
+
 
 
 Boolean KeyEditForm_HandleEvent(EventPtr event) {
