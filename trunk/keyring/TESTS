@@ -1,6 +1,10 @@
 Test-cases for GNU Keyring
 $Id$
 
+Running through all of these tests ought to cover most of the code in
+Keyring.  Please add more tests when you think of them or when you add
+code.
+
 > Create a new record
 
  > Make various record fields empty
