@@ -519,7 +519,7 @@ BEGIN
 
   "Released under the GNU GPL v2." = "Liscencée sous le GNU GPL v2." 
 
-  "Save archive copy on PC" = "Enregistrez la copie d'archives sur le PC.""
+  "Save archive copy on PC" = "Enregistrez la copie d'archives sur le PC."
 
   "Database" = "Base de Données"
   "Set Password..." = "Créez le mot de passe..."
@@ -530,7 +530,7 @@ BEGIN
   "Preferences..." =  "Préférences..."
   "About..." =  "Au sujet de..."
 
-  "Undo" = "Défaites""
+  "Undo" = "Défaites"
   "Undo All" = "Défaites tout"
   "Graffiti Help" = "Graffiti-aide"
   "Paste" = "Collez"
