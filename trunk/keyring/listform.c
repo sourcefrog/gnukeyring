@@ -38,14 +38,6 @@
 // List form
 
 /*
- * Sort order will be (not implemented yet): reserved records (fixed
- * positions), records with no name in order of insertion by database index,
- * normal records sorted by name and then by database index, and finally
- * deleted records.  I think we'll try just always inserting into the right
- * position and never explicitly inserting.
- */
-
-/*
  * TODO: As a possible optimization, scroll the bitmap of the table
  * rather than redrawing it.  See ListViewScroll in the MemoPad
  * source.

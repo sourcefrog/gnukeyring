@@ -1,4 +1,4 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-file-style: "k&r"; -*-
  *
  * $Id$
  * 
@@ -28,8 +28,6 @@
  */
 
 #include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
 
 #include "keyring.h"
 #include "memutil.h"
@@ -41,82 +39,6 @@
 #include "snib.h"
 #include "uiutil.h"
 #include "auto.h"
-
-static Int16 KeyDB_CompareRecords(void * rec1, void * rec2, Int16 other,
-			 SortRecordInfoPtr info1,
-			 SortRecordInfoPtr info2,
-			 MemHandle appInfoHand);
-
-// ======================================================================
-// Key record manipulation
-
-
-/* Compare records for sorting or sorted insertion.
- *
- * Because all records begin with the strz record name the comparison
- * is pretty simple: we sort in string order, except that deleted
- * records go to the end.  */
-static Int16 KeyDB_CompareRecords(void * rec1, void * rec2,
-				  Int16 UNUSED(other),
-				  SortRecordInfoPtr info1,
-				  SortRecordInfoPtr info2,
-				  MemHandle UNUSED(appInfoHand))
-{
-    Int16 result;
-    Char	*cp1, *cp2;
-
-    if (info1 && (info1->attributes & dmRecAttrDelete))
-	result = +1;
-    else if (info2 && (info2->attributes & dmRecAttrDelete))
-	result = -1;
-    else {
-	cp1 = (Char *) rec1;
-	cp2 = (Char *) rec2;
-	
-	if (rec1  &&  !rec2)
-	    result = -1;
-	else if (!rec1  &&  rec2)
-	    result = +1;
-	else if (!rec1 && !rec2)
-	    result = 0;
-	else if (*cp1 && !*cp2)
-	    result = -1;
-	else if (!*cp1 && *cp2)
-	    result = +1;
-	else 
-	    result = StrCompare(cp1, cp2);
-    }
-    return result;
-}
-
-
-
-void KeyRecord_Reposition(Char * name, UInt16 *idx, UInt16 *position)
-{
-    UInt16 	attr;
-    UInt32 	uniqueID;
-    MemHandle	moveHandle;
-    Err 	err;
-    
-    DmRecordInfo(gKeyDB, *idx, &attr, &uniqueID, NULL);
-    err = DmDetachRecord(gKeyDB, *idx, &moveHandle);
-    if (err) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
-	return;
-    }
-	
-    *idx = DmFindSortPosition(gKeyDB, (void *) name, 0,
-			      KeyDB_CompareRecords, 0);
-
-    err = DmAttachRecord(gKeyDB, idx, moveHandle, 0);
-    if (err) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
-	return;
-    }
-    DmSetRecordInfo(gKeyDB, *idx, &attr, &uniqueID);
-
-    *position = DmPositionInCategory(gKeyDB, *idx, gPrefs.category);
-}
 
 
 void UnpackedKey_Free(UnpackedKeyPtr u) {
@@ -133,21 +55,6 @@ void UnpackedKey_Free(UnpackedKeyPtr u) {
 	= NULL;
 }
 
-
-#if 0
-static Err KeyRecord_SetCategory(Int16 idx, UInt16 category) {
-    UInt16		attr;
-    Err			err;
-
-    if ((err = DmRecordInfo(gKeyDB, idx, &attr, 0, 0)))
-	return err;
-
-    attr = (attr & ~dmRecAttrCategoryMask)
-	| (category & dmRecAttrCategoryMask);
-
-    return DmSetRecordInfo(gKeyDB, idx, &attr, 0);
-}
-#endif
 
 
 Err KeyRecord_GetCategory(Int16 idx, UInt16 *category) {

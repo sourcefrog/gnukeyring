@@ -21,8 +21,6 @@
  */
 
 #include <PalmOS.h>
-#include <Password.h>
-#include <Encrypt.h>
 
 #include "resource.h"
 #include "keyring.h"
@@ -39,23 +37,9 @@
 #include "pack.h"
 #include "unpack.h"
 #include "auto.h"
+#include "sort.h"
 
-
-/* TODO: Show position and do paging within category -- is this
- * working now?
- *
- * TODO: Be more careful about not saving unless actually modified, as
- * this can save a lot of time.  I think we handle all the obvious
- * cases now.
- *
- * TODO: Resort the database when editing is finished.  It's probably
- * simplest not to sort until returning to the list.
- *
- * FIXME: Position in the form title is wrong after changing
- * categories.  Do we want to stay in the originally selected category?
- *
- * TODO: Perhaps close the list form while we're in the edit form?
- *
+/*
  * TODO: Newline in single-line fields should move down one.
  */
 
@@ -85,6 +69,11 @@ static FormPtr f_KeyEditForm;
 
 /* Index of the current record in the database as a whole. */
 UInt16		gKeyRecordIndex = kNoRecord;
+
+/* True if we should sort the database on leaving this form.  At the
+ * moment we set this on any modification, although we could perhaps
+ * be a bit more selective. */
+static Boolean f_needsSort;
 
 /* Holds the string to be copied into the title.  Must be big enough
  * to handle the largest possible expansion. */
@@ -269,12 +258,13 @@ static void KeyEditForm_Commit(void) {
         return;
 
     if (KeyEditForm_IsEmpty()) {
-        KeyEditForm_DeleteKey(false); /* no backup */
-        KeyEditForm_MarkClean();
+         KeyEditForm_DeleteKey(false); /* no backup */
+         KeyEditForm_MarkClean();
     } else if (KeyEditForm_IsDirty()) {
-        KeyEditForm_ToUnpacked(&gRecord);
-        KeyEditForm_Save();
-        KeyEditForm_MarkClean();
+         f_needsSort = true;
+         KeyEditForm_ToUnpacked(&gRecord);
+         KeyEditForm_Save();
+         KeyEditForm_MarkClean();
     }
 }
 
@@ -438,9 +428,18 @@ static void KeyEditForm_PrepareFields(void)
 
 
 static void KeyEditForm_FormOpen(void) {
+     f_needsSort = false;
      KeyEditForm_GetFields();
      KeyEditForm_PrepareFields();
      KeyEditForm_OpenRecord();
+}
+
+
+static void Edit_FormClose(void) {
+     KeyEditForm_Commit();
+     if (f_needsSort) {
+          Keys_Sort();
+     }
 }
 
 
@@ -452,6 +451,9 @@ static void KeyEditForm_DeleteKey(Boolean saveBackup)
      /* We set f_keyDiscarded to make sure that we don't try to save this
       * record as the form closes. */
     f_keyDiscarded = true;
+
+    /* I don't think there's any need to sort here, because nothing else
+     * has moved. */
 
     if (saveBackup) {
         DmArchiveRecord(gKeyDB, gKeyRecordIndex);
@@ -740,8 +742,8 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
         return true;
 
     case frmCloseEvent:
-        KeyEditForm_Commit();
-        return false;
+         Edit_FormClose();
+         return false;
 
     case keyDownEvent:
         return KeyEditForm_HandleKeyDownEvent(event);
