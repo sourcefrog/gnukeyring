@@ -74,8 +74,11 @@ static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
 static ScrollBarPtr f_NotesScrollBar;
 static FormPtr f_KeyEditForm;
 
+#define k_NumFields 4
+static FieldPtr f_AllFields[k_NumFields];
+
 /* Index of the current record in the database as a whole. */
-UInt16		gKeyRecordIndex = kNoRecord;
+UInt16          gKeyRecordIndex = kNoRecord;
 
 /* True if we should sort the database on leaving this form.  At the
  * moment we set this on any modification, although we could perhaps
@@ -85,6 +88,9 @@ static Boolean f_needsSort;
 /* Holds the string to be copied into the title.  Must be big enough
  * to handle the largest possible expansion. */
 Char f_KeyFormTitle[32];
+
+
+extern Boolean g_ReadOnly;
 
 
 // ======================================================================
@@ -166,10 +172,11 @@ static void KeyEditForm_FromUnpacked(void) {
  * Wipe out all the fields on this form.
  */
 static void KeyEditForm_Clear(void) {
-    FldDelete(f_KeyNameFld, 0, (UInt16) -1);
-    FldDelete(f_AcctFld, 0, (UInt16) -1);
-    FldDelete(f_PasswdFld, 0, (UInt16) -1);
-    FldDelete(f_NotesFld, 0, (UInt16) -1);
+     Int16 i;
+
+     for (i = 0; i < k_NumFields; i++) {
+          FldDelete(f_AllFields[i], 0, (UInt16) -1);
+     }
 }
 
 
@@ -340,10 +347,11 @@ static void Keys_UndoAll(void) {
  */
 static void KeyEditForm_MarkClean(void)
 {
-    FldSetDirty(f_KeyNameFld, false);
-    FldSetDirty(f_PasswdFld, false);
-    FldSetDirty(f_AcctFld, false);
-    FldSetDirty(f_NotesFld, false);
+     Int16 i;
+
+     for (i = 0; i < k_NumFields; i++) {
+          FldSetDirty(f_AllFields[i], false);
+     }
 }
 
 
@@ -351,8 +359,14 @@ static void KeyEditForm_MarkClean(void)
  * user. */
 static Boolean KeyEditForm_IsDirty(void)
 {
-    return (FldDirty(f_KeyNameFld) || FldDirty(f_PasswdFld)
-            || FldDirty(f_AcctFld) || FldDirty(f_NotesFld));
+     Int16 i;
+
+     for (i = 0; i < k_NumFields; i++) {
+          if (FldDirty(f_AllFields[i]))
+               return true;
+     }
+
+     return false;
 }
 
 
@@ -360,8 +374,14 @@ static Boolean KeyEditForm_IsDirty(void)
  * the record rather than saving it. */
 static Boolean KeyEditForm_IsEmpty(void)
 {
-    return !(FldGetTextLength(f_KeyNameFld) || FldGetTextLength(f_PasswdFld)
-             || FldGetTextLength(f_AcctFld) || FldGetTextLength(f_NotesFld));
+     Int16 i;
+
+     for (i = 0; i < k_NumFields; i++) {
+          if (FldGetTextLength(f_KeyNameFld))
+               return false;
+     }
+
+     return true;
 }
 
 
@@ -412,10 +432,16 @@ static void KeyEditForm_OpenRecord(void) {
 static void KeyEditForm_GetFields(void)
 {
     f_KeyEditForm = FrmGetActiveForm();
-    f_KeyNameFld = UI_GetObjectByID(f_KeyEditForm, ID_KeyNameField),
-    f_NotesFld = UI_GetObjectByID(f_KeyEditForm, ID_NotesField);
-    f_AcctFld = UI_GetObjectByID(f_KeyEditForm, AccountField);
-    f_PasswdFld = UI_GetObjectByID(f_KeyEditForm, PasswordField);
+
+    f_AllFields[0] = f_KeyNameFld =
+         UI_GetObjectByID(f_KeyEditForm, ID_KeyNameField);
+    
+    f_AllFields[1] = f_NotesFld = UI_GetObjectByID(f_KeyEditForm, ID_NotesField);
+    f_AllFields[2] = f_AcctFld = UI_GetObjectByID(f_KeyEditForm, AccountField);
+    
+    f_AllFields[3] = f_PasswdFld =
+         UI_GetObjectByID(f_KeyEditForm, PasswordField);
+ 
     f_NotesScrollBar = UI_GetObjectByID(f_KeyEditForm, NotesScrollbar);
 }
 
@@ -424,20 +450,32 @@ static void KeyEditForm_GetFields(void)
  * Set run-time-only attributes on fields.  This is called each time the
  * form is opened.
  */
-static void KeyEditForm_PrepareFields(void)
+static void Edit_PrepareFields(void)
 {
     FieldAttrType attr;
 
     FldGetAttributes(f_NotesFld, &attr);
     attr.hasScrollBar = true;
     FldSetAttributes(f_NotesFld, &attr);
+
+    /* If the database is read-only, apply that attribute to the
+     * fields. */
+    if (g_ReadOnly) {
+         Int16 i;
+
+         for (i = 0; i < k_NumFields; i++) {
+              FldGetAttributes(f_AllFields[i], &attr);
+              attr.editable = false;
+              FldSetAttributes(f_AllFields[i], &attr);
+         }              
+    }
 }
 
 
 static void KeyEditForm_FormOpen(void) {
      f_needsSort = false;
      KeyEditForm_GetFields();
-     KeyEditForm_PrepareFields();
+     Edit_PrepareFields();
      KeyEditForm_OpenRecord();
 }
 
