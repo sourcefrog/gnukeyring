@@ -250,20 +250,6 @@
  * hash; hash collisions will occur no more often than chance.
  */
 
-/*
- * The minimum number of bits to release a "wait on input".  Should
- * probably always be 8, since a /dev/random read can return a single
- * byte.
- */
-#define WAIT_INPUT_BITS 8
-/* 
- * The limit number of bits under which to release a "wait on
- * output".  Should probably always be the same as WAIT_INPUT_BITS, so
- * that an output wait releases when and only when a wait on input
- * would block.
- */
-#define WAIT_OUTPUT_BITS WAIT_INPUT_BITS
-
 /* There is actually only one of these, globally. */
 typedef struct {
 	unsigned add_ptr;
@@ -418,13 +404,16 @@ void Secrand_Close(void)
 void Secrand_AddEventRandomness(EventType *ev)
 {
     UInt32 *rand = (UInt32 *) ev;
-    int i = sizeof(EventType) / sizeof(UInt32);
+    int i = sizeof(EventType) / sizeof(UInt32) / 2;
+    UInt32 x = TimGetTicks(), y = x;
     
-    Secrand_AddEntropyWords(TimGetTicks(), TimGetSeconds());
     while (i-- > 0) {
-	Secrand_AddEntropyWords(rand[0], rand[1]);
-	rand += 2;
+	x = (x << 5) | (x >> 27);
+	y = (y << 5) | (y >> 27);
+	x ^= *rand++;
+	y ^= *rand++;
     }
+    Secrand_AddEntropyWords(x, y);
 }
 
 #define HASH_BUFFER_SIZE (kMD5HashSize / (2 * sizeof(UInt32)))
