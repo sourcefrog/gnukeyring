@@ -21,6 +21,11 @@
  */
 
 
+/*
+ * TODO: Generate a genuine random key, and save it encrypted by the
+ * user's password.
+ */
+
 #include <PalmOS.h>
 
 #include "keyring.h"
