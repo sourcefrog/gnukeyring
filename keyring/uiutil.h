@@ -31,3 +31,9 @@ int UI_ScanUnion(FormPtr frm, UInt16 const * map);
 void UI_UnionSet(FormPtr frm, UInt16 const *map, UInt16 value);
 
 void UI_UpdateCategoryName(FormPtr frm, UInt16 category);
+
+void UI_ReportSysError2(UInt16 msgID, Err err, char const *where);
+
+void App_ReportSysError(UInt16 msgID, Err err);
+
+void App_NotImplemented(void);

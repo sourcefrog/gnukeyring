@@ -34,7 +34,7 @@
 #include "export.h"
 #include "category.h"
 #include "crypto.h"
-#include "sesskey.h"
+#include "snib.h"
 #include "pack.h"
 #include "unpack.h"
 #include "auto.h"

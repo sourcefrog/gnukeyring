@@ -27,6 +27,9 @@
 #include "crypto.h"
 #include "pwhash.h"
 #include "resource.h"
+#include "keydb.h"
+#include "uiutil.h"
+#include "auto.h"
 
 /*
  * Store the checking-hash of a password into record[kMasterHashRec].
@@ -48,7 +51,7 @@ Err PwHash_Store(Char *newPasswd)
     idx = kMasterHashRec;
     recHandle = DmNewRecord(gKeyDB, &idx, kMD5HashSize);
     if (!recHandle) {
-	App_ReportSysError(KeyDatabaseAlert, DmGetLastErr());
+	App_ReportSysError(ID_KeyDatabaseAlert, DmGetLastErr());
 	return err;
     }
 
@@ -83,7 +86,7 @@ Boolean PwHash_Check(Char *guess)
     /* Retrieve the hash record. */
     recHandle = DmQueryRecord(gKeyDB, kMasterHashRec);
     if (!recHandle) {
-	App_ReportSysError(KeyDatabaseAlert, err);
+	App_ReportSysError(ID_KeyDatabaseAlert, err);
 	return false;
     }
     recPtr = MemHandleLock(recHandle);

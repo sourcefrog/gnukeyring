@@ -121,17 +121,18 @@ void KeyDB_SetPasswd(Char *newPasswd)
 
 
 /* Will return an error if the database does not exist. */
-Err KeyDB_OpenExistingDB(DmOpenRef *dbp) {
+Err KeyDB_OpenExistingDB(void) {
     Err err;
     
     // TODO: Give people the option to name the database, or to create
     // it on different cards?
-    *dbp = DmOpenDatabaseByTypeCreator(kKeyDBType, kKeyringCreatorID,
+    gKeyDB = DmOpenDatabaseByTypeCreator(kKeyDBType, kKeyringCreatorID,
 				       dmModeReadWrite);
-    if (!*dbp)
+    if (!gKeyDB)
 	return DmGetLastErr();
 
-    if ((err = DmOpenDatabaseInfo(*dbp, &gKeyDBID, NULL, NULL, &gKeyDBCardNo, NULL)))
+    if ((err = DmOpenDatabaseInfo(gKeyDB, &gKeyDBID, NULL, NULL,
+				  &gKeyDBCardNo, NULL)))
 	return err;
 
     return 0;
@@ -164,6 +165,8 @@ Err KeyDB_CreateDB(void) {
 
     if ((err = KeyDB_SetVersion()))
 	return err;
+
+    SessKey_Generate();
 
     return 0;
 }

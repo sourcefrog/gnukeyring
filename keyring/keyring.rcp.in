@@ -30,7 +30,7 @@ BEGIN
   "@@generate2" = "password:"
   "@@OutOfMemory" = "Not enough dynamic memory to proceed."
   "@@WrongPassword" = "Password incorrect.  Please try again."
-  "@@PasswordMismatch" = "The passwords you entered do not match. Please try again"
+  "@@PasswordMismatch" = "The passwords you entered do not match."
   "@@NotImplemented" = "Sorry, that feature is not implemented yet."
 
   "@@GenerateHelp" = "help/en/generate.txt"
@@ -406,7 +406,7 @@ END
 
 
 
-ALERT ID NotImplementedAlert
+ALERT ID ID_NotImplementedAlert
 BEGIN
 	TITLE "Not here yet"
 
@@ -438,12 +438,12 @@ BEGIN
 END
 
 
-ALERT ID KeyDatabaseAlert
+ALERT ID ID_KeyDatabaseAlert
 ERROR
 BEGIN
 	TITLE "Error"
 
-	MESSAGE "Error accessing key database: ^1"
+	MESSAGE "Error accessing key database: ^1 (^2)"
 
 	BUTTONS "OK"
 END

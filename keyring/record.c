@@ -38,7 +38,9 @@
 #include "crypto.h"
 #include "passwd.h"
 #include "resource.h"
-#include "sesskey.h"
+#include "snib.h"
+#include "uiutil.h"
+#include "auto.h"
 
 static Int16 KeyDB_CompareRecords(void * rec1, void * rec2, Int16 other,
 			 SortRecordInfoPtr info1,
@@ -99,7 +101,7 @@ void KeyRecord_Reposition(Char * name, UInt16 *idx, UInt16 *position)
     DmRecordInfo(gKeyDB, *idx, &attr, &uniqueID, NULL);
     err = DmDetachRecord(gKeyDB, *idx, &moveHandle);
     if (err) {
-	App_ReportSysError(KeyDatabaseAlert, err);
+	App_ReportSysError(ID_KeyDatabaseAlert, err);
 	return;
     }
 	
@@ -108,7 +110,7 @@ void KeyRecord_Reposition(Char * name, UInt16 *idx, UInt16 *position)
 
     err = DmAttachRecord(gKeyDB, idx, moveHandle, 0);
     if (err) {
-	App_ReportSysError(KeyDatabaseAlert, err);
+	App_ReportSysError(ID_KeyDatabaseAlert, err);
 	return;
     }
     DmSetRecordInfo(gKeyDB, *idx, &attr, &uniqueID);

@@ -27,6 +27,7 @@
 #include "resource.h"
 #include "category.h"
 #include "uiutil.h"
+#include "keydb.h"
 
 static Char		categoryName[dmCategoryLength];
 

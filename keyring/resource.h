@@ -28,7 +28,6 @@
 #define OutOfMemoryAlert		1019
 #define CouldntLaunchMemoAlert		1020
 #define CryptoErrorAlert		1021
-#define KeyDatabaseAlert		1022
 #define UpgradeAlert			1023
 #define TooNewAlert			1024
 #define CantUpgradeAlert		1025

@@ -31,7 +31,10 @@
 #include "uiutil.h"
 #include "upgrade.h"
 #include "keyedit.h"
+#include "crypto.h"
+
 #include "prefs.h"
+#include "snib.h"
 #include "listform.h"
 #include "error.h"
 #include "beta.h"
@@ -60,16 +63,6 @@ KeyringPrefsType gPrefs;
 // ======================================================================
 // Application methods
 
-
-
-
-void App_ReportSysError(UInt16 msgID, Err err) {
-    Char buf[256];
-
-    *buf = '\0';		/* in case nothing is inserted? */
-    SysErrString(err, buf, (UInt16) sizeof buf);
-    FrmCustomAlert(msgID, buf, 0, 0);
-}
 
 
 static void App_LoadPrefs(void) {
@@ -117,10 +110,10 @@ static Err App_PrepareDB(void) {
     
     /* If the database doesn't already exist, then we require the user
      * to set their password. */
-    err = KeyDB_OpenExistingDB(&gKeyDB);
+    err = KeyDB_OpenExistingDB();
     if (err == dmErrCantFind) {
 	if ((err = KeyDB_CreateDB())
-            || (err = KeyDB_OpenExistingDB(&gKeyDB))
+            || (err = KeyDB_OpenExistingDB())
 	    || (err = KeyDB_CreateCategories()))
 	    goto failDB;
 	if (!SetPasswd_Run())
@@ -153,7 +146,7 @@ static Err App_PrepareDB(void) {
 
 
  failDB:
-    App_ReportSysError(KeyDatabaseAlert, err);
+    App_ReportSysError(ID_KeyDatabaseAlert, err);
     return err;
 }
 
@@ -161,10 +154,10 @@ static Err App_PrepareDB(void) {
 static Err App_Start(void) {
     Err err;
 
-    Unlock_Reset();
-
     App_LoadPrefs();
     Gkr_CheckBeta();
+    if ((err = Snib_Init()))
+	return err;
 
     if ((err = App_PrepareDB()))
         return err;
@@ -182,6 +175,7 @@ static void App_Stop(void) {
 #ifdef ENABLE_OBLITERATE
     Unlock_ObliterateKey();
 #endif
+    Snib_Close();
     DmCloseDatabase(gKeyDB);
 }
 
@@ -247,11 +241,6 @@ void App_AboutCmd(void) {
     if (prevFrm)
 	FrmSetActiveForm(prevFrm);
     FrmDeleteForm(frm);
-}
-
-
-void App_NotImplemented(void) {
-    FrmAlert(NotImplementedAlert);
 }
 
 
