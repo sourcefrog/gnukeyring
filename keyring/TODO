@@ -1,8 +1,7 @@
--*- indented-text -*- 
+-*- indented-text -*-
+$Id$
 
-Page up in list doesn't work?
-
-Advise use of accented characters as they're much harder to guess.
+* Advise use of accented characters as they're much harder to guess.
 
 * Lock the database when the timeout expires, even if it's currently
   showing a record.  Also, make sure changes to the system clock
@@ -181,19 +180,14 @@ This is a little out of the scope of Keyring.
 Really?  Yes, probably this would be good: better than decrypting on
 the PC.
 
-* Upgrade dbs.
-
-* Discard records with all fields empty
-
-* Export/import memos
+* Import memos
 
 * How to load in long data?
 
 * New version that does 0kp to authenticate to a custom PAM module.
 
-* Doodle to generate entropy, MD5 to hash
+  -- This really belongs in a separate program.
 
-Necessary?
 
 * Event loop timeout to show countdown?
 
