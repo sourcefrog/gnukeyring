@@ -13,6 +13,8 @@ Requirements
  * Should be not-too-hard to decode on a PC, either using a custom
    program or writing one from this document.
 
+ * Should use a well known and researched encryption method.
+
 
 Packed format of key records:
 
@@ -21,7 +23,6 @@ encrypted:
   strz account name
   strz password
   strz notes
-  ULONG days-since-1904 last change
 
 It's OK for any of these fields to be empty.  If they are, we use
 the record's unique ID in the list.
@@ -43,6 +44,28 @@ Key records are stored encrypted by a random session key.  The session
 key in turn is stored encrypted by the password in the application
 info block.
 
+
+Future Plans:
+
+In the next release I would like to extend this format to make it more
+flexible and powerful:
+
+UInt16  recordVersion
+FontID  nameFont
+strz    name of record
+encrypted:
+  Field  field1
+  Field  field2
+  ...
+
+where Field is:
+  LabelID label
+  FontID  font
+  strz    value
+
+LabelID is a 8 bit value.  Labels 0..127 are system defined, 128..255
+are user defined.  System defined labels may have a special meaning.
+The user defined labels are in the AppInfo header.
 
 
 Encryption strategies:
@@ -164,9 +187,7 @@ password ought to lock out anyone who knew the previous key.
 
 We don't use the password itself as the key, but rather it's MD5 hash.
 This gives 128 bits, so we have two 64-bit keys (though DES will
-ignore the parity bits from each.)  In a later version I would like to
-put a salt into MD5 process.  So if someone steals the encryption key
-he can be locked out again without changing the password.
+ignore the parity bits from each.)
 
 It's supposed to be infeasible to derive this from the verification
 hash.  I hope this is OK.
@@ -180,6 +201,40 @@ gives us the mild inconvenience of needing to use two temporary
 buffers: we have to pack/unpack records to give buffers for editing,
 and have to use database manager functions to write out to the
 database, rather than just writing into a buffer.  This is harmless.
+
+
+Future Plans:
+
+In the current scheme I can see several disadvantages: Every record is
+encrypted with the same key so one may notice in the encrypted data
+when two fields have the same account name.  Secondly the MD5 hash is
+very fast and may lead to a brute force password attack.  The
+encryption key doesn't depend on a salt.  If someone steals the
+encryption key (from the snib) he can read every database with the
+same master key.  And last but not least one cannot check from the
+snib whether it matches the key database.
+
+To solve all these issues I want to change to this key scheme:
+
+Snib          = MD5(... MD5(MD5(MasterKey ; Salt) ; Salt ; MasterKey)
+                    ... ; Salt ; MasterKey) [ iterated 1000 times ]
+KeyHash       = Salt ; MD5(Snib ; Salt)
+EncryptionKey = MD5(Snib)
+
+Keyring only needs the Snib to check KeyHash or to encrypt a record.
+Every records gets another key and the snib is dependent on the salt.
+
+Also we should change from des-ecb to des-cbc.
+
+An attacker can read the KeyHash.  Following attacks are possible:
+ * Brute Forcing the MasterKey.  This is now much more infeasible
+   because of the 1000 MD5 hashes that need to be calculated per try.
+ * Brute Forcing the Snib.  Infeasible because the snib contains
+   128 bit of randomness.
+ * Reversing MD5.  This is commonly thought to be infeasible.
+ * Dictionary attacks can't work because of the salt.
+ * There may be problems due to the regularity of the iteration of the
+   MD5 hash.  I believe there are no problems, though.
 
 
 
@@ -201,7 +256,7 @@ Sample code:
 
 On a PC, you can get the same result by
 
-   openssl enc -des-ecb -K KEYHEX -in foo.bin
+   openssl enc -des-ede-ecb -K KEYHEX -in foo.bin
 
 where foo.bin contains the 8-byte text and KEYHEX is a hex
 representation of the key, with the first byte first.
@@ -219,7 +274,7 @@ either do block chaining ourselves or just use ECB mode.  Probably the
 first is better if it's not too hard.
 
 Since the records we're encrypting will be relatively small and since
-code simplicity is somewhat important it seems OK to use DES-EDE3-ECB
+code simplicity is somewhat important it seems OK to use DES-EDE-ECB
 (as SSLeay and OpenSSL call it).
 
 
