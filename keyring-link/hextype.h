@@ -1,2 +1,1 @@
-
-void hextype(FILE *f, unsigned char const *d, size_t len) ;
+void hextype(FILE *f, void const *d, size_t len) ;
