@@ -1569,19 +1569,19 @@ BEGIN
 	LABEL "@@generate2" AUTOID AT (PREVLEFT PREVBOTTOM) FONT 1
 
 	LABEL "Length:" autoid at (right@43 prevbottom+4) font 1
-	pushbutton "4" id Length4Push at (46 prevtop auto auto)		  group 1
-	pushbutton "6" id Length6Push at (prevright+1 prevtop auto auto)  group 1
-	pushbutton "8" id Length8Push at (prevright+1 prevtop auto auto)  group 1 
-	pushbutton "10" id Length10Push at (prevright+1 prevtop auto auto) group 1
-	pushbutton "16" id Length16Push at (prevright+1 prevtop auto auto) group 1
-	pushbutton "20" id Length20Push at (prevright+1 prevtop auto auto) group 1
+	pushbutton "4" id Length4Push at (46 prevtop 16 auto)  group 1
+	pushbutton "6" id Length6Push at (prevright+1 prevtop 16 auto)  group 1
+	pushbutton "8" id Length8Push at (prevright+1 prevtop 17 auto)  group 1 
+	pushbutton "10" id Length10Push at (prevright+1 prevtop 17 auto) group 1
+	pushbutton "16" id Length16Push at (prevright+1 prevtop 17 auto) group 1
+	pushbutton "20" id Length20Push at (prevright+1 prevtop 17 auto) group 1
 	
 	LABEL "Include:" AUTOID AT (RIGHT@43 PREVBOTTOM+6) FONT 1
-	PUSHBUTTON "a-z" ID IncludeLower at (46 prevtop auto auto) 
-	PUSHBUTTON "A-Z" id IncludeUpper at (prevright+1 prevtop auto auto) 
-	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
+	PUSHBUTTON "a-z" ID IncludeLower at (46 prevtop 20 auto) 
+	PUSHBUTTON "A-Z" id IncludeUpper at (prevright+1 prevtop 20 auto) 
+	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop 20 auto) 
 	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 prevtop 20 auto)
-        PUSHBUTTON "@@langSpecificChars" ID ID_IncludeHigh AT (prevright+1 prevtop 22 AUTO)
+        PUSHBUTTON "@@langSpecificChars" ID ID_IncludeHigh AT (prevright+1 prevtop 21 AUTO)
         PUSHBUTTON "@@pronounceable" ID ID_Syllables AT (46 PREVBOTTOM+1 PREVRIGHT-46 AUTO)
 
 	BUTTON "Generate" id OkBtn at (3 PREVBOTTOM+7 auto auto)
