@@ -31,8 +31,10 @@
      <pagelink name="conduits"> |
      <pagelink name="faq"> |
      <pagelink id="history" name="changelog"> |
-     <pagelink name="plans"> |
      <pagelink id="building" name="building from source">
+     <br>
+     <pagelink name="plans"> |
+     <pagelink id="prerelease" name="pre-release">
      <br>
      <pagelink id="lists" name="mailinglists"> |
      <externallink href="https://sourceforge.net/tracker/?group_id=306&amp;atid=100306" name="bugs"> |
