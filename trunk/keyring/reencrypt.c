@@ -81,16 +81,13 @@ void KeyDB_Reencrypt(UInt8 *oldRecordKey, Char const *newPasswd)
              continue;
         }
         recPtr = MemHandleLock(recHand);
-
 	Keys_UnpackRecord(recPtr, &unpacked, oldRecordKey);
-        Keys_CalcPackedSize(&unpacked);
-        Keys_WriteRecord(&unpacked, recPtr, newRecordKey);
+        MemHandleUnlock(recHand);
+        Keys_SaveRecord(&unpacked, idx, newRecordKey);
 
 	UnpackedKey_Free(&unpacked);
 
-        MemHandleUnlock(recHand);
 
-	DmReleaseRecord(gKeyDB, idx, true); // dirty
     }
 
     // Finally, make the new unlock hash the currently active one
