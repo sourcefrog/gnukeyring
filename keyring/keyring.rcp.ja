@@ -109,8 +109,8 @@ BEGIN
   "Export to Memo" = "メモへコピー"
   "Delete..." = "削除. . ."
 
-  "@@GenerateHelp" = "help/en/generate.txt"
-  "@@KeyEditHelp" = "help/en/keyedit.txt"
+  "@@GenerateHelp" = "help/ja/generate.txt"
+  "@@KeyEditHelp" = "help/ja/keyedit.txt"
   "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "There is no data to export." = "作成するデータがありません。"
