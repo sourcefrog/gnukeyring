@@ -1,7 +1,6 @@
 <set chapter="faq">
 <set rcsid="$$Id$$">
 
-<opt verbose>
 <file template="keyring.htt">
 
 <set faqctr="1">
