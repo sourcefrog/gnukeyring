@@ -88,6 +88,9 @@ void Keys_Sort(void)
 {
      Err err;
 
+     /* Insertion sort is actually much faster than quick sort
+      * in the common case (where most records are already in order).
+      */
      err = DmInsertionSort(gKeyDB, Keys_Compare, 0);
      if (err) {
           UI_ReportSysError2(ID_SortError, err, __FUNCTION__);
