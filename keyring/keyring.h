@@ -35,13 +35,15 @@
  *
  * v1 had the session key stored in the SortInfo block, which was a mistake
  *
- * v2 has the session key and master password checksum stored in
+ * v2 was in 0.13.0pr1 and not supported
+ *
+ * v3 has the session key and master password checksum stored in
  * hidden records.
  */
-#define kDatabaseVersion	2
+#define kDatabaseVersion	3
 
 /* The app and preferences version */
-#define kAppVersion		131
+#define kAppVersion		132
 
 #define kLockExpiryPref		0
 #define kGeneralPref		1
