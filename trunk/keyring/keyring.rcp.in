@@ -133,6 +133,9 @@ MENUID ListMenuBar
 BEGIN
 	TITLE "GNU Keyring"
 
+	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 0 AUTO AUTO) RIGHTANCHOR USABLE
+	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
+
 	LIST "" ID KeysList AT (1 17 150 125) 
 	SCROLLBAR ID KeysListScrollBar 
 		AT (PREVRIGHT+1 PREVTOP 7 PREVHEIGHT)
@@ -148,6 +151,9 @@ BEGIN
 	/* The default title must be big enough for anything we 
 	 * want to copy into it */
 	TITLE "Key ______ of ______" 
+
+	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 0 AUTO AUTO) RIGHTANCHOR USABLE
+	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
 
 	FIELD ID KeyNameField AT (60 18 97 AUTO) USABLE  
 		UNDERLINED AUTOSHIFT MAXCHARS 40
@@ -331,22 +337,80 @@ BEGIN
 END
 
 
-
-ALERT ID SysErrAlert
+ALERT ID CouldntLaunchMemoAlert
 ERROR
 BEGIN
-	MESSAGE "^1: System error ^2"
+	TITLE "Error"
+
+	MESSAGE "Couldn't launch the Memo Pad"
 
 	BUTTONS "OK"
 END
 
 
-ALERT ID CouldntLaunchMemoAlert
+ALERT ID CryptoErrorAlert
 ERROR
 BEGIN
-	MESSAGE "Couldn't launch the Memo Pad"
+	TITLE "Error"
+
+	MESSAGE "Cryptographic error: ^1"
 
 	BUTTONS "OK"
+END
+
+
+ALERT ID KeyDatabaseAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Error accessing key database: ^1"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID UpgradeAlert
+CONFIRMATION
+BEGIN
+	TITLE "Upgrade Database?"
+
+	MESSAGE "This database is from a previous version of Keyring.  Convert it to the new format?"
+
+	BUTTONS "Convert" "Cancel"
+END
+
+
+ALERT ID CantUpgradeAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Can't upgrade database from version ^1."
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID UpgradeFailedAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+	MESSAGE "Error upgrading database: ^1"
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID TooNewAlert
+ERROR
+BEGIN
+	TITLE "Incompatible Database"
+
+	MESSAGE "This database is from a later version of Keyring, and cannot be opened."
+
+	BUTTONS "Cancel"
 END
 
 
@@ -430,7 +494,7 @@ END
 ICON "keyring-22.xbm"
 SMALLICON "keyring-15.xbm"
 
-BITMAP ID GnuBitmap "philosophical-gnu-tiny-bw.bmp"
+BITMAP ID GnuBitmap	"philosophical-gnu-tiny-bw.bmp"
 
 STRING ID TitleTemplateStr "Key %d of %d"
 STRING ID EmptyTitleStr "New Key"
@@ -440,3 +504,6 @@ STRING ID EmptyTitleStr "New Key"
 string id GenerateHelp file "@@GenerateHelp"
 string id PreferencesHelp file "@@PreferencesHelp"
 string id KeyEditHelp file "@@KeyEditHelp"
+
+
+CATEGORIES ID CategoryRsrc "Unfiled" "Banking" "Computer" "Phone" "Web"

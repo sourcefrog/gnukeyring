@@ -23,18 +23,20 @@
 #include <Password.h>
 #include <Encrypt.h>
 
+#include "resource.h"
 #include "keyring.h"
+#include "crypto.h"
 
 // ======================================================================
 // DES3 functions
 
 #undef DISABLE_DES
 
-void DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
-	      UInt8 const *key)
+Err DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
+	     UInt8 const *key)
 {
     UInt8	other[kBlockSize];
-    Err		err;
+    Err		err = 0;
     
     ErrNonFatalDisplayIf(len & (kBlockSize-1),
 			 __FUNCTION__ ": not block padded");
@@ -44,15 +46,15 @@ void DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
 #ifndef DISABLE_DES	
 	err = EncDES(from, (UInt8 *) key, to, encrypt);
 	if (err)
-	    goto fail;
+	    return err;
 
 	err = EncDES(to, (UInt8 *) key+kBlockSize, other, !encrypt);
 	if (err)
-	    goto fail;
+	    return err;
 
 	err = EncDES(other, (UInt8 *) key, to, encrypt);
 	if (err)
-	    goto fail;
+	    return err;
 #else /* DISABLE_DES */
 	MemMove(to, from, kBlockSize);
 #endif /* DISABLE_DES */
@@ -61,10 +63,7 @@ void DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
 	len -= kBlockSize;
     } while (len > 0);
 
-    return;
-    
- fail:
-    App_ReportSysError(__FUNCTION__": EncDES", err);	
+    return 0;
 }
 
 

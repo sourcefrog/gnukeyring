@@ -48,11 +48,11 @@ static void Unlock_SetKey(Char const *passwd) {
 
     err = EncDigestMD5((void *) passwd, StrLen(passwd), gRecordKey);
     if (err)
-	App_ReportSysError(__FUNCTION__, err);
+	App_ReportSysError(CryptoErrorAlert, err);
 }
 
 
-void Unlock_ObliterateKey(void) {
+static void Unlock_ObliterateKey(void) {
     MemSet(gRecordKey, kPasswdHashSize, 'x');
 }
 

@@ -29,9 +29,11 @@
 #include "resource.h"
 #include "keyring.h"
 #include "keydb.h"
+#include "record.h"
 #include "util.h"
 #include "memutil.h"
 #include "dbutil.h"
+#include "export.h"
 
 #define kMaxExport (16<<10)
 
@@ -40,7 +42,7 @@ static UInt32 const kMemoType = 'DATA', kApplType = 'appl';
 static UInt32 const kMemoCreator = 'memo';
 
 
-static void Export_Failure()
+static void Export_Failure(void)
 {
     FrmAlert(MemoDatabaseErrorAlert);
 }
@@ -49,8 +51,8 @@ static void Export_Failure()
 /* Convert a record to text form, and return a pointer to a
  * newly-allocated buffer containing it.  The caller should free the
  * buffer after use.  Returns 0 if unsuccessful. */
-UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
-		     void *memoRecord)
+static UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
+			       void *memoRecord)
 {
     UInt32	off;
 

@@ -5,12 +5,12 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.9.2
+VERSION         = 0.11.0
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
 		  crypto.c passwd.c uiutil.c generate.c prefs.c \
-		  export.c dbutil.c
+		  export.c dbutil.c upgrade.c record.c category.c
 DEP             = $(subst .c,.d,$(SRC))
 OBJ		= $(subst .c,.o,$(SRC))
 #GRC             = $(APP).grc
@@ -34,7 +34,11 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
 # because it is defined to be the greatest amount of optimization that
 # does not involve size-speed tradeoffs.
 
-CFLAGS          = -O2 -Wall -Werror -Winline -Wno-unused -W \
+# -Wconversion
+
+CFLAGS          = -O2 -Wall -Werror -Winline -Wunused -W \
+		   -Wsign-compare -Wstrict-prototypes \
+		  -Wmissing-prototypes \
 		  $(DEFINES) $(INCLUDES) -MMD -g
 
 HELP_TXT        = $(wildcard help/*/*.txt)

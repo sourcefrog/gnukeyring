@@ -26,6 +26,7 @@
 #include "uiutil.h"
 
 
+
 // ======================================================================
 // User-interface utilities
 FieldPtr UI_GetFocusObjectPtr(void) {

@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool
+ * Copyright (C) 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,50 +19,45 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* This file looks after the "Preferences" dialog.  For the time being
- * the only setting here is how long the keyring stays unlocked. */
-
 #include <PalmOS.h>
+#include <Password.h>
+#include <Encrypt.h>
 
-#include "resource.h"
 #include "keyring.h"
-#include "memutil.h"
-#include "keydb.h"
+#include "resource.h"
+#include "category.h"
 #include "uiutil.h"
-#include "prefs.h"
 
-// ======================================================================
-// Preferences
+static Char		categoryName[dmCategoryLength];
 
-void PrefsForm_Run(void) {
-    FormPtr 	prevFrm = FrmGetActiveForm();
-    FormPtr	frm = FrmInitForm(PrefsForm);
-    UInt16	btn;
-    Int16		chosen;
-    
-    static const UInt16 map[] = {
-	0,   Expiry0Push,
-	15,  Expiry15Push,
-	60,  Expiry60Push,
-	300, Expiry300Push,
-	-1
-    };
 
-    UI_ScanAndSet(frm, map, gPrefs.timeoutSecs);
+void Category_UpdateName(FormPtr frm, UInt16 category) {
+    CategoryGetName(gKeyDB, category, categoryName);
+    FrmSetCategoryLabel(frm, CategoryTrigger, categoryName);
+}
 
-    btn = FrmDoDialog(frm);
 
-    if (btn == CancelBtn)
-	goto leave;
+Boolean Category_Selected(Int16 *category, Boolean showAll) {
+    FormPtr frm;
+    Boolean		categoryEdited;
+    Int16		oldCategory;
 
-    chosen = UI_ScanForFirst(frm, map);
-    if (chosen != -1) {
-	gPrefs.timeoutSecs = chosen;
+    oldCategory = *category;
+
+    frm = FrmGetActiveForm();
+    categoryEdited = CategorySelect(gKeyDB, frm,
+				    CategoryTrigger,
+				    CategoryList,
+				    showAll, 
+				    category,
+				    categoryName,
+				    1, 0);
+
+    if (categoryEdited || *category != oldCategory) {
+	FrmUpdateForm(FrmGetActiveFormID(), updateCategory);
+	return true;
     }
-    
- leave:
-    FrmDeleteForm(frm);
-    FrmSetActiveForm(prevFrm);
+    return false;
 }
 
 

@@ -12,7 +12,6 @@
 #define AboutForm			1002
 #define UnlockForm			1003
 #define WrongKeyAlert			1004
-#define SysErrAlert			1005
 #define ChecksumForm			1006
 #define SecurityForm			1007
 #define NotImplementedAlert		1008
@@ -28,11 +27,19 @@
 #define MemoDatabaseErrorAlert		1018
 #define OutOfMemoryAlert		1019
 #define CouldntLaunchMemoAlert		1020
+#define CryptoErrorAlert		1021
+#define KeyDatabaseAlert		1022
+#define UpgradeAlert			1023
+#define TooNewAlert			1024
+#define CantUpgradeAlert		1025
+#define UpgradeFailedAlert		1026
 
 #define ListMenuBar			1100
 #define KeyEditMenuBar			1101
 #define GnuBitmap			1102
 #define KeyringBitmap			1103
+#define NoteBitmap			1104
+#define FieldsBitmap			1105
 
 #define KeysList			1200
 #define KeyNameField			1201
@@ -76,6 +83,8 @@
 #define IncludeDigits			1239
 #define IncludePunct			1240
 #define GenerateBtn			1241
+#define CategoryTrigger			1242
+#define CategoryList			1243
 
 #define AboutCmd			1300
 #define KeyboardCmd			1301
@@ -98,3 +107,5 @@
 #define GenerateHelp			1502
 #define PreferencesHelp			1503
 #define KeyEditHelp			1504
+
+#define CategoryRsrc			2000

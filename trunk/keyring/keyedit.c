@@ -30,7 +30,10 @@
 #include "uiutil.h"
 #include "util.h"
 #include "generate.h"
+#include "record.h"
 #include "export.h"
+#include "category.h"
+
 
 /* This keeps an unpacked version of the record currently being
  * edited.  They're periodically sync'd up; e.g. just before saving.
@@ -38,11 +41,11 @@
  * It's a bit unfortunate to keep it in a global like this, but the
  * problem is that the date isn't stored by the GUI control, so we
  * need somewhere to keep it.  */
-static UnpackedKeyType editingUnpacked;
+static UnpackedKeyType gRecord;
 
 static void KeyEditForm_Save(FormPtr frm);
 static Boolean KeyEditForm_IsDirty(FormPtr);
-static void KeyEditForm_UpdateScrollbar();
+static void KeyEditForm_UpdateScrollbar(void);
 static void KeyEditForm_Page(int offset);
 static Boolean KeyEditForm_DeleteKey(Boolean saveBackup);
 
@@ -196,20 +199,21 @@ static void KeyEditForm_Load(FormPtr frm) {
     busyForm = FrmInitForm(BusyDecryptForm);
     FrmDrawForm(busyForm);
 
-    KeyRecord_Unpack(record, &editingUnpacked, gRecordKey);
+    KeyRecord_Unpack(record, &gRecord, gRecordKey);
     MemHandleUnlock(record);
+    KeyRecord_GetCategory(gKeyRecordIndex, &gRecord.category);
 
     FrmEraseForm(busyForm);
     FrmDeleteForm(busyForm);
     FrmSetActiveForm(frm);
 
-    KeyEditForm_FromUnpacked(frm, &editingUnpacked);
+    KeyEditForm_FromUnpacked(frm, &gRecord);
     KeyEditForm_UpdateScrollbar();
 }
 
 
 /* Save the record if any fields are dirty, and also update
- * editingUnpacked from the field values. */
+ * gRecord from the field values. */
 static void KeyEditForm_MaybeSave(void) {
     FormPtr frm;
 
@@ -218,10 +222,7 @@ static void KeyEditForm_MaybeSave(void) {
     
     // TODO: Delete record if all fields empty?
     frm = FrmGetActiveForm();
-    ErrNonFatalDisplayIf(FrmGetFormId(frm) != KeyEditForm,
-			 "KeyEditForm_Save: wrong form id");
-
-    KeyEditForm_ToUnpacked(frm, &editingUnpacked);
+    KeyEditForm_ToUnpacked(frm, &gRecord);
 
     if (KeyEditForm_IsDirty(frm))
 	KeyEditForm_Save(frm);
@@ -242,16 +243,16 @@ static void KeyEditForm_Save(FormPtr frm) {
     FrmDrawForm(busyForm);
 
     // Pull out name to use in resorting
-    if (editingUnpacked.nameHandle)
-	name = MemHandleLock(editingUnpacked.nameHandle);
+    if (gRecord.nameHandle)
+	name = MemHandleLock(gRecord.nameHandle);
     else
 	name = 0;
 
     if (gKeyRecordIndex == kNoRecord) {
-	KeyDB_SaveNewRecord(&editingUnpacked, name);
+	KeyRecord_SaveNew(&gRecord, name);
     } else {
-	KeyDB_UpdateRecord(&editingUnpacked, gKeyRecordIndex);
-	KeyDB_RepositionRecord(name, &gKeyRecordIndex);
+	KeyRecord_Update(&gRecord, gKeyRecordIndex);
+	KeyRecord_Reposition(name, &gKeyRecordIndex);
     }
 
     if (name)
@@ -272,7 +273,10 @@ static void KeyEditForm_Save(FormPtr frm) {
 static Boolean KeyEditForm_IsDirty(FormPtr frm) {
     FieldPtr fld;
 
-    if (editingUnpacked.lastChangeDirty)
+    if (gRecord.categoryDirty)
+	return true;
+
+    if (gRecord.lastChangeDirty)
 	return true;
     
     fld = UI_GetObjectByID(frm, KeyNameField);
@@ -296,12 +300,12 @@ static Boolean KeyEditForm_IsDirty(FormPtr frm) {
 
 
 
-static void KeyEditForm_New() {
+static void KeyEditForm_New(void) {
     // Nothing to do, fields can allocate their own memory
-    editingUnpacked.lastChangeDirty = false;
-    DateSecondsToDate(TimGetSeconds(), &editingUnpacked.lastChange);
+    gRecord.lastChangeDirty = false;
+    DateSecondsToDate(TimGetSeconds(), &gRecord.lastChange);
     KeyEditForm_SetDateTrigger(UI_ObjectFromActiveForm(DateTrigger),
-			       &editingUnpacked);
+			       &gRecord);
 }
 
 
@@ -314,7 +318,7 @@ static void KeyEditForm_OpenRecord(void) {
     if (gKeyRecordIndex != kNoRecord) 
 	KeyEditForm_Load(frm);
     else
-	KeyEditForm_New(frm);
+	KeyEditForm_New();
 
     fld = UI_GetObjectByID(frm, NotesField);
 
@@ -325,25 +329,31 @@ static void KeyEditForm_OpenRecord(void) {
     keyDeleted = false;
 
     KeyEditForm_SetTitle(frm);
-    
-    FrmDrawForm(frm);
     FrmSetFocus(frm, FrmGetObjectIndex(frm, KeyNameField));
 }
 
-static void KeyEditForm_FormOpen(void) {
-    KeyEditForm_OpenRecord();
+
+static void KeyEditForm_Update(int UNUSED(updateCode)) {
+    Category_UpdateName(FrmGetActiveForm(), gRecord.category);
 }
 
 
-static void KeyEditForm_Done() {
+static void KeyEditForm_FormOpen(void) {
+    KeyEditForm_OpenRecord();
+    KeyEditForm_Update(updateCategory);
+    FrmDrawForm(FrmGetActiveForm());
+}
+
+
+static void KeyEditForm_Done(void) {
     FrmGotoForm(ListForm);
 }
 
 
-static void KeyEditForm_ChooseDate() {
+static void KeyEditForm_ChooseDate(void) {
     Boolean ok;
     Int16 year, month, day;
-    DatePtr date = &editingUnpacked.lastChange;
+    DatePtr date = &gRecord.lastChange;
 
     /* Limit to protect against SelectDay aborting. */
     year = limit(kYearMin, date->year + 1904, kYearMax);
@@ -361,16 +371,16 @@ static void KeyEditForm_ChooseDate() {
 	date->year = year - 1904;
 	date->month = month;
 	date->day = day;
-	editingUnpacked.lastChangeDirty = true;
+	gRecord.lastChangeDirty = true;
 	
 	triggerPtr = UI_ObjectFromActiveForm(DateTrigger);
-	KeyEditForm_SetDateTrigger(triggerPtr, &editingUnpacked);
+	KeyEditForm_SetDateTrigger(triggerPtr, &gRecord);
     }
 }
 
 
 /* Delete the record if the user is sure that's what they want. */
-static Boolean KeyEditForm_MaybeDeleteKey() {
+static Boolean KeyEditForm_MaybeDeleteKey(void) {
     // TODO: Check if the record is empty; if it is delete without
     // seeking confirmation.
     UInt16 buttonHit;
@@ -455,9 +465,9 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
 
     case ExportMemoCmd:
 	/* As a side effect, MaybeSave commits the changes into
-           editingUnpacked. */
+           gRecord. */
 	KeyEditForm_MaybeSave();
-	ExportKey(&editingUnpacked);
+	ExportKey(&gRecord);
 	return true;
 	
     default:
@@ -466,7 +476,7 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
 }
 
 
-static void KeyEditForm_UpdateScrollbar() {
+static void KeyEditForm_UpdateScrollbar(void) {
     UInt16 textHeight, fieldHeight, maxValue, scrollPos;
 
     FieldPtr fld;
@@ -517,6 +527,8 @@ static void KeyEditForm_Page(int offset) {
     
     KeyEditForm_MaybeSave();
 
+    /* TODO: Seek in this category! */
+
     numRecs = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
 
     if ((gKeyRecordIndex == 0  &&  offset == -1)
@@ -525,6 +537,7 @@ static void KeyEditForm_Page(int offset) {
 
     gKeyRecordIndex += offset;
     KeyEditForm_OpenRecord();
+    FrmDrawForm(FrmGetActiveForm());
 }
 
 
@@ -582,6 +595,14 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
 }
 
 
+static void KeyEditForm_CategorySelected(void) {
+    gRecord.categoryDirty = Category_Selected(&gRecord.category, false);
+    if (gPrefs.category != dmAllCategories) {
+	gPrefs.category = gRecord.category;
+    }
+}
+
+
 Boolean KeyEditForm_HandleEvent(EventPtr event) {
     Boolean result = false;
     
@@ -594,6 +615,10 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 	    break;
 	case DoneBtn:
 	    KeyEditForm_Done();
+	    result = true;
+	    break;
+	case CategoryTrigger:
+	    KeyEditForm_CategorySelected();
 	    result = true;
 	    break;
 	}
@@ -612,7 +637,7 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
     case frmCloseEvent:
 	KeyEditForm_MaybeSave();
 #ifdef ENABLE_OBLITERATE
-	UnpackedKey_Obliterate(&editingUnpacked);
+	UnpackedKey_Obliterate(&gRecord);
 #endif
 	result = false;
 	break;
