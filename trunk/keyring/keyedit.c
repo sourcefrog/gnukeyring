@@ -177,16 +177,16 @@ static void KeyEditForm_Done(void) {
     FrmGotoForm(ListForm);
 }
 
-static Err KeyEditForm_Wakeup(SysNotifyParamType *np) {
-    if(np->notifyType == sysNotifyLateWakeupEvent) {
-	SysNotifyUnregister(gKeyDBCardNo,
-			    gKeyDBID,
-			    sysNotifyLateWakeupEvent,
-			    sysNotifyNormalPriority);
-	KeyEditForm_Done();
-    }
-    return 0;
-}
+/*  static Err KeyEditForm_Wakeup(SysNotifyParamType *np) { */
+/*      if(np->notifyType == sysNotifyLateWakeupEvent) { */
+/*  	SysNotifyUnregister(gKeyDBCardNo, */
+/*  			    gKeyDBID, */
+/*  			    sysNotifyLateWakeupEvent, */
+/*  			    sysNotifyNormalPriority); */
+/*  	KeyEditForm_Done(); */
+/*      } */
+/*      return 0; */
+/*  } */
 
 
 /*
@@ -218,12 +218,17 @@ static void KeyEditForm_Load(FormPtr frm) {
 
     KeyEditForm_FromUnpacked(frm, &gRecord);
     KeyEditForm_UpdateScrollbar();
-    SysNotifyRegister(gKeyDBCardNo,
-		      gKeyDBID,
-		      sysNotifyLateWakeupEvent,
-		      KeyEditForm_Wakeup,
-		      sysNotifyNormalPriority,
-		      NULL);
+
+    /* NotifyRegister is not present in 3.0.  We need to check for
+     * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
+     * call this.  It might be better to set an alarm to lock after
+     * the specified time instead. */
+/*      SysNotifyRegister(gKeyDBCardNo, */
+/*  		      gKeyDBID, */
+/*  		      sysNotifyLateWakeupEvent, */
+/*  		      KeyEditForm_Wakeup, */
+/*  		      sysNotifyNormalPriority, */
+/*  		      NULL); */
 }
 
 
