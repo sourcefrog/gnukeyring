@@ -20,4 +20,4 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-void Keys_UnpackRecord(Char * recPtr, UnpackedKeyType *u);
+void Keys_UnpackRecord(Char * recPtr, UnpackedKeyType *u, UInt8 *recordKey);

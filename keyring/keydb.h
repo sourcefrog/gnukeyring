@@ -31,7 +31,7 @@ extern DmOpenRef gKeyDB;
 Err KeyDB_CreateCategories(void);
 
 Err KeyDB_CreateRingInfo(void);
-void KeyDB_SetPasswd(Char *newPasswd);
+void KeyDB_SetPasswd(UInt8 *oldKey, Char *newPasswd);
 Err KeyDB_CreateReservedRecords(void);
 Err KeyDB_SetVersion(void);
 

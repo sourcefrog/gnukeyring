@@ -20,4 +20,4 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-void KeyDB_Reencrypt(Char const *newPasswd);
+void KeyDB_Reencrypt(UInt8 *oldRecordKey, Char const *newPasswd);

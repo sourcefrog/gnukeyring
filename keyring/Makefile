@@ -67,10 +67,11 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 DEFINES		= 
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes -Winline		\
-		-Wlarger-than-256 -Wshadow -Wcast-align	
+		-Wlarger-than-260 -Wshadow -Wcast-align	
 # 		-Wsign-compare
 OPTIM		= -O3 -finline-functions -g
-CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD 
+CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD \
+		-DMEM_CHECK
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 

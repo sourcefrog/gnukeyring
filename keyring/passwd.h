@@ -23,8 +23,7 @@
 Boolean SetPasswd_Run(void);
 
 Boolean UnlockForm_HandleEvent(EventPtr event);
-Boolean UnlockForm_Run(void);
-Boolean Unlock_CheckTimeout(void);
+Boolean Unlock_GetKey(Boolean askAlways, UInt8 *key);
 void Unlock_SetExpiry(UInt32 newExpiry);
 void Unlock_Reset(void);
 void Unlock_PrimeTimer(void);

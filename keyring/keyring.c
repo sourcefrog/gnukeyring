@@ -108,14 +108,10 @@ static Err App_Start(void) {
 
 
 static void App_Stop(void) {
-    /* TODO: Make more sure that we don't leave the Snib open */
     App_SavePrefs();
     Secrand_Close();
     FrmCloseAllForms();
     ErrNonFatalDisplayIf(!gKeyDB, __FUNCTION__ ": gKeyDB == null");
-#ifdef ENABLE_OBLITERATE
-    Unlock_ObliterateKey();
-#endif
     Snib_Close();
     DmCloseDatabase(gKeyDB);
 }
@@ -191,7 +187,6 @@ void App_AboutCmd(void) {
 Boolean Common_HandleMenuEvent(EventPtr event)
 {
     FieldPtr		fld;
-    Boolean		result = false;
     Int16		itemId;
 
     fld = UI_GetFocusObjectPtr();
@@ -200,110 +195,73 @@ Boolean Common_HandleMenuEvent(EventPtr event)
     switch (itemId) {
     case AboutCmd:
 	App_AboutCmd();
-	result = true;
-	break;
+	return true;
 
     case ID_PrefsCmd:
-	if (Unlock_CheckTimeout() || UnlockForm_Run())
-	    PrefsForm_Run();
-	result = true;
-	break;
+	PrefsForm_RunChecked();
+	return true;
 
     case SetPasswdCmd:
-         if (App_CheckReadOnly())
-              return true;
-	if (UnlockForm_Run()) 
-	    SetPasswd_Run();
-	result = true;
-	break;
+	if (App_CheckReadOnly())
+	    return true;
+	SetPasswd_Run();
+	return true;
 
     case KeyboardCmd:
-         if (App_CheckReadOnly())
-              return true;
+	if (App_CheckReadOnly())
+	    return true;
 	SysKeyboardDialog(kbdDefault);
-	result = true;
-	break;
+	return true;
 
     case GraffitiReferenceCmd:
 	SysGraffitiReferenceDialog(referenceDefault);
-	result = true;
-	break;
+	return true;
 
     case EditCopy:
 	FldCopy(fld);
-	result = true;
-	break;
+	return true;
 
     case EditPaste:
          if (App_CheckReadOnly())
               return true;
          FldPaste(fld);
-         result = true;
-         break;
+         return true;
 
     case EditCut:
          if (App_CheckReadOnly())
               return true;
          FldCut(fld);
-         result = true;
-         break;
+         return true;
          
     case EditSelectAll:
 	FldSetSelection(fld, 0, FldGetTextLength(fld));
-	result = true;
-	break;
+	return true;
 
     case EditUndo:
          if (App_CheckReadOnly())
               return true;
 	FldUndo(fld);
-	result = true;
-	break;
+	return true;
     }
 
-    return result;
+    return false;
 }
 
 
-/***********************************************************************
- *
- * FUNCTION:    RomVersionCompatible
- *
- * DESCRIPTION: This routine checks that a ROM version meets your
- *              minimum requirement.
- *
- * PARAMETERS:  requiredVersion - minimum rom version required
- *                                (see sysFtrNumROMVersion in SystemMgr.h 
- *                                for format)
- *              launchFlags     - flags that indicate if the application 
- *                                UI is initialized.
- *
- * RETURNED:    error code or zero if rom is compatible
- *                             
- *
- * REVISION HISTORY:
- *			Name	Date		Description
- *			----	----		-----------
- *			art	11/15/96	Initial Revision
- *
- ***********************************************************************/
-static Err RomVersionCompatible (UInt32 requiredVersion, UInt16 launchFlags)
+static Err RomVersionCompatible (UInt32 requiredVersion)
 {
     UInt32 romVersion;
 
     // See if we have at least the minimum required version of the ROM or later.
     FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
     if (romVersion < requiredVersion) {
-        if ((launchFlags & (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp)) ==
-            (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp)) {
-            FrmAlert(NotEnoughFeaturesAlert);
-            
-            // Pilot 1.0 will continuously relaunch this app unless we switch to 
-            // another safe one.
-            if (romVersion < 0x02000000)
-                AppLaunchWithCommand(sysFileCDefaultApp, sysAppLaunchCmdNormalLaunch, NULL);
-        }
-        
+	FrmAlert(NotEnoughFeaturesAlert);
+	
+	// Pilot 1.0 will continuously relaunch this app unless we switch to 
+	// another safe one.
+	if (romVersion < 0x02000000)
+	    AppLaunchWithCommand(sysFileCDefaultApp, 
+				 sysAppLaunchCmdNormalLaunch, NULL);
         return sysErrRomIncompatible;
     }
     
@@ -316,12 +274,13 @@ UInt32 PilotMain(UInt16 launchCode,
 		 UInt16 UNUSED(launchFlags))
 {
     Err err = 0;
-    UInt32 rom30 = sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0);
-
-    if ((err = RomVersionCompatible(rom30, launchFlags)))
-        return err;
 
     if (launchCode == sysAppLaunchCmdNormalLaunch) {
+	UInt32 rom30 = sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0);
+	
+	if ((err = RomVersionCompatible(rom30)))
+	    return err;
+
 	err = App_Start();
 #ifdef MEM_CHECK
 	MemHeapCheck(0);
@@ -331,6 +290,10 @@ UInt32 PilotMain(UInt16 launchCode,
 	    App_EventLoop();
 	    App_Stop();
 	}
+    } else if (launchCode == sysAppLaunchCmdTimeChange
+	       || launchCode == sysAppLaunchCmdAlarmTriggered) {
+	/* This is the expiry alarm, or the time changed */
+	Snib_Eradicate ();
     }
 
     /* TODO: We should handle: sysAppLaunchCmdSaveData,

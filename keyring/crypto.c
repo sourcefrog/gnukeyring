@@ -66,7 +66,7 @@ static Err DES3_Block(void const *from, void *to, Boolean encrypt,
 }
 
 
-Err DES3_Read(void * from, void * to, UInt32 len)
+Err DES3_Read(void * from, void * to, UInt32 len, UInt8 *cryptKey)
 {
     //    Err		err = 0;
 
@@ -74,7 +74,7 @@ Err DES3_Read(void * from, void * to, UInt32 len)
 			 __FUNCTION__ ": not block padded");
 
     do {
-        DES3_Block(from, to, false, g_Snib->recordKey);
+        DES3_Block(from, to, false, cryptKey);
 
 	to += kDESBlockSize;
 	from += kDESBlockSize;

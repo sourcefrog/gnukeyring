@@ -35,7 +35,7 @@ Err Snib_Init(void);
 
 void Snib_SetExpiry(UInt32 newTime);
 void Snib_StoreRecordKey(UInt8 *newHash);
-Err Snib_StoreFromPasswd(Char *passwd);
+Boolean Snib_RetrieveKey(UInt8* keyHash);
 
 /*
  * There is only one record in this database, and it contains this
@@ -46,5 +46,4 @@ typedef struct {
     UInt8     recordKey[k2DESKeySize];
 } SnibStruct, *SnibPtr;
 
-extern SnibPtr g_Snib;
 void Snib_Eradicate(void);

@@ -27,7 +27,7 @@
 #define k2DESKeySize            16
 #define kMD5HashSize            16
 
-Err DES3_Read(void * from, void * to, UInt32 len);
+Err DES3_Read(void * from, void * to, UInt32 len, UInt8 *cryptKey);
 Err DES3_Write(void *recPtr, UInt32 off, char const *from, UInt32,
                UInt8 *cryptKey);
 

@@ -59,7 +59,7 @@
  * We do have to also include archived records, as they must be
  * accessible on the PC.
  */
-void KeyDB_Reencrypt(Char const *newPasswd)
+void KeyDB_Reencrypt(UInt8 *oldRecordKey, Char const *newPasswd)
 {
     /* We read each record into memory, decrypt it using the old
      * unlock hash, then encrypt it using the new hash and write it
@@ -98,7 +98,7 @@ void KeyDB_Reencrypt(Char const *newPasswd)
         }
         recPtr = MemHandleLock(recHand);
 
-	Keys_UnpackRecord(recPtr, &unpacked);
+	Keys_UnpackRecord(recPtr, &unpacked, oldRecordKey);
         Keys_CalcPackedSize(&unpacked);
         Keys_WriteRecord(&unpacked, recPtr, newRecordKey);
 
@@ -111,6 +111,7 @@ void KeyDB_Reencrypt(Char const *newPasswd)
 
     // Finally, make the new unlock hash the currently active one
     Snib_StoreRecordKey(newRecordKey);
+    MemSet(newRecordKey, sizeof(newRecordKey), 0);
 }
 
 

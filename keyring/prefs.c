@@ -3,7 +3,7 @@
  * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,16 +35,27 @@
 #include "keydb.h"
 #include "uiutil.h"
 #include "prefs.h"
+#include "crypto.h"
 #include "auto.h"
+#include "passwd.h"
 
 // ======================================================================
 // Preferences
+
+
+void PrefsForm_RunChecked(void)
+{
+     UInt8    dummy[k2DESKeySize];
+     
+     if (Unlock_GetKey(false, dummy))
+	  PrefsForm_Run();
+}
 
 void PrefsForm_Run(void) {
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(ID_PrefsForm);
     UInt16	btn;
-    Int16		chosen;
+    Int16	chosen;
     
     static const UInt16 map[] = {
 	0,   Expiry0Push,

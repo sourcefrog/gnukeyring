@@ -213,7 +213,8 @@ void Key_SetCategory(UInt16 idx, UInt16 category)
  * unlock record
  * set record position
  */
-void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
+void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx, 
+		     UInt8 *recordKey)
 {
     MemHandle recHandle;
     void	*recPtr;
@@ -232,7 +233,7 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
 	return;
     
     recPtr = MemHandleLock(recHandle);
-    Keys_WriteRecord(unpacked, recPtr, g_Snib->recordKey);
+    Keys_WriteRecord(unpacked, recPtr, recordKey);
     MemHandleUnlock(recHandle);
 
     err = DmReleaseRecord(gKeyDB, *idx, true);

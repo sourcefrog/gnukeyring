@@ -76,6 +76,7 @@ static FormPtr f_KeyEditForm;
 
 #define k_NumFields 4
 static FieldPtr f_AllFields[k_NumFields];
+static UInt8 gRecordKey[k2DESKeySize];
 
 /* Index of the current record in the database as a whole. */
 UInt16          gKeyRecordIndex = kNoRecord;
@@ -161,9 +162,13 @@ static void KeyEditForm_UpdateTitle(void)
 
 
 static void KeyEditForm_FromUnpacked(void) {
+    FldFreeMemory(f_KeyNameFld);
     FldSetTextHandle(f_KeyNameFld, (MemHandle) gRecord.nameHandle);
+    FldFreeMemory(f_AcctFld);
     FldSetTextHandle(f_AcctFld, (MemHandle) gRecord.acctHandle);
+    FldFreeMemory(f_PasswdFld);
     FldSetTextHandle(f_PasswdFld, (MemHandle) gRecord.passwdHandle);
+    FldFreeMemory(f_NotesFld);
     FldSetTextHandle(f_NotesFld, (MemHandle) gRecord.notesHandle);
 }
 
@@ -232,7 +237,7 @@ static void KeyEditForm_Load(void)
 
     // Open r/o
     record = DmQueryRecord(gKeyDB, gKeyRecordIndex);
-    ErrNonFatalDisplayIf(!record, "coudn't query record");
+    ErrNonFatalDisplayIf(!record, "couldn't query record");
     recPtr = MemHandleLock(record);
     ErrNonFatalDisplayIf(!recPtr, "couldn't lock record");
     
@@ -240,7 +245,7 @@ static void KeyEditForm_Load(void)
     FrmSetActiveForm(busyForm);
     FrmDrawForm(busyForm);
 
-    Keys_UnpackRecord(recPtr, &gRecord);
+    Keys_UnpackRecord(recPtr, &gRecord, gRecordKey);
     MemHandleUnlock(record);
     KeyRecord_GetCategory(gKeyRecordIndex, &gRecord.category);
 
@@ -297,7 +302,7 @@ static void KeyEditForm_Save(void)
     busyForm = FrmInitForm(BusyEncryptForm);
     FrmDrawForm(busyForm);
 
-    Keys_SaveRecord(&gRecord, &gKeyRecordIndex);
+    Keys_SaveRecord(&gRecord, &gKeyRecordIndex, gRecordKey);
     Key_SetCategory(gKeyRecordIndex, gRecord.category);
 
     FrmEraseForm(busyForm);
@@ -388,18 +393,12 @@ static Boolean KeyEditForm_IsEmpty(void)
      return true;
 }
 
-
-/* Called from the list form when creating a new record. */
-void KeyEditForm_GotoNew(void) {
-    gKeyRecordIndex = kNoRecord;
-    
-    FrmGotoForm(KeyEditForm);
-}
-
-
-
 void KeyEditForm_GotoRecord(UInt16 recordIdx) {
     gKeyRecordIndex = recordIdx;
+     
+    if (Unlock_GetKey(false, gRecordKey)) {
+        FrmGotoForm(KeyEditForm);
+    }
 }
         
 
@@ -504,6 +503,7 @@ static void Edit_SortAndFollow(void) {
 
 static void Edit_FormClose(void) {
      KeyEditForm_Commit();
+     MemSet(gRecordKey, sizeof(gRecordKey), 0);
      if (f_needsSort) {
           Edit_SortAndFollow();
      }
@@ -692,7 +692,7 @@ static void Edit_OpenAtPosition(Int16 pos)
 static void Edit_OpenAtOffset(Int16 offset)
 {
      Int16 pos, dir;
-
+     
      if (offset < 0) {
           pos = -offset;
           dir = dmSeekBackward;
@@ -723,6 +723,7 @@ static void Edit_TryFlip(Int16 offset)
 {
      UInt16 numRecs;
      UInt16 pos;
+     UInt8  dummy[k2DESKeySize];
      
      pos = DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
      numRecs = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
@@ -733,8 +734,9 @@ static void Edit_TryFlip(Int16 offset)
           return;
      }
 
-     if (!(Unlock_CheckTimeout() || UnlockForm_Run()))
+     if (!Unlock_GetKey(false, dummy))
           return; /* otherwise, stay on the same record. */
+     MemSet(dummy, sizeof(dummy), 0);
 
      KeyEditForm_Commit();
 
