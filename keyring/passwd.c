@@ -38,6 +38,11 @@
 // ======================================================================
 // Unlock form
 
+/*
+ * TODO: Show only the most-recently-entered character.  Perhaps
+ * we need a custom widget to do this?
+ */
+
 
 static FieldPtr    f_entryFld;
 
