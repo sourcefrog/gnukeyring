@@ -2,7 +2,7 @@
 # $Id$
 
 
-pages=index license screenshots download mirrors
+pages=index license screenshots download mirrors thanks
 
 latte_pages=$(addsuffix .latte, $(pages))
 html_pages=$(addsuffix .html, $(pages))
