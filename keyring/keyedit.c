@@ -198,7 +198,7 @@ static void KeyEditForm_Done(void)
 }
 
 
-static Err KeyEditForm_Sleep(SysNotifyParamType *np) {
+static Err KeyEditForm_Sleep(SysNotifyParamType UNUSED(*np)) {
     /* Close all form and erase screen */
     FrmCloseAllForms();
 
@@ -874,6 +874,10 @@ Boolean KeyEditForm_HandleEvent(EventPtr event)
     switch (event->eType) {
     case ctlSelectEvent:
         switch (event->data.ctlSelect.controlID) {
+        case LockBtn:
+            Snib_Eradicate ();
+            KeyEditForm_Done();
+            return true;
         case DoneBtn:
             KeyEditForm_Done();
             return true;

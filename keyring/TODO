@@ -155,9 +155,6 @@ would seem to encourage insecure behaviour.
 ** Require set password when creating first record
 Would this perhaps be a bit more friendly?
 
-* Button in list form to forget the password
-Useful?  Mutt has this.
-
 * Support categories, and store in appinfo
 I think there's a standard format for this.  We might have to change
 the appinfo from our current usage: perhaps the key information goes
@@ -240,9 +237,6 @@ the PC.
 
 
 * Event loop timeout to show countdown?
-
-Perhaps show a little open-lock icon while unlocked, and a closed-lock
-while locked.  Perhaps clicking that icon ought to relock the keyring.
 
 * GNOME-Pilot or JPilot conduit/module.
 

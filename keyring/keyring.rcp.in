@@ -849,7 +849,8 @@ MENUID ListMenuBar
 BEGIN
 	TITLE "Keyring"
 
-	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 0 AUTO AUTO) RIGHTANCHOR USABLE
+	BUTTON "" ID LockBtn AT (RIGHT@160 1 10 11) NOFRAME
+	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@149 0 AUTO AUTO) RIGHTANCHOR USABLE
 	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
 
 	TABLE ID ID_KeyTable AT (0 17 152 129) COLUMNS 1 ROWS 16
@@ -870,7 +871,9 @@ BEGIN
 	 * want to copy into it */
 	TITLE "Key ______ of ______" 
 
-	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 1 AUTO AUTO) 
+	FORMBITMAP AT (151 1) BITMAP UnlockBitmap
+	BUTTON "" ID LockBtn AT (RIGHT@160 1 10 11) NOFRAME
+	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@149 1 AUTO AUTO) 
 		RIGHTANCHOR USABLE
 
 	LIST "" ID CategoryList AT (RIGHT@159 1 80 AUTO) NONUSABLE VISIBLEITEMS 1
@@ -1366,6 +1369,8 @@ END
 ICON "keyring-22.xbm"
 SMALLICON "keyring-15.xbm"
 BITMAP ID KeyBitmap "keyring-22.xbm"
+BITMAP ID LockBitmap "lock.xbm"
+BITMAP ID UnlockBitmap "unlock.xbm"
 
 STRING ID TitleTemplateStr "Key %d of %d"
 STRING ID EmptyTitleStr "New Key"
