@@ -18,7 +18,7 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 
 HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
 		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
-		resource.h sesskey.h tclib.h				\
+		resource.h sesskey.h					\
 		util.h crypto.h export.h keyedit.h memutil.h		\
 		pwhash.h uiutil.h snib.h pack.h unpack.h
 
@@ -38,7 +38,7 @@ PILRC           = pilrc
 TXT2BITM        = txt2bitm
 BUILDPRC        = build-prc
 
-BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
+BITMAPS         = keyring-15.xbm keyring-22.xbm 
 
 # Note: 
 # Turning on debugger support (-g) costs about 100 bytes
