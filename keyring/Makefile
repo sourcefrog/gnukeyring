@@ -48,7 +48,7 @@ DOCS		= COPYING doc/HACKING doc/BUGS doc/TODO doc/TESTS \
 		  doc/memo-import-export.html doc/security.html \
 		  doc/attack-tree.txt doc/description.txt \
 		  doc/Blatant-Plug-Insert-4-Cheap.jpg \
-		  doc/keyring.css doc/snaps/*.png
+		  doc/keyring.css $(wildcard doc/snaps/*.png)
 
 DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
 		  $(DOCS) $(wildcard *.c *.h) $(DEF) \
