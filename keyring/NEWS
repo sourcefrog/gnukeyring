@@ -31,9 +31,9 @@ Changes from 1.0:
    <https://sf.net/users/hoenicke>, based on the Linux entropy device.
    This makes generated password harder to predict.
 
- * Ship only tar and zip files containing both binaries and source,
-   and not bare .prc files.  I hope the zip file will reduce the
-   incidence of people confused by truncated downloads.
+ * Ship a tar files containing the sources and a zip files containing
+   all binaries.  I hope the zip file will reduce the incidence of
+   people confused by truncated downloads.
 
  * Encryption keys are now stored on the heap, not in a temporary
    database, and are obliterated after use.  The encryption key is
