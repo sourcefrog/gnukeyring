@@ -3,7 +3,7 @@
  * $Id$
  * 
  * GNU Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@sourcefrog.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
