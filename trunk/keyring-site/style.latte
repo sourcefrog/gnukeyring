@@ -99,14 +99,13 @@
 }
 
 {\def \currentpageid foo}
+  
 {\def {\pagelink \=pageid \=anchor \&name} 
   {\if {\equal? \currentpageid {\or \pageid {\car \name}}}
         \name                     \; current page
         {\a \href={{\or \pageid \name}.html
                    \/{\if \anchor #\anchor}}
-	 \name}
-  }
-}
+	 \name}}}
 
 {\def {\page \=pagetitle \=rcsid \=pageid \&rest}
   {
