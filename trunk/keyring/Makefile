@@ -105,7 +105,7 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 # For a list of ISO language codes, see
 # http://www.unicode.org/unicode/onlinedat/languages.html
 # I'm not sure about nynorsk
-LANGUAGES = en de fr es it ja nl no no_NY pt sv 
+LANGUAGES = en da de es fr it ja nl no no_NY pt sv 
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
