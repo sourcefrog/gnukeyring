@@ -67,7 +67,7 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
 
-OPTIM		= -O3 -finline-functions -g
+OPTIM		= -O2 -finline-functions -g
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
@@ -82,16 +82,16 @@ SRC_DIST        = $(RCP_IN) Makefile $(RESOURCES) \
 
 TOP_DIST	= COPYING README INSTALL
 
-DIST_BALL	= $(APP)-$(VERSION).tar.gz
-DIST_ZIP	= $(APP)-$(VERSION).zip
-DIST_NEWS	= $(APP)-$(VERSION).news
+BASE		= $(APP)-$(VERSION)
+DIST_BALL	= $(BASE).tar.gz
+DIST_ZIP	= $(BASE).zip
+DIST_NEWS	= $(BASE).news
 TAR		= tar
 ZIP		= zip
 
 SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 		   -e "s/__DATE__/$(BUILD_DATE)/g"
 
-BASE		= $(APP)-$(VERSION)
 
 # For a list of ISO language codes, see
 # http://www.unicode.org/unicode/onlinedat/languages.html
@@ -105,8 +105,7 @@ default: $(BASE)-en.prc
 all: $(PRCS) 
 
 $(BASE)-%.prc: %.resstamp $(EXE)
-	$(BUILDPRC) $@ 'Keyring' Gtkr $(EXE) res/$*/*.bin
-	@ls -l $@
+	cd res/$*; $(BUILDPRC) ../../$@ 'Keyring' Gtkr ../../$(EXE) *.bin
 
 %.resstamp: $(BITMAPS) resource.h 
 %.resstamp: $(RCP)
@@ -119,7 +118,6 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	@touch $@
 
 dist: $(DIST_BALL) $(DIST_ZIP) $(DIST_NEWS)
-	ls -l $(APP)-$(VERSION)*
 
 tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
@@ -128,17 +126,16 @@ $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 	cp --parents $(SRC_DIST) $(tmpdir)/$(BASE)
 	cp $(TOP_DIST) $(tmpdir)/$(BASE)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
-	@ls -l $(DIST_BALL)
 	rm -fr $(tmpdir)
 
 $(DIST_ZIP): $(PRCS) $(TOP_DIST)
 	$(ZIP) -rq9 $(DIST_ZIP) $(TOP_DIST) $(PRCS)
-	@ls -l $(DIST_ZIP)
 
 $(DIST_NEWS): NEWS $(PRCS) $(DIST_ZIP) $(DIST_BALL)
 	(cat NEWS ; md5sum $(PRCS) $(DIST_ZIP) $(DIST_BALL);echo ) > NEWS.tmp
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
+	@ls -l $(PRCS) $(DIST_ZIP) $(DIST_BALL)
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
@@ -181,7 +178,7 @@ ID: .
 
 install: install-en
 
-install-%: $(APP)-$(VERSION)-%.prc
+install-%: $(BASE)-%.prc
 	pilot-xfer -i $^
 
 

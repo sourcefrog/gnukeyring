@@ -37,6 +37,9 @@ typedef struct {
     MemHandle nameHandle, acctHandle, passwdHandle, notesHandle;
 
     UInt16 category;
+
+    /* Date password was last changed. */
+    DateType lastChange;
 } UnpackedKeyType;
 
 typedef UnpackedKeyType *UnpackedKeyPtr;

@@ -2,7 +2,7 @@
  *
  * Keyring -- store passwords securely on a handheld
  *
- * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
  * 
  * $Id$
  *
@@ -35,6 +35,7 @@ BEGIN
   "@@WrongPassword" = "Password incorrect.  Please try again."
   "@@PasswordMismatch" = "The passwords you entered do not match."
   "@@NotImplemented" = "Sorry, that feature is not implemented yet."
+  "@@CouldntLaunchMemo" = "Couldn't launch the Memo Pad."
   "@@langSpecificChars" =  "ä¥©"
 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
@@ -98,6 +99,7 @@ BEGIN
   "Decrypting..." = "Decifrando..."
 
   "@@OutOfMemory" =  "Out of memory."
+  "Password" = "Password"
   "@@WrongPassword" = "Password errata.  Si prega di riprovare"
   "@@PasswordMismatch" =  "Le password inserite non corrispondono."
   "@@langSpecificChars" =  "ä¥©"
@@ -105,8 +107,7 @@ BEGIN
   "Not here yet" = "Funzione non ancora implementata"
   "@@NotImplemented" = "Questa caratteristica non è ancora stata implementata."
 
-  "^1: System error ^2" =  "^1: Errore di sistema ^2"
-  "Couldn't launch the Memo Pad" =  "Impossibile avviare Memo Pad."
+  "@@CouldntLaunchMemo" = "Impossibile avviare Memo Pad."
 
   "Delete Key" = "Elimina record"
   "Delete current key record?" = "Eliminare il record corrente?"
@@ -148,7 +149,6 @@ BEGIN
   "@@GenerateHelp" = "help/it/generate.txt"
   "@@KeyEditHelp" = "help/it/keyedit.txt"
   "@@SetPasswdHelp" = "La master password protegge tutte le chiavi, e deve essere digitata per accedere al database. In caso venga dimenticata, il database non sarà più accessibile."
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "There is no data to export." = "Non ci sono dati da esportare."
 
@@ -200,6 +200,8 @@ BEGIN
   "Include:" = "Zeichen:"
   "Generate" = "Generieren"
 
+  "Change Date" = "Änderungsdatum"
+
   "Unlock" =  "Entsperren"
 
   "Enter your password:" = "Geben sie ihr Passwort ein:"
@@ -208,6 +210,7 @@ BEGIN
   "Decrypting..." = "Entschlüsseln..."
 
   "@@OutOfMemory" =  "Nicht genügend dynamischer Speicher."
+  "Password" = "Passwort"
   "@@WrongPassword" = "Passwort falsch.  Bitte versuchen sie es noch einmal."
   "@@PasswordMismatch" =  "Passworte stimmen nicht überein.  Bitte versuchen sie es noch einmal."
 
@@ -215,8 +218,7 @@ BEGIN
   "@@NotImplemented" = "Dieses Feature ist noch nicht implementiert."
   "@@langSpecificChars" =  "ä¥©"
 
-  "^1: System error ^2" =  "^1: Systemfehler ^2"
-  "Couldn't launch the Memo Pad" =  "Die Merkzettel Anwendung konnte nicht gestartet werden."
+  "@@CouldntLaunchMemo" =  "Die Merkzettel Anwendung konnte nicht gestartet werden."
 
   "Delete Key" = "Schlüssel löschen"
   "Delete current key record?" = "Aktuellen Schlüssel löschen?"
@@ -318,6 +320,7 @@ BEGIN
   "Decrypting..." = "Descifrando..."
 
   "@@OutOfMemory" =  "No hay suficiente memoria disponible."
+  "Password" = "Clave"
   "@@WrongPassword" = "Clave incorrecta. Inténtelo de nuevo."
   "@@PasswordMismatch" =  "Las claves no son iguales. Inténtelo de nuevo."
 
@@ -327,8 +330,7 @@ BEGIN
 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
-  "^1: System error ^2" =  "^1: ¡Error! ^2"
-  "Couldn't launch the Memo Pad" =  "El block de notas no puede ejecutarse."
+  "@@CouldntLaunchMemo" =  "El block de notas no puede ejecutarse."
 
   "Delete Key" = "Borrar Clave"
   "Delete current key record?" = "¿Borrar la presente Clave?"
@@ -415,6 +417,7 @@ BEGIN
   "Decrypting..." = "Dekrypterar..."
 
   "@@OutOfMemory" =  "För lite dynamiskt minne för att fortsätta."
+  "Password" = "Lösenord"
   "@@WrongPassword" = "Felaktigt lösenord.  Försök igen."
   "@@PasswordMismatch" =  "Lösenorden stämmer inte överens.  Försök igen."
 
@@ -422,8 +425,7 @@ BEGIN
   "@@NotImplemented" = "Denna funktion är inte implementerad ännu."
   "@@langSpecificChars" =  "ä¥©"
 
-  "^1: System error ^2" =  "^1: Systemfel ^2"
-  "Couldn't launch the Memo Pad" =  "Kunde inte starta Memo Pad."
+  "@@CouldntLaunchMemo" =  "Kunde inte starta Memo Pad."
 
   "Delete Key" = "Ta bort nyckel"
   "Delete current key record?" = "Ta bort den aktuella nyckeln?"
@@ -492,6 +494,7 @@ BEGIN
   "Name:" = "Naam:"
   "Account:" = "Account:"
   "Password:" = "Wachtwoord:"
+  "Password" = "Wachtwoord"
   "Confirm:"  = "Bevestigen:" 
   "Changed:" = "Verandert:"
   "Done" = "Klaar"
@@ -531,8 +534,7 @@ BEGIN
   "@@NotImplemented" = "Deze functie is nog niet geimplementeerd."
   "@@langSpecificChars" =  "ä¥©"
 
-  "^1: System error ^2" =  "^1: Systeemfout ^2"
-  "Couldn't launch the Memo Pad" =  "Kan de memo applicatie niet starten."
+  "@@CouldntLaunchMemo" =  "Kan de memo applicatie niet starten."
 
   "Delete Key" = "Sleutel verwijderen"
   "Delete current key record?" = "Actuele sleutel verwijderen?"
@@ -599,6 +601,7 @@ BEGIN
   "Key ^0 of ^1" = "Clef ^0 de ^1"
   "Name:" = "Nom:"
   "Account:" = "Compte:" 
+  "Password" = "Mot de passe"
   "Password:" = "Mot de passe:"
   "Confirm:" = "Confirmez:"
   "Changed:" = "Changé:"
@@ -611,7 +614,7 @@ BEGIN
   "5 min" = "5 min."
 
   "Cancel" = "Annuler"
-  "Set Keyring Password" = "Changer son mot de passe pour Keyring"
+  "Set Keyring Password" = "Changer son mot de passe"
   "@@choosepassword" = "Choisez un mot de passe, s'il vous plait:"
   "Generate Password" = "Générez un Mot de Passe"
   "@@generate1" = "Un nouveau mot de passe "
@@ -636,15 +639,14 @@ BEGIN
   "@@NotImplemented" = "Cette function n'est pas encore mis en application."
   "@@langSpecificChars" =  "ä¥©"
 
-  "^1: System error ^2" =  "^1: Erreur système ^2"
-  "Couldn't launch the Memo Pad" =  "N'a pas pu lancer le bloc-notes."
+  "@@CouldntLaunchMemo" =  "N'a pas pu lancer le bloc-notes."
 
   "Delete Key" = "Clé d'effacement"
   "Delete current key record?" = "Effacez principal enregistrement?"
   "Save archive copy on PC" = "Enregistrez la copie d'archives sur le PC?"
 
   "@@BetaVersion"
-   = "Ceci est une vserion pilote d'essai de GNU Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de n'importe quelles donnÃ©es irrÃ©mÃ©diables."
+   = "Ceci est une version pilote d'essai de GNU Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de n'importe quelles données irrémédiables."
 
   "This is free software.  No warranty." = "C'est logiciel libre.  Il n'y a aucune garantie."
 
@@ -701,6 +703,7 @@ BEGIN
   "Name:" = "Navn:"
   "Account:" = "Konto:"
   "Password:" = "Passord:"
+  "Password" = "Passord"
   "Confirm:"  = "Bekreft:" 
   "Changed:" = "Endret:"
   "Done" = "Ferdig"
@@ -740,8 +743,7 @@ BEGIN
   "@@NotImplemented" = "Denne funksjonen er enda ikke implementert."
   "@@langSpecificChars" =  "ä¥©"
 
-  "^1: System error ^2" =  "^1: Systemfeil ^2"
-  "Couldn't launch the Memo Pad" =  "Kunne ikke starte Memo Pad."
+  "@@CouldntLaunchMemo" =  "Kunne ikke starte Memo Pad."
 
   "Delete Key" = "Slett nøkkel"
   "Delete current key record?" = "Slett den aktuelle nøkkelen?"
@@ -808,6 +810,7 @@ BEGIN
   "Name:" = "Navn:"
   "Account:" = "Konto:"
   "Password:" = "Passord:"
+  "Password" = "Passord"
   "Confirm:"  = "Bekreft:" 
   "Changed:" = "Endra:"
   "Done" = "Ferdig"
@@ -849,8 +852,7 @@ BEGIN
 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
-  "^1: System error ^2" =  "^1: Systemfeil ^2"
-  "Couldn't launch the Memo Pad" =  "Kunne ikkje starte Memo Pad."
+  "@@CouldntLaunchMemo" =  "Kunne ikkje starte Memo Pad."
 
   "Delete Key" = "Slett nykel"
   "Delete current key record?" = "Slett den aktuelle nyklen?"
@@ -907,6 +909,7 @@ BEGIN
   "Name:" = "Nome:"
   "Account:" = "Conta:"
   "Password:" = "Senha:"
+  "Password" = "Senha"
   "Confirm:"  = "Confirmar:"
   "Changed:" = "Modificado:"
   "Done" = "Pronto"
@@ -948,8 +951,7 @@ BEGIN
 
   "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
 
-  "^1: System error ^2" =  "^1: Error: ^2"
-  "Couldn't launch the Memo Pad" =  "Nao pude executar o Memo Pad"
+  "@@CouldntLaunchMemo"  =  "Nao pude executar o Memo Pad"
 
   "Delete Key" = "Deletar Chave"
   "Delete current key record?" = "Deletar a entrada da chave atual?"
@@ -1040,7 +1042,7 @@ BEGIN
 
 	LIST "" ID CategoryList AT (RIGHT@159 1 80 AUTO) NONUSABLE VISIBLEITEMS 1
 
-	FIELD ID ID_KeyNameField AT (47 18 110 AUTO) USABLE  
+	FIELD ID ID_KeyNameField AT (47 16 110 AUTO) USABLE  
 		UNDERLINED AUTOSHIFT MAXCHARS 40
 
 	LABEL "Name:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
@@ -1055,9 +1057,13 @@ BEGIN
 
 	LABEL "Password:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
 
-	FIELD ID ID_NotesField AT (0 PREVBOTTOM 152 88) USABLE
-		UNDERLINED AUTOSHIFT MULTIPLELINES MAXCHARS 3000 
+	SELECTORTRIGGER "1/4/99" ID DateTrigger AT (47 PREVBOTTOM+1 40 AUTO)
+		LEFTANCHOR
 
+        LABEL "Changed:" AUTOID AT (RIGHT@PREVLEFT-5 PREVTOP)
+
+	FIELD ID ID_NotesField AT (0 PREVBOTTOM+2 152 77) USABLE
+		UNDERLINED AUTOSHIFT MULTIPLELINES MAXCHARS 3000 
 	SCROLLBAR ID NotesScrollbar AT (152 PREVTOP 7 PREVHEIGHT) USABLE 
 	
 	BUTTON "Done" DoneBtn AT (1 147 AUTO AUTO)
@@ -1215,23 +1221,12 @@ BEGIN
 END
 
 
-
-ALERT ID ID_NotImplementedAlert
-BEGIN
-	TITLE "Not here yet"
-
-	MESSAGE "Sorry, that feature is not implemented yet."
-
-	BUTTONS "Oh well"
-END
-
-
 ALERT ID CouldntLaunchMemoAlert
 ERROR
 BEGIN
 	TITLE "Error"
 
-	MESSAGE "Couldn't launch the Memo Pad"
+	MESSAGE "@@CouldntLaunchMemo"
 
 	BUTTONS "OK"
 END
@@ -1521,6 +1516,7 @@ STRING ID KeyringFindStr "Keyring"
 
 STRING ID TitleTemplateStr "Key ^0 of ^1"
 STRING ID EmptyTitleStr "New Key"
+STRING ID ChangeDateStr "Change Date"
 STRING ID ErrCheckingROM  "Error checking ROM version: ^1"
 
 // Help messages

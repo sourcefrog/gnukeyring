@@ -63,7 +63,8 @@ void Keys_UnpackRecord(Char *recPtr, UnpackedKeyType *u, UInt8 *recordKey)
     u->acctHandle = Mem_ReadString(&recPtr, &remain, &u->acctLen);
     u->passwdHandle = Mem_ReadString(&recPtr, &remain, &u->passwdLen);
     u->notesHandle = Mem_ReadString(&recPtr, &remain, &u->notesLen);
-
+    Mem_ReadChunk(&recPtr, &remain, &u->lastChange, sizeof(DateType));
+	    
     if (remain < 0) {
         FrmCustomAlert(ID_KeyDatabaseAlert,
                        "record underflow", __FUNCTION__, "");

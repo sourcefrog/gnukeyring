@@ -37,13 +37,6 @@ void UI_ReportSysError2(UInt16 msgID, Err err, char const *where)
 }
 
 
-void App_NotImplemented(void)
-{
-    FrmAlert(ID_NotImplementedAlert);
-}
-
-
-
 FieldPtr UI_GetFocusObjectPtr(void)
 {
     FormPtr frm;
