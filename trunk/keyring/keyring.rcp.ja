@@ -30,8 +30,8 @@ BEGIN
   "New" = "新規"
   "Key ______ of ______" = "キー ______ / ______" 
   "Name:" = "名称:"
-  "Account:" = "ｱｶｳﾝﾄ:"
-  "Password:" = "ﾊﾟｽﾜｰﾄﾞ:"
+  "Account:" = "アカント:"
+  "Password:" = "パスワド:"
   "Confirm:"  = "再確認:" 
   "Changed:" = "変更後:"
   "Done" = "完了"
@@ -41,6 +41,7 @@ BEGIN
   "15 sec" = "15秒"
   "60 sec" = "1分"
   "5 min" = "5分"
+  "Use Keyring fonts" = "---"
 
   "Cancel" = "キャンセル"
 
@@ -70,6 +71,7 @@ BEGIN
 
   "Not here yet" = "まだありません。"
   "@@NotImplemented" = "この機能はまだ実装されていません。"
+  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
 
   "^1: System error ^2" =  "^1: システムエラー ^2"
   "Couldn't launch the Memo Pad" =  "メモ帳を起動できません。"
@@ -123,6 +125,7 @@ BEGIN
   "Computer" = "パソ\コン"
   "Web" = "インターネット"
   "@@langSpecificChars" = "---"
+  "@@pronounceable" = "発音可能\ "
 
   "@@accel_Undo" = "U"
   "@@accel_Cut" = "X"
