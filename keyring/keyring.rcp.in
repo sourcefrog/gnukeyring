@@ -1007,6 +1007,115 @@ BEGIN
   "@@accel_Graffiti" = "G"
 END
 
+// ======================================================================
+// Danish translation by Jais Holstein <post@jaisholstein.net>
+
+TRANSLATION "da"
+BEGIN
+  "New" = "Ny"
+  "Key ______ of ______" = "Nøgle ______ af ______"
+  "Name:" = "Navn:"
+  "Account:" = "Konto:"
+  "Password:" = "Password:"
+  "Confirm:"  = "Bekræft:"
+  "Changed:" = "Ændret:"
+  "Done" = "Klar"
+  "Preferences" = "Instillinger"
+  "Stay unlocked for:" = "Forbliv ulåst i:"
+  "No time" = "0 sek."
+  "15 sec" = "15 sek."
+  "60 sec" = "1 min."
+  "5 min" = "5 min."
+
+  "Cancel" = "cancel"
+
+  "Set Keyring Password" =  "Sæt Keyring Password"
+
+  "@@choosepassword" = "vælg et password:"
+
+  "Generate Password" = "Generer password"
+  "@@generate1" = "generer et nyt "
+  "@@generate2" = "password:"
+
+  "Length:" = "Længde:"
+  "Include:" = "Inkluder:"
+  "Generate" = "Generer"
+
+  "Unlock" =  "Lås op"
+
+  "Enter your password:" = "Skriv nyt password:"
+
+  "Encrypting..." = "Krypterer..."
+  "Decrypting..." = "Dekrypterer..."
+
+  "@@OutOfMemory" =  "Ikke nok hukommelse til at fortsætte."
+  "Password" = "Password"
+  "@@WrongPassword" = "Forkert password. Prøv igen."
+  "@@PasswordMismatch" =  "Password passer ikke.  Forsøg igen."
+
+  "Not here yet" = "Ikke her endnu"
+  "@@NotImplemented" = "Denne funktion er endnu ikke implementeret."
+  "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronounceable"
+
+  "@@CouldntLaunchMemo" =  "Kunde ikke starte Memo Pad."
+
+  "Delete Key" = "Slet nøgle"
+  "Delete current key record?" = "Slet aktuelle nøgle?"
+  "Save archive copy on PC" = "Gem arkiv på PC"
+
+  "@@BetaVersion"
+   = "Sette er en betaversion af Keyring.  Der kan være bugs.  Husk at tage backup af data du ikke kan gendanne."
+
+  "This is free software.  No warranty." = "Dette er et gratis program.  Ingen garanti."
+
+  "Released under the GNU GPL v2." = "Udgivet under GNU GPL v2."
+
+  "Database" = "Database"
+  "Set Password..." = "Sæt password..."
+  "Options" = "Indstillinger"
+  /* "Tips" = "Tips" */
+  "Edit" = "Rediger"
+
+  "Preferences..." =  "Instillinger..."
+  "About..." =  "Om Keyring"
+
+  "Undo" = "Fortryd"
+  "Undo All" = "Fortryd alt"
+  "Graffiti Help" = "Graffiti-hjælp"
+  "Paste" = "Sæt ind"
+  "Cut" = "Klip"
+  "Select All" = "Marker alt"
+  "Key ^0 of ^1" = "Nøgle ^0 af ^1"
+  "Copy" = "Kopier"
+  "Keyboard" = "Tastatur"
+  "New Key" = "Ny nøgle"
+
+  "Key" =  "Post"
+  "Generate Password..." = "Generer password..."
+  "Export to Memo" = "Eksporter til Memo"
+  "Delete..." = "Slet..."
+
+  "@@GenerateHelp" = "help/sv/generate.txt"
+  "@@KeyEditHelp" = "help/sv/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+
+  "Unfiled" = "Ikke kategoriseret"
+  "Banking" = "Bank"
+  "Computer" = "Computer"
+  "Phone" = "Telefon"
+  "Web" = "Web"
+
+  /* These may not be right for this translation.  If they're wrong, please
+   * mail me corrections. */
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "P"
+  "@@accel_SelectAll" = "S"
+  "@@accel_Keyboard" = "K"
+  "@@accel_Graffiti" = "G"
+END
 
 
 #include "resource.h"
