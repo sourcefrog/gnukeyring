@@ -82,9 +82,12 @@ Err PwHash_Store(Char *newPasswd)
     Char		digest[kMD5HashSize];
     MemHandle		recHandle;
     void		*recPtr;
-    UInt32		salt;
+    UInt32		salt = 0;
+    int                 i;
 
-    salt = Secrand_GetBits(32);
+    for (i = 0; i < 4; i++) {
+	salt = (salt << 8) | Secrand_GetByte();
+    }
 
     PwHash_Calculate(digest, salt, newPasswd);
 

@@ -183,7 +183,7 @@ static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len)
          * character and see if it's included.  */
         
         do {
-            ch = (Char) Secrand_GetBits(8);
+            ch = (Char) Secrand_GetByte();
         } while (!(classMap[(UInt8) ch] & flags));
 	
 	ptr[i] = ch;
