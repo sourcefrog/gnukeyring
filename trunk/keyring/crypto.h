@@ -1,4 +1,4 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -27,4 +27,7 @@
 
 Err DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
 	     UInt8 const *key);
+
+void DES3_Write(void *recPtr, UInt32 off,
+                char const *bodyBuf, UInt32 bodyLen);
 

@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
  *
  * $Id$
  * 
@@ -54,78 +54,63 @@
 #include "crypto.h"
 #include "auto.h"
 #include "resource.h"
+#include "memutil.h"
+
+static UInt32 packBodyLen, packRecLen;
 
 
 /*
- * Calculate the size a record will occupy when it is packed. 
- *
- * All the fields except for the name are encrypted into DES 8-byte
- * blocks, so we have to round up to the next full block size. */
-static UInt32 Keys_CalcPackedLength(UnpackedKeyType const *unpacked)
+ * Calculate and store into packRecLen and packBodyLen the amount of
+ * database space this key will use.
+ */
+static void Keys_CalcPackedSize(UnpackedKeyType const *unpacked)
 {
-    UInt32 plainSize = unpacked->nameLen + 1;
-    UInt32 encSize = unpacked->acctLen + 1
+    packBodyLen = unpacked->acctLen + 1
 	+ unpacked->passwdLen + 1
 	+ unpacked->notesLen + 1
 	+ sizeof(UInt32);		/* date */
 
-    if (encSize & (kDESBlockSize-1))
-	encSize = (encSize & ~(kDESBlockSize-1)) + kDESBlockSize;
+    if (packBodyLen & (kDESBlockSize-1))
+	packBodyLen = (packBodyLen & ~(kDESBlockSize-1)) + kDESBlockSize;
 
-    return encSize + plainSize;
+    packRecLen = unpacked->nameLen + 1 + packBodyLen;
 }
 
 
-#if 0
-
-/* Convert from an unpacked in-memory representation into the packed
- * form written into the database. */
-void * KeyRecord_Pack(UnpackedKeyType const *u,
-                      UInt8 const *key)
+/*
+ * Return a newly-allocated buffer containing a packed form of the
+ * body of this key.  The caller should encrypt and store it, then
+ * free the buffer.
+ */
+static char *Keys_PackBody(UnpackedKeyType const *u)
 {
-    int		dateLen;
-    Char *	ptr; // Moves through buffer filling with data
-    Char *     startCrypt;     // Start of data that should be enc.
-    Char *     buf; // Start of buffer
-    UInt32	recLen;
-    Err		err;
-    
-    recLen = KeyRecord_CalcPackedLength(u);
-    buf = MemPtrNew(recLen);
-    ErrFatalDisplayIf(!buf, "Not enough dynamic memory to encode record");
-    ptr = buf;
+    char      *buf, *ptr;
 
-    Mem_CopyFromHandle(&ptr, u->nameHandle, u->nameLen+1);
-    startCrypt = ptr;
+    ptr = buf = MemPtrNew(packBodyLen);
+    ErrFatalDisplayIf(!buf, "Not enough dynamic memory to encode record");
 
     Mem_CopyFromHandle(&ptr, u->acctHandle, u->acctLen+1);
     Mem_CopyFromHandle(&ptr, u->passwdHandle, u->passwdLen+1);
     Mem_CopyFromHandle(&ptr, u->notesHandle, u->notesLen+1);
 
-    dateLen = sizeof(DateType);
-    MemMove(ptr, (void *) &u->lastChange, dateLen);
-    ptr += dateLen;
-
-    /* Can we really encrypt in place like this?  It looks dodgy to me.  Perhaps
-     * we'd better instead */
-    if ((err = DES3_Buf(startCrypt, startCrypt, recLen - (startCrypt-buf), true,
-			key))) {
-	/* TODO: If this failed, indicate to the caller that we
-	 * couldn't pack the record. */
-	App_ReportSysError(CryptoErrorAlert, err);
-    }
-	    
     return buf;
 }
-#endif
+
 
 static void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr)
 {
-    Char *fldPtr;
+    Char       *fldPtr;
+    UInt32     off;
+    void       *bodyBuf;
 
     fldPtr = MemHandleLock(unpacked->nameHandle);
     DmStrCopy(recPtr, 0, fldPtr);
     MemHandleUnlock(unpacked->nameHandle);
+    off = unpacked->nameLen + 1;
+
+    bodyBuf = Keys_PackBody(unpacked);
+    DES3_Write(recPtr, off, bodyBuf, packBodyLen);
+    MemPtrFree(bodyBuf);
 }
 
 
@@ -184,17 +169,16 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
     MemHandle recHandle;
     void	*recPtr;
     Err		err;
-    Int16	recLen;
 
-    recLen = Keys_CalcPackedLength(unpacked);
-    ErrFatalDisplayIf(recLen < 0 || recLen > 8000,
-		      __FUNCTION__ ": immmoderate recLen"); /* paranoia */
+    Keys_CalcPackedSize(unpacked);
+    ErrFatalDisplayIf(packRecLen > 8000,
+		      __FUNCTION__ ": immmoderate packRecLen"); /* paranoia */
 
     if (*idx == kNoRecord) {
-	recHandle = Keys_PrepareNew(idx, recLen);
+	recHandle = Keys_PrepareNew(idx, packRecLen);
     } else {
 	ErrFatalDisplayIf(*idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
-	recHandle = Keys_PrepareExisting(idx, recLen);
+	recHandle = Keys_PrepareExisting(idx, packRecLen);
     }
 
     if (!recHandle)

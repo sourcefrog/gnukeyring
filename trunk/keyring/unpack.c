@@ -39,11 +39,10 @@ void Keys_Unpack(MemHandle record, UnpackedKeyType *u,
     Char *	recPtr;
     UInt32	recLen;
     Int32	nameLen;
-
+    Char *	ptr;
 #if 0
     Char *	plainBuf;
     Char *	cryptPtr;
-    Char *	ptr;
     Err		err;
 #endif 
 
@@ -67,13 +66,15 @@ void Keys_Unpack(MemHandle record, UnpackedKeyType *u,
 
     ptr = plainBuf;
 
+#endif 0
+    ptr = recPtr + nameLen + 1;
     u->acctHandle = Mem_ReadString(&ptr, &u->acctLen);
     u->passwdHandle = Mem_ReadString(&ptr, &u->passwdLen);
     u->notesHandle = Mem_ReadString(&ptr, &u->notesLen);
-    Mem_ReadChunk(&ptr, sizeof(DateType), &u->lastChange);
-    MemPtrFree(plainBuf);
 
-#endif 0
+    /*     Mem_ReadChunk(&ptr, sizeof(DateType), &u->lastChange); */
+    /*     MemPtrFree(plainBuf); */
+
     u->lastChangeDirty = false;
 
     MemHandleUnlock(record);
