@@ -6,7 +6,7 @@ APP             = keyring
 ICONTEXT        ="Tightly Bound"
 APPID           = "Gtkr"
 
-VERSION         = 1.0pr5
+VERSION         = 1.0pr6
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
