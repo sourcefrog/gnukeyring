@@ -1475,14 +1475,14 @@ BEGIN
 
 	PULLDOWN "Edit"
 	BEGIN
-		MENUITEM "Undo" ID EditUndo "@accel_Undo"
-		MENUITEM "Cut" ID EditCut "@accel_Cut"
-		MENUITEM "Copy" ID EditCopy "@accel_Copy"
-		MENUITEM "Paste" ID EditPaste "@accel_Paste"
-		MENUITEM "Select All" ID EditSelectAll "@accel_SelectAll"
+		MENUITEM "Undo" ID 10000 "@accel_Undo"
+		MENUITEM "Cut" ID 10001 "@accel_Cut"
+		MENUITEM "Copy" ID 10002 "@accel_Copy"
+		MENUITEM "Paste" ID 10003 "@accel_Paste"
+		MENUITEM "Select All" ID 10004 "@accel_SelectAll"
 		MENUITEM SEPARATOR
-		MENUITEM "Keyboard" ID KeyboardCmd "@accel_Keyboard"
-		MENUITEM "Graffiti Help" ID GraffitiReferenceCmd "@accel_Graffiti"
+		MENUITEM "Keyboard" ID 10006 "@accel_Keyboard"
+		MENUITEM "Graffiti Help" ID 10007 "@accel_Graffiti"
 	END
 
 	PULLDOWN "Options"

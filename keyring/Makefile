@@ -113,7 +113,7 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	@[ -d res/$* ] || mkdir -p res/$*
 	@-rm -f res/$*/*
 	@-rm -f *.bin
-	$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/ >/dev/null
+	$(PILRC) -allowEditID -H auto.h.tmp -q -L $* $(RCP) res/$*/ >/dev/null
 	@if cmp -s auto.h auto.h.tmp; then rm -f auto.h.tmp; \
 	 else mv auto.h.tmp auto.h; fi
 	@touch $@
@@ -149,7 +149,7 @@ auto.h: en.resstamp
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
-%.o: %.c auto.h
+%.o: %.c auto.h prototype.h
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
