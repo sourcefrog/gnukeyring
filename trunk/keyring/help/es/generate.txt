@@ -1,4 +1,4 @@
-GNU Keyring (Llavero) puede generar claves aleatorias que cumplen ciertas características seguras. Las claves mas grandes y con un rango muy variado de caracteres son más difíciles de adivinar.
+Keyring (Llavero) puede generar claves aleatorias que cumplen ciertas características seguras. Las claves mas grandes y con un rango muy variado de caracteres son más difíciles de adivinar.
 
 Tamaño de la Clave: Numero de caracteres de la clave.
 

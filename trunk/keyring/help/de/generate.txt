@@ -1,4 +1,4 @@
-GNU Keyring kann Passworte nach gewissen Kriterien generieren.  Je länger ein Passwort ist, und je größer der Zeichenvorrat ist, desto schwerer ist es zu erraten oder zu knacken.
+Keyring kann Passworte nach gewissen Kriterien generieren.  Je länger ein Passwort ist, und je größer der Zeichenvorrat ist, desto schwerer ist es zu erraten oder zu knacken.
 
 Länge: Wählen sie die Länge des zu generierenden Passworts.
 
