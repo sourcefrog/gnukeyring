@@ -487,8 +487,20 @@ UPGRADE_SECTION Err UpgradeDB(UInt16 oldVersion)
 	    else
                 FrmAlert(WrongKeyAlert);
 	}
-	if (!err)
+	if (!err) {
+	    FormPtr	frm, oldFrm;
+	    oldFrm = FrmGetActiveForm();
+	    frm = FrmInitForm(BusyEncryptForm);
+	    FrmSetActiveForm(frm);
+	    FrmDrawForm(frm);
+
 	    err = Upgrade_ConvertDB(oldVersion, passwd, cipher, iter);
+
+	    FrmEraseForm(frm);
+	    FrmDeleteForm(frm);
+	    if (oldFrm)
+		FrmSetActiveForm(oldFrm);
+	}
     } else {
 	UpgradeDB_Failed(oldVersion);
 	err = appErrMisc;
