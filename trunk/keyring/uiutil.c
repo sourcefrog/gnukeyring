@@ -188,7 +188,7 @@ Char* UI_TxtParamString(const Char *inTemplate,
 	    return NULL;
 
 	result = MemHandleLock(h);
-	StrNCopy(result, inTemplate, len);
+	StrCopy(result, inTemplate);
 	for (i = 0; i < 4; i++) {
 	    if (!params[i])
 		continue;
