@@ -222,7 +222,7 @@ static void KeyEditForm_Load(FormPtr frm) {
     busyForm = FrmInitForm(BusyDecryptForm);
     FrmDrawForm(busyForm);
 
-    Keys_Unpack(record, &gRecord, gRecordKey);
+    Keys_Unpack(record, &gRecord);
     MemHandleUnlock(record);
     KeyRecord_GetCategory(gKeyRecordIndex, &gRecord.category);
 

@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: nil; -*-
  *
  * $Id$
  * 
@@ -20,5 +20,4 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-void Keys_Unpack(MemHandle record, UnpackedKeyType *u,
-		 UInt8 const *key);
+void Keys_Unpack(MemHandle record, UnpackedKeyType *u);
