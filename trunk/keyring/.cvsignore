@@ -13,5 +13,6 @@ grc.stamp
 index.html
 keyring
 keyring-*.tar.gz
+keyring-*.tar.gz.asc
 keyring.rcp
 res
