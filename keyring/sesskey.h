@@ -1,4 +1,5 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+ *
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -20,11 +21,19 @@
  */
 
 
-/* Sizes in bytes */
-#define kDESBlockSize		8
-#define kDES3BlockSize          16
-#define kMD5HashSize            16
+/* gRecordKey contains a DES3-EDE key that will be used to encrypt and
+ * decrypt the records.  It's read out of the hidden record when the
+ * user's password is entered, but is lost again on exiting the
+ * application.
+ *
+ * Eventually we will store this in a database marked not-for-backup,
+ * so that people will be able to switch apps without needing to log
+ * in again.  But we don't do that yet. */
 
-Err DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
-	     UInt8 const *key);
+#define kRecordKeySize 16
 
+extern UInt8 gRecordKey[kRecordKeySize];
+
+void SessKey_Store(Char *passwd);
+void SessKey_Load(Char *passwd);
+void SessKey_Generate(void);

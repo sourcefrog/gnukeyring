@@ -36,6 +36,8 @@
 #include "error.h"
 #include "beta.h"
 
+/* TODO: Call MemSetDebugMode!! */
+
 // ======================================================================
 // Globals
 
@@ -53,11 +55,6 @@ UInt16		gKeyPosition = kNoRecord;
 KeyringPrefsType gPrefs;
 
 
-/* If the keyring is unlocked, this holds the hash of the master
- * password, which is used for the two DES keys to decrypt records. */
-UInt8		gRecordKey[kPasswdHashSize];
-
-
 // ======================================================================
 // Application methods
 
@@ -67,7 +64,7 @@ UInt8		gRecordKey[kPasswdHashSize];
 void App_ReportSysError(UInt16 msgID, Err err) {
     Char buf[256];
 
-    *buf = '\0';
+    *buf = '\0';		/* in case nothing is inserted? */
     SysErrString(err, buf, (UInt16) sizeof buf);
     FrmCustomAlert(msgID, buf, 0, 0);
 }
@@ -122,7 +119,6 @@ static Err App_PrepareDB(void) {
     if (err == dmErrCantFind) {
 	if ((err = KeyDB_CreateDB())
             || (err = KeyDB_OpenExistingDB(&gKeyDB))
-	    || (err = KeyDB_CreateRingInfo())
 	    || (err = KeyDB_CreateCategories()))
 	    goto failDB;
 	if (!SetPasswd_Run())
@@ -146,6 +142,8 @@ static Err App_PrepareDB(void) {
 	}
     }
 
+    /* We always mark the database here, because we may have converted
+     * from an old version of keyring that didn't do that. */
     if ((err = KeyDB_MarkForBackup()))
 	goto failDB;
 

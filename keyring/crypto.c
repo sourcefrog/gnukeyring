@@ -38,10 +38,9 @@ Err DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
 {
     UInt8	other[kDESBlockSize];
     Err		err = 0;
-    
+
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
-    ErrFatalDisplayIf(!to || !from, __FUNCTION__ ":null");
 
     do {
 	err = EncDES(from, (UInt8 *) key, to, encrypt);

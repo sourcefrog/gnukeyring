@@ -24,9 +24,9 @@
 #endif	/* !__GNUC__ */
 
 #define kKeyDBType		'Gkyr'
-#define kKeyDBName		"Keys-Gtkr"
+#define kKeyDBName		"Keys-Gtkr2"
 #define kKeyringCreatorID	'Gtkr'
-#define kAppName		"GNU Keyring"
+#define kAppName		"Keyring"
 
 /* The database version we use:
  *
@@ -48,21 +48,7 @@
 #define kGeneratePref		2
 #define kLastVersionPref        3
 
-#define kPasswdHashSize		16
-
 #define kNoRecord		((UInt16) -1)
-
-
-/* Application info */
-typedef struct {
-    UInt32 	passwdSalt;
-    Char 	passwdHash[16];
-
-    /* THIS FIELD IS NO LONGER USED -- USE THE DATABASE VERSION INSTEAD! */
-    UInt16 	appInfoVersion;
-} KeyringInfoType;
-typedef KeyringInfoType *KeyringInfoPtr;\
-
 
 typedef struct {
     UInt32		timeoutSecs;
@@ -81,9 +67,13 @@ void App_SavePrefs(void);
 extern DmOpenRef gKeyDB;
 extern UInt16 gKeyRecordIndex;
 extern UInt16 gKeyPosition;
-extern UInt8 gRecordKey[kPasswdHashSize];
-extern KeyringPrefsType gPrefs;
 
+
+/*
+ * All current preferences.  Read in at application startup, and
+ * written out when they change.
+ */
+extern KeyringPrefsType gPrefs;
 
 enum updateCodes {
     updateCategory = 1

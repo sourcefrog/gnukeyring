@@ -33,6 +33,8 @@
 #include "record.h"
 #include "export.h"
 #include "category.h"
+#include "crypto.h"
+#include "sesskey.h"
 
 /* TODO: Show position and do paging within category
  *
@@ -186,8 +188,12 @@ static Err KeyEditForm_Wakeup(SysNotifyParamType *np) {
     return 0;
 }
 
-// If we're editing an existing record, then open it and use it to
-// fill the form.
+
+/*
+ * Fill in the current KeyEdit form with data from the record
+ * [gKeyRecordIndex].  We have to decrypt and unpack all the data.
+ * gRecordKey already contains the decrypted record key.
+ */
 static void KeyEditForm_Load(FormPtr frm) {
     MemHandle	record = 0;
     Char *	recPtr;

@@ -20,9 +20,6 @@
  */
 
 Boolean SetPasswd_Run(void);
-#ifdef REALLY_OBLITERATE
-void Unlock_ObliterateKey(void);
-#endif /* REALLY_OBLITERATE */
 
 Boolean UnlockForm_HandleEvent(EventPtr event);
 Boolean UnlockForm_Run(void);

@@ -88,10 +88,8 @@ Boolean SetPasswd_Run(void) {
     FrmDrawForm(frm);
 
     KeyDB_SetPasswd(masterPtr);
-#ifdef REALLY_OBLITERATE
-    Mem_ObliteratePtr(masterPtr);
-#endif /* REALLY_OBLITERATE */
     MemPtrFree(masterPtr);
+    
     result = true;
 
     FrmEraseForm(frm);

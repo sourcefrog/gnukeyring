@@ -34,6 +34,7 @@
 #include "crypto.h"
 #include "passwd.h"
 #include "resource.h"
+#include "sesskey.h"
 
 static Int16 KeyDB_CompareRecords(void * rec1, void * rec2, Int16 other,
 			 SortRecordInfoPtr info1,
