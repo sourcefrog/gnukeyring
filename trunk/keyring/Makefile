@@ -1,6 +1,8 @@
-# Keyring
+# Keyring for PalmOS.  
+# 
+# Resource file to be preprocessed.
 #
-# Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
+# Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
 #
 # $Id$
 
@@ -95,7 +97,7 @@ BASE		= $(APP)-$(VERSION)
 
 # For a list of ISO language codes, see
 # http://www.unicode.org/unicode/onlinedat/languages.html
-LANGUAGES = en de es nl sv
+LANGUAGES = en de fr es nl sv
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
