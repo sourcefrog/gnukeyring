@@ -597,16 +597,16 @@ MENU ID KeyEditMenuBar
 BEGIN
 	PULLDOWN "Record"
 	BEGIN
-		menuitem "Generate Password..." id GenerateCmd "G"
-		menuitem "Export to Memo" id ExportMemoCmd
+		MENUITEM "Generate Password..." id GenerateCmd
+		MENUITEM "Export to Memo" id ExportMemoCmd
 		MENUITEM SEPARATOR
-		menuitem "Delete..." id DeleteKeyCmd "D"
+		MENUITEM "Undo All" ID EditUndoAll
+		MENUITEM "Delete..." id DeleteKeyCmd 
 	END
 
 	PULLDOWN "Edit"
 	BEGIN
 		MENUITEM "Undo" ID EditUndo "U"
-		MENUITEM "Undo All" ID EditUndoAll
 		MENUITEM "Cut" ID EditCut "X"
 		MENUITEM "Copy" ID EditCopy "C"
 		MENUITEM "Paste" ID EditPaste "P"
