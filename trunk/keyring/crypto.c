@@ -30,7 +30,9 @@
 
 void CryptoPrepareKey(UInt8 *rawKey, CryptoKey cryptKey)
 {
+    des_set_odd_parity((des_cblock*) rawKey);
     des_set_key((des_cblock*) rawKey, cryptKey[0]);
+    des_set_odd_parity((des_cblock*) rawKey + 1);
     des_set_key((des_cblock*) rawKey + 1, cryptKey[1]);
 }
 
