@@ -31,6 +31,7 @@
 #include "upgrade.h"
 #include "error.h"
 #include "resource.h"
+#include "uiutil.h"
 
 /*
  * TODO: In the future, when converting the database, write out to a new database

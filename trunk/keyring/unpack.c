@@ -29,6 +29,7 @@
 #include "resource.h"
 #include "auto.h"
 #include "crypto.h"
+#include "uiutil.h"
 
 
 /* Convert from a packed database record into an unpacked in-memory

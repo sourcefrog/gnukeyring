@@ -1,4 +1,4 @@
-/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; -*-
+/* -*- c-indentation-style: "bsd"; c-basic-offset: 4; indent-tabs-mode: t; -*-
  *
  * $Id$
  * 
@@ -21,45 +21,28 @@
  */
 
 
-#include <PalmOS.h>
+/* gRecordKey contains a DES3-EDE key that will be used to encrypt and
+ * decrypt the records.  It's read out of the hidden record when the
+ * user's password is entered, but is lost again on exiting the
+ * application.
+ *
+ * Eventually we will store this in a database marked not-for-backup,
+ * so that people will be able to switch apps without needing to log
+ * in again.  But we don't do that yet. */
 
-#include "keyring.h"
-#include "memutil.h"
-#include "crypto.h"
-#include "resource.h"
-#include "snib.h"
-#include "auto.h"
-#include "uiutil.h"
-#include "sesskey.h"
+void Snib_Close(void);
+Err Snib_Init(void);
 
-
-/*
- * Make up a new session key.  This is called only when creating a new
- * database -- calling it any other time will make the database
- * unreadable.  It's left in memory in gRecordKey, and can later be saved
- * using SessKey_Store.
- */
-void SessKey_Generate(void)
-{
-    UInt8       tmpKey[kDES3KeySize];
-    
-    MemSet(tmpKey, kDES3KeySize, 0);
-    Snib_SetSessKey(tmpKey);
-}
-
+void Snib_SetExpiry(UInt32 newTime);
+void Snib_SetSessKey(UInt8 const *newKey);
 
 /*
- * Load the session key from the main database, decrypt it, and store it in
- * the working database.
+ * There is only one record in this database, and it contains this
+ * structure.
  */
-void SessKey_Load(Char *UNUSED(passwd))
-{
-    SessKey_Generate();         /* stubbed out */
-}
+typedef struct {
+    UInt32    expiryTime;
+    UInt8     sessKey[kDES3KeySize];
+} SnibStruct, *SnibPtr;
 
-
-void SessKey_Store(Char *UNUSED(passwd))
-{
-
-}
-
+extern SnibPtr g_Snib;

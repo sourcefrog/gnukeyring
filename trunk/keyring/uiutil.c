@@ -24,11 +24,33 @@
 #include <Encrypt.h>
 
 #include "uiutil.h"
-
+#include "auto.h"
 
 
 // ======================================================================
 // User-interface utilities
+
+void App_ReportSysError(UInt16 msgID, Err err) {
+    UI_ReportSysError2(msgID, err, "None");
+}
+
+
+void UI_ReportSysError2(UInt16 msgID, Err err, char const *where) 
+{
+    Char buf[256];
+
+    *buf = '\0';		/* in case nothing is inserted? */
+    SysErrString(err, buf, (UInt16) sizeof buf);
+    FrmCustomAlert(msgID, buf, where, 0);
+}
+
+
+void App_NotImplemented(void) {
+    FrmAlert(ID_NotImplementedAlert);
+}
+
+
+
 FieldPtr UI_GetFocusObjectPtr(void) {
     FormPtr frm;
     UInt16 focus;

@@ -22,7 +22,7 @@
 
 extern Int16 gKeyDBCardNo;
 extern LocalID gKeyDBID;
-
+extern DmOpenRef gKeyDB;
 
 
 #define kMasterHashRec 0
@@ -34,7 +34,7 @@ Err KeyDB_CreateCategories(void);
 Err KeyDB_CreateRingInfo(void);
 void KeyDB_SetPasswd(Char *newPasswd);
 
-Err KeyDB_OpenExistingDB(DmOpenRef *dbp);
+Err KeyDB_OpenExistingDB(void);
 Err KeyDB_CreateDB(void);
 Err KeyDB_MarkForBackup(void);
 Err KeyDB_GetVersion(UInt16 *ver);

@@ -56,6 +56,9 @@
 #include "resource.h"
 #include "memutil.h"
 #include "dbutil.h"
+#include "keydb.h"
+#include "uiutil.h"
+
 
 static UInt32 packBodyLen, packRecLen;
 
@@ -118,7 +121,7 @@ static MemHandle Keys_PrepareNew(UInt16 *idx, Int16 recLen)
     *idx = dmMaxRecordIndex;
     recHandle = DmNewRecord(gKeyDB, idx, recLen);
     if (!recHandle) {
-	App_ReportSysError(KeyDatabaseAlert, DmGetLastErr());
+	App_ReportSysError(ID_KeyDatabaseAlert, DmGetLastErr());
 	return NULL;
     }
 
@@ -132,7 +135,7 @@ static MemHandle Keys_PrepareExisting(UInt16 *idx, Int16 recLen)
 
     recHandle = DmResizeRecord(gKeyDB, *idx, recLen);
     if (!recHandle) {
-	App_ReportSysError(KeyDatabaseAlert, DmGetLastErr());
+	App_ReportSysError(ID_KeyDatabaseAlert, DmGetLastErr());
 	return NULL;
     }
 
@@ -201,6 +204,6 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
 
     err = DmReleaseRecord(gKeyDB, *idx, true);
     if (err)
-	App_ReportSysError(KeyDatabaseAlert, err);
+	App_ReportSysError(ID_KeyDatabaseAlert, err);
 }
 

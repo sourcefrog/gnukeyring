@@ -1,3 +1,6 @@
+GNU Keyring
+Changes from 0.11 to 0.13
+
  * Forward-compatible change to use database version 2, which supports
    categories and doesn't lose the encryption key in backups :-/
 
@@ -11,8 +14,7 @@
  * If this is an unstable release of GNU Keyring, then display a
    warning at startup.
 
- * Add in sprinklings of memory validation, and a magic menu to turn
-   on memory checking.
+ * Add in sprinklings of memory validation.
 
  * Add Record/UndoAll menu item
 
@@ -21,4 +23,5 @@
  * Records without names are now displayed with an index number rather
    than random hex.
 
- 
+ * Stay unlocked for the full timeout value, even if you switch to
+   another app and back.

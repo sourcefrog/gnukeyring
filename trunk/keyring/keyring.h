@@ -62,11 +62,8 @@ typedef KeyringPrefsType *KeyringPrefsPtr;
 Boolean Common_HandleMenuEvent(EventPtr event);
 
 void App_AboutCmd(void);
-void App_NotImplemented(void);
-void App_ReportSysError(UInt16 msgID, Err err);
 void App_SavePrefs(void);
 
-extern DmOpenRef gKeyDB;
 extern UInt16 gKeyRecordIndex;
 extern UInt16 gKeyPosition;
 

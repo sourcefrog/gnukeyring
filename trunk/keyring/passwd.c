@@ -1,4 +1,4 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  *
  * $Id$
  *
@@ -33,38 +33,52 @@
 #include "pwhash.h"
 #include "crypto.h"
 #include "sesskey.h"
-
-static UInt32		gExpiry;
+#include "snib.h"
 
 // ======================================================================
 // Unlock form
 
 
+static FieldPtr    f_entryFld;
+
 void Unlock_Reset(void) {
-  gExpiry = 0;
+    Snib_SetExpiry(0);
 }
 
 
 void Unlock_PrimeTimer(void) {
-    gExpiry = TimGetSeconds() + gPrefs.timeoutSecs;
+    Snib_SetExpiry(TimGetSeconds() + gPrefs.timeoutSecs);
 }
 
 
-Boolean UnlockForm_Run() {
+static void UnlockForm_SelAll(void) {
+    /* We'd like to select the entire contents of the form every time
+     * it's shown, but FldSetSelection seems not to work so well if
+     * the form is not displayed.  Is FldSetSelection incompatible
+     * with FrmDoDialog? */
+
+/*      Int16 len = FldGetTextLength(f_entryFld); */
+/*      if (len) */
+/*          FldSetSelection(f_entryFld, 0, len); */
+}
+
+
+Boolean UnlockForm_Run(void) {
     UInt16 	result;
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(UnlockForm);
     Char * 	entry;
     UInt16 	entryIdx = FrmGetObjectIndex(frm, MasterKeyFld);
-    FieldPtr 	entryFld = FrmGetObjectPtr(frm, entryIdx);
     Boolean 	done, correct;
 
     do { 
+        f_entryFld = FrmGetObjectPtr(frm, entryIdx);
+
 	FrmSetFocus(frm, entryIdx);
 	result = FrmDoDialog(frm);
 
 	if (result == UnlockBtn) {
-	    entry = FldGetTextPtr(entryFld);
+	    entry = FldGetTextPtr(f_entryFld);
 	    if (!entry)
 		entry = "";
 	    done = correct = PwHash_Check(entry);
@@ -74,6 +88,7 @@ Boolean UnlockForm_Run() {
                 SessKey_Load(entry);
 	    } else {
 		FrmAlert(WrongKeyAlert);
+                UnlockForm_SelAll();
 	    }
 	} else {
 	    done = true;
@@ -81,7 +96,6 @@ Boolean UnlockForm_Run() {
 	} 
     } while (!done);
 
-    Mem_ObliterateHandle((MemHandle) FldGetTextHandle(entryFld));
     FrmDeleteForm(frm);
     FrmSetActiveForm(prevFrm);
 
@@ -93,21 +107,14 @@ Boolean UnlockForm_Run() {
 Boolean Unlock_CheckTimeout() {
     UInt32 now = TimGetSeconds();
 
-    if (now > gExpiry) {
-#ifdef REALLY_OBLITERATE
-	Unlock_ObliterateKey();
-#endif
+    if (now > g_Snib->expiryTime) {
 	return false;
     }
 
     // If the timeout is too far in the future, then adjust it: this
     // makes it work OK if e.g. the clock has changed.
-    if (now + gPrefs.timeoutSecs < gExpiry)
-	gExpiry = now + gPrefs.timeoutSecs;
+    if (now + gPrefs.timeoutSecs < g_Snib->expiryTime)
+	Snib_SetExpiry(now + gPrefs.timeoutSecs);
 
     return true;
 }
-
-
-
-
