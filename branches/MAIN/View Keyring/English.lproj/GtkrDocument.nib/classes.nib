@@ -1,0 +1,31 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                changeCategory = id; 
+                clickNameTable = id; 
+                endPasswordWindow = id; 
+                lockDatabase = id; 
+                unlockDatabase = id; 
+            }; 
+            CLASS = GtkrDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                account = NSTextField; 
+                category = NSPopUpButton; 
+                changed = NSTextField; 
+                enteredPassword = NSSecureTextField; 
+                lockButton = NSButton; 
+                lockLabel = NSTextField; 
+                name = NSTextField; 
+                nameView = NSTableView; 
+                notes = NSTextView; 
+                password = NSTextField; 
+                passwordWindow = NSWindow; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }
+    ); 
+    IBVersion = 1; 
+}
