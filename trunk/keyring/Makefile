@@ -72,7 +72,7 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 
 BASE		= $(APP)-$(VERSION)
 
-LANGUAGES = en de es
+LANGUAGES = en de es sv
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
