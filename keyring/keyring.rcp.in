@@ -140,8 +140,8 @@ BEGIN
   "Export to Memo" = "Esporta in Memo Pad"
   "Delete..." = "Elimina..."
 
-  "@@GenerateHelp" = "help/it/generate.txt"
-  "@@KeyEditHelp" = "help/it/keyedit.txt"
+  "@@GenerateHelp" = "help/en/generate.txt"
+  "@@KeyEditHelp" = "help/en/keyedit.txt"
 
   "There is no data to export." = "Non ci sono dati da esportare."
 
