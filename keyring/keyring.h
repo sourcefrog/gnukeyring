@@ -41,7 +41,7 @@
 #define kDatabaseVersion	2
 
 /* The app and preferences version */
-#define kAppVersion		130
+#define kAppVersion		131
 
 #define kLockExpiryPref		0
 #define kGeneralPref		1
