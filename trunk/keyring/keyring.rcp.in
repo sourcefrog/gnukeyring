@@ -1,5 +1,5 @@
 /*
- * Tightly Bound -- store passwords securely on a handheld
+ * No Peeking Keyring -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 Martin Pool
  * $Id$
  *
@@ -98,12 +98,14 @@ BEGIN
   "Database" = "Datenbank"
   "Set Password..." = "Passwort festlegen..."
   "Options" = "Optionen"
+  "Tips" = "Tipps"
   "Edit" = "Bearbeiten"
 
   "Preferences..." =  "Einstellungen..."
   "About..." =  "Info..."
 
   "Undo" = "Rückgängig"
+  "Undo All" = "Änderungen verwerfen"
   "Graffiti Help" = "Graffiti-Hilfe"
   "Paste" = "Einfügen"
   "Cut" = "Ausschneiden"
@@ -294,19 +296,19 @@ VERSION ID 1000 "__VERSION__"
 FORM ID ListForm AT (0 0 160 160)
 MENUID ListMenuBar
 BEGIN
-	TITLE "Tightly Bound"
+	TITLE "No Peeking"
 
 	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 0 AUTO AUTO) RIGHTANCHOR USABLE
 	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
 
-	TABLE ID ID_KeyTable AT (0 17 152 127) COLUMNS 1 ROWS 16
+	TABLE ID ID_KeyTable AT (0 17 152 129) COLUMNS 1 ROWS 16
 		EDITABLE COLUMNWIDTHS 150
 
 	SCROLLBAR ID ID_KeyTableScrollBar 
 		AT (PREVRIGHT+1 PREVTOP 7 PREVHEIGHT)
 		VALUE 0 MIN 0 MAX 0 PAGESIZE 0
 
-	BUTTON "New" NewKeyBtn AT (1 146 AUTO AUTO)
+	BUTTON "New" NewKeyBtn AT (1 147 AUTO AUTO)
 END
 
 
@@ -348,7 +350,7 @@ BEGIN
 END
 
 
-FORM ID ID_PrefsForm AT (2 80 156 77)
+FORM ID ID_PrefsForm AT (2 93 156 63)
 MODAL
 BEGIN
 	TITLE "Preferences"
@@ -368,7 +370,7 @@ BEGIN
                AT (3 PREVBOTTOM+5 AUTO AUTO) FONT 1
 */
 	
-	BUTTON "OK" OkBtn AT (5 PREVBOTTOM+4 AUTO AUTO) 
+	BUTTON "OK" OkBtn AT (5 PREVBOTTOM+6 AUTO AUTO) 
 	BUTTON "Cancel" CancelBtn AT (PREVRIGHT+6 PREVTOP AUTO AUTO)
 END
 
@@ -399,7 +401,7 @@ BEGIN
 end
 
 
-FORM ID GenerateForm AT (2 50 156 108)
+FORM ID GenerateForm AT (2 62 156 96)  /* (2 50 156 108) */
 HELPID GenerateHelp
 MODAL
 BEGIN
@@ -572,7 +574,7 @@ WARNING
 BEGIN
   TITLE "Beta Software"
 
-  MESSAGE "This is a beta test version of Tightly Bound.  It may have bugs.  Please keep another copy of any unrecoverable data."
+  MESSAGE "This is a beta test version of No Peeking.  It may have bugs.  Please keep another copy of any unrecoverable data."
 
   BUTTONS "OK" 
 END
@@ -627,7 +629,7 @@ ERROR
 BEGIN
 	TITLE "Not Enough Features"
 
-	MESSAGE "This version of Tightly Bound requires PalmOS 3.0 features and cannot run here."
+	MESSAGE "This version of No Peeking requires PalmOS 3.0 features and cannot run here."
 
 	BUTTONS "OK"
 END
@@ -674,11 +676,11 @@ END
 FORM ID AboutForm AT (2 2 156 156)
 MODAL
 BEGIN
-	TITLE "Tightly Bound"
+	TITLE "No Peeking"
 
 	FORMBITMAP AT (69 20) BITMAP KeyBitmap
 
-	LABEL "Tightly Bound"
+	LABEL "No Peeking"
 		AUTOID AT (CENTER 50) FONT 1
 	LABEL "__VERSION__ (__DATE__)" 
 		AUTOID AT (CENTER PREVBOTTOM) FONT 1
