@@ -1,6 +1,8 @@
 /*
- * No Peeking Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool
+ * GNU Keyring -- store passwords securely on a handheld
+ *
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+ * 
  * $Id$
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +39,14 @@ BEGIN
   "@@KeyEditHelp" = "help/en/keyedit.txt"
 
   "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "P"
+  "@accel_SelectAll" = "S" 
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
 END
 
 
@@ -62,7 +72,7 @@ BEGIN
 
   "Cancel" = "Abbrechen"
 
-  "Set Keyring Password" =  "Keyring Passwort festlegen"
+  "Set Keyring Password" =  "Passwort festlegen"
 
   "@@choosepassword" = "Bitte wählen sie ein Passwort:"
 
@@ -121,7 +131,15 @@ BEGIN
   "Delete..." = "Eintrag löschen..."
 
   "@@GenerateHelp" = "help/de/generate.txt"
-  "@@KeyEditHelp" = "help/en/keyedit.txt"
+  "@@KeyEditHelp" = "help/de/keyedit.txt"
+
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "V"
+  "@accel_SelectAll" = "A"
+  "@accel_Keyboard" = "T"
+  "@accel_Graffiti" = "G"
 END
 
 // ======================================================================
@@ -205,6 +223,14 @@ BEGIN
 
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
+
+  "@accel_Undo" = ""
+  "@accel_Cut" = ""
+  "@accel_Copy" = "" 
+  "@accel_Paste" = ""
+  "@accel_SelectAll" = ""
+  "@accel_Keyboard" = ""
+  "@accel_Graffiti" = ""
 END
 
 // ======================================================================
@@ -287,6 +313,15 @@ BEGIN
 
   "@@GenerateHelp" = "help/sv/generate.txt"
   "@@KeyEditHelp" = "help/sv/keyedit.txt"
+
+
+  "@accel_Undo" = ""
+  "@accel_Cut" = ""
+  "@accel_Copy" = "" 
+  "@accel_Paste" = ""
+  "@accel_SelectAll" = ""
+  "@accel_Keyboard" = ""
+  "@accel_Graffiti" = ""
 END
 
 #include "resource.h"
@@ -296,7 +331,7 @@ VERSION ID 1000 "__VERSION__"
 FORM ID ListForm AT (0 0 160 160)
 MENUID ListMenuBar
 BEGIN
-	TITLE "No Peeking"
+	TITLE "GNU Keyring"
 
 	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@159 0 AUTO AUTO) RIGHTANCHOR USABLE
 	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
@@ -339,10 +374,10 @@ BEGIN
 
 	LABEL "Password:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
 
-	FIELD ID ID_NotesField AT (3 PREVBOTTOM 147 88) USABLE
+	FIELD ID ID_NotesField AT (1 PREVBOTTOM 150 88) USABLE
 		UNDERLINED AUTOSHIFT MULTIPLELINES MAXCHARS 3000 
 
-	SCROLLBAR ID NotesScrollbar AT (150 PREVTOP 7 PREVHEIGHT) USABLE 
+	SCROLLBAR ID NotesScrollbar AT (152 PREVTOP 7 PREVHEIGHT) USABLE 
 	
 	BUTTON "Done" DoneBtn AT (1 147 AUTO AUTO)
 
@@ -407,19 +442,19 @@ MODAL
 BEGIN
 	TITLE "Generate Password"
 
-	LABEL "Generate a new random " AUTOID AT (3 15) FONT 1
-	LABEL "password:" AUTOID AT (PREVLEFT PREVBOTTOM) FONT 1
+	LABEL "@@generate1" AUTOID AT (3 15) FONT 1
+	LABEL "@@generate2" AUTOID AT (PREVLEFT PREVBOTTOM) FONT 1
 
-	LABEL "Length:" autoid at (right@41 prevbottom+4) font 1
-	pushbutton "4" id Length4Push at (44 prevtop auto auto)		  group 1
+	LABEL "Length:" autoid at (right@43 prevbottom+4) font 1
+	pushbutton "4" id Length4Push at (46 prevtop auto auto)		  group 1
 	pushbutton "6" id Length6Push at (prevright+1 prevtop auto auto)  group 1
 	pushbutton "8" id Length8Push at (prevright+1 prevtop auto auto)  group 1 
 	pushbutton "10" id Length10Push at (prevright+1 prevtop auto auto) group 1
 	pushbutton "16" id Length16Push at (prevright+1 prevtop auto auto) group 1
 	pushbutton "20" id Length20Push at (prevright+1 prevtop auto auto) group 1
 	
-	LABEL "Include:" AUTOID AT (RIGHT@41 PREVBOTTOM+6) FONT 1
-	PUSHBUTTON "a-z" ID IncludeLower at (44 prevtop auto auto) 
+	LABEL "Include:" AUTOID AT (RIGHT@43 PREVBOTTOM+6) FONT 1
+	PUSHBUTTON "a-z" ID IncludeLower at (46 prevtop auto auto) 
 	PUSHBUTTON "A-Z" id IncludeUpper at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 PREVTOP 20 auto)
@@ -574,7 +609,7 @@ WARNING
 BEGIN
   TITLE "Beta Software"
 
-  MESSAGE "This is a beta test version of No Peeking.  It may have bugs.  Please keep another copy of any unrecoverable data."
+  MESSAGE "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data."
 
   BUTTONS "OK" 
 END
@@ -629,7 +664,7 @@ ERROR
 BEGIN
 	TITLE "Not Enough Features"
 
-	MESSAGE "This version of No Peeking requires PalmOS 3.0 features and cannot run here."
+	MESSAGE "This version of GNU Keyring requires PalmOS 3.0 features and cannot run here."
 
 	BUTTONS "OK"
 END
@@ -676,11 +711,11 @@ END
 FORM ID AboutForm AT (2 2 156 156)
 MODAL
 BEGIN
-	TITLE "No Peeking"
+	TITLE "GNU Keyring"
 
 	FORMBITMAP AT (69 20) BITMAP KeyBitmap
 
-	LABEL "No Peeking"
+	LABEL "GNU Keyring"
 		AUTOID AT (CENTER 50) FONT 1
 	LABEL "__VERSION__ (__DATE__)" 
 		AUTOID AT (CENTER PREVBOTTOM) FONT 1
@@ -700,12 +735,12 @@ MENU ID ListMenuBar
 BEGIN
 	PULLDOWN "Keyring"
 	BEGIN
-		MENUITEM "Set Password..." ID SetPasswdCmd "S"
+		MENUITEM "Set Password..." ID SetPasswdCmd 
 	END
 
 	PULLDOWN "Options"
 	BEGIN
-		MENUITEM "Preferences..." ID ID_PrefsCmd "P"
+		MENUITEM "Preferences..." ID ID_PrefsCmd
 		MENUITEM "About..." ID AboutCmd
 	END
 END
@@ -715,8 +750,8 @@ MENU ID KeyEditMenuBar
 BEGIN
 	PULLDOWN "Key"
 	BEGIN
-		MENUITEM "Generate Password..." id GenerateCmd
-		MENUITEM "Export to Memo" id ExportMemoCmd
+		MENUITEM "Generate Password..." ID GenerateCmd
+		MENUITEM "Export to Memo" ID ExportMemoCmd
 		MENUITEM SEPARATOR
 		MENUITEM "Undo All" ID ID_UndoAllCmd
 		MENUITEM "Delete..." id DeleteKeyCmd 
@@ -724,19 +759,19 @@ BEGIN
 
 	PULLDOWN "Edit"
 	BEGIN
-		MENUITEM "Undo" ID EditUndo "U"
-		MENUITEM "Cut" ID EditCut "X"
-		MENUITEM "Copy" ID EditCopy "C"
-		MENUITEM "Paste" ID EditPaste "P"
-		MENUITEM "Select All" ID EditSelectAll "S"
+		MENUITEM "Undo" ID EditUndo "@accel_Undo"
+		MENUITEM "Cut" ID EditCut "@accel_Cut"
+		MENUITEM "Copy" ID EditCopy "@accel_Copy"
+		MENUITEM "Paste" ID EditPaste "@accel_Paste"
+		MENUITEM "Select All" ID EditSelectAll "@accel_SelectAll"
 		MENUITEM SEPARATOR
-		MENUITEM "Keyboard" ID KeyboardCmd "K"
-		MENUITEM "Graffiti Help" ID GraffitiReferenceCmd "G"
+		MENUITEM "Keyboard" ID KeyboardCmd "@accel_Keyboard"
+		MENUITEM "Graffiti Help" ID GraffitiReferenceCmd "@accel_Graffiti"
 	END
 
 	PULLDOWN "Options"
 	BEGIN
-		MENUITEM "Preferences..." ID ID_PrefsCmd "R"
+		MENUITEM "Preferences..." ID ID_PrefsCmd 
 		MENUITEM "Tips..."	ID HelpCmd
 		MENUITEM "About..." ID AboutCmd
 	END
