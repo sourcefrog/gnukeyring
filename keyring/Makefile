@@ -3,7 +3,7 @@
 # Resource file to be preprocessed.
 #
 # Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
-# Copyright (C) 2002-2003 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
+# Copyright (C) 2002-2005 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
 #
 # $Header$
 
@@ -39,15 +39,12 @@ INCLUDES        = -IpilotSSLeay/include
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
-# XXX: You may have to edit this to match your SDK installation
-#PALM_BASE       = /usr/local/include/palmos3.5
-#C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI:$(PALM_BASE)/Libraries/PalmOSGlue:$(PALM_BASE)/Dynamic:$(PALM_BASE)/Libraries
-#export C_INCLUDE_PATH
-
 RCP             = $(APP).rcp
 RCP_IN          = $(RCP).ja $(RCP).iso2 $(RCP).in
-BITMAPS         = keyring-15-1.pbm keyring-32-1.ppm keyring-32-8.ppm    \
-		  keyring-64-8.ppm keyring-22.xcf lock.xbm unlock.xbm
+BITMAPS         = keyring-15-1.pbm keyring-22-1.pbm keyring-22-8.ppm    \
+		  keyring-64-8.ppm keyring-22.xcf keyring-64.xcf \
+                  lock-1.pbm lock-8.ppm lock-hi-8.ppm \
+                  unlock-1.pbm unlock-8.ppm unlock-hi-8.ppm
 RESOURCES	= fontPW.txt fontstar.txt $(BITMAPS)
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
