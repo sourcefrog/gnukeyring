@@ -23,7 +23,7 @@ TXT2BITM        = txt2bitm
 OBJRES          = m68k-palmos-coff-obj-res
 BUILDPRC        = build-prc
 
-HELP_TXT	= delete-confirm.txt generate-help.txt
+HELP_TXT	= delete-confirm.txt generate-help.txt preferences-help.txt
 BITMAPS         = keyring-15.bmp keyring-22.bmp philosophical-gnu-tiny-bw.bmp
 
 # Note: 
@@ -35,7 +35,7 @@ BITMAPS         = keyring-15.bmp keyring-22.bmp philosophical-gnu-tiny-bw.bmp
 CFLAGS          = -O2 -Wall -Werror -Winline -W $(DEFINES) $(INCLUDES) -MMD
 
 DOCS		= HACKING COPYING index.html Blatant-Plug-Insert-4-Cheap.JPG \
-		  ChangeLog BUGS TODO TESTS doc/attack-tree.txt \
+		  BUGS TODO TESTS doc/attack-tree.txt \
 		  doc/security.html doc/description.txt doc/memo-import-export.html \
 		  robots.txt
 
@@ -69,10 +69,6 @@ $(DIST_BALL): $(DISTFILES)
 %: %.in Makefile
 	sed $(SED_SUBST) $@.in > $@
 
-# As a rough guide, ChangeLog should be rebuild if anything in this
-# directory has changed
-ChangeLog: . CVS
-	rcs2log -v -R > ChangeLog
 
 grc.stamp:    $(APP) ;
 	$(OBJRES) $(APP)
