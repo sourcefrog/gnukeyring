@@ -43,7 +43,7 @@
     <li>Import/Export whole categories.</li>
 <!---    <li>Check how \Product can run on PalmOS 2.0 again.</li>--->
     <li>Encrypt databases of other applications.</li>
-    <li>Port to <externallink href="http://www.pocketlinux.com/"
-         name="PocketLinux">.</li>
+<!---    <li>Port to <externallink href="http://www.pocket-lnx.org/"
+         name="PocketLinux">.</li>--->
   </ul>
 </section>
