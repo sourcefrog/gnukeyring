@@ -50,6 +50,113 @@ BEGIN
   "@accel_Graffiti" = "G"
 END
 
+// ======================================================================
+// Italian translation contributed by Paolo Gasti
+
+TRANSLATION "it"
+BEGIN
+  "New" = "Nuovo"
+  "Key ______ of ______" = "Record ______ di ______" 
+  "Name:" = "Nome:"
+  "Account:" = "Account:"
+  "Password:" = "Password:"
+  "Confirm:"  = "Conferma:" 
+  "Changed:" = "Cambiato:"
+  "Done" = "Salva"
+  "Preferences" = "Preferenze"
+  "Stay unlocked for:" = "Resta sbloccato per:"
+  "No time" = "0 sec."
+  "15 sec" = "15 sec."
+  "60 sec" = "1 Min."
+  "5 min" = "5 Min."
+  "Veil password" = "Maschera password"
+  "Generate"="Genera"
+
+  "Cancel" = "Annulla"
+
+  "Set Keyring Password" =  "Imposta la master password"
+
+  "@@choosepassword" = "Inserire una nuova master password:"
+
+  "Generate Password" = "Genera password"
+  "@@generate1" = "Genera una nuova password "
+  "@@generate2" = "casuale:"
+
+  "Length:" = "Lungh.:"
+  "Include:" = "Includi:"
+  "Generate" = "Genera"
+
+  "Unlock" =  "Sblocca"
+
+  "Enter your password:" = "Inserisci la password:"
+
+  "Encrypting..." = "Cifrando..."
+  "Decrypting..." = "Decifrando..."
+
+  "@@OutOfMemory" =  "Out of memory."
+  "@@WrongPassword" = "Password errata.  Si prega di riprovare"
+  "@@PasswordMismatch" =  "Le password inserite non corrispondono."
+
+  "Not here yet" = "Non ancora implementato"
+  "@@NotImplemented" = "Questa caratteristica non è ancora stata implementata."
+
+  "^1: System error ^2" =  "^1: Errore di sistema ^2"
+  "Couldn't launch the Memo Pad" =  "Impossibile avviare Memo Pad."
+
+  "Delete Key" = "Elimina record"
+  "Delete current key record?" = "Eliminare il record corrente?"
+
+  "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+   = "Questa fighissima versione di Keyring, oltre ad essere beta è anche stata patchata da Paolo. Se perdete tutto affari vostri."
+
+  "This is free software.  No warranty." = "Free Software.  Nessuna garanzia." 
+
+  "Released under the GNU GPL v2." = "Rilasciata secondo la GNU GPL v2." 
+
+  "Save archive copy on PC" = "Salva una copia sul PC"
+
+  "Database" = "Database"
+  "Set Password..." = "Imposta la password..."
+  "Options" = "Opzioni"
+  "Tips" = "Suggerimenti"
+  "Edit" = "Modifica"
+
+  "Preferences..." =  "Preferenze..."
+  "About..." =  "Info..."
+
+  "Undo" = "Annulla"
+  "Undo All" = "Annulla tutto"
+  "Graffiti Help" = "Graffiti Help"
+  "Paste" = "Incolla"
+  "Cut" = "Taglia"
+  "Select All" = "Seleziona tutto"
+  "Key %d of %d" = "Record %d di %d"
+  "Copy" = "Copia"
+  "Keyboard" = "Tastiera"
+  "New Key" = "Nuovo record"
+
+  "Record" =  "Record"
+  "Generate Password..." = "Genera password..."
+  "Export to Memo" = "Esporta in Memo Pad"
+  "Delete..." = "Elimina..."
+
+  "@@GenerateHelp" = "help/it/generate.txt"
+  "@@KeyEditHelp" = "help/it/keyedit.txt"
+
+  "There is no data to export." = "Non ci sono dati da esportare."
+
+  "Unfiled" = "Non catalogato"
+  "Phone" = "Telefono"
+  "Banking" = "Banca"
+
+  "@accel_Undo" = "U"
+  "@accel_Cut" = "X"
+  "@accel_Copy" = "C"
+  "@accel_Paste" = "V"
+  "@accel_SelectAll" = "S"
+  "@accel_Keyboard" = "K"
+  "@accel_Graffiti" = "G"
+END
 
 // ======================================================================
 // German translation contributed by Stefan H. Holek and Johannes Rauh
