@@ -45,7 +45,6 @@
 #define KeyBitmap                       1106
 
 #define KeysList			1200
-#define KeyNameField			1201
 #define DoneBtn				1202
 #define KeysListScrollBar		1203
 #define CountDownTrigger		1204
@@ -65,7 +64,6 @@
 #define SumBtn				1218
 #define OkBtn				1219
 #define SaveArchiveCheck		1220
-#define NotesField			1221
 #define NotesScrollbar			1222
 #define TitleTemplateStr		1223
 #define EmptyTitleStr			1224
