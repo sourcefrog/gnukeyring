@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title>Breaking Keyrings</title>
+    <link rel="stylesheet" type="text/css" href="keyring.css">
+  </head>
+  
+  <body>
+    <h1>Breaking Keyrings</h1>
+    
+    <A href="http://sourceforge.net"> 
+      <IMG src="http://sourceforge.net/sflogo.php?group_id=306&type=1"
+	   width="88" align=right height="31" border="0"></A>
+
+    <p>Copyright (C) 1999, 2000
+      by Martin Pool <a href="mailto:mbp@humbug.org.au">&lt;mbp@humbug.org.au&gt;</a>
+
+    <p><tt>$Id$</tt>
+
+    <p><a href=".">up</a>
+
+    <p>
+      <a href=".">GNU Keyring</a> tries to keep your passwords secure
+      through it's user interface and storage.  One important feature
+      of this is that passwords are encrypted when stored in the
+      database and PC.  </p>
+
+    <p>
+      The EDE DES3 algorithm used to do this is well trusted, but a
+      fundamental limit is the length of the master key.  To achieve
+      the full potential of the encryption algorithm, the master key
+      would have to have 112 bits of entropy.  Assuming a good mix of
+      letters and other symbols, each character would contribute a bit
+      over 6 bits of entropy.  Therefore passwords over 18 characters
+      are maximally secure, while anything under that is
+      proportionally more vulnerable to a brute-force attack.
+    </p>
+
+    <p>
+      Since the password has to be entered each time the keyring is
+      accessed I expect few people will use 18 character passwords.  A
+      more likely password of six randomly-selected printable
+      characters gives about 40 bits of entropy, which is about a
+      million million possible passwords.  This is reasonably large,
+      but not impossible to check by brute force on a modern PC.
+    </p>
+
+    <p>
+      There's no way that I know of to keep useful secrets on the
+      handheld, and in any case keeping things there would prevent
+      backing up the keyring and put it at risk of loss from hardware
+      failure, battery exhaustion or pilot error.
+    </p>
+
+    <p>
+      Changing to a new encryption algorithm would not help the
+      essential problem of predictable keys.  One option would be to
+      use something other than an alphanumeric password.  Perhaps a
+      freehand signature could be used to form a digital secret key?
+    </p>
+
+    <p>
+      Since it's probably possible to brute force the password, the
+      most useful precaution is to only backup the keyring to a
+      trusted PC.  Some criteria for security to weigh against the
+      confidentiality of the data in the keyring include:
+
+    <ul>
+      <li>The operating system and services on the machine should be
+	up-to-date; and new fixes should be promptly applied as
+	problems are found.
+
+      <li>Only people you trust with the information in the keyring
+	should have access to the machine.
+
+      <li>The machine should be physically secure.
+
+      <li>Backups of the machine should be made in a secure way and
+	kept safe.
+
+      <li>The machine should not be unduly network-accessible.
+
+      <li>Whether the software on the machine can be
+	<a href="http://www.counterpane.com/crypto-gram-9909.html#OpenSourceandSecurity">trusted</a>
+    </ul>
+
+    <p>
+      I intend in the future to offer a utility to break keyrings on a
+      PC as an aid to people who've lost their password.  It's not
+      terribly hard to write such a thing, so I can't assume me not
+      writing it would give any additional protection.  I'm not sure
+      if I'll do this; please
+      <a href="https://sourceforge.net/survey/survey.php?group_id=306&survey_id=10192"><b>express your opinion here</b></a> or
+	<a href="mailto:mbp@gnukeyring.sourceforge.net">mail me</a>.
+    </p>
+  </body>
+</html>
