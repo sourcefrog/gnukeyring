@@ -44,6 +44,13 @@
  * old session key from the snib, and then store it back encrypted by
  * the new session key.  Finally update the snib to hold the hash of
  * the new password.
+ *
+ * We now no longer bother unpacking each record, but rather make a
+ * single pass through converting packed record.  This is simpler and
+ * saves space.
+ *
+ * We do have to also include archived records, as they must be
+ * accessible on the PC.
  */
 void KeyDB_Reencrypt(Char const *newPasswd)
 {
@@ -65,7 +72,7 @@ void KeyDB_Reencrypt(Char const *newPasswd)
     if (err)
 	UI_ReportSysError2(CryptoErrorAlert, err, __FUNCTION__);
 
-    for (idx = 0; idx < numRecs; idx++) {
+    for (idx = kNumHiddenRecs; idx < numRecs; idx++) {
 	// Skip deleted records.  Handling of archived records is a
 	// bit of an open question, because we'll still want to be
 	// able to decrypt them on the PC.  (If we can ever do
@@ -85,6 +92,7 @@ void KeyDB_Reencrypt(Char const *newPasswd)
         recPtr = MemHandleLock(recHand);
 
 	Keys_UnpackRecord(recPtr, &unpacked);
+        Keys_CalcPackedSize(&unpacked);
         Keys_WriteRecord(&unpacked, recPtr, newRecordKey);
 
 	UnpackedKey_Free(&unpacked);
