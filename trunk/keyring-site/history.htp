@@ -16,6 +16,11 @@
 
 <section title="release history">
  <table>
+  <release id="135550" ver="1.2.2" date="2003-03-18">
+    <li>Fix for <buglink id=698054>: Fatal Alert in OS 5 when searching. </li>
+    <li>Copyright statements updated.</li>
+    <li>French translation updated.</li>
+  </release>
   <release id="135550" ver="1.2.1" date="2003-01-23">
     <li>Fix for <buglink id=670527>: Freeze on installation. </li>
     <li>Italian translation updated.</li>
