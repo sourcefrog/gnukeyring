@@ -1,5 +1,47 @@
 -*- outline -*- 
 
+* Page up in list doesn't work
+
+* Scroll to show newly-inserted items
+
+* Export using localized field headings
+
+or perhaps don't export them at all.
+
+* Scroll bar must update when paging
+
+* Don't use SysRandom
+
+* Advice on secure passwords
+
+minimum length; use of accented/extended characters
+
+* Must unlock to set prefs
+
+* Update pos when changing categories
+
+* Build date in about box
+
+* Lock on power off/switching apps
+
+* Move to right record on empty record & page down
+
+* Sort
+
+* No session key
+
+* Newline in single-line fields should move down one field
+
+* Choose fonts
+
+* Text entry slow?
+
+* Generate button when setting master password?
+
+* Beaming
+
+* Distinguish I from l
+
 * Change back to encrypting using the hash of the password
 
 * Safe way to change password and re-encrypt
