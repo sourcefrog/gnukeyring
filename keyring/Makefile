@@ -3,6 +3,7 @@
 # Resource file to be preprocessed.
 #
 # Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
+# Copyright (C) 2002-2003 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
 #
 # $Header$
 
@@ -49,7 +50,8 @@ PERL		= perl
 JAVA		= java
 
 # Note: 
-# Turning on debugger support (-g) costs about 100 bytes
+# Turning on debugger support (-g) costs about 140 bytes
+# -mdebug-labels costs about 3100 bytes
 
 # Turning on  -finline-functions costs about 532 bytes
 # Empirically the smallest executables come from -O2, which makes sense
@@ -67,13 +69,13 @@ JAVA		= java
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.2.1
-DEFINES		= -DkAppVersion=0x1021
+VERSION         = 1.2.2
+DEFINES		= -DkAppVersion=0x1022
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
 
-OPTIM		= -O2 -g -mdebug-labels
+OPTIM		= -O2 #-g -mdebug-labels
 INCLUDES        = -IpilotSSLeay/include
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
