@@ -1,0 +1,322 @@
+/*
+ * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
+ * Copyright (C) 1999 Martin Pool
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include "resource.h"
+
+VERSION ID 1000 "__VERSION__"
+
+FORM ID ListForm AT (0 0 160 160)
+MENUID ListMenuBar
+BEGIN
+	TITLE "GNU Keyring"
+
+	LIST "" ID KeysList AT (1 17 150 125) 
+	SCROLLBAR ID KeysListScrollBar 
+		AT (PREVRIGHT+1 PREVTOP 7 PREVHEIGHT)
+		VALUE 0 MIN 0 MAX 0 PAGESIZE 0
+
+	BUTTON "New" NewKeyBtn AT (1 146 AUTO AUTO)
+END
+
+
+FORM ID KeyEditForm AT (0 0 160 160)
+MENUID KeyEditMenuBar
+BEGIN
+	/* The default title must be big enough for anything we 
+	 * want to copy into it */
+	TITLE "Key ______ of ______" 
+
+	FIELD ID KeyNameField AT (60 18 97 AUTO) USABLE  
+		UNDERLINED AUTOSHIFT MAXCHARS 40
+
+	LABEL "Name:" AUTOID AT (RIGHT@PREVLEFT-5 PREVTOP) FONT 1
+
+
+	FIELD ID AccountField AT (60 PREVBOTTOM+2 97 AUTO) USABLE
+		UNDERLINED MAXCHARS 50 
+
+	LABEL "Account:" AUTOID AT (RIGHT@PREVLEFT-5 PREVTOP) FONT 1
+
+
+	FIELD PasswordField AT (60 PREVBOTTOM+2 97 AUTO) USABLE 
+		UNDERLINED MAXCHARS 50
+
+	LABEL "Password:" AUTOID AT (RIGHT@PREVLEFT-5 PREVTOP) FONT 1
+
+
+	SELECTORTRIGGER "1/4/99" ID DateTrigger AT (60 PREVBOTTOM+2 40 AUTO)
+		LEFTANCHOR     
+
+	LABEL "Changed:" AUTOID AT (RIGHT@PREVLEFT-5 PREVTOP) FONT 1
+
+
+	FIELD ID NotesField AT (3 PREVBOTTOM+2 147 68) USABLE
+		UNDERLINED MULTIPLELINES MAXCHARS 2000 
+
+	SCROLLBAR ID NotesScrollbar AT (150 PREVTOP 7 PREVHEIGHT) USABLE 
+	
+	BUTTON "Done" DoneBtn AT (1 147 AUTO AUTO)
+
+	GRAFFITISTATEINDICATOR AT (150 150)
+END
+
+
+FORM ID PrefsForm AT (2 91 156 67)
+helpid PreferencesHelp
+MODAL
+BEGIN
+	TITLE "Preferences"
+
+	LABEL "Stay unlocked for:" AUTOID AT (5 15) FONT 1
+
+	PUSHBUTTON "No time" ID Expiry0Push AT (5 PREVBOTTOM+2 AUTO AUTO)
+		GROUP 1
+	PUSHBUTTON "15 sec" ID Expiry15Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
+		GROUP 1
+	PUSHBUTTON "60 sec" ID Expiry60Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
+		GROUP 1
+	PUSHBUTTON "5 min" ID Expiry300Push AT (PREVRIGHT+1 PREVTOP AUTO AUTO)
+		GROUP 1
+	
+	BUTTON "OK" OkBtn AT (5 50 AUTO AUTO) 
+	BUTTON "Cancel" CancelBtn AT (PREVRIGHT+6 PREVTOP AUTO AUTO)
+END
+
+
+FORM ID SetPasswdForm AT (2 2 156 156)
+MODAL
+BEGIN
+	title "Set Keyring Password"
+
+	label "Please choose a password to"
+		autoid at (5 30) font 0
+	label "protect your keys: they cannot"
+		autoid at (prevleft prevbottom) font 0
+	label "be recovered without it."
+		autoid at (prevleft prevbottom) font 0
+
+	label "Password:" 
+		autoid at (prevleft 103) font 1
+
+	field id MasterKeyFld at (65 prevtop 85 15)
+		underlined maxchars 40
+
+	label "Confirm:" 
+		autoid at (5 prevbottom) font 1
+
+	field id ConfirmFld at (65 prevtop 85 15)
+		underlined maxchars 40
+
+	button "OK" OkBtn at (5 prevbottom+7 auto auto)
+	button "Cancel" CancelBtn at (prevright+6 prevtop auto auto)
+end
+
+
+form id GenerateForm at (2 62 156 96)
+helpid GenerateHelp
+modal
+begin
+	title "Generate Password"
+
+	label "Generate a new random " autoid at (3 15) font 1
+	label "password:" autoid at (prevleft prevbottom) font 1
+
+	label "Length:" autoid at (right@43 prevbottom+4) font 1
+	pushbutton "4" id Length4Push at (46 prevtop auto auto)		  group 1
+	pushbutton "6" id Length6Push at (prevright+1 prevtop auto auto)  group 1
+	pushbutton "8" id Length8Push at (prevright+1 prevtop auto auto)  group 1 
+	pushbutton "10" id Length10Push at (prevright+1 prevtop auto auto) group 1
+	pushbutton "16" id Length16Push at (prevright+1 prevtop auto auto) group 1
+	pushbutton "20" id Length20Push at (prevright+1 prevtop auto auto) group 1
+	
+	label "Include:" autoid at (right@43 prevbottom+6) font 1
+	pushbutton "a-z" id IncludeLower at (46 prevtop auto auto) 
+	pushbutton "A-Z" id IncludeUpper at (prevright+1 prevtop auto auto) 
+	pushbutton "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
+	pushbutton "!@#$" id IncludePunct at (prevright+1 prevtop auto auto)
+
+	button "Generate" id OkBtn at (3 80 auto auto)
+	button "Cancel" id CancelBtn at (prevright+5 prevtop auto auto)
+end
+
+
+FORM ID UnlockForm AT (2 98 156 60)
+MODAL
+BEGIN
+	TITLE "Unlock"
+	
+	LABEL "Enter your password:" AUTOID AT (3 15) FONT 1
+
+	FIELD ID MasterKeyFld AT (3 30 150 15) UNDERLINED MAXCHARS 40 
+
+	BUTTON "Unlock" UnlockBtn AT (3 45 AUTO AUTO)
+	BUTTON "Cancel" CancelBtn AT (PREVRIGHT+6 PREVTOP AUTO AUTO)
+
+	GRAFFITISTATEINDICATOR AT (140 PREVTOP)
+END
+
+
+FORM ID BusyEncryptForm AT (45 65 70 30)
+MODAL
+BEGIN
+	LABEL "Encrypting..." AUTOID AT (CENTER CENTER) FONT 1
+END
+
+
+FORM ID BusyDecryptForm AT (40 65 80 30)
+MODAL
+BEGIN
+	LABEL "Decrypting..." AUTOID AT (CENTER CENTER) FONT 1
+END
+
+
+ALERT ID WrongKeyAlert
+ERROR
+BEGIN
+	TITLE "Password"
+
+	MESSAGE "Password incorrect.  Please try again."
+
+	BUTTONS "OK"
+END
+
+
+ALERT ID PasswdMismatchAlert
+ERROR
+BEGIN
+	TITLE "Password"
+
+	MESSAGE "The passwords you entered do not match. Please try again"
+
+	BUTTONS "OK"
+END
+
+
+
+ALERT ID NotImplementedAlert
+BEGIN
+	TITLE "Not here yet"
+
+	MESSAGE "Sorry, that feature is not implemented yet."
+
+	BUTTONS "Oh well"
+END
+
+
+
+ALERT ID SysErrAlert
+ERROR
+BEGIN
+	MESSAGE "^1: system error ^2"
+
+	BUTTONS "OK"
+END
+
+
+FORM ID ConfirmDeleteForm AT (2 94 156 64)
+HELPID ConfirmDeleteStr
+MODAL
+BEGIN
+	TITLE "Delete Key"
+
+	LABEL "Delete current key record?" AUTOID AT (5 16) FONT 1 
+
+	CHECKBOX "Save archive copy on PC" ID SaveArchiveCheck 
+		AT (5 PREVBOTTOM + 3 AUTO AUTO) FONT 1
+
+	BUTTON "OK" ID OkBtn AT (5 46 AUTO AUTO) 
+	BUTTON "Cancel" ID CancelBtn AT (PREVRIGHT + 5 PREVTOP AUTO AUTO)
+END
+
+
+
+FORM ID AboutForm AT (2 2 156 156)
+MODAL
+BEGIN
+	TITLE "About GNU Keyring"
+
+	FORMBITMAP AT (48 15) BITMAP GnuBitmap
+
+	LABEL "GNU Keyring __VERSION__" AUTOID AT (CENTER 96) FONT 1
+  	LABEL "Copyright 1999 by Martin Pool" AUTOID AT (CENTER PREVBOTTOM)
+	LABEL "This is free software.  No warranty." AUTOID AT (CENTER PREVBOTTOM) 
+
+	BUTTON "OK" AUTOID AT (CENTER 139 30 12)
+END
+
+
+
+MENU ID ListMenuBar
+BEGIN
+	PULLDOWN "Database"
+	BEGIN
+		MENUITEM "Set Password..." ID SetPasswdCmd "S"
+	END
+
+	PULLDOWN "Options"
+	BEGIN
+		MENUITEM "Preferences..." ID PrefsCmd "P"
+		MENUITEM "About GNU Keyring" ID AboutCmd "A"
+	END
+END
+
+
+MENU ID KeyEditMenuBar
+BEGIN
+	PULLDOWN "Record"
+	BEGIN
+		menuitem "Generate Password..." id GenerateCmd "G"
+		MENUITEM SEPARATOR
+		menuitem "Delete..." id DeleteKeyCmd "D"
+	END
+
+	PULLDOWN "Edit"
+	BEGIN
+		MENUITEM "Undo" ID EditUndo "U"
+		MENUITEM "Cut" ID EditCut "X"
+		MENUITEM "Copy" ID EditCopy "C"
+		MENUITEM "Paste" ID EditPaste "P"
+		MENUITEM "Select All" ID EditSelectAll "S"
+		MENUITEM SEPARATOR
+		MENUITEM "Keyboard" ID KeyboardCmd "K"
+		MENUITEM "Graffiti Help" ID GraffitiReferenceCmd "G"
+	END
+
+	PULLDOWN "Options"
+	BEGIN
+		MENUITEM "Preferences..." ID PrefsCmd "P"
+		MENUITEM "About Keyring" ID AboutCmd
+	END
+END
+
+ICON "keyring-22.bmp"
+SMALLICON "keyring-15.bmp"
+
+BITMAP ID GnuBitmap "philosophical-gnu-tiny-bw.bmp"
+
+STRING ID TitleTemplateStr "Key %d of %d"
+STRING ID EmptyTitleStr "New Key"
+
+
+// Help messages
+STRING ID ConfirmDeleteStr FILE "delete-confirm.txt"
+string id GenerateHelp file "generate-help.txt"
+string id PreferencesHelp file "preferences-help.txt"
+

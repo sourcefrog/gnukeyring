@@ -1,0 +1,16 @@
+*.tmp
+*~
+bin
+*.o
+bin.stamp
+*.grc
+grc.stamp
+keyring
+keyring.prc
+keyring-*.tar.gz
+ChangeLog
+*.d
+res
+index.html
+keyring.rcp
+ID
