@@ -8,14 +8,16 @@ APPID           = "Gtkr"
 VERSION         = 0.13.0
 
 RCP             = $(APP).rcp
-SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
-		  crypto.c passwd.c uiutil.c generate.c prefs.c \
-		  export.c dbutil.c upgrade.c record.c category.c \
-		  beta.c setpasswd.c pwhash.c sesskey.c
+SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
+		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
+		  export.c dbutil.c upgrade.c record.c category.c	\
+		  beta.c setpasswd.c pwhash.c sesskey.c memdebug.c
 
-HEADERS = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
-upgrade.h category.h error.h keydb.h listform.h prefs.h resource.h	\
-util.h crypto.h export.h keyedit.h memutil.h pwhash.h uiutil.h sesskey.h
+HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
+		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
+		resource.h						\
+		util.h crypto.h export.h keyedit.h memutil.h		\
+		pwhash.h uiutil.h sesskey.h memdebug.h
 
 # 		  libdes/des_enc.c
 
@@ -93,11 +95,13 @@ $(RCP): $(RCP).in Makefile
 $(EXE):       $(SRC:.c=.o) ;
 	$(CC) $(CFLAGS) $^ -o $(EXE)
 
+auto.h: en.resstamp
+
 %.resstamp: $(RCP) $(BITMAPS) resource.h 
 	[ -d res/$* ] || mkdir -p res/$*
 	-rm -f res/$*/*
 	-rm -f *.bin
-	$(PILRC) -q -L $* $(RCP) res/$*/
+	$(PILRC) -H auto.h -q -L $* $(RCP) res/$*/
 	touch $@
 
 %.s: %.c
