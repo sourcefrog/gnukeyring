@@ -1,12 +1,37 @@
+/* -*- c-file-style: "java"; -*-
+ *
+ * $Header$
+ * 
+ * Keyring -- store passwords securely on a handheld
+ * Copyright (C) 2002-2003 Jochen Hoenicke <hoenicke@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /*
                                                  
 The following is a listing of the source code referenced in the
 Appendix A of the Automated Password Generator Standard, extracted
 from http://www.eff.org/Privacy/Newin/New_nist/fips181.txt on 8 May
 2002.  There is no licensing information regarding this code in the
-above document, however it seems clear that it is intended to be used
-as a reference implementation.  Derivative works would therefore seem
-to be OK.
+above document, however, it seems clear that it is intended to be used
+as a reference implementation.  Derivative works would therefore be
+OK.
+
+The idea and first implementation to use this code in keyring is due
+to Robin Stephenson.
 
 */
 
