@@ -5,12 +5,14 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.11.1
+VERSION         = 0.13.0
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
 		  crypto.c passwd.c uiutil.c generate.c prefs.c \
-		  export.c dbutil.c upgrade.c record.c category.c
+		  export.c dbutil.c upgrade.c record.c category.c \
+# 		  libdes/des_enc.c
+
 DEP             = $(subst .c,.d,$(SRC))
 OBJ		= $(subst .c,.o,$(SRC))
 #GRC             = $(APP).grc
@@ -36,6 +38,7 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
 
 # -Wconversion
 
+DEFINES		= -DPALM_KEYRING
 CFLAGS          = -O2 -Wall -Werror -Winline -Wunused -W \
 		   -Wsign-compare -Wstrict-prototypes \
 		  -Wmissing-prototypes \
@@ -43,12 +46,8 @@ CFLAGS          = -O2 -Wall -Werror -Winline -Wunused -W \
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
-DOCS		= COPYING doc/HACKING doc/BUGS doc/TODO doc/TESTS \
-		  doc/break.html doc/find.html doc/index.html \
-		  doc/memo-import-export.html doc/security.html \
-		  doc/attack-tree.txt doc/description.txt \
-		  doc/Blatant-Plug-Insert-4-Cheap.jpg \
-		  doc/keyring.css $(wildcard doc/snaps/*.png)
+DOCS		= COPYING HACKING TODO TESTS 
+# The web site is now maintained separately
 
 DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
 		  $(DOCS) $(wildcard *.c *.h) $(DEF) \
@@ -95,6 +94,9 @@ $(EXE):       $(SRC:.c=.o) ;
 	$(PILRC) -q -L $* $(RCP) res/$*/
 	touch $@
 
+%.s: %.c
+	$(CC) $(CFLAGS) -S $< 
+
 %.o %.d: %.c ;
 	$(CC) $(CFLAGS) -c $< -o $*.o
 
@@ -103,19 +105,12 @@ depend: $(DEP)
 clean:
 	rm -rf *.o $(EXE) *.bin res/*/* *.grc *.prc *.stamp *.bin *.d *.stamp
 
-# Only useful for the maintainer
-.PHONY: _upload
-hosting_dir = gnukeyring.sourceforge.net:/home/groups/gnukeyring/htdocs
-upload_doc: 
-	cd doc && rsync --recursive --times -e ssh -v $(hosting_dir) 
-
 sig: $(DIST_SIG)
 
 $(DIST_SIG): $(DIST_BALL)
 	gpg -u 40C90109 -a -b $(DIST_BALL)
 
 # TODO: Also upload the release to the SourceForge download area
-
 count: 
 	@cat *.[ch] *.rcp Makefile|wc -l
 
