@@ -49,9 +49,6 @@ static void KeyEditForm_MarkClean(void);
 static void Edit_DeleteKey(Boolean saveBackup);
 static void KeyEditForm_GetFields(void);
 
-static Boolean f_keyDiscarded;
-static Boolean f_keyCommitted;
-
 // If the form is active, all these are valid.
 static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
 static ScrollBarPtr f_NotesScrollBar;
@@ -62,7 +59,7 @@ static FieldPtr f_AllFields[k_NumFields];
 static UInt8 gRecordKey[k2DESKeySize];
 
 /* Index of the current record in the database as a whole. */
-UInt16          gKeyRecordIndex = kNoRecord;
+static UInt16 gKeyRecordIndex = kNoRecord;
 
 /* True if we should sort the database on leaving this form.  At the
  * moment we set this on any modification, although we could perhaps
@@ -125,12 +122,13 @@ static void KeyEditForm_UpdateTitle(void)
     Char totalStr[maxStrIToALen];
     Char * keyFormTitle;
     
-    ErrNonFatalDisplayIf(gKeyRecordIndex == kNoRecord,
-                         __FUNCTION__ ": no record");
-
-    /* 1-based count */
-    pos = 1 + DmPositionInCategory(gKeyDB, gKeyRecordIndex, gPrefs.category);
     total = DmNumRecordsInCategory(gKeyDB, gPrefs.category);
+    /* 1-based count */
+    if (gKeyRecordIndex == kNoRecord) 
+	pos = ++total;
+    else 
+	pos = 1 + DmPositionInCategory(gKeyDB, gKeyRecordIndex, 
+				       gPrefs.category);
     
     titleHandle = DmGetResource(strRsc, TitleTemplateStr);
     titleTemplate = MemHandleLock(titleHandle);
@@ -258,6 +256,17 @@ static void KeyEditForm_Load(void)
 }
 
 
+static void Key_SetNewRecordCategory(void)
+{
+    if (gPrefs.category == dmAllCategories)
+	gRecord.category = dmUnfiledCategory;
+    else
+	gRecord.category = gPrefs.category;
+    
+    Key_SetCategory(gKeyRecordIndex, gRecord.category);
+}
+
+
 /*
  * Save the record if any fields are dirty, and also update gRecord
  * from the field values.  If the record has been left empty, then
@@ -265,21 +274,22 @@ static void KeyEditForm_Load(void)
  */
 static void KeyEditForm_Commit(void)
 {
-    if (f_keyDiscarded || f_keyCommitted)
-        return;
-
     if (KeyEditForm_IsEmpty()) {
-         Edit_DeleteKey(false); /* no backup */
-         KeyEditForm_MarkClean();
+
+	Edit_DeleteKey(false); /* no backup */
+	KeyEditForm_MarkClean();
+
     } else if (KeyEditForm_IsDirty()) {
-         f_needsSort = true;
-         KeyEditForm_ToUnpacked(&gRecord);
-         KeyEditForm_Save();
-         KeyEditForm_MarkClean();
-    } else {
-	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+	if (gKeyRecordIndex == kNoRecord) {
+	    /* TODO: If this fails, do something. */
+	    KeyDB_CreateNew(&gKeyRecordIndex);
+	    Key_SetNewRecordCategory();
+	}
+	f_needsSort = true;
+	KeyEditForm_ToUnpacked(&gRecord);
+	KeyEditForm_Save();
+	KeyEditForm_MarkClean();
     }
-    f_keyCommitted = true;
 }
 
 
@@ -392,30 +402,10 @@ static Boolean KeyEditForm_IsEmpty(void)
 }
 
 
-static void Key_SetNewRecordCategory(void)
-{
-    if (gPrefs.category == dmAllCategories)
-        gRecord.category = dmUnfiledCategory;
-    else
-        gRecord.category = gPrefs.category;
-
-    Key_SetCategory(gKeyRecordIndex, gRecord.category);
-}
-
-
-
 static void KeyEditForm_OpenRecord(void)
 {
     if (gKeyRecordIndex != kNoRecord) 
         KeyEditForm_Load();
-    else {
-        KeyDB_CreateNew(&gKeyRecordIndex);
-        Key_SetNewRecordCategory();
-        /* TODO: If this fails, do something. */
-    }
-
-    f_keyDiscarded = false;
-    f_keyCommitted = false;
 
     if (gPrefs.category != dmAllCategories)
 	gPrefs.category = gRecord.category;
@@ -548,7 +538,7 @@ static void Edit_SortAndFollow(void)
 
      /* TODO: We need to update gKeyRecordIndex as the "current"
       * record may now have a different index. */
-     followRecord = (gKeyRecordIndex != kNoRecord) && !f_keyDiscarded;
+     followRecord = (gKeyRecordIndex != kNoRecord);
 
      if (followRecord)
           DmRecordInfo(gKeyDB, gKeyRecordIndex, NULL, &uniqueId, NULL);
@@ -565,14 +555,15 @@ static void Edit_FormClose(void)
      UInt32 version;
 #endif
      KeyEditForm_Commit();
+     if (gKeyRecordIndex != kNoRecord)
+	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
      MemSet(gRecordKey, sizeof(gRecordKey), 0);
-     if (f_needsSort) {
+     if (f_needsSort)
           Edit_SortAndFollow();
-     }
 
      /* This is not necessarily a reasonable index, but the list form
       * will check it before use. */
-     if (f_keyDiscarded)
+     if (gKeyRecordIndex == kNoRecord)
           f_FirstIdx = 0;
      else
           f_FirstIdx = DmPositionInCategory(gKeyDB, gKeyRecordIndex,
@@ -592,13 +583,13 @@ static void Edit_FormClose(void)
 
 
 /*
- * Delete the current record, and set f_keyDiscarded.
+ * Delete the current record.
  */
 static void Edit_DeleteKey(Boolean saveBackup)
 {
-    /* We set f_keyDiscarded to make sure that we don't try to save this
-     * record as the form closes. */
-    f_keyDiscarded = true;
+    /* Is there a record to remove ? */
+    if (gKeyRecordIndex == kNoRecord)
+	return;
 
     DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
 
@@ -609,12 +600,11 @@ static void Edit_DeleteKey(Boolean saveBackup)
         DmArchiveRecord(gKeyDB, gKeyRecordIndex);
     } else {
         DmDeleteRecord(gKeyDB, gKeyRecordIndex);
-        // Move to the end to make the ordering of the remaining
-        // records simple.
-        DmMoveRecord(gKeyDB, gKeyRecordIndex, DmNumRecords(gKeyDB));
-        // gKeyRecordIndex now refers to the next record.  That's probably OK.
     }
 
+    // Move to the end to make the ordering of the remaining
+    // records simple.
+    DmMoveRecord(gKeyDB, gKeyRecordIndex, DmNumRecords(gKeyDB));
     gKeyRecordIndex = kNoRecord;
 }
 
@@ -645,6 +635,10 @@ static void Edit_MaybeDelete(void)
 	 if (buttonHit == CancelBtn)
 	     return;
      }
+
+     /* If we want to save a backup copy, commit the changes */
+     if (saveBackup)
+	 KeyEditForm_Commit();
 
      Edit_DeleteKey(saveBackup);
 

@@ -204,8 +204,4 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
     recPtr = MemHandleLock(recHandle);
     Keys_WriteRecord(unpacked, recPtr, recordKey);
     MemHandleUnlock(recHandle);
-
-    err = DmReleaseRecord(gKeyDB, idx, true);
-    if (err)
-	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
 }
