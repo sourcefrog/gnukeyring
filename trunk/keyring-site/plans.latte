@@ -1,8 +1,8 @@
 {\page 
-  \pageid=plan \pagetitle=plan
+  \pageid=plans \pagetitle={development plans}
   \rcsid=\"$Id$\"
 {
-  {\h2 development plan}
+  {\h2 development plans}
 
   {\h3 0.13.0}
 
@@ -23,7 +23,7 @@
    {\li For records with no public name, show them in the list by
    their index number rather than a unique hex string.}
    {\li Discard empty records.}
-   {\li Add an Edit/Undo All feature.}
+   {\li Add an {\buglink \bugid=113358 Edit/Undo All feature}.}
    {\li Show homepage URL in the About box.}
   }
 
@@ -31,14 +31,15 @@
 
   {\ul 
     {\li Beaming of records, or whole categories of records}
-    {\li Choose from the PalmOS standard fonts}
-    {\li Variable size fields in the edit screen (like Address Book),
+    {\li {\buglink \bugid=105112 Choose from the PalmOS standard fonts}}
+    {\li Fields in the edit screen {\buglink \bugid=109629 grow to fit 
+      their contents} (like Address Book),
       or buttons to zoom onto fields so that longer entries may be
       edited (like Mail)}
     {\li Import from Memo Pad}
     {\li Lock timeout should be independent of the handheld being 
      switched off or of switching to other applications} 
-    {\li Optionally {\buglink \buglink=109050 hide passwords as 
+    {\li Optionally {\buglink \bugid=109050 hide passwords as 
       they are entered}.  Perhaps
       display just a single character as Grafitti confirmation.}
     {\li Support PalmOS global Find.}
