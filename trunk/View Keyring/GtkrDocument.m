@@ -250,7 +250,12 @@
 objectValueForTableColumn: (NSTableColumn *)aTableColumn
             row: (int)rowIndex
 {
-    return [keyring nameForIndex: [[[keyring names] objectAtIndex: rowIndex] intValue]];
+    NSString *n;
+    int realIndex;
+
+    realIndex = [[[keyring names] objectAtIndex: rowIndex] intValue];
+    n = [keyring nameForIndex: realIndex];
+    return n;
 }
 
 @end
