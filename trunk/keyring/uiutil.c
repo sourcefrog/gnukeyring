@@ -118,7 +118,7 @@ int UI_ScanUnion(FormPtr frm, UInt16 const * map)
 	if (map[i] == (UInt16) -1)
 	    break;
 	
-	if (CtlGetValue(UI_GetObjectByID(frm, map[i+1])))
+	if (map[i] && CtlGetValue(UI_GetObjectByID(frm, map[i+1])))
 	    result |= map[i];
     }
 
@@ -135,7 +135,10 @@ void UI_UnionSet(FormPtr frm, UInt16 const * map, UInt16 value)
 	if (map[i] == (UInt16) -1)
 	    break;
 
-	CtlSetValue(UI_GetObjectByID(frm, map[i+1]),
-		    (map[i] & value) ? true : false);
+	if (map[i] == 0)
+	    FrmHideObject(frm, map[i+1]);
+	else
+	    CtlSetValue(UI_GetObjectByID(frm, map[i+1]),
+			(map[i] & value) ? true : false);
     }
 }
