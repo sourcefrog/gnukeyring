@@ -1,0 +1,62 @@
+Keyring for PalmOS 1.1 preview 3
+(previously GNU Keyring)
+
+Copyright 1999-2002 The GNU Keyring Sourceforge Team
+
+  http://gnukeyring.sourceforge.net/
+
+Keyring for PalmOS lets you securely store secret keys and
+confidential information on a PalmOS handheld computer.  This
+information might include: computer account passwords, credit card
+numbers, GnuPG or PGP passphrases, SKey one-time-pads, or phone
+banking keywords.
+
+Keyring is Free Software, so you can inspect it to satisfy yourself of
+its security, modify it to meet your needs, and share it with your
+friends.
+
+Records are encrypted using the well-trusted DES3 algorithm on a
+master password.  For your convenience, the keyring can stay unlocked
+for a time after you enter your master password.
+
+When you need to set a password, Keyring can generate a random
+password of specified length, optionally including letters, numbers or
+symbols.
+
+Changes from 1.0:
+
+ * Renamed project from "GNU Keyring" to "Keyring for PalmOS".
+
+ * Added an entropy pool contributed by Jochen Hoenicke
+   <https://sf.net/users/hoenicke>, based on the Linux entropy device.
+   This makes generated password harder to predict.
+
+ * Ship only tar and zip files containing both binaries and source,
+   and not bare .prc files.  I hope the zip file will reduce the
+   incidence of people confused by truncated downloads.
+
+ * Encryption keys are now stored on the heap, not in a temporary
+   database, and are obliterated after use.  The encryption key is
+   destroyed after the timeout elapses, and not on the next
+   action.  Patch from Jochen Hoenicke.
+
+ * Before the Palm enteres sleep mode, it returns from the edit
+   form to the list form.  Patches from Mustafa Kocaturk
+   <https://sf.net/users/mkocaturk> and Jochen Hoenicke.
+
+ * Add a lock bitmap to display the state of the database.  Pressing
+   it will lock the database immediately.
+
+ * The master key can now be veiled when the data base unlocked.
+
+ * Translations for Dutch, French, Norwegian, Italian and Japanese.
+
+ * Login and Passwords are displayed in a special font to distinguish
+   I and l.
+
+Preview files may be downloaded from:
+
+  https://sourceforge.net/project/showfiles.php?group_id=306
+
+MD5 checksums (binary mode):
+
