@@ -1,5 +1,13 @@
 -*- outline -*- 
 
+* Change back to encrypting using the hash of the password
+
+* Safe way to change password and re-encrypt
+
+* Perhaps use the SSLeay-Palm port?
+
+http://www.isaac.cs.berkeley.edu/pilot/ 
+
 * Markov chain generation
 
 Generating a state table from a large amount of English text shows

@@ -38,7 +38,8 @@ static Char		categoryName[dmCategoryLength];
  */
 void Category_UpdateName(FormPtr frm, UInt16 category) {
     ControlPtr		ctl;
-    
+
+    /* TODO: Instead, cache this per form. */
     ctl = UI_GetObjectByID(frm, CategoryTrigger);
     CategoryGetName(gKeyDB, category, categoryName);
     CategorySetTriggerLabel(ctl, categoryName);
