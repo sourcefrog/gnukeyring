@@ -129,7 +129,6 @@ static Err App_Start(void)
 	return err;
 
     Secrand_Init();
-    FrmGotoForm(ListForm);
     
     /* TODO: Make more sure that we don't leave the Snib open */
 
@@ -310,6 +309,7 @@ UInt32 PilotMain(UInt16 launchCode,
     case sysAppLaunchCmdNormalLaunch:	    
 	err = App_Start();
 	if (!err) {
+	    FrmGotoForm(ListForm);
 	    App_EventLoop();
 	    App_Stop();
 	}
