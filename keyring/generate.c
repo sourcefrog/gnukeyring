@@ -195,25 +195,89 @@ static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len)
 }
 
 /*
+ * This is the routine that returns a random word.  Both word and
+ * hyphenated_word must be pre-allocated. This algorithm was
+ * initially worded out by Morrie Gasser in 1975.  Any changes here
+ * are minimal so that as many word combinations can be produced as
+ * possible (and thus keep the words random).  It collects random
+ * syllables until a predetermined word length is found.
+ *
  * http://www.eff.org//Privacy/Newin/New_nist/fips181.txt
  */
-static void Generate_Word(Char * ptr, Int16 UNUSED(flags), Int16 len)
+static void Generate_Word(Char * word, Int16 flags, Int16 pwlen)
 {
+    PronStateType state;
+    Int16 word_length;
+    Int16 oFlags = flags & (kDigits | kPunct);
+
+    MemSet(&state, sizeof(state), 0);
+    /*
+     * The length of the word in characters.
+     */
+    word_length = 0;
     
-    Char hyphenated[2 * MAX_PWLEN +1];
-    
-    Pron_GetWord(ptr, hyphenated, len);
+    /*
+     * Find syllables until the entire word is constructed.
+     */
+    while (word_length < pwlen)
+    {
+	/*
+	 * Get the syllable and find its length.
+	 */
+	Char * syllable = word + word_length;
+	Char * ptr;
+	Pron_GetSyllable (syllable, pwlen - word_length, &state);
+	word_length += StrLen (syllable);
 
-    /* nice thought, but not enough room for it -- FIXME put it in the
-     * "notes" field?
-    strcat(ptr, " (");
-    strcat(ptr, hyphenated);
-    strcat(ptr, ")");
-    */
+	if ((flags & kUpper) != 0) {
+	    /* Make some chars in syllable uppercase */
+	    switch (Secrand_GetByte() & 3) {
+	    case 0:
+		/* lowercase */
+		break;
+	    case 1:
+		/* uppercase */
+		for (ptr = syllable; *ptr != 0; ptr++) {
+		    *ptr -= 0x20;
+		}
+		break;
+	    case 2:
+		/* first character uppercase */
+		syllable[0] -= 0x20;
+		break;
+	    case 3:
+		/* vowels uppercase */
+		for (ptr = syllable; *ptr != 0; ptr++) {
+		    switch (*ptr) {
+		    case 'y':
+			/* y is not a vowel at the beginning */
+			if (ptr == syllable)
+			    break;
+		    case 'a':
+		    case 'e':
+		    case 'i':
+		    case 'o':
+		    case 'u':
+			*ptr -= 0x20;
+		    }
+		}
+		break;
+	    }
+	}
 
-    /* FIXME should reset flags to "lower-case only", because that's
-     * all we deliver ... */
+	if (word_length < pwlen && oFlags != 0) {
+	    Char ch;
+	    do {
+		ch = (Char) Secrand_GetByte();
+	    } while (!(classMap[(UInt8) ch] & oFlags));
+	    word[word_length++] = ch;
+	}
 
+	/* FIXME put the hyphenated syllables in the "notes" field?
+	 */
+    }
+
+    word[word_length] = '\0';
 }
 
 static MemHandle Generate_MakePassword(FormPtr frm)
@@ -234,7 +298,7 @@ static MemHandle Generate_MakePassword(FormPtr frm)
 
     Generate_Save(&prefs);
 
-    h = MemHandleNew(prefs.len * 3 + 3 + 1); /* "password (pa-ss-wo-rd)\0" */
+    h = MemHandleNew(prefs.len + 1);
     if (!h) {
 	FrmAlert(OutOfMemoryAlert);
 	return NULL;
@@ -256,7 +320,7 @@ static MemHandle Generate_MakePassword(FormPtr frm)
 MemHandle Generate_Run(void)
 {
     FormPtr 	prevFrm, frm;
-    Int16		btn;
+    Int16	btn;
     MemHandle	result;
     UInt32      encoding;
 
