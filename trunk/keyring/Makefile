@@ -1,11 +1,11 @@
-# GNU Keyring
+# Keyring
 #
-# Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
+# Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
 #
 # $Id$
 
 APP             = keyring
-ICONTEXT        ="GNU Keyring"
+ICONTEXT        = "Keyring"
 APPID           = "Gtkr"
 
 # XXX: You may have to edit this to match your SDK installation
@@ -13,7 +13,7 @@ PALM_BASE       = /usr/local/include/palmos3.5
 C_INCLUDE_PATH  = $(PALM_BASE):$(PALM_BASE)/Core:$(PALM_BASE)/Core/Hardware:$(PALM_BASE)/Core/System:$(PALM_BASE)/Core/UI
 export C_INCLUDE_PATH
 
-VERSION         = 1.0+5
+VERSION         = 1.1pre1
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
@@ -66,8 +66,7 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm
 
 DEFINES		= 
 WARN	        = -Wall -Winline -Wunused -W	\
- -Wstrict-prototypes	\
-		-Wmissing-prototypes -Winline		\
+		-Wstrict-prototypes -Wmissing-prototypes -Winline		\
 		-Wlarger-than-256 -Wshadow -Wcast-align	
 # 		-Wsign-compare
 OPTIM		= -O3 -finline-functions
