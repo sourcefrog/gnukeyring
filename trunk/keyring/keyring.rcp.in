@@ -1582,7 +1582,7 @@ BEGIN
 	LABEL "__VERSION__ (__DATE__)" 
 		AUTOID AT (CENTER PREVBOTTOM) FONT 1
 
-  	LABEL "Copyright 1999-2002 by Martin Pool"
+  	LABEL "Copyright 1999-2003 by Martin Pool"
 		AUTOID AT (CENTER PREVBOTTOM+4)
 	LABEL "This is free software.  No warranty." AUTOID AT (CENTER PREVBOTTOM) 
 	LABEL "Released under the GNU GPL v2." AUTOID AT (CENTER PREVBOTTOM) 
