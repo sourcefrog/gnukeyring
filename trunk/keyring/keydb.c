@@ -1,9 +1,9 @@
-/* -*- c-indentation-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
+/* -*- c-file-style: "k&r"; c-basic-offset: 4; indent-tabs-mode: t; -*-
  *
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,28 +54,37 @@ DmOpenRef       gKeyDB;
  * begins with an unencrypted name, which is followed by a
  * 3DES-encrypted block containing all the other fields.
  *
- * We encrypt the records not with the master password itself, but
- * rather with a session key stored in record 0 of the database.  The
- * session key is just random noise.  The session key is stored
- * encrypted by the master password.
+ * We encrypt all the records with a key directly derived from the MD5
+ * hash of the master password.  This gives a 128 bit hash.  We split
+ * this into two halves of 64 bits, and use them as DES encryption
+ * keys K1 and K2.  (DES ignores a parity bit from each byte, so there
+ * are actually only 56 unknown bits in each key.)
+ *
+ * As suggested in Schneier's ACv2, each block of the output is
+ * encrypted as ENC(K1,DEC(K2,ENC(K1))).  Since we expect the records
+ * to be relatively short, we don't worry about chaining blocks at the
+ * moment: each is independently encrypted.
  *
  * We also need to be able to tell whether the user has entered the
  * right master password, since we want to give them an error message
- * rather than just display random garbage.  Therefore the MD5 hash of
- * the master password is also stored.  This goes into record #1.
+ * rather than just display random garbage.  Therefore a salted hash
+ * of the master password is also stored.  This goes into record #0.
  *
- * Rather than worrying about creating these records when they're
+ * Rather than worrying about creating the reserved record when it's
  * used, we create them with the database so we know they'll never be
  * used.  These records are marked secret, because that flag is not
  * otherwise used in this application.
  *
- * Once the session key is set, it is never changed throughout the
- * life of the database.  If the user changes their master password,
- * then we re-encrypt the session key with the new password and store
- * that as record 0.  This is (I think) as close to atomic as we can
- * get under PalmOS.  It would be a bad thing if e.g. the system
- * crashed while we were changing it, and the session key was lost. */
-
+ * When the user changes their password, we have to walk through the
+ * database, decrypt each record with the old key, and re-encrypt with
+ * the new key.
+ *
+ * NOTE: This scheme is not implemented in the current codebase,
+ * because 0.13 up to dev3 digressed towards using an
+ * independently-generated session key.  But it will be correct for
+ * the final 0.13 release, and is almost correct for previous versions
+ * except that the data was stored in AppInfo or SortInfo rather than
+ * in record 0. */
 
 Err KeyDB_CreateCategories(void) {
     LocalID		appInfoID;
