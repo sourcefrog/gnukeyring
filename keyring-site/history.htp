@@ -4,21 +4,21 @@
 <file template="keyring.htt">
 
 <blockdef name="release" option="id ver date">
-  <dt>
+  <tr><td align=center>
    <externallink
     href="https://sourceforge.net/project/shownotes.php?release_id=${id}"
-    name="$ver">
-  </dt>
-  <dd>(<use date>)
+    name="$ver">&nbsp;</td>
+  <td>(<use date>)</td></tr>
+  <tr><td></td><td colspan="2">
     <ul><use block></ul>
-  </dd>
+  </td></tr>
 </blockdef>
 
 <section title="release history">
- <dl>
+ <table>
   <release id="135550" ver="1.2.1" date="2003-01-23">
-    <li> Fix for <buglink id=670527>: Freeze on installation. </li>
-    <li> Italian translation updated.</li>
+    <li>Fix for <buglink id=670527>: Freeze on installation. </li>
+    <li>Italian translation updated.</li>
   </release>
 
   <release id="134437" ver="1.2" date="2003-01-18">
@@ -33,7 +33,7 @@
 	    the PalmOS builtin encryption.  The binaries from
 	    pilotSSLeay are included.</li>
     <li>The last-modified-date is back again.</li>
-    <li>Support larger notes, up to 32000 characters.}}</li>
+    <li>Support larger notes, up to 32000 characters.</li>
   </release>
 
   <release id="79104" ver="1.1" date="2003-03-11">
@@ -95,20 +95,17 @@
      <li>Add Swedish translation courtesy of Kalle Svensson.
   </release>
 
-  <release id="12604" ver="0.11.1" date="????-??-??">
+  <release id="12604" ver="0.11.1" date="2000-??-??">
      <li>Add Spanish translation courtesy of Juan Carlos Borrás</li>
   </release>
 
-  <release id="12604" ver="0.11.0" date="????-??-??">
+  <release id="5374" ver="0.11.0" date="2000-05-17">
      <li>Allow beaming of the Keyring app without the `a newer
      version exists' warning, and without overwriting the
-     existing database.
-     
-     <li>Add category support.
-     
-     <li>Forward-compatible change to use database version 1.
-     
-     <li>Better error reporting.
+     existing database.</li>
+     <li>Add category support.</li>
+     <li>Forward-compatible change to use database version 1.</li>
+     <li>Better error reporting.</li>
   </release>
 
   <release id="5196" ver="0.9.2" date="2000-05-15">
@@ -223,5 +220,5 @@
      <li>First public release.  Working, but the file format is
      not stable and record encryption is not implemented.</li>
   </release>
- </dl>
+ </table>
 </section>

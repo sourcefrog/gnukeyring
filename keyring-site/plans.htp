@@ -1,7 +1,6 @@
 <set chapter="development plans">
 <set rcsid="$$Id$$">
 
-<opt verbose>
 <file template="keyring.htt">
 
 <block head>
