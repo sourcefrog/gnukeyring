@@ -7,9 +7,37 @@
 #
 # $Header$
 
+# Note: 
+# Turning on debugger support (-g) costs about 140 bytes
+# -mdebug-labels costs about 3100 bytes
+
+# Turning on  -finline-functions costs about 532 bytes
+# Empirically the smallest executables come from -O2, which makes sense
+# because it is defined to be the greatest amount of optimization that
+# does not involve size-speed tradeoffs.
+
+# Adding -O3 seems to make a difference to execution time as many
+# functions are inlined.  However, it also generates code that
+# grievously confuses gdb.  So, for debugging we turn optimization 
+# off altogether and for ship versions we turn it right up.
+
+# TODO: Switch optimization based on version number?
+
+# On the other hand -O0 seems to make gcc not treat constants
+# properly. Foo. 
+
 APP             = keyring
-ICONTEXT        = "KeyringTest"
-APPID           = "GtkR"
+BUILD_DATE     := $(shell date +'%Y-%m-%d')
+VERSION         = 2.0-pre1
+DEFINES		= -DBETA -DkAppVersion=0x1991
+WARN	        = -Wall -Winline -Wunused -W	\
+		-Wstrict-prototypes -Wmissing-prototypes \
+		-Wlarger-than-384 -Wshadow -Wcast-align
+
+OPTIM		= -O2 -g -mdebug-labels
+INCLUDES        = -IpilotSSLeay/include
+LIBS            = -lPalmOSGlue
+CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
 # XXX: You may have to edit this to match your SDK installation
 #PALM_BASE       = /usr/local/include/palmos3.5
@@ -23,9 +51,10 @@ BITMAPS         = keyring-15-1.pbm keyring-32-1.ppm keyring-32-8.ppm    \
 RESOURCES	= fontPW.txt fontstar.txt $(BITMAPS)
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
-		  export.c dbutil.c upgrade.c record.c category.c	\
+		  export.c record.c category.c				\
 		  setpasswd.c pwhash.c snib.c reencrypt.c sort.c	\
 		  secrand.c search.c pronounce.c sha1.c			\
+#		  upgrade.c
 
 ASMGEN          = sha1-m68k.pl
 
@@ -55,37 +84,6 @@ BUILDPRC        = build-prc
 AWK		= awk
 PERL		= perl
 JAVA		= java
-
-# Note: 
-# Turning on debugger support (-g) costs about 140 bytes
-# -mdebug-labels costs about 3100 bytes
-
-# Turning on  -finline-functions costs about 532 bytes
-# Empirically the smallest executables come from -O2, which makes sense
-# because it is defined to be the greatest amount of optimization that
-# does not involve size-speed tradeoffs.
-
-# Adding -O3 seems to make a difference to execution time as many
-# functions are inlined.  However, it also generates code that
-# grievously confuses gdb.  So, for debugging we turn optimization 
-# off altogether and for ship versions we turn it right up.
-
-# TODO: Switch optimization based on version number?
-
-# On the other hand -O0 seems to make gcc not treat constants
-# properly. Foo. 
-
-BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 2.0-pre1
-DEFINES		= -DBETA -DkAppVersion=0x1991
-WARN	        = -Wall -Winline -Wunused -W	\
-		-Wstrict-prototypes -Wmissing-prototypes \
-		-Wlarger-than-384 -Wshadow -Wcast-align
-
-OPTIM		= -O2 -g -mdebug-labels
-INCLUDES        = -IpilotSSLeay/include
-LIBS            = -lPalmOSGlue
-CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 AESLIBS         = COPYING.AESLib AESLib-SDK/PRC/AESLib.prc

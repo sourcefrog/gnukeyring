@@ -61,6 +61,7 @@ static FormPtr   f_KeyEditForm;
 static Boolean   f_dirty;
 static FieldPtr  f_AllFields[k_NumFields];
 static CryptoKey *gRecordKey;
+static Boolean   gKeyDirty;
 static DateType  f_lastChanged;
 
 /* Index of the current record in the database as a whole. */
@@ -193,30 +194,10 @@ static GUI_SECTION void KeyEdit_SetDateTrigger(void)
  */
 static GUI_SECTION void KeyEdit_Clear(void)
 {
-    int i, offset;
-    FieldHeaderType *field;
-
-    /* XXX This should call CreateFromTemplate smthg. */
     gRecord = MemPtrNew(sizeof(UnpackedKeyType) + 4*sizeof(UInt16));
-    gRecord->numFields = 5;
-    gRecord->plainText = MemPtrNew(sizeof(FieldHeaderType)*5 + 2
-				   + sizeof(DateType));
-    offset = 0;
-    for (i = 0; i < 5; i++) {
-	gRecord->fieldOffset[i] = offset,
-	field = gRecord->plainText + offset;
-	field->len = 0;
-	field->fieldID = i == 4 ? NotesFieldID : i;
-	field->fontID = 0;
-	offset += sizeof(FieldHeaderType);
-	if (i == 3) {
-	    field->len = sizeof(DateType);
-	    DateSecondsToDate(TimGetSeconds(), 
-			      (DateType*) (gRecord->plainText + offset));
-	    offset += sizeof(DateType);
-	}
-    }
-    *(UInt16 *)(gRecord->plainText + offset) = ENDMARKER;
+    gRecord->numFields = 0;
+    gRecord->plainText = MemPtrNew(2);
+    *(UInt16 *)(gRecord->plainText) = ENDMARKER;
  
     gRecord->category = gPrefs.category;
     if (gRecord->category == dmAllCategories)
@@ -238,50 +219,73 @@ static GUI_SECTION void KeyEdit_ToUnpacked(void)
     MemSet(gRecord, MemPtrSize(gRecord), 0);
     MemPtrFree(gRecord);
     gRecord = MemPtrNew(sizeof(UnpackedKeyType) + 4*sizeof(UInt16));
-    gRecord->numFields = 5;
+    gRecord->numFields = 0;
     gRecord->plainText = MemPtrNew(plainLen);
 
     offset = 0;
     for (i = 0; i < 5; i++) {
-	gRecord->fieldOffset[i] = offset;
+	gRecord->fieldOffset[gRecord->numFields++] = offset;
 	field = gRecord->plainText + offset;
 	field->fieldID = i;
-	field->fontID = 0;
+	field->reserved = 0;
 	offset += sizeof(FieldHeaderType);
 	switch (i) {
 	case 0:
 	    field->len = FldGetTextLength(f_AllFields[k_KeyName]);
-	    MemMove((char *) (gRecord->plainText + offset), 
-		    FldGetTextPtr(f_AllFields[k_KeyName]), field->len);
-	    offset += EVEN(field->len);
+	    if (field->len) {
+		MemMove((char *) (gRecord->plainText + offset), 
+			FldGetTextPtr(f_AllFields[k_KeyName]), field->len);
+		offset += EVEN(field->len);
+	    }
 	    break;
 
 	case 1:
 	    field->len = FldGetTextLength(f_AllFields[k_Acct]);
-	    MemMove((char *) (gRecord->plainText + offset), 
-		    FldGetTextPtr(f_AllFields[k_Acct]), field->len);
-	    offset += EVEN(field->len);
+	    if (field->len == 0) {
+		offset -= sizeof(FieldHeaderType);
+		gRecord->numFields--;
+	    } else {
+		MemMove((char *) (gRecord->plainText + offset), 
+			FldGetTextPtr(f_AllFields[k_Acct]), field->len);
+		offset += EVEN(field->len);
+	    }
 	    break;
 
 	case 2:
 	    field->len = FldGetTextLength(f_AllFields[k_Passwd]);
-	    MemMove((char *) (gRecord->plainText + offset), 
-		    FldGetTextPtr(f_AllFields[k_Passwd]), field->len);
-	    offset += EVEN(field->len);
+	    if (field->len == 0) {
+		offset -= sizeof(FieldHeaderType);
+		gRecord->numFields--;
+	    } else {
+		MemMove((char *) (gRecord->plainText + offset), 
+			FldGetTextPtr(f_AllFields[k_Passwd]), field->len);
+		offset += EVEN(field->len);
+	    }
 	    break;
 
 	case 3:
-	    field->len = sizeof(DateType);
-	    *(DateType*)(gRecord->plainText + offset) = f_lastChanged;
-	    offset += sizeof(DateType);
+	    if (!f_lastChanged.year && !f_lastChanged.month
+		&& !f_lastChanged.day) {
+		offset -= sizeof(FieldHeaderType);
+		gRecord->numFields--;
+	    } else {
+		field->len = sizeof(DateType);
+		*(DateType*)(gRecord->plainText + offset) = f_lastChanged;
+		offset += sizeof(DateType);
+	    }
 	    break;
 
 	case 4:
 	    field->fieldID = NotesFieldID;
 	    field->len = FldGetTextLength(f_AllFields[k_Notes]);
-	    MemMove((char *) (gRecord->plainText + offset), 
-		    FldGetTextPtr(f_AllFields[k_Notes]), field->len);
-	    offset += EVEN(field->len);
+	    if (field->len == 0) {
+		offset -= sizeof(FieldHeaderType);
+		gRecord->numFields--;
+	    } else {
+		MemMove((char *) (gRecord->plainText + offset), 
+			FldGetTextPtr(f_AllFields[k_Notes]), field->len);
+		offset += EVEN(field->len);
+	    }
 	    break;
 	}
     }
@@ -363,6 +367,8 @@ static GUI_SECTION void KeyEdit_FillData(void) {
     FieldHeaderType *fldHeader;
     unsigned int fldIndex, fldLen;
 
+    gKeyDirty = false;
+
     if (gKeyRecordIndex == kNoRecord)
 	KeyEdit_Clear();
     else
@@ -371,10 +377,7 @@ static GUI_SECTION void KeyEdit_FillData(void) {
     if (gPrefs.category != dmAllCategories)
 	gPrefs.category = gRecord->category;
 
-    FldFreeMemory(f_AllFields[k_KeyName]);
-    FldFreeMemory(f_AllFields[k_Acct]);
-    FldFreeMemory(f_AllFields[k_Passwd]);
-    FldFreeMemory(f_AllFields[k_Notes]);
+    DateSecondsToDate(TimGetSeconds(), &f_lastChanged);
 
     for (fldIndex = 0; fldIndex < gRecord->numFields; fldIndex++) {
 	fldHeader = (FieldHeaderType *)
@@ -412,25 +415,33 @@ static GUI_SECTION void KeyEdit_FillData(void) {
     FrmDrawForm(f_KeyEditForm);
 }
 
+
+/*
+ * Frees the GUI fields.  Also overwrites everything with zeros.
+ */
+static GUI_SECTION void KeyEdit_FreeFields(void) {
+    int i;
+
+    for (i = 0; i < k_NumFields; i++) {
+	MemHandle textH = FldGetTextHandle(f_AllFields[i]);
+	FldSetTextHandle(f_AllFields[i], NULL);
+	if (textH) {
+	    MemSet(MemHandleLock(textH), MemHandleSize(textH), 0);
+	    MemHandleUnlock(textH);
+	    MemHandleFree(textH);
+	}
+    }
+}
+
 /*
  * Frees gRecord and all associated data.  Also overwrites everything
  * with zeros.
  */
 static GUI_SECTION void KeyEdit_FreeRecord(void) {
-    int i;
-
     MemSet(gRecord->plainText, MemPtrSize(gRecord->plainText), 0);
     MemPtrFree(gRecord->plainText);
     MemSet(gRecord, MemPtrSize(gRecord), 0);
     MemPtrFree(gRecord);
-
-    for (i = 0; i < k_NumFields; i++) {
-	MemHandle textH = FldGetTextHandle(f_AllFields[i]);
-	FldSetTextHandle(f_AllFields[i], NULL);
-	MemSet(MemHandleLock(textH), MemHandleSize(textH), 0);
-	MemHandleUnlock(textH);
-	MemHandleFree(textH);
-    }
 }
 
 /*
@@ -451,6 +462,7 @@ static GUI_SECTION void KeyEdit_Commit(void)
 	    KeyDB_CreateNew(&gKeyRecordIndex);
 	}
 	f_needsSort = true;
+	gKeyDirty = true;
 	KeyEdit_ToUnpacked();
 	KeyEdit_Save();
 	KeyEdit_MarkClean();
@@ -554,8 +566,9 @@ GUI_SECTION void KeyEdit_GotoRecord(UInt16 recordIdx)
 	}
 
 	KeyEdit_FreeRecord();
+	KeyEdit_FreeFields();
 	if (gKeyRecordIndex != kNoRecord)
-	    DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+	    DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
 	gKeyRecordIndex = recordIdx;
 	KeyEdit_FillData();
     } else {
@@ -675,8 +688,9 @@ static GUI_SECTION void KeyEdit_FormClose(void)
      }
 
      KeyEdit_FreeRecord();
+     KeyEdit_FreeFields();
      if (gKeyRecordIndex != kNoRecord) {
-	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
 	 /* Save the uniqueId, so we find the record again after
           * sorting. */
 	 DmRecordInfo(gKeyDB, gKeyRecordIndex, NULL, &uniqueId, NULL);
@@ -718,7 +732,11 @@ static GUI_SECTION void KeyEdit_DeleteKey(Boolean saveBackup)
     if (gKeyRecordIndex == kNoRecord)
 	return;
 
-    DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+    /* If we want to save a backup copy, commit the changes */
+    if (saveBackup)
+	KeyEdit_Commit();
+    
+    DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
 
     /* I don't think there's any need to sort here, because nothing else
      * has moved. */
@@ -763,10 +781,6 @@ static GUI_SECTION void KeyEdit_MaybeDelete(void)
 	     return;
      }
 
-     /* If we want to save a backup copy, commit the changes */
-     if (saveBackup)
-	 KeyEdit_Commit();
-
      KeyEdit_DeleteKey(saveBackup);
 
      FrmGotoForm(ListForm);
@@ -777,8 +791,7 @@ static GUI_SECTION void KeyEdit_MaybeDelete(void)
 static GUI_SECTION void KeyEdit_Generate(void)
 {
     FormPtr     frm;
-    MemHandle   h;
-    FieldPtr    passwdFld;
+    MemHandle   h, oldH;
 
     if (App_CheckReadOnly())
          return;
@@ -788,11 +801,15 @@ static GUI_SECTION void KeyEdit_Generate(void)
         return;
 
     frm = f_KeyEditForm;
-    passwdFld = UI_GetObjectByID(frm, PasswordField);
-    FldFreeMemory(passwdFld);
-    FldSetTextHandle(passwdFld, (MemHandle) h);
-    FldSetDirty(passwdFld, true);
-    FldDrawField(passwdFld);
+    oldH = FldGetTextHandle(f_AllFields[k_Passwd]);
+    FldSetTextHandle(f_AllFields[k_Passwd], (MemHandle) h);
+    if (oldH) {
+	MemSet(MemHandleLock(oldH), MemHandleSize(oldH), 0);
+	MemHandleUnlock(oldH);
+	MemHandleFree(oldH);
+    }
+    FldSetDirty(f_AllFields[k_Passwd], true);
+    FldDrawField(f_AllFields[k_Passwd]);
 
     DateSecondsToDate(TimGetSeconds(), &f_lastChanged);
     f_dirty = true;
@@ -844,8 +861,9 @@ static GUI_SECTION Boolean KeyEdit_HandleMenuEvent(EventPtr event)
 	     * new key, go back to a blank form.  
 	     */
 	    if (gKeyRecordIndex != kNoRecord)
-		DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+		DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
 	    KeyEdit_FreeRecord();
+	    KeyEdit_FreeFields();
 	    KeyEdit_FillData();
 	}
 	return true;

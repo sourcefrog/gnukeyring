@@ -26,7 +26,7 @@
 typedef struct {
     UInt16    len;
     UInt8     fieldID;
-    UInt8     fontID;
+    UInt8     reserved;
 } FieldHeaderType,  *FieldHeaderPtr;
     
 

@@ -60,41 +60,67 @@ static void Export_Failure(void)
 
 
 /*
+ * Write a string into a database record, and update a position pointer.
+ * The NUL is not included.
+ */
+void Export_WriteString(void *dest, UInt32 *off, Char const *str)
+{
+    UInt16 len = StrLen(str);
+    DmWrite(dest, *off, str, len);
+    *off += len;
+}
+
+/*
  * Write the exported form of an unpacked record into a pre-allocated
  * space in a memo record.  Returns the number of bytes written, which
  * will be the new length of the memo record.
  */
 static UInt16 Export_BuildText(UnpackedKeyType *keyRecord, void *memoRecord)
 {
-    UInt32	off;
+    UInt32	off = 0;
+    DateType    lastChanged;
+    Char        dateBuf[longDateStrLength];
+    FieldHeaderType *fldHeader;
+    unsigned int fldIndex, fldLen;
 
-    /* XXX: Ugh, ugly.  Try rewriting this more concisely. */
-
-    off = 0;
-
-#if 0
-    /* NB it's OK to call this with a null handle. */
-    DB_WriteStringFromHandle(memoRecord, &off, keyRecord->nameHandle,
-                             keyRecord->nameLen);
-    if (keyRecord->acctHandle) {
-	DB_WriteString(memoRecord, &off, "\nAccount: ");
-	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->acctHandle,
-				 keyRecord->acctLen);
+    for (fldIndex = 0; fldIndex < keyRecord->numFields; fldIndex++) {
+	fldHeader = (FieldHeaderType *)
+	    (keyRecord->plainText + keyRecord->fieldOffset[fldIndex]);
+	fldLen = fldHeader->len;
+	switch (fldHeader->fieldID) {
+	case 0: /* key name */
+	    DmWrite(memoRecord, off, (char*) (fldHeader + 1), fldLen);
+	    off += fldLen;
+	    break;
+	case 1: /* account */
+	    Export_WriteString(memoRecord, &off, "\nAccount: ");
+	    DmWrite(memoRecord, off, (char*) (fldHeader + 1), fldLen);
+	    off += fldLen;
+	    break;
+	case 2: /* password */
+	    Export_WriteString(memoRecord, &off, "\nPassword: ");
+	    DmWrite(memoRecord, off, (char*) (fldHeader + 1), fldLen);
+	    off += fldLen;
+	    break;
+	case 255: /* notes */
+	    DmWrite(memoRecord, off, "\n\n", 2);
+	    off += 2;
+	    DmWrite(memoRecord, off, (char*) (fldHeader + 1), fldLen);
+	    off += fldLen;
+	    break;
+	case 3: /* lastChanged */
+	    lastChanged = *(DateType*) (fldHeader + 1);
+	    DateToAscii(lastChanged.month, lastChanged.day, 
+			lastChanged.year + 1904, 
+			PrefGetPreference(prefLongDateFormat), dateBuf);
+	    Export_WriteString(memoRecord, &off, "\nLast Changed: ");
+	    Export_WriteString(memoRecord, &off, dateBuf);
+	    break;
+	}
     }
-    if (keyRecord->passwdHandle) {
-	DB_WriteString(memoRecord, &off, "\nPassword: ");
-	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->passwdHandle,
-				 keyRecord->passwdLen);
-    }
-    if (keyRecord->notesHandle) {
-	DB_WriteString(memoRecord, &off, "\n\n");
-	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->notesHandle,
-				 keyRecord->notesLen);
-    }
-#endif
 
-    DmWrite(memoRecord, off, "", 1); /* write nul */
-    off++;
+    DmWrite(memoRecord, off, "\n", 2); /* write newline and nul */
+    off += 2;
     return (UInt16) off;
 }
 
