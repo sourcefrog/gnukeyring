@@ -1,0 +1,1 @@
+For your convenience, the keyring can stay unlocked for a time after you enter your master password.  The keyring always locks again if you switch to another application.
