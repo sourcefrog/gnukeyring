@@ -197,42 +197,6 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	    return true;
 	SetPasswd_Run();
 	return true;
-
-    case KeyboardCmd:
-	if (App_CheckReadOnly())
-	    return true;
-	SysKeyboardDialog(kbdDefault);
-	return true;
-
-    case GraffitiReferenceCmd:
-	SysGraffitiReferenceDialog(referenceDefault);
-	return true;
-
-    case EditCopy:
-	FldCopy(fld);
-	return true;
-
-    case EditPaste:
-         if (App_CheckReadOnly())
-              return true;
-         FldPaste(fld);
-         return true;
-
-    case EditCut:
-         if (App_CheckReadOnly())
-              return true;
-         FldCut(fld);
-         return true;
-         
-    case EditSelectAll:
-	FldSetSelection(fld, 0, FldGetTextLength(fld));
-	return true;
-
-    case EditUndo:
-         if (App_CheckReadOnly())
-              return true;
-	FldUndo(fld);
-	return true;
     }
 
     return false;

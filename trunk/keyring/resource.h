@@ -93,8 +93,6 @@
 #define VeilPasswordCheck		1244
 
 #define AboutCmd			1300
-#define KeyboardCmd			1301
-#define GraffitiReferenceCmd		1302
 #define ChecksumCmd			1303
 #define SecurityCmd			1304
 #define DeleteKeyCmd			1305
@@ -102,12 +100,6 @@
 #define GenerateCmd			1308
 #define ExportMemoCmd			1309
 #define HelpCmd				1310
-
-#define EditCopy			1400
-#define EditCut				1401
-#define EditPaste			1402
-#define EditUndo			1403
-#define EditSelectAll			1404
 
 #define GenerateHelp			1502
 #define KeyEditHelp			1504
