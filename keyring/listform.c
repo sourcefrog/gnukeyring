@@ -159,7 +159,7 @@ static GUI_SECTION void ListForm_DrawLockBitmap(void) {
         (bitmapRsc, locked ? LockBitmap : UnlockBitmap);
     ErrFatalDisplayIf(!bmpH, "Missing bitmap");
     bmpP = MemHandleLock((MemHandle)bmpH);
-    WinDrawBitmap(bmpP, 151, 1);
+    WinDrawBitmap(bmpP, 150, 1);
     MemPtrUnlock(bmpP);
     DmReleaseResource((MemHandle) bmpH);
 }
