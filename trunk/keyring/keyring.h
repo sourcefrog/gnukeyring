@@ -49,7 +49,7 @@
 #define kDatabaseVersion	4
 
 /* The app and preferences version */
-#define kAppVersion		10005
+#define kAppVersion		100080
 
 #define kLockExpiryPref		0
 #define kGeneralPref		1
