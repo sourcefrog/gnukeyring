@@ -840,8 +840,8 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
 static void KeyEditForm_CategorySelected(void) {
      Boolean categoryChanged;
      
-/*       if (App_CheckReadOnly()) */
-/*            return; */
+     if (App_CheckReadOnly())
+          return;
 
      categoryChanged = Category_Selected(&gRecord.category, false);
      if (categoryChanged) {
