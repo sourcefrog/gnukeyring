@@ -17,10 +17,8 @@
   {\a
    \; this can't be an externallink because at the moment they don't
    \; pass parameters through correctly :-(
-  \href={http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/\file{}?cvsroot=gnukeyring}
-  {\or \rest \file}
-  }
-}
+   \href=http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gnukeyring/\file
+   {\or \rest \file}}}
 
 {\def {\buglink \=bugid \&rest}
   {\a
@@ -165,13 +163,10 @@
     <{\a \href=https://sourceforge.net/sendmessage.php?touser=521 mbp.users.sourceforge.net}>.
     {\br}
     {\a \href={\concat
-      http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/keyring-site/
-      \__FILE__
-      ?cvsroot=gnukeyring}
+               http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gnukeyring/
+               \__FILE__}
       {\tt \rcsid}}
-
-   {\br \clear=all}
-}}}
+   {\br \clear=all}}}}
 
 {\def \cur_ver 1.0}
 
