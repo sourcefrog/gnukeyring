@@ -5,7 +5,7 @@ APP             = keyring
 ICONTEXT        ="Keyring"
 APPID           = "Gtkr"
 
-VERSION         = 0.11.0
+VERSION         = 0.11.1
 
 RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
@@ -18,7 +18,7 @@ BIN             = $(APP).bin
 DEF		= $(APP).def
 EXE		= $(APP)
 
-NM		= m68k-palmos-nm
+xNM		= m68k-palmos-nm
 CC              = m68k-palmos-gcc
 PILRC           = pilrc
 TXT2BITM        = txt2bitm
@@ -63,7 +63,7 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 
 BASE		= $(APP)-$(VERSION)
 
-LANGUAGES = en de
+LANGUAGES = en de es
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
