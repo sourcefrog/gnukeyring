@@ -24,8 +24,8 @@
 
 #include "includes.h"
 
-#define DEFAULT_ITER 250
-#define DEFAULT_CIPHER AES_256_CBC_CIPHER
+#define DEFAULT_ITER 500
+#define DEFAULT_CIPHER AES_128_CBC_CIPHER
 
 static const Int16 iterMap[] = {
     50,   Iter50Push,
@@ -85,14 +85,15 @@ Char *SetPasswd_Ask(UInt16 *pCipher, UInt16 *pIter)
 	FldSetFont(confirmFld, fntPassword);
     }
 
-    if (gKeyDB) {
-	appInfoPtr = KeyDB_LockAppInfo();
-	iter = appInfoPtr->keyHash.iter;
-	cipher = appInfoPtr->keyHash.cipher;
+    iter = DEFAULT_ITER;
+    cipher = DEFAULT_CIPHER;
+    if (gKeyDB && (appInfoPtr = KeyDB_LockAppInfo())) {
+	if (MemPtrSize(appInfoPtr) > 
+	    sizeof(AppInfoType) + sizeof(SaltHashType)) {
+	    iter = appInfoPtr->keyHash.iter;
+	    cipher = appInfoPtr->keyHash.cipher;
+	}
 	MemPtrUnlock(appInfoPtr);
-    } else {
-	iter = DEFAULT_ITER;
-	cipher = DEFAULT_CIPHER;
     }
     UI_ScanAndSet(frm, iterMap, iter);
     UI_ScanAndSet(frm, cipherMap, cipher);
