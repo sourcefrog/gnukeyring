@@ -1,0 +1,46 @@
+GNU Keyring 0.13.0 preview release 1
+
+This is a PREVIEW version of GNU Keyring 0.13, which includes a major
+rewrite of the database layers to fix the `resizing record', `chunk
+locked' and `restore from backup' bugs.
+
+It does *NOT* know how to convert existing databases, and the database
+format will likely change again before the real release.  However, I
+would really like to hear feedback on whether you can reproduce any
+bugs or crashes in this version of the program.  If you run it on a
+real handheld rather than an emulator, make triply sure you back up
+your existing data.
+
+Here are the changes in this release:
+
+ * Forward-compatible change to use database version 2, which supports
+   categories and doesn't lose the encryption key in backups :-/
+
+ * A cleaner dialog to set the master password, including dialog help.
+
+ * Improved About box (!), including the home page URL.
+
+ * Keyring now checks the PalmOS ROM feature set at startup, and if it
+   can't run it says so right away.
+
+ * If this is an unstable release of GNU Keyring, then display a
+   warning at startup.
+
+ * Add in sprinklings of memory validation
+
+ * Add Record/UndoAll menu item.
+
+ * Improved record export.
+
+ * Records without names are now displayed with an index number rather
+   than random hex.
+
+MD5 checksums:
+
+dcee58f72ad4087becc9d09b08cec705  keyring-0.13.0pr1.tar.gz
+b2b9bf7d498436a0101a024a51a8afe4  keyring-0.13.0pr1-de.prc
+0a909f777e32d73686a00a2bd7e04daf  keyring-0.13.0pr1-en.prc
+57f184863bcc87015691736335168a44  keyring-0.13.0pr1-es.prc
+
+--
+Martin Pool
