@@ -457,6 +457,26 @@ BEGIN
 END
 
 
+ALERT ID MemDebugFailedAlert
+ERROR
+BEGIN
+	TITLE "Error"
+
+ 	MESSAGE "Error setting memory debug mode: ^1"
+	BUTTONS "OK"
+END
+
+
+ALERT ID MemDebugSetAlert
+CONFIRMATION
+BEGIN
+	TITLE "MemDebug Set"
+
+	MESSAGE "Memory debug flags set to: ^1"
+	BUTTONS "Yow!"
+END
+
+
 ALERT ID UpgradeAlert
 CONFIRMATION
 BEGIN
@@ -568,6 +588,17 @@ BEGIN
 		MENUITEM "Preferences..." ID PrefsCmd "P"
 		MENUITEM "About GNU Keyring" ID AboutCmd "A"
 	END
+
+	PULLDOWN "\xa4"
+	BEGIN
+		MENUITEM "CheckOnChange" ID MemCheckOnChangeCmd
+		MENUITEM "CheckOnAll" ID MemCheckOnAllCmd
+		MENUITEM "ScrambleOnChange" ID MemScrambleOnChangeCmd
+		MENUITEM "ScrambleOnAll" ID MemScrambleOnAllCmd
+		MENUITEM "FillFree" ID MemFillFreeCmd
+		MENUITEM "AllHeaps" ID MemAllHeapsCmd
+		MENUITEM "RecordMinDynHeapFree" ID MemRecordMinDynHeapFreeCmd 
+	END
 END
 
 
@@ -598,6 +629,17 @@ BEGIN
 		MENUITEM "Preferences..." ID PrefsCmd "R"
 		MENUITEM "Tips..."	ID HelpCmd
 		MENUITEM "About GNU Keyring" ID AboutCmd
+	END
+
+	PULLDOWN "\xa4"
+	BEGIN
+		MENUITEM "CheckOnChange" ID MemCheckOnChangeCmd
+		MENUITEM "CheckOnAll" ID MemCheckOnAllCmd
+		MENUITEM "ScrambleOnChange" ID MemScrambleOnChangeCmd
+		MENUITEM "ScrambleOnAll" ID MemScrambleOnAllCmd
+		MENUITEM "FillFree" ID MemFillFreeCmd
+		MENUITEM "AllHeaps" ID MemAllHeapsCmd
+		MENUITEM "RecordMinDynHeapFree" ID MemRecordMinDynHeapFreeCmd 
 	END
 END
 
