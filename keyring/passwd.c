@@ -52,9 +52,11 @@ static void Unlock_SetKey(Char const *passwd) {
 }
 
 
+#ifdef REALLY_OBLITERATE
 static void Unlock_ObliterateKey(void) {
     MemSet(gRecordKey, kPasswdHashSize, 'x');
 }
+#endif
 
 
 void Unlock_Reset(void) {

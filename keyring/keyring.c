@@ -66,7 +66,6 @@ void App_ReportSysError(UInt16 msgID, Err err) {
 
 
 static void App_LoadPrefs(void) {
-    Int16 readBytes;
     Int16 size = sizeof(KeyringPrefsType);
 
     /* Set up the defaults first, then try to load over the top.  That
@@ -138,7 +137,7 @@ static Err App_PrepareDB(void) {
 	}
     }
 
-    if ((err = KeyDB_MarkForBackup(gKeyDB)))
+    if ((err = KeyDB_MarkForBackup()))
 	goto failDB;
 
     return 0;

@@ -24,7 +24,7 @@ void KeyDB_SetPasswd(Char const *newPasswd);
 
 Err KeyDB_OpenExistingDB(DmOpenRef *dbp);
 Err KeyDB_CreateDB(void);
-Err KeyDB_MarkForBackup(DmOpenRef dbp);
+Err KeyDB_MarkForBackup(void);
 Err KeyDB_GetVersion(UInt16 *ver);
 Err KeyDB_SetVersion(void);
 
