@@ -1,6 +1,5 @@
-Keyring
-Copyright (C) 2000 by Martin Pool
-$Id$
+Keyring for PalmOS
+Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
 
 Keyring lets you securely store secret keys and confidential
 information on a PalmOS handheld computer.  This information might
@@ -25,3 +24,4 @@ For more details, see
 
   http://gnukeyring.sourceforge.net/
 
+$Id$

@@ -75,18 +75,18 @@ CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES) -MMD
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
-DOCS		= COPYING HACKING TODO TESTS 
-# The web site is now maintained separately
+DOCS		= HACKING TODO TESTS 
 
-DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
+SRC_DIST       = $(RCP) $(RCP).in Makefile $(BITMAPS) \
 		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
 		  $(HELP_TXT)
 
-DIST_BIN = $(PRCS) COPYING
+TOP_DIST	= $(PRCS) COPYING README INSTALL
 
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
-BIN_ZIP    = $(APP)-$(VERSION)-bin.zip
+DIST_ZIP	= $(APP)-$(VERSION).zip
 TAR		= tar
+ZIP		= zip
 
 SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 		   -e "s/__DATE__/$(BUILD_DATE)/g"
@@ -116,16 +116,17 @@ $(BASE)-%.prc: %.resstamp $(EXE)
 	cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
 	touch $@
 
-dist: $(DIST_BALL) $(BIN_ZIP)
+dist: $(DIST_BALL) $(DIST_ZIP)
 
 tmpdir:=$(shell echo _build.$$$$)
-$(DIST_BALL) $(BIN_ZIP): $(DISTFILES)
+$(DIST_BALL) $(DIST_ZIP): $(SRC_DIST) $(TOP_DIST)
 	rm -rf $(tmpdir)
-	mkdir -p $(tmpdir)/$(BASE)
-	cp --parents $(DISTFILES) $(tmpdir)/$(BASE)
+	mkdir -p $(tmpdir)/$(BASE)/src
+	cp --parents $(SRC_DIST) $(tmpdir)/$(BASE)/src
+	cp $(TOP_DIST) $(tmpdir)/$(BASE)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
-	zip -q9 $(BIN_ZIP) $(DIST_BIN)
-	ls -l $(DIST_BALL) $(BIN_ZIP)
+	cd $(tmpdir) && $(ZIP) -rq9 ../$(DIST_ZIP) $(BASE)
+	ls -l $(DIST_BALL) $(DIST_ZIP)
 	rm -fr $(tmpdir)
 
 # I hate accidentally editing the generated file, so the chmod 

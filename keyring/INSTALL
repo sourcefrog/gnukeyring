@@ -1,0 +1,26 @@
+Installing GNU Keyring for PalmOS
+Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
+
+Download and unpack the tar or zip file.  They contain four Palm
+program files, one for each of the supported languages:
+
+  de	German
+  es	Spanish
+  en    English
+  sv    Swedish
+
+Install the appropriate application using your Palm Desktop or
+pilot-link software.
+
+Under Linux, amongst other programs, you can use the Pilot-Link
+package.  After installing and configuring that package, use a command
+like:
+
+  $ pilot-link -i keyring-1.1-en.prc
+
+to install the application.
+
+(The translations may be out of date.  If you see a problem, please
+send me an updated translation.)
+
+$Id$
