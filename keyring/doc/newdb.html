@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title>New Keyring Database Format</title>
+  </head>
+
+    <body bgcolor="#444444" background="Blatant-Plug-Insert-4-Cheap.JPG" 
+	  text="white" 
+	  link="red" alink="red" 
+	  vlink="#cc0000">
+    <h1>New Keyring Database Format</h1>
+
+    <p><tt>$Id$</tt></p>
+
+    <p>
+      I think it might be time to change the Keyring database format.
+      Obviously we'll want to do this in a backward-compatible way.
+
+    <h3>What's wrong?</h3>
+
+    <p>
+      Here are some potential reasons to change the structure.  Some
+      may not actually require changing the database, but taken
+      together it's probably time.
+
+    <p>
+      The foremost problem is that we encrypt all of the records with
+      a hash of the password.  This is nice and simple, but
+      potentially catastrophic while changing the password.  If
+      anything goes wrong, then we'll be left with some passwords
+      encrypted with the old key and some with the new key, and no way
+      to recover them.  I guess one way around this would be to build
+      a new database using the encryption key and store things in
+      there.
+      
+    <p>
+      Relying on the built-in DES routines was easy and makes it
+      likely that the code is fast, but it's not ideal.  Since they're
+      undocumented they may not actually be behaving properly,
+      although they seem to be OK.  The routines aren't present in old
+      versions of PalmOS, and since we don't have any other reason not
+      to support those versions this is a little unfortunate.
+
+    <p>
+      On the other hand, the DES implementation hopefully uses
+      assembler, and can be improved by Palm for future devices.
+      There are more important features to add.
+
+    <p>
+      A stream cypher might be easier to use, but really blocks are
+      fine.
+
+    <p>One contender is <a
+      href="http://www.counterpane.com/twofish.html">Twofish</a>.
+
+    <ul>
+	<li>I want to support Categories.
+	
+        <li>The ``resizing record'' bug makes me suspicious of all
+        that code.
+
+    
+      </ul>
+
+    <h3>Backward Compatibility</h3>
+
+    <p>
+      PalmOS has a <tt>version</tt> field in the database header that
+      can be used for these things.  At the moment this is set to
+      0x42.  We could either leave all the code in there, or upgrade
+      the first time we see a new database.  However we do this,
+      remember to keep it simple!.
+    </p>
+  </body>
+</html>
