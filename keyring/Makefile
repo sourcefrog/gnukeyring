@@ -96,7 +96,7 @@ BASE		= $(APP)-$(VERSION)
 # For a list of ISO language codes, see
 # http://www.unicode.org/unicode/onlinedat/languages.html
 # I'm not sure about nynorsk
-LANGUAGES = en de fr es it ja no no_NY nl pt sv 
+LANGUAGES = en de fr es it ja nl no no_NY pt sv 
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 
@@ -135,8 +135,8 @@ $(DIST_ZIP): $(PRCS) $(TOP_DIST)
 	$(ZIP) -rq9 $(DIST_ZIP) $(TOP_DIST) $(PRCS)
 	@ls -l $(DIST_ZIP)
 
-$(DIST_NEWS): NEWS $(DIST_BALL) $(DIST_ZIP) $(PRCS)
-	(cat NEWS ; md5sum $(DIST_BALL) $(DIST_ZIP) $(PRCS) ) > NEWS.tmp
+$(DIST_NEWS): NEWS $(PRCS) $(DIST_ZIP) $(DIST_BALL)
+	(cat NEWS ; md5sum $(PRCS) $(DIST_ZIP) $(DIST_BALL);echo ) > NEWS.tmp
 	gpg --clearsign -o $(DIST_NEWS) NEWS.tmp
 	rm -f NEWS.tmp
 
@@ -165,6 +165,9 @@ clean:
 	rm -f *.o *.d $(EXE) $(RCP) TAGS *.bin *.grc *.prc *.resstamp \
 	prototype.h *.bin *.d .*.stamp auto.h
 	rm -rf res
+
+scrub:	clean
+	rm -f $(APP)-*.tar.gz $(APP)-*.zip $(APP)-*.news
 
 tags: TAGS
 TAGS: *.c *.h
