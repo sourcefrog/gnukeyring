@@ -1,8 +1,8 @@
-/* -*- moe: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -31,6 +31,7 @@
 #include "uiutil.h"
 #include "util.h"
 #include "generate.h"
+#include "export.h"
 
 /* This keeps an unpacked version of the record currently being
  * edited.  They're periodically sync'd up; e.g. just before saving.
@@ -107,10 +108,10 @@ static void KeyEditForm_SetDateTrigger(ControlPtr triggerPtr,
  * new record, it will be something like "New Record".  If it's an
  * existing record, it will be something like "Record 4 of 42". */
 static void KeyEditForm_SetTitle(FormPtr frm) {
-    CharPtr titleTemplate;
-    static CharPtr gKeyFormTitle = 0;
-    UInt pos, total;
-    UInt len;
+    Char * titleTemplate;
+    static Char * gKeyFormTitle = 0;
+    UInt16 pos, total;
+    UInt16 len;
 
     if (gKeyFormTitle)
 	MemPtrFree(gKeyFormTitle);
@@ -145,13 +146,13 @@ static void KeyEditForm_SetTitle(FormPtr frm) {
 
 static void KeyEditForm_FromUnpacked(FormPtr frm, UnpackedKeyType *u) {
     FldSetTextHandle(UI_GetObjectByID(frm, KeyNameField),
-		     (Handle) u->nameHandle);
+		     (MemHandle) u->nameHandle);
     FldSetTextHandle(UI_GetObjectByID(frm, AccountField),
-		     (Handle) u->acctHandle);
+		     (MemHandle) u->acctHandle);
     FldSetTextHandle(UI_GetObjectByID(frm, PasswordField),
-		     (Handle) u->passwdHandle);
+		     (MemHandle) u->passwdHandle);
     FldSetTextHandle(UI_GetObjectByID(frm, NotesField),
-		     (Handle) u->notesHandle);
+		     (MemHandle) u->notesHandle);
     KeyEditForm_SetDateTrigger(UI_GetObjectByID(frm, DateTrigger), u);
 }
 
@@ -160,19 +161,19 @@ static void KeyEditForm_ToUnpacked(FormPtr frm, UnpackedKeyType *u) {
     FieldPtr fld;
 
     fld = UI_GetObjectByID(frm, KeyNameField);
-    u->nameHandle = (VoidHand) FldGetTextHandle(fld);
+    u->nameHandle = (MemHandle) FldGetTextHandle(fld);
     u->nameLen = FldGetTextLength(fld);
     
     fld = UI_GetObjectByID(frm, AccountField);
-    u->acctHandle = (VoidHand) FldGetTextHandle(fld);
+    u->acctHandle = (MemHandle) FldGetTextHandle(fld);
     u->acctLen = FldGetTextLength(fld);
     
     fld = UI_GetObjectByID(frm, PasswordField);
-    u->passwdHandle = (VoidHand) FldGetTextHandle(fld);
+    u->passwdHandle = (MemHandle) FldGetTextHandle(fld);
     u->passwdLen = FldGetTextLength(fld);
     
     fld = UI_GetObjectByID(frm, NotesField);
-    u->notesHandle = (VoidHand) FldGetTextHandle(fld);
+    u->notesHandle = (MemHandle) FldGetTextHandle(fld);
     u->notesLen = FldGetTextLength(fld);
 
     // date is stored in the struct when it is edited
@@ -182,8 +183,8 @@ static void KeyEditForm_ToUnpacked(FormPtr frm, UnpackedKeyType *u) {
 // If we're editing an existing record, then open it and use it to
 // fill the form.
 static void KeyEditForm_Load(FormPtr frm) {
-    VoidHand	record = 0;
-    CharPtr	recPtr;
+    MemHandle	record = 0;
+    Char *	recPtr;
     FormPtr	busyForm;
 
     // Open r/o
@@ -234,7 +235,7 @@ static void KeyEditForm_MaybeSave(void) {
  * too. */
 static void KeyEditForm_Save(FormPtr frm) {
     FormPtr busyForm;
-    CharPtr name;
+    Char * name;
 
     busyForm = FrmInitForm(BusyEncryptForm);
     FrmDrawForm(busyForm);
@@ -340,7 +341,7 @@ static void KeyEditForm_Done() {
 
 static void KeyEditForm_ChooseDate() {
     Boolean ok;
-    SWord year, month, day;
+    Int16 year, month, day;
     DatePtr date = &editingUnpacked.lastChange;
 
     /* Limit to protect against SelectDay aborting. */
@@ -371,7 +372,7 @@ static void KeyEditForm_ChooseDate() {
 static Boolean KeyEditForm_MaybeDeleteKey() {
     // TODO: Check if the record is empty; if it is delete without
     // seeking confirmation.
-    Word buttonHit;
+    UInt16 buttonHit;
     FormPtr alert;
     Boolean saveBackup = false;
 
@@ -420,7 +421,7 @@ static Boolean KeyEditForm_DeleteKey(Boolean saveBackup) {
 
 static void KeyEditForm_Generate(void) {
     FormPtr	frm;
-    VoidHand 	h;
+    MemHandle 	h;
     FieldPtr	passwdFld;
 
     h = Generate_Run();
@@ -430,7 +431,7 @@ static void KeyEditForm_Generate(void) {
     frm = FrmGetActiveForm();
     passwdFld = UI_GetObjectByID(frm, PasswordField);
     FldFreeMemory(passwdFld);
-    FldSetTextHandle(passwdFld, (Handle) h);
+    FldSetTextHandle(passwdFld, (MemHandle) h);
     FldSetDirty(passwdFld, true);
     FldDrawField(passwdFld);
 }
@@ -446,6 +447,10 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
     case GenerateCmd:
 	KeyEditForm_Generate();
 	return true;
+
+    case ExportMemoCmd:
+	ExportKey(&editingUnpacked);
+	return true;
 	
     default:
 	return false;
@@ -454,7 +459,7 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
 
 
 static void KeyEditForm_UpdateScrollbar() {
-    Word textHeight, fieldHeight, maxValue, scrollPos;
+    UInt16 textHeight, fieldHeight, maxValue, scrollPos;
 
     FieldPtr fld;
     ScrollBarPtr bar;
@@ -477,8 +482,8 @@ static void KeyEditForm_UpdateScrollbar() {
 
 static void KeyEditForm_Scroll(EventPtr event) {
     ScrollBarPtr scl;
-    Long lines;
-    DirectionType direction;
+    Int32 lines;
+    WinDirectionType direction;
     
     scl = UI_ObjectFromActiveForm(NotesScrollbar);
 
@@ -486,9 +491,9 @@ static void KeyEditForm_Scroll(EventPtr event) {
 
     if (lines < 0) {
 	lines = -lines;
-	direction = up;
+	direction = winUp;
     } else {
-	direction = down;
+	direction = winDown;
     }
     
     FldScrollField(UI_ObjectFromActiveForm(NotesField),
@@ -497,7 +502,7 @@ static void KeyEditForm_Scroll(EventPtr event) {
 
 
 static void KeyEditForm_Page(int offset) {
-    UInt numRecs;
+    UInt16 numRecs;
 
     if (gKeyRecordIndex == kNoRecord)
 	return;
@@ -517,11 +522,11 @@ static void KeyEditForm_Page(int offset) {
 
 static Boolean KeyEditForm_Arrow(int dir) {
     FormPtr frm;
-    Word activeIdx;
-    Word activeId, nextId;
-    Word	i;
+    UInt16 activeIdx;
+    UInt16 activeId, nextId;
+    UInt16	i;
     
-    static const Word idLinks[] = {
+    static const UInt16 idLinks[] = {
 	0, KeyNameField, AccountField, PasswordField, NotesField, -1
     };
 
@@ -534,12 +539,12 @@ static Boolean KeyEditForm_Arrow(int dir) {
 
     /* Otherwise, look for this field and work out where to go next. */
     for (i = 0; ; i++) {
-	if (idLinks[i] == (Word) -1)
+	if (idLinks[i] == (UInt16) -1)
 	    return false;
 
 	if (idLinks[i] == activeId) {
 	    nextId = idLinks[i + dir];
-	    if (nextId == 0  ||  nextId == (Word) -1)
+	    if (nextId == 0  ||  nextId == (UInt16) -1)
 		return false;
 	    FrmSetFocus(frm, FrmGetObjectIndex(frm, nextId));
 	    return true;

@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -39,7 +39,7 @@
 // Reference to the keys database
 DmOpenRef       gKeyDB;
 
-UInt		gKeyRecordIndex = kNoRecord;
+UInt16		gKeyRecordIndex = kNoRecord;
 
 
 KeyringPrefsType gPrefs;
@@ -47,7 +47,7 @@ KeyringPrefsType gPrefs;
 
 /* If the keyring is unlocked, this holds the hash of the master
  * password, which is used for the two DES keys to decrypt records. */
-Byte		gRecordKey[kPasswdHashSize];
+UInt8		gRecordKey[kPasswdHashSize];
 
 
 // ======================================================================
@@ -56,7 +56,7 @@ Byte		gRecordKey[kPasswdHashSize];
 
 
 
-void App_ReportSysError(const CharPtr func, int err) {
+void App_ReportSysError(Char const * func, int err) {
     static Char buf[16];
 
     StrIToA(buf, err);
@@ -65,8 +65,8 @@ void App_ReportSysError(const CharPtr func, int err) {
 
 
 void App_LoadPrefs(void) {
-    SWord version;
-    Word size = sizeof(KeyringPrefsType);
+    Int16 version;
+    UInt16 size = sizeof(KeyringPrefsType);
 
     version = PrefGetAppPreferences(kKeyringCreatorID,
 				    kGeneralPref,
@@ -134,7 +134,7 @@ void App_Stop(void) {
 static Boolean App_HandleEvent(EventPtr event)
 {
     FormPtr	frm;
-    Int		formId;
+    UInt16		formId;
     Boolean	result = false;
 
     CALLBACK_PROLOGUE;
@@ -170,7 +170,7 @@ static Boolean App_HandleEvent(EventPtr event)
 static void App_EventLoop(void)
 {
     EventType	event;
-    Word			error;
+    UInt16			error;
 	
     do {
 	EvtGetEvent(&event, evtWaitForever);
@@ -266,9 +266,9 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 }
 
 
-DWord PilotMain(Word launchCode,
-		Ptr cmdPBP UNUSED,
-		Word launchFlags UNUSED)
+UInt32 PilotMain(UInt16 launchCode,
+		 void UNUSED(*cmdPBP),
+		 UInt16 UNUSED(launchFlags))
 {
     Err err = 0;
 

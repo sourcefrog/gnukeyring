@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -31,10 +31,10 @@
 
 #undef DISABLE_DES
 
-void DES3_Buf(VoidPtr from, VoidPtr to, ULong len, Boolean encrypt,
-	      Byte const *key)
+void DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
+	      UInt8 const *key)
 {
-    Byte	other[kBlockSize];
+    UInt8	other[kBlockSize];
     Err		err;
     
     ErrNonFatalDisplayIf(len & (kBlockSize-1),
@@ -43,15 +43,15 @@ void DES3_Buf(VoidPtr from, VoidPtr to, ULong len, Boolean encrypt,
 
     do {
 #ifndef DISABLE_DES	
-	err = EncDES(from, (BytePtr) key, to, encrypt);
+	err = EncDES(from, (UInt8 *) key, to, encrypt);
 	if (err)
 	    goto fail;
 
-	err = EncDES(to, (BytePtr) key+kBlockSize, other, !encrypt);
+	err = EncDES(to, (UInt8 *) key+kBlockSize, other, !encrypt);
 	if (err)
 	    goto fail;
 
-	err = EncDES(other, (BytePtr) key, to, encrypt);
+	err = EncDES(other, (UInt8 *) key, to, encrypt);
 	if (err)
 	    goto fail;
 #else /* DISABLE_DES */

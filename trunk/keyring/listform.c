@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -33,18 +33,17 @@
 // =====================================================================
 // List form
 
-
-static void ListForm_ListDraw(UInt itemNum,
+static void ListForm_ListDraw(Int16 itemNum,
 			      RectanglePtr bounds,
-			      CharPtr *data UNUSED)
+			      Char * UNUSED(*data))
 {
     /* We keep deleted records at the end, so the first N records will
      * be ones we can draw. */
-    VoidHand rec = 0;
-    CharPtr recPtr = 0, scrStr;
-    UInt len;
+    MemHandle rec = 0;
+    Char * recPtr = 0, *scrStr;
+    UInt16 len;
     Char altBuf[30];
-    UInt recPos;
+    UInt16 recPos;
 
     CALLBACK_PROLOGUE;
 
@@ -65,7 +64,7 @@ static void ListForm_ListDraw(UInt itemNum,
 	} else {
 	    if (!*recPtr) {
 		// If there is no name, use the uniqueid instead
-		ULong uniqueID;
+		UInt32 uniqueID;
 	
 		DmRecordInfo(gKeyDB, itemNum, 0, &uniqueID, 0);
 		altBuf[0] = 23;		// shortcut symbol
@@ -90,7 +89,7 @@ static void ListForm_ListDraw(UInt itemNum,
 static void ListForm_BuildChoices(ListPtr list) {
     // DmNumRecordsInCategory doesn't count deleted records, which is what we
     // need.
-    UInt numRows = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
+    UInt16 numRows = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
     LstSetListChoices(list, 0, numRows);
     LstSetDrawFunction(list, ListForm_ListDraw);
 }
@@ -99,9 +98,9 @@ static void ListForm_BuildChoices(ListPtr list) {
 static void ListForm_FormOpen() {
     FormPtr frm = FrmGetActiveForm();
     ListPtr list = (ListPtr) UI_GetObjectByID(frm, KeysList);
-    UInt numRows = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
+    UInt16 numRows = DmNumRecordsInCategory(gKeyDB, dmAllCategories);
     ScrollBarPtr 	scl;
-    UInt 		top, visRows, max;
+    UInt16 		top, visRows, max;
     
     ErrFatalDisplayIf(!list, "!listPtr");
     ListForm_BuildChoices(list);
@@ -156,22 +155,22 @@ static void ListForm_ScrollRepeat(EventPtr event) {
    
     int new = event->data.sclRepeat.newValue;
     int old = event->data.sclRepeat.value;
-    enum directions dir = new > old ? down : up;
+    WinDirectionType dir = new > old ? winDown : winUp;
     int count = new > old ? new - old : old - new;
     LstScrollList(list, dir, count);
 }
 
 
-static void ListForm_ScrollPage(DirectionType dir) {
+static void ListForm_ScrollPage(WinDirectionType dir) {
     ListPtr list = (ListPtr) UI_ObjectFromActiveForm(KeysList);
     ScrollBarPtr scl = (ScrollBarPtr)
         UI_ObjectFromActiveForm(KeysListScrollBar);
-    UInt visRows = LstGetVisibleItems(list);
-    Short value, min, max, pageSize;
+    UInt16 visRows = LstGetVisibleItems(list);
+    Int16 value, min, max, pageSize;
 
     LstScrollList(list, dir, visRows);
     SclGetScrollBar(scl, &value, &min, &max, &pageSize);
-    value += (dir == down) ? visRows : -visRows;
+    value += (dir == winDown) ? visRows : -visRows;
     SclSetScrollBar(scl, value, min, max, pageSize);
 }
 
@@ -211,11 +210,11 @@ Boolean ListForm_HandleEvent(EventPtr event) {
 
     case keyDownEvent:
         if (event->data.keyDown.chr == pageUpChr) {
-            ListForm_ScrollPage(up);
+            ListForm_ScrollPage(winUp);
             result = true;
         }
         else if (event->data.keyDown.chr == pageDownChr) {
-            ListForm_ScrollPage(down);
+            ListForm_ScrollPage(winDown);
             result = true;
         }
         break;

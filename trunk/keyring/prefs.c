@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /* This file looks after the "Preferences" dialog.  For the time being
  * the only setting here is how long the keyring stays unlocked. */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 
 #include "resource.h"
 #include "keyring.h"
@@ -37,10 +37,10 @@
 void PrefsForm_Run(void) {
     FormPtr 	prevFrm = FrmGetActiveForm();
     FormPtr	frm = FrmInitForm(PrefsForm);
-    Word	btn;
-    Int		chosen;
+    UInt16	btn;
+    Int16		chosen;
     
-    static const Word map[] = {
+    static const UInt16 map[] = {
 	0,   Expiry0Push,
 	15,  Expiry15Push,
 	60,  Expiry60Push,

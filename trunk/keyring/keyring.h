@@ -2,7 +2,7 @@
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
- * Copyright (C) 1999 Martin Pool
+ * Copyright (C) 1999, 2000 Martin Pool
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifdef __GNUC__
+#  define UNUSED(x) x __attribute__((unused))
+#endif	/* !__GNUC__ */
+
 #define kKeyDBType		'Gkyr'
 #define kKeyDBName		"Keys-Gtkr"
 #define kKeyringCreatorID	'Gtkr'
@@ -34,16 +38,16 @@
 
 #define kPasswdHashSize		16
 
-#define kNoRecord		((UInt) 0xffff)
+#define kNoRecord		((UInt16) -1)
 
 #define kBlockSize		8
 
 // in-memory unpacked form of a key record
 typedef struct {
     /* Length of corresponding string fields. */
-    ULong nameLen, acctLen, passwdLen, notesLen;
+    UInt32 nameLen, acctLen, passwdLen, notesLen;
     /* Handles to string values, or 0 */
-    VoidHand nameHandle, acctHandle, passwdHandle, notesHandle;
+    MemHandle nameHandle, acctHandle, passwdHandle, notesHandle;
 
     /* Date password was last changed. */
     DateType lastChange;
@@ -57,16 +61,16 @@ typedef UnpackedKeyType *UnpackedKeyPtr;
 
 /* Application info */
 typedef struct {
-    ULong 	passwdSalt;
-    Byte 	passwdHash[16];
+    UInt32 	passwdSalt;
+    Char 	passwdHash[16];
 
-    Word 	appInfoVersion;
+    UInt16 	appInfoVersion;
 } KeyringInfoType;
 typedef KeyringInfoType *KeyringInfoPtr;
 
 
 typedef struct {
-    ULong timeoutSecs;
+    UInt32 timeoutSecs;
 } KeyringPrefsType;
 
 typedef KeyringPrefsType *KeyringPrefsPtr;
@@ -75,12 +79,11 @@ Boolean Common_HandleMenuEvent(EventPtr event);
 
 void App_AboutCmd(void);
 void App_NotImplemented(void);
-void App_ReportSysError(const CharPtr func, int err);
+void App_ReportSysError(const Char *func, int err);
 void App_SavePrefs(void);
 
 extern DmOpenRef gKeyDB;
-extern UInt gKeyRecordIndex;
-extern Byte gRecordKey[kPasswdHashSize];
+extern UInt16 gKeyRecordIndex;
+extern UInt8 gRecordKey[kPasswdHashSize];
 extern KeyringPrefsType gPrefs;
 
-#define UNUSED __attribute__((unused))

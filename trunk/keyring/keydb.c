@@ -1,4 +1,5 @@
 /* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+ *
  * $Id$
  * 
  * GNU Tiny Keyring for PalmOS -- store passwords securely on a handheld
@@ -19,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <Password.h>
 #include <Encrypt.h>
 
@@ -30,10 +31,10 @@
 #include "crypto.h"
 #include "passwd.h"
 
-static Int KeyDB_CompareRecords(VoidPtr rec1, VoidPtr rec2, Int other,
+static Int16 KeyDB_CompareRecords(void * rec1, void * rec2, Int16 other,
 			 SortRecordInfoPtr info1,
 			 SortRecordInfoPtr info2,
-			 VoidHand appInfoHand);
+			 MemHandle appInfoHand);
 static KeyringInfoPtr KeyDB_OpenKeyringInfo(void);
 
 // ======================================================================
@@ -41,13 +42,13 @@ static KeyringInfoPtr KeyDB_OpenKeyringInfo(void);
 
 
 /* Calculate the size a record will occupy when it is packed. */
-static ULong KeyRecord_CalcPackedLength(UnpackedKeyType const *unpacked)
+static UInt32 KeyRecord_CalcPackedLength(UnpackedKeyType const *unpacked)
 {
-    ULong plainSize = unpacked->nameLen + 1;
-    ULong encSize = unpacked->acctLen + 1
+    UInt32 plainSize = unpacked->nameLen + 1;
+    UInt32 encSize = unpacked->acctLen + 1
 	+ unpacked->passwdLen + 1
 	+ unpacked->notesLen + 1
-	+ sizeof(ULong);		/* date */
+	+ sizeof(UInt32);		/* date */
 
     /* All the fields except for the name are encrypted into DES
      * 8-byte blocks, so we have to round up to the next full block
@@ -92,15 +93,15 @@ static void UnpackedKey_Free(UnpackedKeyPtr u) {
 
 /* Convert from a packed database record into an unpacked in-memory
  * representation. */
-void KeyRecord_Unpack(VoidHand record, UnpackedKeyType *u,
-		      Byte const *key)
+void KeyRecord_Unpack(MemHandle record, UnpackedKeyType *u,
+		      UInt8 const *key)
 {
-    CharPtr	recPtr = MemHandleLock(record);
-    CharPtr	plainBuf;
-    CharPtr	cryptPtr;
-    ULong	recLen;
-    CharPtr	ptr;
-    Long	nameLen;
+    Char *	recPtr = MemHandleLock(record);
+    Char *	plainBuf;
+    Char *	cryptPtr;
+    UInt32	recLen;
+    Char *	ptr;
+    Int32	nameLen;
     
     u->nameHandle = Mem_StrToHandle(recPtr, &nameLen);
     u->nameLen = nameLen;
@@ -128,14 +129,14 @@ void KeyRecord_Unpack(VoidHand record, UnpackedKeyType *u,
 
 /* Convert from an unpacked in-memory representation into the packed
  * form written into the database. */
-static VoidPtr KeyRecord_Pack(UnpackedKeyType const *u,
-			      Byte const *key)
+static void * KeyRecord_Pack(UnpackedKeyType const *u,
+			      UInt8 const *key)
 {
     int		dateLen;
-    CharPtr	ptr; // Moves through buffer filling with data
-    CharPtr     startCrypt;     // Start of data that should be enc.
-    CharPtr     buf; // Start of buffer
-    ULong	recLen;
+    Char *	ptr; // Moves through buffer filling with data
+    Char *     startCrypt;     // Start of data that should be enc.
+    Char *     buf; // Start of buffer
+    UInt32	recLen;
     
     recLen = KeyRecord_CalcPackedLength(u);
     buf = MemPtrNew(recLen);
@@ -150,7 +151,7 @@ static VoidPtr KeyRecord_Pack(UnpackedKeyType const *u,
     Mem_CopyFromHandle(&ptr, u->notesHandle, u->notesLen+1);
 
     dateLen = sizeof(DateType);
-    MemMove(ptr, (VoidPtr) &u->lastChange, dateLen);
+    MemMove(ptr, (void *) &u->lastChange, dateLen);
     ptr += dateLen;
 
     DES3_Buf(startCrypt, startCrypt, recLen - (startCrypt-buf), true,
@@ -169,14 +170,14 @@ static VoidPtr KeyRecord_Pack(UnpackedKeyType const *u,
  * Because all records begin with the strz record name the comparison
  * is pretty simple: we sort in string order, except that deleted
  * records go to the end.  */
-static Int KeyDB_CompareRecords(VoidPtr rec1, VoidPtr rec2,
-				Int other UNUSED,
-				SortRecordInfoPtr info1,
-				SortRecordInfoPtr info2,
-				VoidHand appInfoHand UNUSED)
+static Int16 KeyDB_CompareRecords(void * rec1, void * rec2,
+				  Int16 UNUSED(other),
+				  SortRecordInfoPtr info1,
+				  SortRecordInfoPtr info2,
+				  MemHandle UNUSED(appInfoHand))
 {
-    Int result;
-    CharPtr	cp1, cp2;
+    Int16 result;
+    Char	*cp1, *cp2;
 
     CALLBACK_PROLOGUE;
     if (info1 && (info1->attributes & dmRecAttrDelete))
@@ -184,8 +185,8 @@ static Int KeyDB_CompareRecords(VoidPtr rec1, VoidPtr rec2,
     else if (info2 && (info2->attributes & dmRecAttrDelete))
 	result = -1;
     else {
-	cp1 = (CharPtr) rec1;
-	cp2 = (CharPtr) rec2;
+	cp1 = (Char *) rec1;
+	cp2 = (Char *) rec2;
 	
 	if (rec1  &&  !rec2)
 	    result = -1;
@@ -209,16 +210,16 @@ static void KeyDB_HashNewPasswd(Char const *newPasswd,
 				KeyringInfoPtr ai)
 {
     Char msgBuf[64];
-    CharPtr ptr;
+    Char * ptr;
     Err err;
     
-    ai->passwdSalt = ((ULong) SysRandom(0) << 16L) | SysRandom(0);
+    ai->passwdSalt = ((UInt32) SysRandom(0) << 16L) | SysRandom(0);
 
     MemSet(msgBuf, 64, 0);
     ptr = msgBuf;
-    MemMove(ptr, &ai->passwdSalt, sizeof(Long));
-    ptr += sizeof(Long);
-    StrNCopy(ptr, newPasswd, 64 - 1 - sizeof(Long));
+    MemMove(ptr, &ai->passwdSalt, sizeof(Int32));
+    ptr += sizeof(Int32);
+    StrNCopy(ptr, newPasswd, 64 - 1 - sizeof(Int32));
 
     err = EncDigestMD5(msgBuf, 64, ai->passwdHash);
     if (err)
@@ -228,15 +229,15 @@ static void KeyDB_HashNewPasswd(Char const *newPasswd,
 
 static Boolean KeyDB_CheckPasswdHash(Char const *guess, KeyringInfoPtr ki) {
     Char msgBuf[64];
-    Byte guessHash[kPasswdHashSize];
-    CharPtr ptr;
+    UInt8 guessHash[kPasswdHashSize];
+    Char * ptr;
     Err err;
     
     MemSet(msgBuf, 64, 0);
     ptr = msgBuf;
-    MemMove(ptr, &ki->passwdSalt, sizeof(Long));
-    ptr += sizeof(Long);
-    StrNCopy(ptr, guess, 64 - 1 - sizeof(Long));
+    MemMove(ptr, &ki->passwdSalt, sizeof(Int32));
+    ptr += sizeof(Int32);
+    StrNCopy(ptr, guess, 64 - 1 - sizeof(Int32));
 
     err = EncDigestMD5(msgBuf, 64, guessHash);
     if (err)
@@ -248,8 +249,8 @@ static Boolean KeyDB_CheckPasswdHash(Char const *guess, KeyringInfoPtr ki) {
 
 void KeyDB_CreateAppInfo(void) {
     LocalID		KeyringInfoID, dbID;
-    UInt		cardNo;
-    VoidHand		KeyringInfoHand;
+    UInt16		cardNo;
+    MemHandle		KeyringInfoHand;
     Err			err;
 
     err = DmOpenDatabaseInfo(gKeyDB, &dbID, NULL, NULL, &cardNo, NULL);
@@ -274,7 +275,7 @@ static void KeyDB_StorePasswdHash(Char const *newPasswd) {
     MemSet(&kiBuf, sizeof(kiBuf), 0);
     kiBuf.appInfoVersion = kKeyringVersion;
     KeyDB_HashNewPasswd(newPasswd, &kiBuf);
-    DmWrite(dbPtr, 0, (VoidPtr) &kiBuf, sizeof(kiBuf));
+    DmWrite(dbPtr, 0, (void *) &kiBuf, sizeof(kiBuf));
     MemPtrUnlock(dbPtr);
 }
 
@@ -288,17 +289,17 @@ static void KeyDB_Reencrypt(Char const *newPasswd) {
     /* We read each record into memory, decrypt it using the old
      * unlock hash, then encrypt it using the new hash and write it
      * back. */
-    UInt 	numRecs = DmNumRecords(gKeyDB);
-    UInt 	idx;
-    VoidHand 	fromRec;
-    VoidPtr	recPtr, toPtr;
-    UInt	attr;
+    UInt16 	numRecs = DmNumRecords(gKeyDB);
+    UInt16 	idx;
+    MemHandle 	fromRec;
+    void	*recPtr, *toPtr;
+    UInt16	attr;
     Err		err;
     UnpackedKeyType	unpacked;
-    ULong		recLen;
-    Byte		newRecordKey[kPasswdHashSize];
+    UInt32		recLen;
+    UInt8		newRecordKey[kPasswdHashSize];
 
-    err = EncDigestMD5((VoidPtr) newPasswd,
+    err = EncDigestMD5((void *) newPasswd,
 		       StrLen(newPasswd),
 		       newRecordKey);
     if (err)
@@ -355,17 +356,17 @@ void KeyDB_SetPasswd(Char const *newPasswd) {
 
 
 void KeyDB_SaveNewRecord(UnpackedKeyType const *unpacked, Char const *name) {
-    VoidHand	record;
-    Int		idx;
-    ULong	recLen;
+    MemHandle	record;
+    Int16		idx;
+    UInt32	recLen;
     Err		err;
-    VoidPtr	encBuf, recPtr;
+    void        *encBuf, *recPtr;
     
     // TODO: If empty, don't save
     encBuf = KeyRecord_Pack(unpacked, gRecordKey);
     recLen = MemPtrSize(encBuf);
     
-    idx = DmFindSortPosition(gKeyDB, (CharPtr) name, 0,
+    idx = DmFindSortPosition(gKeyDB, (Char *) name, 0,
 			     KeyDB_CompareRecords, 0);
     ErrNonFatalDisplayIf(!gKeyDB, "save new key: no database");
     record = DmNewRecord(gKeyDB, &idx, recLen);
@@ -388,12 +389,12 @@ void KeyDB_SaveNewRecord(UnpackedKeyType const *unpacked, Char const *name) {
 
 
 void KeyDB_UpdateRecord(UnpackedKeyType const *unpacked,
-			UInt idx)
+			UInt16 idx)
 {
-    VoidHand	record;
+    MemHandle	record;
     Err 	err;
-    ULong	recLen;
-    VoidPtr	encBuf, recPtr;
+    UInt32	recLen;
+    void *encBuf, *recPtr;
 
     encBuf = KeyRecord_Pack(unpacked, gRecordKey);
     recLen = MemPtrSize(encBuf);
@@ -417,12 +418,12 @@ void KeyDB_UpdateRecord(UnpackedKeyType const *unpacked,
 }
 
 
-void KeyDB_RepositionRecord(CharPtr name,
-			    UIntPtr idx)
+void KeyDB_RepositionRecord(Char * name,
+			    UInt16 *idx)
 {
-    Word 	attr;
-    ULong 	uniqueID;
-    Handle	moveHandle;
+    UInt16 	attr;
+    UInt32 	uniqueID;
+    MemHandle	moveHandle;
     Err 	err;
     
     DmRecordInfo(gKeyDB, *idx, &attr, &uniqueID, NULL);
@@ -432,7 +433,7 @@ void KeyDB_RepositionRecord(CharPtr name,
 	return;
     }
 	
-    *idx = DmFindSortPosition(gKeyDB, (VoidPtr) name, 0,
+    *idx = DmFindSortPosition(gKeyDB, (void *) name, 0,
 			      KeyDB_CompareRecords, 0);
 
     err = DmAttachRecord(gKeyDB, idx, moveHandle, 0);
@@ -449,9 +450,9 @@ void KeyDB_RepositionRecord(CharPtr name,
  * can't be written directly, only through DmWrite and friends. */
 static KeyringInfoPtr KeyDB_OpenKeyringInfo(void) {
     LocalID		kiID, dbID;
-    UInt		cardNo;
+    UInt16		cardNo;
     Err			err;
-    VoidPtr		ptr;
+    void *		ptr;
 
     err = DmOpenDatabaseInfo(gKeyDB, &dbID, NULL, NULL, &cardNo, NULL);
     if (err)
@@ -541,8 +542,8 @@ Err KeyDB_CreateDB(DmOpenRef *dbp) {
 
 Err KeyDB_MarkForBackup(DmOpenRef dbp) {
     LocalID dbID;
-    Word attr;
-    UInt cardNo;
+    UInt16 attr;
+    UInt16 cardNo;
     
     // Set the backup bit.  It seems that without this the Windows
     // desktop software doesn't make the backup properly
