@@ -103,7 +103,6 @@ BEGIN
 
   "Delete Key" = "Schlüssel löschen"
   "Delete current key record?" = "Aktuellen Schlüssel löschen?"
-  "Save archive copy on PC" = "Archivkopie auf dem PC speichern"
 
   "This is a beta test version of GNU Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
    = "Dies ist ein beta Testversion von GNU Keyring.  Es könnten Fehler auftreten.  Bitte bewahren sie eine Kopie ihrer Daten auf."
