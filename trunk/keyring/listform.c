@@ -112,6 +112,9 @@ static void ListForm_DrawCell(TablePtr UNUSED(table),
     Char const *recPtr = 0, *scrStr;
     Int16       idx;
 
+    /* Clear current cell content.  This is needed by PalmOS 3.3 and below */
+    WinEraseRectangle(bounds, 0);
+
     idx = ListForm_RecordIdx(row); 
     if (idx == -1) 
 	/* We reached the end of the table; return immediately. */
