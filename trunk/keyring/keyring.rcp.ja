@@ -1,4 +1,5 @@
-/*
+/* -*-coding:shift_jis;-*-
+ *
  * Keyring -- store passwords securely on a handheld
  *
  * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@humbug.org.au>
@@ -74,7 +75,7 @@ BEGIN
   "Delete Key" = "キーの削除"
   "Delete current key record?" = "現在のキーを削除しますか？"
 
-  "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+  "@@BetaVersion"
    = "これはKeyringのベータテストバージョンです。バグがある可能\性があります。かならず別の媒体にも保管してください。"
 
   "This is free software.  No warranty." = "Keyringは無保証のフリーソ\フトウ"
@@ -110,6 +111,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/en/generate.txt"
   "@@KeyEditHelp" = "help/en/keyedit.txt"
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "There is no data to export." = "作成するデータがありません。"
 
@@ -120,11 +122,11 @@ BEGIN
   "Web" = "インターネット"
   "@@langSpecificChars" = "---"
 
-  "@accel_Undo" = "U"
-  "@accel_Cut" = "X"
-  "@accel_Copy" = "C"
-  "@accel_Paste" = "V"
-  "@accel_SelectAll" = "A"
-  "@accel_Keyboard" = "T"
-  "@accel_Graffiti" = "G"
+  "@@accel_Undo" = "U"
+  "@@accel_Cut" = "X"
+  "@@accel_Copy" = "C"
+  "@@accel_Paste" = "V"
+  "@@accel_SelectAll" = "A"
+  "@@accel_Keyboard" = "T"
+  "@@accel_Graffiti" = "G"
 END
