@@ -1,0 +1,3 @@
+application { "Keyring" Gtkr }
+
+multiple code { "code2" }

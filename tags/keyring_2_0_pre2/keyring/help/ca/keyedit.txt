@@ -1,0 +1,5 @@
+"Genera clau": Crea una nova clau de forma aleatòria, observant certs criteris.
+
+"Exportar al Bloc de Notes": Guardar tota la informació d'aquesta clau en una nova nota sense categoria.
+
+"Desfer tot": Descartar tots els canvis fets des que s'ha obert aquest registre.
