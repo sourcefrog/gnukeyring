@@ -1,10 +1,10 @@
 -*- outline -*- 
 
-* ``This is a beta'' warning when creating a new DB?
-
 * Use exceptions for error handling.
 
 * Sound
+
+* Check that when the category is changed, the title updates too
 
 * Click field captions to zoom in on that form
 
