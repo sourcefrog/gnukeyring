@@ -37,6 +37,7 @@ CFLAGS          = -O2 -Wall -Werror -Winline -W $(DEFINES) $(INCLUDES) -MMD -g
 DOCS		= HACKING COPYING index.html Blatant-Plug-Insert-4-Cheap.JPG \
 		  BUGS TODO TESTS doc/attack-tree.txt \
 		  doc/security.html doc/description.txt doc/memo-import-export.html \
+		  doc/find.html \
 		  robots.txt
 
 DISTFILES       = $(RCP) $(PRC) Makefile $(HELP_TXT) $(BITMAPS) \
