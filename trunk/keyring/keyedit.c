@@ -48,9 +48,7 @@
  * TODO: Be more careful about not saving unless actually modified, as
  * this can save a lot of time.  I think we handle all the obvious
  * cases now.
- *
- * FIXME: We don't update the fields when the page buttons are
- * pressed. */
+ */
 
 
 /* This keeps an unpacked version of the record currently being
