@@ -30,11 +30,22 @@
 #include "auto.h"
 #include "uiutil.h"
 
+/*
+ * The snib database holds working values which have to persist even
+ * when switching to and from the Keyring application.  At the moment
+ * this is just the expiry time, and the unencrypted session key.
+ *
+ * We want to make fairly sure that this data cannot be stolen off the
+ * handheld, so we destroy it on timeout.  At the moment that's only
+ * when the timer expires, but eventually we should have a timer to
+ * check it.
+ */
+
+
 
 /*
  * If the keyring is unlocked, then this is the handle of a record
- * which contains the unencrypted session key.
- */
+ * which contains the unencrypted session key.  */
 MemHandle        g_SnibHandle;
 SnibPtr          g_Snib;
 DmOpenRef        g_SnibDB;
@@ -160,6 +171,10 @@ Err Snib_Init(void)
 }
 
 
+/*
+ * Release all records and close the database, we're leaving Keyring
+ * (but may be coming back.)
+ */
 void Snib_Close(void)
 {
     Err err;
@@ -176,6 +191,24 @@ void Snib_Close(void)
 }
 
 
+/*
+ * Reset the expiry time to zero, and also destroy the session key.
+ */
+void Snib_Eradicate(void)
+{
+    Err		err;
+    
+    err = DmSet(g_Snib, 0, sizeof (SnibStruct), 0);
+
+    if (err) {
+	UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+    }
+}
+
+
+/*
+ * Set a new expiry time.
+ */
 void Snib_SetExpiry(UInt32 newTime)
 {
     Err		err;

@@ -42,7 +42,7 @@
 static FieldPtr    f_entryFld;
 
 void Unlock_Reset(void) {
-    Snib_SetExpiry(0);
+    Snib_Eradicate();
 }
 
 

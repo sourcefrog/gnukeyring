@@ -46,3 +46,4 @@ typedef struct {
 } SnibStruct, *SnibPtr;
 
 extern SnibPtr g_Snib;
+void Snib_Eradicate(void);

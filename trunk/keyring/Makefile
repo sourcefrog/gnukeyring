@@ -18,7 +18,7 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 
 HEADERS	      = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
 		upgrade.h category.h error.h keydb.h listform.h prefs.h	\
-		resource.h sesskey.h					\
+		resource.h sesskey.h tclib.h				\
 		util.h crypto.h export.h keyedit.h memutil.h		\
 		pwhash.h uiutil.h snib.h pack.h unpack.h
 
@@ -50,7 +50,7 @@ BITMAPS         = keyring-15.xbm keyring-22.xbm philosophical-gnu-tiny-bw.bmp
 # -Wconversion
 
 DEFINES		= -DPALM_KEYRING
-CFLAGS          = -O2 -Wall -Werror -Winline -Wunused -W \
+CFLAGS          = -O2 -Wall -Winline -Wunused -W \
 		   -Wsign-compare -Wstrict-prototypes \
 		  -Wmissing-prototypes \
 		  $(DEFINES) $(INCLUDES) -MMD -g
