@@ -153,7 +153,7 @@ auto.h: en.resstamp
 
 clean:
 	rm -f *.o *.d $(EXE) *.bin res/*/* *.grc *.prc *.resstamp \
-	prototype.h *.bin *.d *.stamp 
+	prototype.h *.bin *.d .*.stamp 
 
 tags: TAGS
 TAGS: *.c *.h
@@ -163,7 +163,7 @@ TAGS: *.c *.h
 ID: .
 	mkid
 
-.PHONY: install
+.PHONY: install proto
 
 install: $(EN_PRC)
 	pilot-xfer -i $(EN_PRC)
@@ -171,12 +171,10 @@ install: $(EN_PRC)
 
 MKPROTO_C = $(SRC)
 
-proto: prototype.h
+prototype.h: proto
+proto: .proto.stamp
 
-.proto.stamp: prototype.h
-	@[ -f $@ ] || touch $@
-
-prototype.h: script/mkproto.awk $(MKPROTO_C)
+.proto.stamp: script/mkproto.awk $(MKPROTO_C)
 	@echo Checking prototype.h
 	@$(AWK) -f script/mkproto.awk $(MKPROTO_C) \
 		>prototype.h.new
@@ -187,6 +185,7 @@ prototype.h: script/mkproto.awk $(MKPROTO_C)
 	echo Installing new prototype.h; \
 	mv prototype.h.new prototype.h; \
 	fi
+	@[ -f $@ ] || touch $@
 
 
 $(OBJ): $(HEADERS)
