@@ -1,0 +1,72 @@
+{\def {\faqentry \=faqid \name \&rest}
+  {\a \name=\faqid {{\h3 \name {\a \href={\concat # \faqid} {\c-raquo}}} \rest}}
+}
+
+{\page 
+  \pageid=faq \pagetitle={frequently asked questions}
+  \rcsid=\"$Id$\"
+{
+  {\h2 frequently asked questions}
+
+  {\faqentry \faqid=check_backup
+      {I have begun using Keyring, and am trying to verify that
+       my encrypted data is being backed up on the pc during the
+       hotsync process.  How can I ensure that this is happening?}
+
+   Have a look in the backup directory of your desktop
+   software.  You should see a file called Keys-Gtkr.pdb --
+   this is the data.  The date on that file will tell you
+   when the file was last backed up.  If you're using Unix,
+   you can use the `pilot-file' command to see the encrypted
+   records inside it and their individual modification times.
+   Because the keys are encrypted you can't look inside it at
+   the moment, but there may be support for editing on a PC
+   in the future.
+	  
+   Backups didn't work reliably with some Windows client
+   software in 0.7.4 and earlier versions.}
+	  
+   {\faqentry \faqid=windoze_tgz
+      {How do I open the .tar.gz file on Windows?}
+                
+	  
+	    WinZip will open these files happily.  If you'd rather use
+	    free or command-line software, there is an excellent
+	    port of GNU tar in the {\a
+	    \href=http://sourceware.cygnus.com/cygwin/ CygWin
+	    toolset}.
+	    There are probably other archive tools.}
+
+
+   {\faqentry \faqid=palmos2
+     {Why do I get a system error when trying to use GNU Keyring on
+      PalmOS 2? }
+
+   GNU Keyring up to and including version 0.13 relies on encryption
+   functions built into the operating system ROM.  These functions are
+   not present in 2.0, so it simply can't work there. 
+
+   Version 0.13 will display a warning message at installation rather
+   than just failing.  Later versions may work around the problem to
+   operate on PalmOS 2.0.  
+   }
+
+   
+   {\faqentry \faqid=fix_eleven
+    
+      {I'm using GNU Keyring 0.11, and I can't seem to restore my data
+       from a backup.  Is there anything I can do to recover it?}
+
+      {\b Yes.}
+
+      Simply {\pagelink \pageid=download download and install} version
+      0.11.2 (or something later).  It should be able to recover all
+      of your data.
+
+      This is caused by a bug in PalmOS, which means that the "{\tt
+      SortInfo}" field of a PalmOS database is not restored from
+      backup.  0.11.0 and 0.11.1 are the only versions that uses this
+      field.  Previous and later versions are not affected.  
+      }
+   }  
+}

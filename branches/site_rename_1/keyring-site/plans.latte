@@ -1,0 +1,108 @@
+{\page 
+  \pageid=plans \pagetitle={development plans}
+  \rcsid=\"$Id$\"
+{
+  {\h2 development plans}
+
+  {\h3 0.13.0}
+
+  ({\a \href=\"http://linuxcare.com.au/projects/gnukeyring/preview/\" Preview releases of 0.13.})
+
+  {\ul
+   {\li Fix the {\buglink \bugid=106167 backup and restore bug} in
+   0.11.0, and recover all data made inaccessible.  (A workaround is 
+   already in 0.11.2, but this will be a permanent fix.) }
+
+   {\li Fix the {\buglink \bugid=100727 resizing record} and
+   {\buglink \bugid=109425 chunk locked} bugs.  Rewrite the database
+   layer, and use PalmOS debugging features.}
+
+   {\li Display a warning about beta status at startup}
+
+   {\li If the version of PalmOS does not have the necessary features
+   then display an apology rather than just crashing.}
+
+   {\li Change database format again, with the master password hash
+        stored in hidden records.}
+
+   {\li For records with no public name, show them in the list by
+   their index number rather than a unique hex string.}
+
+   {\li Discard empty records.}
+
+   {\li Add an {\buglink \bugid=113358 Edit/Undo All feature}.}
+
+   {\li Show homepage URL in the About box.}
+
+   {\li Lock timeout is independent of the handheld being 
+     switched off or of switching to other applications.} 
+
+   {\li Generated passwords can contain writable non-ASCII
+    characters. }
+
+   {\li Key list form now uses a PalmOS Table control and looks much
+    nicer.}
+
+   {\li In the Edit form, the up/down buttons scroll the Notes field
+    if possible, or otherwise flip through the records.}
+  }
+
+  {\h3 Later versions}
+
+  {\ul 
+    {\li Beaming of records, or whole categories of records}
+
+    {\li {\buglink \bugid=105112 Choose from the PalmOS standard fonts}}
+
+    {\li Fields in the edit screen {\buglink \bugid=109629 grow to fit 
+      their contents} (like Address Book),
+      or buttons to zoom onto fields so that longer entries may be
+      edited (like Mail)}
+
+    {\li {\buglink \bugid=114373 Import from Memo Pad}}
+
+    {\li Optionally {\buglink \bugid=109050 hide passwords as 
+      they are entered}.  Perhaps
+      display just a single character as Grafitti confirmation.}
+
+    {\li Support PalmOS global Find.}
+
+    {\li Reminders to change passwords.}
+
+    {\li Automatically update the last-modified-date when the record
+     is changed.}
+
+    {\li More national language translations, or translations of these
+    web pages.  Volunteers?}
+
+    {\li Handle databases in Flash ROM.}
+
+    {\li Provide our own implementation of the encryption and checksum
+       code so that Keyring can run on PalmOS 2.0.  Probably we'll use
+       the SSLeay Palm port.}
+
+    {\li Port to {\externallink \href=http://www.pocketlinux.com/
+         PocketLinux}.}
+  }
+
+  {\h3 Possibilities}
+  ({\externallink \href={http://sourceforge.net/bugs/?group_id=306}
+    Add your comments} if you want them!)
+
+  {\ul
+    {\li Provide a custom font that makes the small letter l and the large
+    letter I are distinguishable in passwords. }
+
+    {\li Import/Export whole categories.}
+
+    {\li Provide a {\externallink \href=http://www.gnome.org/ GNOME}
+    or Java PC interface.}
+
+    {\li Keep multiple key databases on the same handheld and choose
+    between them, and choose which memory card to use when creating a
+    new db.}
+   
+    {\li Encrypt databases of other applications.}
+  }
+}
+}

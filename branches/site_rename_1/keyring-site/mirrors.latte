@@ -1,0 +1,14 @@
+{\page \pagetitle=mirrors \pageid=mirrors
+  \rcsid=\"$Id$\"
+{
+  {\subhead mirrors}
+
+  {\ul
+   {\foreach \mirror \mirrorlist 
+    {\let {{\url {\cadr \mirror}} {\countrycode {\car \mirror}}}
+
+      {\li {\externallink \href=\url \url} ({\upcase \countrycode})}
+      }
+    }
+   }
+}}
