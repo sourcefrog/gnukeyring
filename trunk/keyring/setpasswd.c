@@ -171,7 +171,6 @@ Boolean SetPasswd_Run(void)
 {
     CryptoKey  *oldKey;
     Char *      newPasswd;
-    FormPtr	frm, oldFrm;
     UInt16      cipher, iter;
 
     oldKey = MemPtrNew(sizeof(CryptoKey));
@@ -192,16 +191,7 @@ Boolean SetPasswd_Run(void)
     /* This stores the checking-hash and also reencrypts and stores
      * the session key.
      */
-    oldFrm = FrmGetActiveForm();
-    frm = FrmInitForm(BusyEncryptForm);
-    FrmSetActiveForm(frm);
-    FrmDrawForm(frm);
-
     SetPasswd_Reencrypt(oldKey, newPasswd, cipher, iter);
-    FrmEraseForm(frm);
-    FrmDeleteForm(frm);
-    if (oldFrm)
-	FrmSetActiveForm(oldFrm);
 
     /* Eradicate the new and old passwords.
      */
