@@ -209,7 +209,8 @@ static void KeyEditForm_Load(FormPtr frm) {
 }
 
 
-/* Save the record if any fields are dirty. */ 
+/* Save the record if any fields are dirty, and also update
+ * editingUnpacked from the field values. */
 static void KeyEditForm_MaybeSave(void) {
     FormPtr frm;
 
@@ -450,6 +451,9 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event) {
 	return true;
 
     case ExportMemoCmd:
+	/* As a side effect, MaybeSave commits the changes into
+           editingUnpacked. */
+	KeyEditForm_MaybeSave();
 	ExportKey(&editingUnpacked);
 	return true;
 	

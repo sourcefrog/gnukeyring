@@ -32,7 +32,7 @@
 #endif /* !REALLY_OBLITERATE */
 
 // ======================================================================
-// Memory management routines
+// Memory and database management routines
 
 /* Scribble over all memory allocated to a handle.  It's OK to pass a null
  * handle */
