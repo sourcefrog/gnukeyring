@@ -30,6 +30,17 @@
 // ======================================================================
 // DES3 functions
 
+/*
+ * Encrypt (or not!) and write out
+ */
+void DES3_Write(void *recPtr, UInt32 off,
+                char const *src, UInt32 len)
+{
+    DmWrite(recPtr, off, src, len);
+}
+
+
+
 #define DISABLE_DES
 
 #ifndef DISABLE_DES

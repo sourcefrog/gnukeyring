@@ -18,3 +18,4 @@ keyring
 keyring-*.tar.gz
 keyring-*.tar.gz.asc
 keyring.rcp
+*.resstamp
