@@ -598,6 +598,7 @@ END
 
 // ======================================================================
 // French translation contributed by Rick Moen <rick@linuxmafia.com>
+// and Pascal <pascal@jaillon.com>
 
 TRANSLATION "fr"
 BEGIN
@@ -621,7 +622,7 @@ BEGIN
 
   "Cancel" = "Annuler"
   "Set Keyring Password" = "Changer son mot de passe"
-  "@@choosepassword" = "Choisez un mot de passe, s'il vous plait:"
+  "@@choosepassword" = "Choisissez un mot de passe, s'il vous plait:"
   "Generate Password" = "Générez un Mot de Passe"
   "@@generate1" = "Un nouveau mot de passe "
   "@@generate2" = "Générez:"
@@ -634,42 +635,42 @@ BEGIN
 
   "Enter your password:" = "Entrez votre mot de passe:"
 
-  "Encrypting..." = "Chifferent..."
-  "Decrypting..." = "Déchifferent..."
+  "Encrypting..." = "Chiffrement..."
+  "Decrypting..." = "Déchiffrement..."
 
-  "@@OutOfMemory" =  "Hors de mémoire vive"
+  "@@OutOfMemory" =  "Mémoire pleine"
   "@@WrongPassword" = "Mot de passe incorrect. Essayez encore."
-  "@@PasswordMismatch" =  "Les mot de passe n'appariez pas.  Essayez encore, s'il vous plaît."
+  "@@PasswordMismatch" =  "Les mots de passe ne sont pas identiques. Essayez encore."
 
-  "Not here yet" = "Pas encore mis en application"
-  "@@NotImplemented" = "Cette function n'est pas encore mis en application."
+  "Not here yet" = "Non disponible actuellement"
+  "@@NotImplemented" = "Non implémenté."
   "@@langSpecificChars" =  "ä¥©"
   "@@pronounceable" = "pronounceable"
 
-  "@@CouldntLaunchMemo" =  "N'a pas pu lancer le bloc-notes."
+  "@@CouldntLaunchMemo" =  "Le bloc-notes n'a pas pu être lancé"
 
   "Delete Key" = "Clé d'effacement"
-  "Delete current key record?" = "Effacez principal enregistrement?"
-  "Save archive copy on PC" = "Enregistrez la copie d'archives sur le PC?"
+  "Delete current key record?" = "Effacez enregistrement principal?"
+  "Save archive copy on PC" = "Archiver la copie sur le PC?"
 
   "@@BetaVersion"
-   = "Ceci est une version pilote d'essai de GNU Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de n'importe quelles données irrémédiables."
+   = "Ceci est une version pilote d'essai de GNU Keyring.  Il peut avoir des anomalies.  Veuillez garder une autre copie de toutes données importantes."
 
-  "This is free software.  No warranty." = "C'est logiciel libre.  Il n'y a aucune garantie."
+  "This is free software.  No warranty." = "Ce logiciel est gratuit et libre de droits. Il n'y a aucune garantie."
 
-  "Released under the GNU GPL v2." = "Liscencée sous le GNU GPL v2." 
+  "Released under the GNU GPL v2." = "Disponible sous licence le GNU GPL v2." 
 
-  "Save archive copy on PC" = "Enregistrez la copie d'archives sur le PC."
+  "Save archive copy on PC" = "Archivez la copie sur votre PC"
 
   "Database" = "Base de Données"
   "Set Password..." = "Créez le mot de passe..."
-  "Tips" = ""
+  "Tips" = "Astuces"
 
   "Key" = "Clef"
   "Generate Password..." = "Générer un mot de passe..."
   "Undo All" = "Annuler tout"
   "Export to Memo" = "Exporter vers une Note"
-  "Delete..." = "Purge..."
+  "Delete..." = "Effacer..."
 
   "Edit" = "Edition"
   "Undo" = "Annuler"
@@ -682,13 +683,13 @@ BEGIN
 
   "Options" = "Options"
   "Preferences..." =  "Préférences..."
-  "About..." =  "Au sujet de..."
+  "About..." =  "A propos..."
 
   "New Key" = "Nouvelle clé"
 
   "@@GenerateHelp" = "help/fr/generate.txt"
   "@@KeyEditHelp" = "help/fr/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "Le mot de passe principal protège toutes vos clés. Il doit être saisi pour accéder à la base de données. Ne l'oubliez pas!"
 
   "@@accel_Undo" = "Z"
   "@@accel_Cut" = "X"
