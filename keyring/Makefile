@@ -35,7 +35,11 @@ BITMAPS         = keyring-15.bmp keyring-22.bmp philosophical-gnu-tiny-bw.bmp
 CFLAGS          = -O2 -Wall -Werror -Winline -W $(DEFINES) $(INCLUDES) -MMD -g
 
 TOP_DOCS	= HACKING COPYING BUGS TODO TESTS 
-DOCS		= $(TOP_DOCS) doc/*.html doc/*.txt doc/*.jpg \
+DOCS		= $(TOP_DOCS) \
+		  doc/break.html doc/find.html doc/index.html \
+		  doc/memo-import-export.html doc/security.html \
+		  doc/attack-tree.txt doc/description.txt \
+		  doc/Blatant-Plug-Insert-4-Cheap.jpg \
 		  doc/keyring.css
 
 DISTFILES       = $(RCP) $(PRC) Makefile $(HELP_TXT) $(BITMAPS) \
