@@ -61,6 +61,7 @@ static FormPtr   f_KeyEditForm;
 static Boolean   f_dirty;
 static FieldPtr  f_AllFields[k_NumFields];
 static CryptoKey gRecordKey;
+static Boolean   gKeyDirty;
 
 /* Index of the current record in the database as a whole. */
 static UInt16 gKeyRecordIndex = kNoRecord;
@@ -286,6 +287,8 @@ static void KeyEditForm_FillData(void) {
     else
 	KeyEditForm_Load();
 
+    gKeyDirty = false;
+
     if (gPrefs.category != dmAllCategories)
 	gPrefs.category = gRecord.category;
 
@@ -351,6 +354,7 @@ static void KeyEditForm_Save(void)
 
     Keys_SaveRecord(&gRecord, gKeyRecordIndex, gRecordKey);
     Key_SetCategory(gKeyRecordIndex, gRecord.category);
+    gKeyDirty = true;
 
     FrmEraseForm(busyForm);
     FrmDeleteForm(busyForm);
@@ -430,7 +434,7 @@ void KeyEditForm_GotoRecord(UInt16 recordIdx)
     }
 
     if (gKeyRecordIndex != kNoRecord)
-	DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+	DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
     
     gKeyRecordIndex = recordIdx;
 
@@ -534,7 +538,7 @@ static void KeyEditForm_FormClose(void)
      MemSet(gRecordKey, sizeof(gRecordKey), 0);
 
      if (gKeyRecordIndex != kNoRecord) {
-	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, gKeyDirty);
 	 /* Save the uniqueId, so we find the record again after
           * sorting. */
 	 DmRecordInfo(gKeyDB, gKeyRecordIndex, NULL, &uniqueId, NULL);
