@@ -115,7 +115,7 @@ void Snib_Eradicate(void)
     }
 }
 
-static SnibPtr Snib_GetSnib(Boolean create)
+SnibPtr Snib_GetSnib(Boolean create)
 {
     Err err;
     SnibPtr snib;
