@@ -32,6 +32,7 @@ static Boolean gSleeping;
 static MemHandle handleFontStar;
 static MemHandle handleFontPW;
 
+
 // ======================================================================
 // Application methods
 
@@ -99,6 +100,7 @@ static Err App_Start(void)
     Err err;
 
     App_LoadPrefs();
+
     if (gPrefs.useCustomFonts)
 	App_LoadFonts();
 
@@ -236,24 +238,43 @@ Boolean Common_HandleMenuEvent(EventPtr event)
     return false;
 }
 
+static Err CheckGlib(UInt32 creator, char* libname) {
+    DmOpenRef libdb;
 
-static Err RomVersionCompatible (void)
+    if ((libdb = DmOpenDatabaseByTypeCreator('GLib', creator, 
+					     dmModeReadOnly))) {
+	DmCloseDatabase(libdb);
+	return 0;
+    }
+
+    FrmCustomAlert(NotEnoughFeaturesAlert, libname, NULL, NULL);
+    return sysErrLibNotFound;
+}
+
+static Err CheckRequiredComponents (void)
 {
+    Err err;
     UInt32 romVersion;
-
-    // See if we have at least the minimum required version of the ROM or later.
+    /* See if we have at least the minimum required version of the 
+     * ROM or later.
+     */
     FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
     if (romVersion < sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0)) {
-	FrmAlert(NotEnoughFeaturesAlert);
+	FrmCustomAlert(NotEnoughFeaturesAlert, "palmos 3.0", NULL, NULL);
 	
-	// Pilot 1.0 will continuously relaunch this app unless we switch to 
-	// another safe one.
+	/* Pilot 1.0 will continuously relaunch this app unless we switch to 
+	 * another safe one.
+	 */
 	if (romVersion < 0x02000000)
 	    AppLaunchWithCommand(sysFileCDefaultApp, 
 				 sysAppLaunchCmdNormalLaunch, NULL);
 	return sysErrRomIncompatible;
     }
-    
+
+    /* Check if the necessary openssl libraries are installed */
+    if ((err = CheckGlib('CrDS', "DESLib.prc"))
+	|| (err = CheckGlib('CrMD', "MDLib.prc")))
+	return err;
     return 0;
 }
 
@@ -265,7 +286,7 @@ UInt32 PilotMain(UInt16 launchCode,
     struct EventType keyev;
     Err err = 0;
 
-    if ((err = RomVersionCompatible()))
+    if ((err = CheckRequiredComponents()))
 	return err;
 
 #ifdef NOTIFY_SLEEP_HANDLER
