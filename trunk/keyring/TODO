@@ -23,9 +23,6 @@ Good -----------------------------------------------------------------
 (3) Draw the edit form using a table so that the fields can resize,
     like in the address book.
 
-(3) Show the last-modified date for the record.  Perhaps prompt to
-    update it so that small modifications don't break anything.
-
 Nice -----------------------------------------------------------------
 
 (4) Choose fonts.  This should be per entry.  Probably requires to
@@ -71,8 +68,6 @@ or perhaps don't export them at all.
 
 * Newline in single-line fields should move down one field
 
-* Text entry slow?
-
 * Generate button when setting master password?
 
 * Beaming
@@ -97,18 +92,14 @@ simulation of this, at a cost of about 5k total overhead (code + data).
 
 * Sound
 
-* Check that when the category is changed, the title updates too
-
 * Click field captions to zoom in on that form
 
 * Beaming
 
-* Implement our own encryption algorithm
+* Check if we can run on PalmOS2.
+Does anyone still use these old devices?
 
-So we can run on PalmOS2.
-
-Perhaps build a separate version of the app, so that people who have
-OS3 or later don't need to waste memory storing it.
+Problems: PalmOS2 doesn't support custom fonts
 
 * Attack tree
 Fill it out with more possible attacks.
