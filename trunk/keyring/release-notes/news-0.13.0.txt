@@ -10,3 +10,6 @@
 
  * If this is an unstable release of GNU Keyring, then display a
    warning at startup.
+
+ * Add in sprinklings of memory validation, and a magic menu to turn
+   on memory checking.

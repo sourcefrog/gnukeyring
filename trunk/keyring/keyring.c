@@ -35,8 +35,11 @@
 #include "listform.h"
 #include "error.h"
 #include "beta.h"
+#include "auto.h"
+#include "memdebug.h"
 
-/* TODO: Call MemSetDebugMode!! */
+/* TODO: Call MemSetDebugMode!!  Let people turn this on and off at
+ * runtime through some kind of magic keystroke. */
 
 // ======================================================================
 // Globals
@@ -223,6 +226,9 @@ static void App_EventLoop(void)
     UInt16			error;
 	
     do {
+	MemHeapCheck(0);
+	MemHeapCheck(1);
+
 	EvtGetEvent(&event, (Int32) evtWaitForever);
 	
 	if (!SysHandleEvent(&event))
@@ -252,12 +258,14 @@ void App_NotImplemented(void) {
 
 Boolean Common_HandleMenuEvent(EventPtr event)
 {
-    FieldPtr fld;
-    Boolean result = false;
+    FieldPtr		fld;
+    Boolean		result = false;
+    Int16		itemId;
 
     fld = UI_GetFocusObjectPtr();
+    itemId = event->data.menu.itemID;
     
-    switch (event->data.menu.itemID) {
+    switch (itemId) {
     case AboutCmd:
 	App_AboutCmd();
 	result = true;
@@ -308,6 +316,16 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	FldUndo(fld);
 	result = true;
 	break;
+
+    case MemAllHeapsCmd:
+    case MemFillFreeCmd:
+    case MemScrambleOnAllCmd:
+    case MemScrambleOnChangeCmd:
+    case MemCheckOnAllCmd:
+    case MemCheckOnChangeCmd:
+    case MemRecordMinDynHeapFreeCmd:
+	App_SetMemDebug(itemId);
+	return true;
     }
 
     return result;
@@ -372,6 +390,8 @@ UInt32 PilotMain(UInt16 launchCode,
 
     if (launchCode == sysAppLaunchCmdNormalLaunch) {
 	err = App_Start();
+	MemHeapCheck(0);
+	MemHeapCheck(1);
 	if (!err) {
 	    App_EventLoop();
 	    App_Stop();
