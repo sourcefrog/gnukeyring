@@ -49,7 +49,19 @@ static const Int16 lenMap[] = {
     -1
 };
 
-static const Int16 includeMap[] = {
+/**
+ * Don't include high punctuation except if encoding is palm latin
+ */
+static const Int16 includeMapDefault[] = {
+    kLower, IncludeLower,
+    kUpper, IncludeUpper,
+    kDigits, IncludeDigits,
+    kPunct, IncludePunct,
+    0, ID_IncludeHigh,
+    -1
+};
+
+static const Int16 includeMapPalmLatin[] = {
     kLower, IncludeLower,
     kUpper, IncludeUpper,
     kDigits, IncludeDigits,
@@ -58,13 +70,14 @@ static const Int16 includeMap[] = {
     -1
 };
 
+static const Int16 *includeMap;
 
 /* Borrowed from linux/lib/ctype.c.  Thanks!  */
 #define U	kUpper	/* upper */
 #define L	kLower	/* lower */
 #define D	kDigits	/* digit */
 #define P	kPunct	/* punct */
-#define H      kHigh   /* high but writable in Graffiti */
+#define H	kHigh   /* high but writable in Graffiti */
 
 static const UInt8 classMap[256] = {
     0, 0, 0, 0, 0, 0, 0, 0,      /* 0-7 */
@@ -216,6 +229,15 @@ MemHandle Generate_Run(void)
     FormPtr 	prevFrm, frm;
     Int16		btn;
     MemHandle	result;
+    UInt32      encoding;
+
+    if (FtrGet(sysFtrCreator, sysFtrNumEncoding, &encoding))
+	/* if feature not found it is palm latin */
+	encoding = charEncodingPalmLatin;
+    if (encoding == charEncodingPalmLatin)
+	includeMap = includeMapPalmLatin;
+    else
+	includeMap = includeMapDefault;
 
     prevFrm = FrmGetActiveForm();
     frm = FrmInitForm(GenerateForm);
