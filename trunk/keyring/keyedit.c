@@ -380,7 +380,7 @@ static Boolean KeyEditForm_IsEmpty(void)
      Int16 i;
 
      for (i = 0; i < k_NumFields; i++) {
-          if (FldGetTextLength(f_KeyNameFld))
+          if (FldGetTextLength(f_AllFields[i]))
                return false;
      }
 
