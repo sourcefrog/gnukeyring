@@ -1,4 +1,4 @@
-/* -*- mode: c; c-indentation-style: "k&r"; c-basic-offset: 4 -*-
+/*
  * $Id$
  * 
  * GNU Keyring for PalmOS -- store passwords securely on a handheld
@@ -32,6 +32,7 @@
 #include "keyedit.h"
 #include "prefs.h"
 #include "listform.h"
+#include "error.h"
 
 // ======================================================================
 // Globals
@@ -158,13 +159,14 @@ static Err App_Start(void) {
     Err err;
 
     Unlock_Reset();
+
     App_LoadPrefs();
 
     if ((err = App_PrepareDB()))
-	return err;
-	   
+        return err;
+
     FrmGotoForm(ListForm);
-  
+    
     return 0;
 }
 
@@ -310,11 +312,61 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 }
 
 
+/***********************************************************************
+ *
+ * FUNCTION:    RomVersionCompatible
+ *
+ * DESCRIPTION: This routine checks that a ROM version meets your
+ *              minimum requirement.
+ *
+ * PARAMETERS:  requiredVersion - minimum rom version required
+ *                                (see sysFtrNumROMVersion in SystemMgr.h 
+ *                                for format)
+ *              launchFlags     - flags that indicate if the application 
+ *                                UI is initialized.
+ *
+ * RETURNED:    error code or zero if rom is compatible
+ *                             
+ *
+ * REVISION HISTORY:
+ *			Name	Date		Description
+ *			----	----		-----------
+ *			art	11/15/96	Initial Revision
+ *
+ ***********************************************************************/
+static Err RomVersionCompatible (UInt32 requiredVersion, UInt16 launchFlags)
+{
+    UInt32 romVersion;
+
+    // See if we have at least the minimum required version of the ROM or later.
+    FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
+    if (romVersion < requiredVersion) {
+        if ((launchFlags & (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp)) ==
+            (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp)) {
+            FrmAlert(NotEnoughFeaturesAlert);
+            
+            // Pilot 1.0 will continuously relaunch this app unless we switch to 
+            // another safe one.
+            if (romVersion < 0x02000000)
+                AppLaunchWithCommand(sysFileCDefaultApp, sysAppLaunchCmdNormalLaunch, NULL);
+        }
+        
+        return sysErrRomIncompatible;
+    }
+    
+    return 0;
+}
+
+
 UInt32 PilotMain(UInt16 launchCode,
 		 void UNUSED(*cmdPBP),
 		 UInt16 UNUSED(launchFlags))
 {
     Err err = 0;
+    UInt32 rom30 = sysMakeROMVersion(3, 0, 0, sysROMStageRelease, 0);
+
+    if ((err = RomVersionCompatible(rom30, launchFlags)))
+        return err;
 
     if (launchCode == sysAppLaunchCmdNormalLaunch) {
 	err = App_Start();
@@ -326,3 +378,12 @@ UInt32 PilotMain(UInt16 launchCode,
 
     return err;
 }
+
+/*
+ * Local variables:
+ * mode: c
+ * c-indentation-style: "k&r"
+ * c-basic-offset: 4
+ * c-font-lock-extra-types: ("Err" "D?Word" "U?Int\\(8\\|16\\|32\\)" "Boolean" "\\(Form\\|Field\\)\\(Ptr\\)?" "EventType")
+ * End:
+ */
