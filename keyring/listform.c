@@ -44,7 +44,7 @@ static void ListForm_ListDraw(Int16 itemNum,
      * stepped forward to the next.  However it's not worth optimizing
      * since it will likely change to be a table in the future. */
     MemHandle rec = 0;
-    Char * recPtr = 0, *scrStr;
+    Char const *recPtr = 0, *scrStr;
     UInt16	len;
     Char altBuf[30];
     UInt16 idx;

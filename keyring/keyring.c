@@ -62,7 +62,7 @@ UInt8		gRecordKey[kPasswdHashSize];
 
 
 void App_ReportSysError(UInt16 msgID, Err err) {
-    Char buf[256];
+    Char buf[80];
 
     *buf = '\0';
     SysErrString(err, buf, (UInt16) sizeof buf);
