@@ -3,10 +3,13 @@ A { text-decoration: none; font-weight: bold }
 A:hover { text-decoration: underline }
 A:vlink { text-decoration: none }
 A:alink { color: red; text-decoration: underline }
-BODY,TD { font-size: 11pt; 
-	  font-family: verdana, arial, helvetica, sans-serif; 
-	  background: black; 
-	  color: #dddddd}
+BODY { font-size: 11pt; 
+       font-family: verdana, arial, helvetica, sans-serif; 
+       background: black; 
+       color: #dddddd}
 STRONG { font-weight: bold; 
 	 font-size: 12pt; 
 	 font-family: verdana, arial, helvetica, sans-serif;	 }
+
+.highlite { color: #000000;
+	    background: #c0c0c0 }
