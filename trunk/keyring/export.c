@@ -25,10 +25,10 @@
 
 #include "resource.h"
 #include "keyring.h"
-#include "keyedit.h"
 #include "keydb.h"
 #include "util.h"
 #include "memutil.h"
+#include "dbutil.h"
 
 #define kMaxExport (16<<10)
 
@@ -49,7 +49,14 @@ UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 
     off = 0;
     DB_WriteStringFromHandle(memoRecord, &off, keyRecord->nameHandle,
-			     keyRecord->nameLen + 1);
+			     keyRecord->nameLen);
+    DB_WriteString(memoRecord, &off, "\nAccount: ");
+    DB_WriteStringFromHandle(memoRecord, &off, keyRecord->acctHandle,
+			     keyRecord->acctLen);
+    DB_WriteString(memoRecord, &off, "\n(Exported from GNU Keyring)");
+
+    DmWrite(memoRecord, off, "", 1); /* write nul */
+    off++;
     return (UInt16) off;
 }
 

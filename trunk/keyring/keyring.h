@@ -26,6 +26,7 @@
 #define kKeyDBType		'Gkyr'
 #define kKeyDBName		"Keys-Gtkr"
 #define kKeyringCreatorID	'Gtkr'
+#define kAppName		"GNU Keyring"
 
 /* This is a hex representation of the version number where the
  * database format last changed -- not necessarily the version of the

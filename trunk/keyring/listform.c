@@ -25,7 +25,6 @@
 
 #include "resource.h"
 #include "keyring.h"
-#include "callback.h"
 #include "uiutil.h"
 #include "passwd.h"
 
@@ -44,8 +43,6 @@ static void ListForm_ListDraw(Int16 itemNum,
     UInt16 len;
     Char altBuf[30];
     UInt16 recPos;
-
-    CALLBACK_PROLOGUE;
 
     ErrFatalDisplayIf(!gKeyDB, __FUNCTION__ ":!gKeyDB");
     ErrFatalDisplayIf(itemNum > 100, __FUNCTION__ ":out of range");
@@ -80,9 +77,9 @@ static void ListForm_ListDraw(Int16 itemNum,
 
     if (recPtr)
 	MemHandleUnlock(rec);
-
+    
  leave:
-    CALLBACK_EPILOGUE;
+    ;
 }
 
 
@@ -178,7 +175,6 @@ static void ListForm_ScrollPage(WinDirectionType dir) {
 Boolean ListForm_HandleEvent(EventPtr event) {
     Boolean result = false;
     
-    CALLBACK_PROLOGUE;
     switch (event->eType) {
     case ctlSelectEvent:
 	switch (event->data.ctlSelect.controlID) {
@@ -223,7 +219,6 @@ Boolean ListForm_HandleEvent(EventPtr event) {
 	;	
     }
 
-    CALLBACK_EPILOGUE;
     return result;
 }
 

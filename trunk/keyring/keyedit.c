@@ -26,7 +26,6 @@
 #include "resource.h"
 #include "keyring.h"
 #include "keyedit.h"
-#include "callback.h"
 #include "keydb.h"
 #include "uiutil.h"
 #include "util.h"
@@ -581,7 +580,6 @@ static Boolean KeyEditForm_HandleKeyDownEvent(EventPtr event) {
 
 Boolean KeyEditForm_HandleEvent(EventPtr event) {
     Boolean result = false;
-    CALLBACK_PROLOGUE;
     
     switch (event->eType) {
     case ctlSelectEvent:
@@ -633,7 +631,6 @@ Boolean KeyEditForm_HandleEvent(EventPtr event) {
 
     default:;
     }
-    CALLBACK_EPILOGUE;
     return result;
 }
 

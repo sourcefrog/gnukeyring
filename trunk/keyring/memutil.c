@@ -25,7 +25,6 @@
 
 #include "keyring.h"
 #include "memutil.h"
-#include "callback.h"
 
 #ifndef REALLY_OBLITERATE
 #  define OBLIT_USED __attribute__((unused))
@@ -95,19 +94,6 @@ MemHandle Mem_ReadString(Char * *ptr, UInt32 * len) {
 void Mem_ReadChunk(Char * *ptr, UInt32 len, void * dest) {
     MemMove(dest, *ptr, len);
     *ptr += len;
-}
-
-
-void DB_WriteStringFromHandle(Char * dest, UInt32 *off, MemHandle h, UInt32 len) {
-    if (h) {
-	Char * p = MemHandleLock(h);
-	DmWrite(dest, *off, p, len);
-	*off += len;
-	MemHandleUnlock(h);
-    } else {
-	DmWrite(dest, *off, "", 1);
-	(*off)++;
-    }
 }
 
 

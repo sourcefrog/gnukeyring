@@ -24,47 +24,26 @@
 #include <Encrypt.h>
 
 #include "keyring.h"
+#include "dbutil.h"
 
-// ======================================================================
-// DES3 functions
-
-#undef DISABLE_DES
-
-void DES3_Buf(void * from, void * to, UInt32 len, Boolean encrypt,
-	      UInt8 const *key)
-{
-    UInt8	other[kBlockSize];
-    Err		err;
-    
-    ErrNonFatalDisplayIf(len & (kBlockSize-1),
-			 __FUNCTION__ ": not block padded");
-    ErrFatalDisplayIf(!to || !from, __FUNCTION__ ":null");
-
-    do {
-#ifndef DISABLE_DES	
-	err = EncDES(from, (UInt8 *) key, to, encrypt);
-	if (err)
-	    goto fail;
-
-	err = EncDES(to, (UInt8 *) key+kBlockSize, other, !encrypt);
-	if (err)
-	    goto fail;
-
-	err = EncDES(other, (UInt8 *) key, to, encrypt);
-	if (err)
-	    goto fail;
-#else /* DISABLE_DES */
-	MemMove(to, from, kBlockSize);
-#endif /* DISABLE_DES */
-	to += kBlockSize;
-	from += kBlockSize;
-	len -= kBlockSize;
-    } while (len > 0);
-
-    return;
-    
- fail:
-    App_ReportSysError(__FUNCTION__": EncDES", err);	
+void DB_WriteStringFromHandle(void *dest, UInt32 *off, MemHandle h, UInt32 len) {
+    if (h) {
+	Char * p = MemHandleLock(h);
+	DmWrite(dest, *off, p, len);
+	*off += len;
+	MemHandleUnlock(h);
+    } else {
+	DmWrite(dest, *off, "", 1);
+	(*off)++;
+    }
 }
 
 
+/* Write a string into a database record, and update a position pointer. */
+void DB_WriteString(void *dest, UInt32 *off, Char const *str) {
+    UInt16 len;
+
+    len = StrLen(str);
+    DmWrite(dest, *off, str, len);
+    *off += len;
+}
