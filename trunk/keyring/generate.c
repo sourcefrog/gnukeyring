@@ -164,15 +164,23 @@ static void Generate_Init(FormPtr frm) {
 static void Generate_Garbage(Char * ptr, Int16 flags, Int16 len) {
     Int16 	i;
     Char	ch;
-    Int16		ri;
+    Int16	ri;
+    Int16       mask;
+
+    SysRandom(TimGetTicks());
 
     for (i = 0; i < len; i++) {
-	while (true) {
-	    ri = SysRandom (0);
-	    ch = (ri >> 8) ^ ri;
-            if (classMap[(UInt8) ch] & flags)
-                break;
-	}
+        /* If we just choose characters at random and then check,
+             * then we get too many high ascii characters.  So instead
+             * we apply a random mask. */
+        do {
+            mask = includeMap[(SysRandom(0) % 5) * 2];
+        } while (!(mask & flags));
+        
+        do {
+            ri = SysRandom(0);
+            ch = (ri >> 8) ^ ri;
+        } while (!(classMap[(UInt8) ch] & mask));
 	
 	ptr[i] = ch;
     }
