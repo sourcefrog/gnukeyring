@@ -31,6 +31,8 @@ BIN             = $(APP).bin
 DEF		= $(APP).def
 EXE		= $(APP)
 
+EN_PRC          = $(BASE)-en.prc
+
 xNM		= m68k-palmos-nm
 CC              = m68k-palmos-gcc
 PILRC           = pilrc
@@ -136,6 +138,11 @@ TAGS: *.c *.h
 # for the GNU id-tools package: 
 ID: .
 	mkid
+
+.PHONY: install
+
+install: $(EN_PRC)
+	pilot-xfer -i $(EN_PRC)
 
 # this target is really just for my use. It only works on a limited
 # range of machines and is used to produce a list of potentially
