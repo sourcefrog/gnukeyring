@@ -62,6 +62,8 @@
  * TODO: Perhaps close the list form while we're in the edit form?
  *
  * FIXME: Category changes do not seem to stick.
+ *
+ * FIXME: Crash when deleting existing record.
  */
 
 
@@ -309,15 +311,6 @@ static void KeyEditForm_Save(void)
     FrmEraseForm(busyForm);
     FrmDeleteForm(busyForm);
 
-    // Reset title because we may have changed position (but this may
-    // not be necessary because we're about to leave!)
-
-    /* - It'll give a bus error after creating a new entry. (My
-       experience shows that a bus error is usually a result of a bad
-       pointer).  The bus error comes from KeyEdit.c, procedure
-       KeyEditForm_Save, last two lines, which in your remarks say are
-       unnecessary.  Removing these two lines eliminates the bus
-       error. */
     FrmSetActiveForm(f_KeyEditForm);
 }
 
@@ -418,8 +411,6 @@ static void Key_SetNewRecordCategory(void)
 
 
 static void KeyEditForm_OpenRecord(void) {
-    FieldAttrType attr;
-
     if (gKeyRecordIndex != kNoRecord) 
         KeyEditForm_Load();
     else {
@@ -430,10 +421,6 @@ static void KeyEditForm_OpenRecord(void) {
 
     KeyEditForm_FindMyPosition();
 
-    FldGetAttributes(f_NotesFld, &attr);
-    attr.hasScrollBar = true;
-    FldSetAttributes(f_NotesFld, &attr);
-    
     keyDeleted = false;
 
     FrmSetFocus(f_KeyEditForm,
@@ -453,10 +440,24 @@ static void KeyEditForm_GetFields(void)
 }
 
 
+/*
+ * Set run-time-only attributes on fields.  This is called each time the
+ * form is opened.
+ */
+static void KeyEditForm_PrepareFields(void)
+{
+    FieldAttrType attr;
+
+    FldGetAttributes(f_NotesFld, &attr);
+    attr.hasScrollBar = true;
+    FldSetAttributes(f_NotesFld, &attr);
+}
+
+
 static void KeyEditForm_FormOpen(void) {
-    KeyEditForm_GetFields();
-    KeyEditForm_OpenRecord();
-    KeyEditForm_UpdateAll();
+     KeyEditForm_GetFields();
+     KeyEditForm_PrepareFields();
+     KeyEditForm_OpenRecord();
 }
 
 
@@ -480,6 +481,7 @@ static void KeyEditForm_DeleteKey(Boolean saveBackup)
         // Move to the end to make the ordering of the remaining
         // records simple.
         DmMoveRecord(gKeyDB, gKeyRecordIndex, DmNumRecords(gKeyDB));
+        // gKeyRecordIndex now refers to the next record.  That's probably OK.
     }
 }
 
