@@ -34,11 +34,18 @@
 //
 // $Id$
 
+#define USING_CDSA
+
 #include <string.h>
 #include <sys/types.h>
+#ifdef USING_CDSA
+#import "CryptoEngine.h"
+#else
+/* OpenSSL */
 #include <machine/endian.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#endif
 
 #import "DataAdditions.h"
 
@@ -1849,6 +1856,9 @@ unichar convertJapanese(const unsigned char *buf, int *i, int length)
 // Compute an MD5 digest.
 - (NSData *)MD5
 {
+#ifdef USING_CDSA
+    return [[CryptoEngine defaultEngine] digestUsingMD5: self];
+#else
     EVP_MD_CTX    mdctx;
     unsigned char md_value[EVP_MAX_MD_SIZE];
     int           md_len;
@@ -1857,12 +1867,19 @@ unichar convertJapanese(const unsigned char *buf, int *i, int length)
     EVP_DigestUpdate(&mdctx, [self bytes], [self length]);
     EVP_DigestFinal(&mdctx, md_value, &md_len);
     return [NSData dataWithBytes: md_value length: md_len];
+#endif
 }
 
 - (NSData *)decryptDES_EDE_CBCwithKey1: (NSData *)k1
                                   key2: (NSData *)k2
                                   key3: (NSData *)k3
 {
+#ifdef USING_CDSA
+    return [[CryptoEngine defaultEngine] decryptUsing3DESEDE: self
+                                                    WithKey1: k1
+                                                    WithKey2: k2
+                                                    WithKey3: k3];
+#else
     NSMutableData *res;
     des_key_schedule ks1, ks2, ks3;
     int i, blocks;
@@ -1883,8 +1900,8 @@ unichar convertJapanese(const unsigned char *buf, int *i, int length)
                          (des_cblock *)([res bytes] + i * 8),
                          ks1, ks2, ks3, DES_DECRYPT);
     }
-
     return (NSData *)res;
+#endif
 }
 
 @end
