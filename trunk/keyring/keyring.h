@@ -48,9 +48,6 @@
  * quite similar to v1.  */
 #define kDatabaseVersion	4
 
-/* The app and preferences version */
-#define kAppVersion		0x1005
-
 #define kLockExpiryPref		0
 #define kGeneralPref		1
 #define kGeneratePref		2
