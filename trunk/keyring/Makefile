@@ -17,9 +17,9 @@ APPID           = "Gtkr"
 #export C_INCLUDE_PATH
 
 RCP             = $(APP).rcp
-RCP_IN          = $(RCP).ja $(RCP).in
-BITMAPS         = keyring-15-1.pbm keyring-22-1.pbm keyring-22-8.ppm    \
-		  keyring-22.xcf lock.xbm unlock.xbm
+RCP_IN          = $(RCP).ja $(RCP).iso2 $(RCP).in
+BITMAPS         = keyring-15-1.pbm keyring-32-1.ppm keyring-32-8.ppm    \
+		  keyring-64-8.ppm keyring-22.xcf lock.xbm unlock.xbm
 RESOURCES	= fontPW.txt fontstar.txt $(BITMAPS)
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
@@ -109,10 +109,10 @@ SED_SUBST        = -e "s/__VERSION__/$(VERSION)/g" \
 # For a list of ISO language codes, see
 # http://www.loc.gov/standards/iso639-2/englangn.html
 # The codes nn and nb for nynorsk and bokmål are recent additions.
-LANGUAGES = en da de es fr it ja nl nb nn pt sv
+LANGUAGES = en ca da de es fr it ja nl nb nn pt sv pl
 
-LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it jpJP <ja \
-          nlNL <nl noNO <nb ptBR <pt svSE <sv
+LOCALES = enUS <en daDK <da deDE <de esES <es frFR <fr itIT <it \
+          jpJP <ja nlNL <nl noNO <nb ptBR <pt svSE <sv plPL <pl
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
