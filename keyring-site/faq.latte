@@ -45,5 +45,54 @@
    }
 
    
-}
-}
+   {\faqentry \faqid=fix_eleven
+    
+      {I'm using GNU Keyring 0.11, and I can't seem to restore my data
+       from a backup.  Is there anything I can do to recover it?}
+
+
+      This is caused by a bug in PalmOS, which means that the "{\tt
+      SortInfo}" field of a PalmOS database is not restored from backup.
+      0.11 is the first version that uses this field.  Previous and
+      later versions are not affected.  0.11 has been withdrawn from
+      the web site until a workaround is ready.
+
+      This is already in the bug tracking system as {\buglink
+      \bugid=108323}, {\buglink \bugid=106167} and {\buglink
+      \bugid=108332}.  There's no need to report it again.
+      
+      There is a workaround that will let you recover your data into
+      an earlier version of the application.  Here's what you have to
+      do:
+
+      {\ol
+
+        {\li You must have a backup of the {\tt Keys-Gtkr.pdb}
+         database from {\em before} you tried to restore it.  Make a
+         second backup in case something goes wrong.
+	 }
+
+        {\li Download and run the {\tt {\a
+         \href=ftp://gnukeyring.sourceforge.net/pub/gnukeyring/fix-eleven.pl
+         fix-eleven.pl}} script.  Pass the name of the old database
+         and the output file, e.g.
+	 
+	 {\blockquote {\pre
+$ ./fix-eleven.pl Keys-Gtkr.pdb fixed-keys.pdb}}
+
+	 If you don't have Perl or don't know how to install the
+         packages, then you can mail your database to {\a
+         \href=mailto:mbp@users.sourceforge.net me} and I will fix it
+         for you.}
+
+        {\li Install GNU Keyring 0.9.2 on the handheld.}
+
+	{\li Reinstall the patched database.}
+
+      }
+
+      Please let me know if this works or does not work for you.
+
+      } 
+
+} }
