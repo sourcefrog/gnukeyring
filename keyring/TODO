@@ -1,17 +1,22 @@
 -*- indented-text -*-
 $Id$
 
+(1) Must unlock to set prefs
+
+(1) Lock the database when the timeout expires, even if it's currently
+    showing a record.  Also, make sure changes to the system clock
+    cannot cause the keyring to unlock again.  Also, make sure that
+    the Snib database is overwritten and unlinked when we lock.
+
+(2) Don't use private records, because they're deleted when the system
+    password is reset.
+
+(2) Make sure that the snib really is destroyed when the time runs
+    out, even if the clock has been reset.
+
 * Advise use of accented characters as they're much harder to guess.
 
-* Lock the database when the timeout expires, even if it's currently
-  showing a record.  Also, make sure changes to the system clock
-  cannot cause the keyring to unlock again.  Also, make sure that the
-  Snib database is overwritten and unlinked when we lock.
-
-* Strong randomness
-
-* Don't use private records, because they're deleted when the system
-  password is reset.
+* Prevent people from choosing no options in the Generate dialog.
 
 * Choose fonts
 
@@ -23,9 +28,7 @@ or perhaps don't export them at all.
 
 * Advice on secure passwords
 
-minimum length; use of accented/extended characters
-
-* Must unlock to set prefs
+  minimum length; use of accented/extended characters
 
 * Update pos when changing categories
 
@@ -42,6 +45,8 @@ minimum length; use of accented/extended characters
 * Text entry slow?
 
 * Generate button when setting master password?
+
+* Generate pronounceable passwords?
 
 * Beaming
 

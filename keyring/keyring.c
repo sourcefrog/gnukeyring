@@ -1,9 +1,9 @@
-/* -*- c-file-style: "k&r"; -*-
+/* -*- c-file-style: "bsd"; -*-
  *
  * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 1999, 2000 Martin Pool <mbp@humbug.org.au>
+ * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@humbug.org.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +204,8 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	break;
 
     case ID_PrefsCmd:
-	PrefsForm_Run();
+	if (Unlock_CheckTimeout() || UnlockForm_Run())
+	    PrefsForm_Run();
 	result = true;
 	break;
 
