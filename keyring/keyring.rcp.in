@@ -144,8 +144,8 @@ BEGIN
   "Export to Memo" = "Esporta in Memo Pad"
   "Delete..." = "Elimina..."
 
-  "@@GenerateHelp" = "help/en/generate.txt"
-  "@@KeyEditHelp" = "help/en/keyedit.txt"
+  "@@GenerateHelp" = "help/it/generate.txt"
+  "@@KeyEditHelp" = "help/it/keyedit.txt"
   "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
 
   "There is no data to export." = "Non ci sono dati da esportare."
