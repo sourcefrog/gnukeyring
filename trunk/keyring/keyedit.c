@@ -203,7 +203,7 @@ static void KeyEditForm_Done(void)
     FrmGotoForm(ListForm);
 }
 
-
+#if 0
 static Err KeyEditForm_Sleep(SysNotifyParamType *np) {
     Err err;
     UInt16 cardNo;
@@ -223,6 +223,7 @@ static Err KeyEditForm_Sleep(SysNotifyParamType *np) {
 
     return 0;
 }
+#endif
 
 /*
  * Fill in the current KeyEdit form with data from the record
@@ -514,10 +515,13 @@ static void Edit_PrepareFields(void)
 
 static void KeyEditForm_FormOpen(void)
 {
+#if 0
     UInt32      version;
+#endif
 
     gEditFormActive = true;
     
+#if 0
     /* NotifyRegister is not present in 3.0.  We need to check for
      * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
      * call this.  It might be better to set an alarm to lock after
@@ -528,6 +532,7 @@ static void KeyEditForm_FormOpen(void)
 	&& version)
 	 SysNotifyRegister(gKeyDBCardNo, gKeyDBID, sysNotifySleepRequestEvent,
 			   KeyEditForm_Sleep, sysNotifyNormalPriority, NULL);
+#endif
 
     f_needsSort = false;
     KeyEditForm_GetFields();
@@ -556,7 +561,9 @@ static void Edit_SortAndFollow(void)
 
 static void Edit_FormClose(void)
 {
+#if 0
      UInt32 version;
+#endif
      KeyEditForm_Commit();
      MemSet(gRecordKey, sizeof(gRecordKey), 0);
      if (f_needsSort) {
@@ -570,6 +577,8 @@ static void Edit_FormClose(void)
      else
           f_FirstIdx = DmPositionInCategory(gKeyDB, gKeyRecordIndex,
                                             gPrefs.category);
+
+#if 0
      if (FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &version) == 0
 	 && version) {
 	  SysNotifyUnregister(gKeyDBCardNo,
@@ -577,6 +586,7 @@ static void Edit_FormClose(void)
 			      sysNotifySleepRequestEvent,
 			      sysNotifyNormalPriority);
      }
+#endif
      gEditFormActive = false;
 }
 
@@ -878,6 +888,10 @@ Boolean KeyEditForm_HandleEvent(EventPtr event)
     case frmOpenEvent:
         KeyEditForm_FormOpen();
         return true;
+
+    case frmSaveEvent:
+	KeyEditForm_Commit();
+	return true;
 
     case frmCloseEvent:
 	Edit_FormClose();
