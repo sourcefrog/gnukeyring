@@ -33,6 +33,10 @@
 #define kMaxExport (16<<10)
 
 
+static UInt32 const kMemoType = 'DATA', kApplType = 'appl';
+static UInt32 const kMemoCreator = 'memo';
+
+
 static void Export_Failure()
 {
     FrmAlert(MemoDatabaseErrorAlert);
@@ -47,12 +51,26 @@ UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 {
     UInt32	off;
 
+    /* XXX: Ugh, ugly.  Try rewriting this more concisely. */
+
     off = 0;
     DB_WriteStringFromHandle(memoRecord, &off, keyRecord->nameHandle,
 			     keyRecord->nameLen);
-    DB_WriteString(memoRecord, &off, "\nAccount: ");
-    DB_WriteStringFromHandle(memoRecord, &off, keyRecord->acctHandle,
-			     keyRecord->acctLen);
+    if (keyRecord->acctHandle) {
+	DB_WriteString(memoRecord, &off, "\nAccount: ");
+	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->acctHandle,
+				 keyRecord->acctLen);
+    }
+    if (keyRecord->passwdHandle) {
+	DB_WriteString(memoRecord, &off, "\nPassword: ");
+	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->passwdHandle,
+				 keyRecord->passwdLen);
+    }
+    if (keyRecord->notesHandle) {
+	DB_WriteString(memoRecord, &off, "\n\n");
+	DB_WriteStringFromHandle(memoRecord, &off, keyRecord->notesHandle,
+				 keyRecord->notesLen);
+    }
     DB_WriteString(memoRecord, &off, "\n(Exported from GNU Keyring)");
 
     DmWrite(memoRecord, off, "", 1); /* write nul */
@@ -62,15 +80,20 @@ UInt16 Export_BuildText(UnpackedKeyType *keyRecord,
 
 
 /* Write out a text buffer as a new memo. */
-static void* Export_CreateMemo(DmOpenRef *dbp, Int16 *pidx)
+static void* Export_CreateMemo(DmOpenRef *dbp, Int16 *pidx, LocalID *memoDbID,
+			       UInt16 *memoDbCard)
 {    
     UInt32	recLen;
     Err		err;
     MemHandle	newHandle;
     void *     recPtr;
 
-    if (!(*dbp = DmOpenDatabaseByTypeCreator('DATA', 'memo', dmModeReadWrite)))
+    if (!(*dbp = DmOpenDatabaseByTypeCreator(kMemoType, kMemoCreator, dmModeReadWrite)))
 	goto failOut;
+
+    err = DmOpenDatabaseInfo(*dbp, memoDbID, NULL, NULL, memoDbCard, NULL);
+    if (err)
+	goto failClose;
 
     recLen = kMaxExport;
     *pidx = dmMaxRecordIndex;
@@ -114,6 +137,49 @@ static Int16 Export_Finish(DmOpenRef dbp, Int16 idx, Int16 size, void *recPtr)
 }
 
 
+/* Jump to the just-created memo. */
+static int Export_JumpToMemo(LocalID memoDbID, UInt16 memoDbCard, Int16 idx) {
+    Int16 button;
+    UInt16		appCard = 0;
+    Err			err;
+    LocalID		appID;
+    GoToParamsPtr	params;
+    UInt16		cmd = 0;
+    DmSearchStateType	state;
+
+    /* Work out the database ID for the MemoPad application and data. */
+    err = DmGetNextDatabaseByTypeCreator(true, &state, kApplType,
+					 kMemoCreator, true, &appCard,
+					 &appID);
+    if (err) {
+	FrmAlert(CouldntLaunchMemoAlert);
+	return 0;
+    }
+    
+    /* Construct a GoToParameters pointing to this record. */
+    if (!(params = MemPtrNew(sizeof *params))) {
+	FrmAlert(OutOfMemoryAlert);
+	return 0;
+    }
+    MemSet(params, sizeof *params, 0);
+    params->dbCardNo = memoDbCard;
+    params->dbID = memoDbID;
+    params->recordNum = idx;
+        
+    /* Give ownership of the PBP to the operating system, so that it
+     * is not freed when we exit.  */
+    err = MemPtrSetOwner(params, 0);
+    if (err) {
+	FrmAlert(CouldntLaunchMemoAlert);
+	return 0;
+    }
+
+    cmd = sysAppLaunchCmdGoTo;
+    err = SysUIAppSwitch(appCard, appID, cmd, params);
+
+    return 1;
+}
+
 
 /* Export the current key to a MemoPad record. */
 void ExportKey(UnpackedKeyType *keyRecord)
@@ -121,13 +187,17 @@ void ExportKey(UnpackedKeyType *keyRecord)
     void	*memoRecord;
     Int16	idx;
     Int16	size;
-    DmOpenRef dbp;
+    DmOpenRef	dbp;
+    LocalID	memoDbID;
+    UInt16	memoDbCard;
 
-    if (!(memoRecord = Export_CreateMemo(&dbp, &idx))) {
+    if (!(memoRecord = Export_CreateMemo(&dbp, &idx, &memoDbID, &memoDbCard))) {
 	Export_Failure();
     } else if (!(size = Export_BuildText(keyRecord, memoRecord))) {
 	Export_Failure();
     } else if (!Export_Finish(dbp, idx, size, memoRecord)) {
 	Export_Failure();
+    } else {
+	Export_JumpToMemo(memoDbID, memoDbCard, idx);
     }
 }
