@@ -27,9 +27,6 @@
  * TODO: Newline in single-line fields should move down one, perhaps?
  * Really this is only useful on POSE -- on the real system, people
  * can just use the next-field character.
- *
- * TODO: When flipping records, if the timeout has expired instead go
- * back to the list. 
  */
 
 
@@ -46,18 +43,22 @@ static void KeyEditForm_UpdateScrollbar(void);
 static Boolean KeyEditForm_IsDirty(void);
 static Boolean KeyEditForm_IsEmpty(void);
 static void KeyEditForm_MarkClean(void);
-static void Edit_DeleteKey(Boolean saveBackup);
+static void KeyEditForm_DeleteKey(Boolean saveBackup);
 static void KeyEditForm_GetFields(void);
 
+
+#define k_KeyName   0
+#define k_Acct      1
+#define k_Passwd    2
+#define k_Notes     3
+#define k_NumFields 4
+
 // If the form is active, all these are valid.
-static FieldPtr f_NotesFld, f_KeyNameFld, f_AcctFld, f_PasswdFld;
 static ControlPtr f_DateTrg;
 static ScrollBarPtr f_NotesScrollBar;
-static FormPtr f_KeyEditForm;
-static Boolean f_dirty;
-
-#define k_NumFields 4
-static FieldPtr f_AllFields[k_NumFields];
+static FormPtr   f_KeyEditForm;
+static Boolean   f_dirty;
+static FieldPtr  f_AllFields[k_NumFields];
 static CryptoKey gRecordKey;
 
 /* Index of the current record in the database as a whole. */
@@ -111,6 +112,7 @@ extern Boolean g_ReadOnly;
  * new record, it will be something like "New Record".  If it's an
  * existing record, it will be something like "Record 4 of 42".
  *
+ * TODO: Check if the following still applies:
  * - I haven't isolated the next as it is sometimes intermittent: a
  * bus error results after selecting a record from the list then
  * pressing Page Up key.  I think it's somewhere in
@@ -149,6 +151,14 @@ static void KeyEditForm_UpdateTitle(void)
 }
 
 
+/* Update the category popuptrigger to show the current record's
+ * category name. */
+static void KeyEditForm_UpdateCategory(void)
+{
+    Category_UpdateName(f_KeyEditForm, gRecord.category);
+}
+
+
 /* Set the text in the "set date" popup trigger to match the date in
  * the record. */
 static void KeyEditForm_SetDateTrigger(void)
@@ -178,15 +188,6 @@ static void KeyEditForm_SetDateTrigger(void)
 
 static void KeyEditForm_FromUnpacked(void)
 {
-    FldFreeMemory(f_KeyNameFld);
-    FldSetTextHandle(f_KeyNameFld, (MemHandle) gRecord.nameHandle);
-    FldFreeMemory(f_AcctFld);
-    FldSetTextHandle(f_AcctFld, (MemHandle) gRecord.acctHandle);
-    FldFreeMemory(f_PasswdFld);
-    FldSetTextHandle(f_PasswdFld, (MemHandle) gRecord.passwdHandle);
-    FldFreeMemory(f_NotesFld);
-    FldSetTextHandle(f_NotesFld, (MemHandle) gRecord.notesHandle);
-    KeyEditForm_SetDateTrigger();
 }
 
 
@@ -195,13 +196,13 @@ static void KeyEditForm_FromUnpacked(void)
  */
 static void KeyEditForm_Clear(void)
 {
-    Int16 i;
-    
-    for (i = 0; i < k_NumFields; i++)
-	FldDelete(f_AllFields[i], 0, (UInt16) -1);
-    
+    MemSet(&gRecord, sizeof(gRecord), 0);
+
     DateSecondsToDate(TimGetSeconds(), &gRecord.lastChange);
-    KeyEditForm_SetDateTrigger();
+
+    gRecord.category = gPrefs.category;
+    if (gRecord.category == dmAllCategories)
+	gRecord.category = dmUnfiledCategory;
 }
 
 
@@ -209,18 +210,18 @@ static void KeyEditForm_ToUnpacked(UnpackedKeyType *u)
 {
     FieldPtr fld;
 
-    u->nameHandle = (MemHandle) FldGetTextHandle(f_KeyNameFld);
-    u->nameLen = FldGetTextLength(f_KeyNameFld);
+    u->nameHandle = (MemHandle) FldGetTextHandle(f_AllFields[k_KeyName]);
+    u->nameLen = FldGetTextLength(f_AllFields[k_KeyName]);
     
-    fld = f_AcctFld;
+    fld = f_AllFields[k_Acct];
     u->acctHandle = (MemHandle) FldGetTextHandle(fld);
     u->acctLen = FldGetTextLength(fld);
     
-    fld = f_PasswdFld;
+    fld = f_AllFields[k_Passwd];
     u->passwdHandle = (MemHandle) FldGetTextHandle(fld);
     u->passwdLen = FldGetTextLength(fld);
     
-    fld = f_NotesFld;
+    fld = f_AllFields[k_Notes];
     u->notesHandle = (MemHandle) FldGetTextHandle(fld);
     u->notesLen = FldGetTextLength(fld);
 
@@ -228,12 +229,7 @@ static void KeyEditForm_ToUnpacked(UnpackedKeyType *u)
 }
 
 
-static void KeyEditForm_Done(void)
-{
-    FrmGotoForm(ListForm);
-}
-
-#if 0
+#ifdef NOTIFY_SLEEP_HANDLER
 static Err KeyEditForm_Sleep(SysNotifyParamType *np) {
     Err err;
     UInt16 cardNo;
@@ -283,17 +279,39 @@ static void KeyEditForm_Load(void)
     FrmEraseForm(busyForm);
     FrmDeleteForm(busyForm);
     FrmSetActiveForm(f_KeyEditForm);
-
-    KeyEditForm_FromUnpacked();
 }
 
+/*
+ * Load the data for the current key into gRecord and update the form
+ * elements.  If this is a new key, go back to a blank form.
+ */
+static void KeyEditForm_FillData(void) {
 
-static void Key_SetNewRecordCategory(void)
-{
-    if (gPrefs.category == dmAllCategories)
-	gRecord.category = dmUnfiledCategory;
+    if (gKeyRecordIndex == kNoRecord)
+	KeyEditForm_Clear();
     else
-	gRecord.category = gPrefs.category;
+	KeyEditForm_Load();
+
+    if (gPrefs.category != dmAllCategories)
+	gPrefs.category = gRecord.category;
+
+    FldFreeMemory(f_AllFields[k_KeyName]);
+    FldFreeMemory(f_AllFields[k_Acct]);
+    FldFreeMemory(f_AllFields[k_Passwd]);
+    FldFreeMemory(f_AllFields[k_Notes]);
+
+    FldSetTextHandle(f_AllFields[k_KeyName], (MemHandle) gRecord.nameHandle);
+    FldSetTextHandle(f_AllFields[k_Acct], (MemHandle) gRecord.acctHandle);
+    FldSetTextHandle(f_AllFields[k_Passwd], (MemHandle) gRecord.passwdHandle);
+    FldSetTextHandle(f_AllFields[k_Notes], (MemHandle) gRecord.notesHandle);
+
+    KeyEditForm_MarkClean();
+
+    KeyEditForm_SetDateTrigger();
+    KeyEditForm_UpdateCategory();
+    KeyEditForm_UpdateTitle();
+    KeyEditForm_UpdateScrollbar();
+    FrmDrawForm(f_KeyEditForm);
 }
 
 
@@ -306,14 +324,13 @@ static void KeyEditForm_Commit(void)
 {
     if (KeyEditForm_IsEmpty()) {
 
-	Edit_DeleteKey(false); /* no backup */
+	KeyEditForm_DeleteKey(false); /* no backup */
 	KeyEditForm_MarkClean();
 
     } else if (KeyEditForm_IsDirty()) {
 	if (gKeyRecordIndex == kNoRecord) {
 	    /* TODO: If this fails, do something. */
 	    KeyDB_CreateNew(&gKeyRecordIndex);
-	    Key_SetNewRecordCategory();
 	}
 	f_needsSort = true;
 	KeyEditForm_ToUnpacked(&gRecord);
@@ -348,44 +365,15 @@ static void KeyEditForm_Save(void)
 }
 
 
-/* Update the category popuptrigger to show the current record's
- * category name. */
-static void KeyEditForm_UpdateCategory(void)
-{
-    Category_UpdateName(f_KeyEditForm, gRecord.category);
-}
-
-
-static void KeyEditForm_UpdateAll(void)
-{
-    KeyEditForm_GetFields();
-    KeyEditForm_UpdateCategory();
-    KeyEditForm_UpdateTitle();
-    KeyEditForm_UpdateScrollbar();
-    FrmDrawForm(f_KeyEditForm);
-}
-
-
-/*
- * Throw away all the changes to the current key.  If this is an
- * existing key, reload it from the database.  If this is a new key,
- * go back to a blank form.
- */
-static void Edit_MaybeUndoAll(void)
+static void KeyEditForm_MaybeUndoAll(void)
 {
      if (App_CheckReadOnly())
           return;
 
-     if (gKeyRecordIndex == kNoRecord) {
-	 KeyEditForm_Clear();
-     } else {
-	 /* TODO: Check that this works OK if the record is
-	  * newly-allocated and zero length. */
+     if (gKeyRecordIndex != kNoRecord)
 	 DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
-	 KeyEditForm_Load();
-     }
-     /* TODO: Put the category back to what it was when we entered. */
-     KeyEditForm_UpdateAll();
+
+     KeyEditForm_FillData();
 }
 
 
@@ -436,22 +424,6 @@ static Boolean KeyEditForm_IsEmpty(void)
 }
 
 
-static void KeyEditForm_OpenRecord(void)
-{
-    if (gKeyRecordIndex != kNoRecord) 
-        KeyEditForm_Load();
-    else
-	KeyEditForm_Clear();
-
-    if (gPrefs.category != dmAllCategories)
-	gPrefs.category = gRecord.category;
-
-    KeyEditForm_UpdateAll();
-    FrmSetFocus(f_KeyEditForm,
-                FrmGetObjectIndex(f_KeyEditForm, ID_KeyNameField));
-}
-
-
 /*
  * Go to the record with the specified index.  It has to work
  * regardless of the currently active form.  If key edit form is
@@ -482,7 +454,7 @@ void KeyEditForm_GotoRecord(UInt16 recordIdx)
     gKeyRecordIndex = recordIdx;
 
     if (gEditFormActive)
-	KeyEditForm_OpenRecord();
+	KeyEditForm_FillData();
     else
         FrmGotoForm(KeyEditForm);
 }
@@ -492,15 +464,11 @@ static void KeyEditForm_GetFields(void)
 {
     f_KeyEditForm = FrmGetActiveForm();
 
-    f_AllFields[0] = f_KeyNameFld =
-         UI_GetObjectByID(f_KeyEditForm, ID_KeyNameField);
-    
-    f_AllFields[1] = f_NotesFld = UI_GetObjectByID(f_KeyEditForm, ID_NotesField);
-    f_AllFields[2] = f_AcctFld = UI_GetObjectByID(f_KeyEditForm, AccountField);
-    
-    f_AllFields[3] = f_PasswdFld =
-         UI_GetObjectByID(f_KeyEditForm, PasswordField);
-    
+    f_AllFields[k_KeyName] = UI_GetObjectByID(f_KeyEditForm, ID_KeyNameField);
+    f_AllFields[k_Acct] = UI_GetObjectByID(f_KeyEditForm, AccountField);
+    f_AllFields[k_Passwd] = UI_GetObjectByID(f_KeyEditForm, PasswordField);
+    f_AllFields[k_Notes] = UI_GetObjectByID(f_KeyEditForm, ID_NotesField);
+
     f_DateTrg = UI_GetObjectByID(f_KeyEditForm, DateTrigger);
     
     f_NotesScrollBar = UI_GetObjectByID(f_KeyEditForm, NotesScrollbar);
@@ -511,14 +479,14 @@ static void KeyEditForm_GetFields(void)
  * Set run-time-only attributes on fields.  This is called each time the
  * form is opened.
  */
-static void Edit_PrepareFields(void)
+static void KeyEditForm_PrepareFields(void)
 {
     FieldAttrType attr;
     UInt32 encoding;
 
-    FldGetAttributes(f_NotesFld, &attr);
+    FldGetAttributes(f_AllFields[k_Notes], &attr);
     attr.hasScrollBar = true;
-    FldSetAttributes(f_NotesFld, &attr);
+    FldSetAttributes(f_AllFields[k_Notes], &attr);
 
     /* If the database is read-only, apply that attribute to the
      * fields. */
@@ -536,28 +504,29 @@ static void Edit_PrepareFields(void)
 	/* if feature not found it is palm latin */
 	encoding = charEncodingPalmLatin;
 
-    /* If encoding is not latin, use default fonts. */
+    /* If encoding is latin use our special password font. */
     if (encoding == charEncodingPalmLatin) {
-	FldSetFont(f_AllFields[2], fntPassword);
-	FldSetFont(f_AllFields[3], fntPassword);
+	FldSetFont(f_AllFields[k_Acct], fntPassword);
+	FldSetFont(f_AllFields[k_Passwd], fntPassword);
     }
 }
 
 
 static void KeyEditForm_FormOpen(void)
 {
-#if 0
+#ifdef NOTIFY_SLEEP_HANDLER
     UInt32      version;
 #endif
 
     gEditFormActive = true;
     
-#if 0
+#ifdef NOTIFY_SLEEP_HANDLER
     /* NotifyRegister is not present in 3.0.  We need to check for
      * (sysFtrCreator, sysFtrNumNotifyMgrVersion) to see if we can
-     * call this.  It might be better to set an alarm to lock after
-     * the specified time instead.  Maybe we could reuse the snib
-     * alarm.
+     * call this.  
+     *
+     * This code is currently disabled.  We listen for vchrAutoOff
+     * and vchrPowerOff in the main event loop instead.
      */
     if (FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &version) == 0
 	&& version)
@@ -567,13 +536,15 @@ static void KeyEditForm_FormOpen(void)
 
     f_needsSort = false;
     KeyEditForm_GetFields();
-    Edit_PrepareFields();
-    KeyEditForm_OpenRecord();
+    KeyEditForm_PrepareFields();
+    KeyEditForm_FillData();
+    FrmSetFocus(f_KeyEditForm,
+                FrmGetObjectIndex(f_KeyEditForm, ID_KeyNameField));
 }
 
-static void Edit_FormClose(void)
+static void KeyEditForm_FormClose(void)
 {
-#if 0
+#ifdef NOTIFY_SLEEP_HANDLER
      UInt32 version;
 #endif
      UInt32 uniqueId = 0;
@@ -602,7 +573,7 @@ static void Edit_FormClose(void)
 	 f_FirstIdx = DmPositionInCategory(gKeyDB, index, gPrefs.category);
      }
 
-#if 0
+#ifdef NOTIFY_SLEEP_HANDLER
      if (FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &version) == 0
 	 && version) {
 	  SysNotifyUnregister(gKeyDBCardNo,
@@ -618,7 +589,7 @@ static void Edit_FormClose(void)
 /*
  * Delete the current record.
  */
-static void Edit_DeleteKey(Boolean saveBackup)
+static void KeyEditForm_DeleteKey(Boolean saveBackup)
 {
     /* Is there a record to remove ? */
     if (gKeyRecordIndex == kNoRecord)
@@ -650,7 +621,7 @@ static void Edit_DeleteKey(Boolean saveBackup)
  * TODO: Check if the record is empty; if it is delete without seeking
  * confirmation.
  */
-static void Edit_MaybeDelete(void)
+static void KeyEditForm_MaybeDelete(void)
 {
      UInt16 buttonHit;
      FormPtr alert;
@@ -673,7 +644,7 @@ static void Edit_MaybeDelete(void)
      if (saveBackup)
 	 KeyEditForm_Commit();
 
-     Edit_DeleteKey(saveBackup);
+     KeyEditForm_DeleteKey(saveBackup);
 
      FrmGotoForm(ListForm);
 }
@@ -709,14 +680,14 @@ static void KeyEditForm_Generate(void)
 /*
  * Export if possible.
  */
-static void Edit_MaybeExport(void)
+static void KeyEditForm_MaybeExport(void)
 {
      if (KeyEditForm_IsEmpty()) {
           FrmAlert(alertID_ExportEmpty);
           return;
      }
      
-     /* As a side effect, write into gRecord. */
+     /* Save the record.  As a side effect, write into gRecord. */
      KeyEditForm_Commit();
      ExportKey(&gRecord);
 }
@@ -730,7 +701,7 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event)
         return true;
         
     case DeleteKeyCmd:
-	Edit_MaybeDelete();
+	KeyEditForm_MaybeDelete();
 	return true;
 
     case GenerateCmd:
@@ -738,11 +709,21 @@ static Boolean KeyEditForm_HandleMenuEvent(EventPtr event)
         return true;
 
     case ExportMemoCmd:
-	Edit_MaybeExport();
+	KeyEditForm_MaybeExport();
         return true;
 
     case ID_UndoAllCmd:
-	Edit_MaybeUndoAll();
+	if (!App_CheckReadOnly()) {
+	
+	    /*
+	     * Throw away all the changes to the current key.  If this is
+	     * an existing key, reload it from the database.  If this is a
+	     * new key, go back to a blank form.  
+	     */
+	    if (gKeyRecordIndex != kNoRecord)
+		DmReleaseRecord(gKeyDB, gKeyRecordIndex, false);
+	    KeyEditForm_FillData();
+	}
 	return true;
         
     default:
@@ -755,7 +736,7 @@ static void KeyEditForm_UpdateScrollbar(void)
 {
     UInt16 textHeight, fieldHeight, maxValue, scrollPos;
 
-    FldGetScrollValues(f_NotesFld, &scrollPos, &textHeight, &fieldHeight);
+    FldGetScrollValues(f_AllFields[k_Notes], &scrollPos, &textHeight, &fieldHeight);
 
     if (textHeight > fieldHeight)
         maxValue = textHeight - fieldHeight;
@@ -780,7 +761,7 @@ static void KeyEditForm_Dragged(EventPtr event)
         direction = winDown;
     }
     
-    FldScrollField(f_NotesFld, lines, direction);
+    FldScrollField(f_AllFields[k_Notes], lines, direction);
 }
 
 
@@ -791,11 +772,11 @@ static void KeyEditForm_Dragged(EventPtr event)
  */
 static void KeyEditForm_PageButton(WinDirectionType dir)
 {
-    if (FldScrollable(f_NotesFld, dir)) {
+    if (FldScrollable(f_AllFields[k_Notes], dir)) {
 	Int16 lines;
 
-        lines = FldGetVisibleLines(f_NotesFld);
-        FldScrollField(f_NotesFld, lines, dir);
+        lines = FldGetVisibleLines(f_AllFields[k_Notes]);
+        FldScrollField(f_AllFields[k_Notes], lines, dir);
         KeyEditForm_UpdateScrollbar();
     } else {
 	UInt16 recIndex = gKeyRecordIndex;
@@ -909,11 +890,11 @@ static void KeyEditForm_CategorySelected(void)
     categoryChanged = Category_Selected(&gRecord.category, false);
     if (categoryChanged) {
 	f_dirty = true;
+	KeyEditForm_UpdateCategory();
 	if (gPrefs.category != dmAllCategories) {
 	    gPrefs.category = gRecord.category;
+	    KeyEditForm_UpdateTitle();
 	}
-	KeyEditForm_UpdateCategory();
-	KeyEditForm_UpdateTitle();
     }
 }
 
@@ -926,10 +907,10 @@ Boolean KeyEditForm_HandleEvent(EventPtr event)
         switch (event->data.ctlSelect.controlID) {
         case LockBtn:
             Snib_Eradicate ();
-            KeyEditForm_Done();
+	    FrmGotoForm(ListForm);
             return true;
         case DoneBtn:
-            KeyEditForm_Done();
+	    FrmGotoForm(ListForm);
             return true;
 	case GenerateBtn:
 	    KeyEditForm_Generate();
@@ -960,7 +941,7 @@ Boolean KeyEditForm_HandleEvent(EventPtr event)
 	return true;
 
     case frmCloseEvent:
-	Edit_FormClose();
+	KeyEditForm_FormClose();
 	return false;
 
     case keyDownEvent:
