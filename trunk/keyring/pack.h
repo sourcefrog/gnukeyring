@@ -22,3 +22,4 @@
 
 void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx);
 void Key_SetCategory(UInt16 idx, UInt16 category);
+Err KeyDB_CreateNew(UInt16 *idx);

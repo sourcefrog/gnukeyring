@@ -117,19 +117,38 @@ static void Keys_WriteRecord(UnpackedKeyType const *unpacked, void *recPtr)
 }
 
 
-static MemHandle Keys_PrepareNew(UInt16 *idx, Int16 recLen)
+/* Write just a single NUL to keep space for this record.  It's not
+ * marked dirty yet -- that'll happen when some real data is written
+ * in. */
+Err KeyDB_CreateNew(UInt16 *idx)
 {
     MemHandle	recHandle;
+    Char        *ptr;
+    Err         err;
 
     *idx = dmMaxRecordIndex;
-    recHandle = DmNewRecord(gKeyDB, idx, recLen);
-    if (!recHandle) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),
-                           __FUNCTION__);
-	return NULL;
-    }
+    recHandle = DmNewRecord(gKeyDB, idx, 1);
+    if (!recHandle) 
+        goto findErrOut;
 
-    return recHandle;
+    ptr = MemHandleLock(recHandle);
+    if (!ptr)
+        goto findErrOut;
+    
+    if ((err = DmWrite(ptr, 0, "", 1)))
+        goto errOut;
+    
+    MemHandleUnlock(recHandle);
+    if ((err = DmReleaseRecord(gKeyDB, *idx, false))) /* not really dirty */
+        goto errOut;
+    
+    return 0;
+    
+ findErrOut:
+    err = DmGetLastErr();
+ errOut:
+    UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+    return err;
 }
 
 
@@ -163,10 +182,7 @@ void Key_SetCategory(UInt16 idx, UInt16 category)
  *
  * setup record:
  *   calculate the required record length
- *   if there is an existing record:
- *     resize it to the required length
- *   else:
- *     allocate a new record of the required length
+ *   resize record to the required length
  * lock record
  * write plaintext name
  * write body:
@@ -188,17 +204,13 @@ void Keys_SaveRecord(UnpackedKeyType const *unpacked, UInt16 *idx)
     ErrFatalDisplayIf(packRecLen > 8000,
 		      __FUNCTION__ ": immmoderate packRecLen"); /* paranoia */
 
-    if (*idx == kNoRecord) {
-	recHandle = Keys_PrepareNew(idx, packRecLen);
-    } else {
-	ErrFatalDisplayIf(*idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
-	recHandle = Keys_PrepareExisting(idx, packRecLen);
-    }
-
+    ErrNonFatalDisplayIf(idx == kNoRecord,
+                         __FUNCTION__ ": no record to save");
+    
+    ErrFatalDisplayIf(*idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
+    recHandle = Keys_PrepareExisting(idx, packRecLen);
     if (!recHandle)
 	return;
-
-    ErrFatalDisplayIf(*idx > kMaxRecords, __FUNCTION__ ": outlandish idx");
     
     recPtr = MemHandleLock(recHandle);
     Keys_WriteRecord(unpacked, recPtr);
