@@ -130,7 +130,7 @@ BEGIN
   "Paste" = "Einfügen"
   "Cut" = "Ausschneiden"
   "Select All" = "Alles auswählen"
-  "Key %d of %d" = "Schlüssel %d v. %d"
+  "Key ^0 of ^1" = "Schlüssel ^0 v. ^1"
   "Copy" = "Kopieren"
   "Keyboard" = "Tastatur"
   "New Key" = "Neuer Schlüssel"
@@ -228,7 +228,7 @@ BEGIN
   "Paste" = "Pegar"
   "Cut" = "Cortar"
   "Select All" = "Seleccionar Todo"
-  "Key %d of %d" = "Clave %d de %d"
+  "Key ^0 of ^1" = "Clave ^0 de ^1"
   "Copy" = "Copiar"
   "Keyboard" = "Teclado"
   "New Key" = "Nueva Clave"
@@ -330,7 +330,7 @@ BEGIN
   "Paste" = "Klistra in"
   "Cut" = "Klipp ut"
   "Select All" = "Markera alla"
-  "Key %d of %d" = "Nyckel %d av %d"
+  "Key ^0 of ^1" = "Nyckel ^0 av ^1"
   "Copy" = "Kopiera"
   "Keyboard" = "Tangentbord"
   "New Key" = "Ny nyckel"
@@ -440,7 +440,7 @@ BEGIN
   "Paste" = "Plakken"
   "Cut" = "Knippen"
   "Select All" = "Alles selecteren"
-  "Key %d of %d" = "Sleutel %d van %d"
+  "Key ^0 of ^1" = "Sleutel ^0 van ^1"
   "Copy" = "Kopieren"
   "Keyboard" = "Toetsenbord"
   "New Key" = "Nieuwe sleutel"
@@ -542,7 +542,7 @@ BEGIN
   "Paste" = "Collez"
   "Cut" = "Coupez"
   "Select All" = "Choisissez tout"
-  "Key %d of %d" = "Clef %d de %d"
+  "Key ^0 of ^1" = "Clef ^0 de ^1"
   "Copy" = "Copiez"
   "Keyboard" = "Clavier"
   "New Key" = "Nouvelle clé"
@@ -633,7 +633,7 @@ BEGIN
   "Paste" = "Lim inn"
   "Cut" = "Klipp ut"
   "Select All" = "Velg alle"
-  "Key %d of %d" = "Nøkkel %d av %d"
+  "Key ^0 of ^1" = "Nøkkel ^0 av ^1"
   "Copy" = "Kopier"
   "Keyboard" = "Tastatur"
   "New Key" = "Ny nøkkel"
@@ -726,7 +726,7 @@ BEGIN
   "Paste" = "Lim inn"
   "Cut" = "Klipp ut"
   "Select All" = "Velj alle"
-  "Key %d of %d" = "Nykel %d av %d"
+  "Key ^0 of ^1" = "Nykel ^0 av ^1"
   "Copy" = "Kopier"
   "Keyboard" = "Tastatur"
   "New Key" = "Ny nykel"
@@ -823,7 +823,7 @@ BEGIN
   "Paste" = "Colar"
   "Cut" = "Recortar"
   "Select All" = "Selecionar Tudo"
-  "Key %d of %d" = "Chave %d de %d"
+  "Key ^0 of ^1" = "Chave ^0 de ^1"
   "Copy" = "Copiar"
   "Keyboard" = "Teclado"
   "New Key" = "Nova Chave"
@@ -985,8 +985,8 @@ BEGIN
 	PUSHBUTTON "a-z" ID IncludeLower at (46 prevtop auto auto) 
 	PUSHBUTTON "A-Z" id IncludeUpper at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
-	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 PREVTOP 20 auto)
-        PUSHBUTTON "@@langSpecificChars" ID ID_IncludeHigh AT (PREVRIGHT+1 PREVTOP 22 AUTO)
+	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 prevtop 20 auto)
+        PUSHBUTTON "@@langSpecificChars" ID ID_IncludeHigh AT (prevright+1 prevtop 22 AUTO)
 /*        PUSHBUTTON "pronounceable syllables" ID ID_Syllables AT (44 PREVBOTTOM+1 PREVRIGHT-44 AUTO) */
 
 	BUTTON "Generate" id OkBtn at (3 PREVBOTTOM+7 auto auto)
@@ -1335,7 +1335,7 @@ BEGIN
 		MENUITEM "About..." ID AboutCmd
 	END
 
-	PULLDOWN "Ø"
+	PULLDOWN "Debug"
 	BEGIN
 		MENUITEM "Check on change" ID CMD_CheckHeapOnChange
 		MENUITEM "Scramble on change" ID CMD_ScrambleOnChange
@@ -1381,7 +1381,7 @@ BITMAP ID KeyBitmap "keyring-22.xbm"
 BITMAP ID LockBitmap "lock.xbm"
 BITMAP ID UnlockBitmap "unlock.xbm"
 
-STRING ID TitleTemplateStr "Key %d of %d"
+STRING ID TitleTemplateStr "Key ^0 of ^1"
 STRING ID EmptyTitleStr "New Key"
 STRING ID ErrCheckingROM  "Error checking ROM version: ^1"
 

@@ -68,11 +68,6 @@ UInt16          gKeyRecordIndex = kNoRecord;
  * be a bit more selective. */
 static Boolean f_needsSort;
 
-/* Holds the string to be copied into the title.  Must be big enough
- * to handle the largest possible expansion. */
-Char f_KeyFormTitle[32];
-
-
 extern Boolean g_ReadOnly;
 
 
@@ -124,6 +119,9 @@ static void KeyEditForm_UpdateTitle(void)
 {
     Char * titleTemplate;
     UInt16 pos, total;
+    Char posStr[maxStrIToALen];
+    Char totalStr[maxStrIToALen];
+    Char * keyFormTitle;
     
     ErrNonFatalDisplayIf(gKeyRecordIndex == kNoRecord,
                          __FUNCTION__ ": no record");
@@ -135,10 +133,14 @@ static void KeyEditForm_UpdateTitle(void)
     titleTemplate = MemHandleLock(DmGetResource(strRsc, TitleTemplateStr));
     ErrFatalDisplayIf(!titleTemplate, __FUNCTION__ ": no titleTemplate");
 
-    StrPrintF(f_KeyFormTitle, titleTemplate, pos, total);
+    StrIToA(posStr, pos);
+    StrIToA(totalStr, total);
+
+    keyFormTitle = TxtGlueParamString(titleTemplate, posStr, totalStr, NULL, NULL); 
+    FrmCopyTitle(f_KeyEditForm, keyFormTitle);
+    MemPtrFree(keyFormTitle);
     MemPtrUnlock(titleTemplate);
 
-    FrmCopyTitle(f_KeyEditForm, f_KeyFormTitle);
     return;
 }
 

@@ -19,6 +19,7 @@ VERSION         = 1.1pre3
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
 
 RCP             = $(APP).rcp
+RCP_IN          = $(RCP).ja $(RCP).in
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  crypto.c passwd.c uiutil.c generate.c prefs.c		\
 		  export.c dbutil.c upgrade.c record.c category.c	\
@@ -70,13 +71,14 @@ WARN	        = -Wall -Winline -Wunused -W	\
 		-Wlarger-than-260 -Wshadow -Wcast-align	
 # 		-Wsign-compare
 OPTIM		= -O3 -finline-functions -g
+LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
 HELP_TXT        = $(wildcard help/*/*.txt)
 
 DOCS		= HACKING TODO TESTS 
 
-SRC_DIST       = $(RCP) $(RCP).in Makefile $(BITMAPS) \
+SRC_DIST        = $(RCP_IN) Makefile $(BITMAPS) \
 		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
 		  $(HELP_TXT)
 
@@ -103,17 +105,17 @@ default: $(BASE)-en.prc
 all: $(PRCS) 
 
 $(BASE)-%.prc: %.resstamp $(EXE)
-	cd res/$* && $(BUILDPRC) ../../$@ 'Keyring' Gtkr ../../$(EXE) *.bin
-	ls -l $@
+	$(BUILDPRC) $@ 'Keyring' Gtkr $(EXE) res/$*/*.bin
+	@ls -l $@
 
 %.resstamp: $(BITMAPS) resource.h 
 %.resstamp: $(RCP)
-	@echo Building resources for $*
 	@[ -d res/$* ] || mkdir -p res/$*
 	@-rm -f res/$*/*
 	@-rm -f *.bin
-	@$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/
-	@cmp -s auto.h auto.h.tmp || mv auto.h.tmp auto.h
+	$(PILRC) -H auto.h.tmp -q -L $* $(RCP) res/$*/ >/dev/null
+	@if cmp -s auto.h auto.h.tmp; then rm -f auto.h.tmp; \
+	 else mv auto.h.tmp auto.h; fi
 	@touch $@
 
 dist: $(DIST_BALL) $(DIST_ZIP)
@@ -126,19 +128,19 @@ $(DIST_BALL) $(DIST_ZIP): $(SRC_DIST) $(TOP_DIST)
 	cp $(TOP_DIST) $(tmpdir)/$(BASE)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	cd $(tmpdir) && $(ZIP) -rq9 ../$(DIST_ZIP) $(BASE)
-	ls -l $(DIST_BALL) $(DIST_ZIP)
+	@ls -l $(DIST_BALL) $(DIST_ZIP)
 	rm -fr $(tmpdir)
 
 # I hate accidentally editing the generated file, so the chmod 
 # tries to discourage it
-$(RCP): $(RCP).in Makefile
-	rm -f $@
+$(RCP): $(RCP_IN) Makefile
+	@rm -f $@
 	(echo '// ******DYNAMICALLY GENERATED DO NOT EDIT********'; \
-	 sed $(SED_SUBST) $@.in) > $@
-	chmod -w $@
+	 sed $(SED_SUBST) $(RCP_IN)) > $@
+	@chmod -w $@
 
 $(EXE):       $(SRC:.c=.o) ;
-	$(CC) $(CFLAGS) $^ -o $(EXE)
+	$(CC) $(CFLAGS) $^ $(LIBS) -o $(EXE)
 
 # We try to avoid touching auto.h, because that will kick off
 # rebuilding a lot of source and it's often not necessary.
@@ -148,12 +150,12 @@ auto.h: en.resstamp
 	$(CC) $(CFLAGS) -S $< 
 
 %.o: %.c auto.h
-	@echo Compiling $*.c
-	@$(CC) $(CFLAGS) -c $< -o $*.o
+	$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
-	rm -f *.o *.d $(EXE) *.bin res/*/* *.grc *.prc *.resstamp \
-	prototype.h *.bin *.d .*.stamp 
+	rm -f *.o *.d $(EXE) $(RCP) *.bin res/*/* *.grc *.prc *.resstamp \
+	prototype.h *.bin *.d .*.stamp auto.h
+	rmdir res/*
 
 tags: TAGS
 TAGS: *.c *.h
@@ -175,8 +177,7 @@ prototype.h: proto
 proto: .proto.stamp
 
 .proto.stamp: script/mkproto.awk $(MKPROTO_C)
-	@echo Checking prototype.h
-	@$(AWK) -f script/mkproto.awk $(MKPROTO_C) \
+	$(AWK) -f script/mkproto.awk $(MKPROTO_C) \
 		>prototype.h.new
 	@if test -f prototype.h && cmp -s prototype.h.new prototype.h; \
 	then rm -f prototype.h.new; \
