@@ -11,6 +11,12 @@ RCP             = $(APP).rcp
 SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c \
 		  crypto.c passwd.c uiutil.c generate.c prefs.c \
 		  export.c dbutil.c upgrade.c record.c category.c \
+		  beta.c setpasswd.c pwhash.c
+
+HEADERS = beta.h dbutil.h generate.h keyring.h passwd.h record.h	\
+upgrade.h category.h error.h keydb.h listform.h prefs.h resource.h	\
+util.h crypto.h export.h keyedit.h memutil.h pwhash.h uiutil.h
+
 # 		  libdes/des_enc.c
 
 DEP             = $(subst .c,.d,$(SRC))
@@ -50,7 +56,7 @@ DOCS		= COPYING HACKING TODO TESTS
 # The web site is now maintained separately
 
 DISTFILES       = $(RCP) $(RCP).in $(PRCS) Makefile $(BITMAPS) \
-		  $(DOCS) $(wildcard *.c *.h) $(DEF) \
+		  $(DOCS) $(SRC) $(HEADERS) $(DEF) \
 		  $(HELP_TXT)
 
 DIST_BALL	= $(APP)-$(VERSION).tar.gz
@@ -97,10 +103,8 @@ $(EXE):       $(SRC:.c=.o) ;
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
-%.o %.d: %.c ;
+%.o: %.c ;
 	$(CC) $(CFLAGS) -c $< -o $*.o
-
-depend: $(DEP)
 
 clean:
 	rm -rf *.o $(EXE) *.bin res/*/* *.grc *.prc *.stamp *.bin *.d *.stamp
