@@ -1511,6 +1511,8 @@ BITMAPFAMILY ID KeyBitmap "keyring-22-1.pbm" "" "" "keyring-22-8.ppm" TRANSPAREN
 BITMAP ID LockBitmap "lock.xbm"
 BITMAP ID UnlockBitmap "unlock.xbm"
 
+STRING ID KeyringFindStr "Keyring"
+
 STRING ID TitleTemplateStr "Key ^0 of ^1"
 STRING ID EmptyTitleStr "New Key"
 STRING ID ErrCheckingROM  "Error checking ROM version: ^1"

@@ -314,7 +314,7 @@ static void Secrand_AddEntropyWords(UInt32 *p, Int16 count)
     g_RandomState.input_rotate = j;
 }
 
-static void Secrand_AddTickRandomness()
+static void Secrand_AddTickRandomness(void)
 {
     UInt32 ticks = TimGetTicks();
     Secrand_AddEntropyWords(&ticks, 1);

@@ -1,4 +1,4 @@
-/* -*- c-file-style: "java"; -*-
+/* -*- c-basic-offset: 4; c-file-style: java; -*-
  *
  * $Header$
  * 
@@ -232,10 +232,13 @@ static Err RomVersionCompatible (void)
 
 
 UInt32 PilotMain(UInt16 launchCode,
-		 void UNUSED(*cmdPBP),
+		 void *cmdPBP,
 		 UInt16 UNUSED(launchFlags))
 {
     Err err = 0;
+
+    if ((err = RomVersionCompatible()))
+	return err;
 
     if (launchCode == kKeyringResumeSleepLaunch) {
 	/* We were relaunched by the sleep notify handler.
@@ -252,19 +255,46 @@ UInt32 PilotMain(UInt16 launchCode,
 	launchCode = sysAppLaunchCmdNormalLaunch;
     }
 
-    if (launchCode == sysAppLaunchCmdNormalLaunch) {
-	if ((err = RomVersionCompatible()))
-	    return err;
-
+    switch (launchCode)
+    {
+    case sysAppLaunchCmdNormalLaunch:	    
 	err = App_Start();
 	if (!err) {
 	    App_EventLoop();
 	    App_Stop();
 	}
-    } else if (launchCode == sysAppLaunchCmdTimeChange
-	       || launchCode == sysAppLaunchCmdAlarmTriggered) {
+	break;
+
+    case sysAppLaunchCmdFind:
+	Search((FindParamsPtr) cmdPBP);
+	break;
+
+    case sysAppLaunchCmdGoTo:
+	{
+	    Boolean launched = launchFlags & sysAppLaunchFlagNewGlobals;
+	    UInt16 recordNum = ((GoToParamsPtr) cmdPBP)->recordNum;
+
+	    if (launched)
+	    {
+		err = App_Start();
+		if (err)
+		    return err;
+	    }
+
+	    KeyEditForm_GotoRecord(recordNum);
+	    if (launched) {
+		App_EventLoop();
+		App_Stop();
+	    }
+	}
+	break;
+	
+    case sysAppLaunchCmdTimeChange:	    
+    case sysAppLaunchCmdAlarmTriggered:	    
+
 	/* This is the expiry alarm, or the time changed */
 	Snib_Eradicate ();
+	break;
     }
 
     /* TODO: We should handle: sysAppLaunchCmdSaveData,
