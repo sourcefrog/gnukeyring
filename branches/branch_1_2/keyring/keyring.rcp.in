@@ -4,6 +4,7 @@
  *
  * Copyright (C) 1999-2001 by Martin Pool <mbp@humbug.org.au>
  * Copyright (C) 2001-2003 by Jochen Hoenicke <hoenicke@users.sf.net>
+ * Copyright (C) 2003      by John Kirkland <john_kirkland@users.sf.net>
  * 
  * $Id$
  *
@@ -1313,6 +1314,46 @@ BEGIN
 	GRAFFITISTATEINDICATOR AT (152 150)
 END
 
+HEX "fnav" ID ListForm
+1.w                     // Resource Version
+6.w                     // Number of Objects in focus order
+20.w                    // Size of header (20 bytes)
+8.w                     // Size of list elements (8 bytes)
+1.l                     // navFlags=kFrmNavHeaderFlagsObjectFocusStartState
+LookUpFld.w		// ID of initial focus object
+LookUpFld.w		// ID of jump to object
+LookUpFld.w		// ID of bottom-left object
+0.w                     // Padding
+
+LockBtn.w		// ID of object
+0.w			// objectFlags = none
+0.w			// ID of above object
+0.w			// ID of below object
+
+CategoryTrigger.w
+0.w
+0.w
+LookUpFld.w
+
+ID_KeyTable.w
+1.w
+0.w
+0.w
+
+ID_KeyTableScrollBar.w
+1.w
+0.w
+0.w
+
+LookUpFld.w
+0.w
+CategoryTrigger.w
+NewKeyBtn.w
+
+NewKeyBtn.w
+0.w
+0.w
+0.w
 
 FORM ID KeyEditForm AT (0 0 160 160)
 MENUID KeyEditMenuBar
@@ -1358,6 +1399,81 @@ BEGIN
 	GRAFFITISTATEINDICATOR AT (152 150)
 END
 
+HEX "fnav" ID KeyEditForm
+1.w			// Resource Version
+13.w			// Number of Objects in focus order
+20.w                    // Size of header (20 bytes)
+8.w                     // Size of list elements (8 bytes)
+1.l                     // navFlags=kFrmNavHeaderFlagsObjectFocusStartState
+ID_KeyNameField.w       // ID of initial focus object
+DoneBtn.w               // ID of jump to object
+DoneBtn.w               // ID of bottom-left object
+0.w                     // Padding
+
+CategoryTrigger.w
+0.w
+DoneBtn.w
+ID_KeyNameField.w
+
+LockBtn.w
+0.w
+0.w
+ID_KeyNameField.w
+
+ID_KeyNameField.w	// ID of object
+0.w			// objectFlags = none
+CategoryTrigger.w		// ID of above object
+AccountField.w		// ID of below object
+
+DoneBtn.w		// ID of object
+0.w			// objectFlags = none
+ID_NotesField.w		// ID of above object
+0.w			// ID of below object
+
+GenerateBtn.w		// ID of object
+0.w			// objectFlags = none
+ID_NotesField.w		// ID of above object
+0.w			// ID of below object
+
+AccountField.w		// ID of object
+0.w			// objectFlags = none
+ID_KeyNameField.w	// ID of above object
+PasswordField.w		// ID of below object
+
+DoneBtn.w		// ID of object
+0.w			// objectFlags = none
+ID_NotesField.w		// ID of above object
+0.w			// ID of below object
+
+PasswordField.w		// ID of object
+0.w			// objectFlags = none
+AccountField.w		// ID of above object
+DateTrigger.w		// ID of below object
+
+DoneBtn.w		// ID of object
+0.w			// objectFlags = none
+ID_NotesField.w		// ID of above object
+0.w			// ID of below object
+
+DateTrigger.w		// ID of object
+0.w			// objectFlags = none
+PasswordField.w		// ID of above object
+ID_NotesField.w		// ID of below object
+
+DoneBtn.w		// ID of object
+0.w			// objectFlags = none
+ID_NotesField.w		// ID of above object
+0.w			// ID of below object
+
+ID_NotesField.w		// ID of object
+0.w			// objectFlags = none
+DateTrigger.w		// ID of above object
+DoneBtn.w		// ID of below object
+
+DoneBtn.w		// ID of object
+0.w			// objectFlags = none
+ID_NotesField.w		// ID of above object
+0.w			// ID of below object
 
 FORM ID ID_PrefsForm AT (2 83 156 75)
 MODAL
@@ -1412,6 +1528,36 @@ BEGIN
 	graffitistateindicator at (140 prevtop)
 end
 
+HEX "fnav" ID SetPasswdForm
+1.w                     // Resource Version
+4.w                     // Number of Objects in focus order
+20.w                    // Size of header (20 bytes)
+8.w                     // Size of list elements (8 bytes)
+1.l                     // navFlags=kFrmNavHeaderFlagsObjectFocusStartState
+MasterKeyFld.w          // ID of initial focus object
+OkBtn.w             // ID of jump to object
+OkBtn.w             // ID of bottom-left object
+0.w                     // Padding
+
+MasterKeyFld.w          // ID of object
+0.w                     // objectFlags = none
+0.w                     // ID of above object
+ConfirmFld.w     	// ID of below object
+
+OkBtn.w             // ID of object
+0.w                     // objectFlags = none
+ConfirmFld.w     // ID of above object
+0.w                     // ID of below object
+
+CancelBtn.w             // ID of object
+0.w                     // objectFlags = none
+ConfirmFld.w     // ID of above object
+0.w                     // ID of below object
+
+ConfirmFld.w     // ID of object
+0.w                     // objectFlags = none
+MasterKeyFld.w          // ID of above object
+OkBtn.w             // ID of below object
 
 FORM ID GenerateForm AT (2 50 156 108)
 HELPID GenerateHelp
@@ -1462,6 +1608,36 @@ BEGIN
 	GRAFFITISTATEINDICATOR AT (140 PREVTOP)
 END
 
+HEX "fnav" ID UnlockForm
+1.w			// Resource Version
+4.w			// Number of Objects in focus order
+20.w			// Size of header (20 bytes)
+8.w			// Size of list elements (8 bytes)
+1.l			// navFlags=kFrmNavHeaderFlagsObjectFocusStartState
+MasterKeyFld.w		// ID of initial focus object
+UnlockBtn.w		// ID of jump to object
+UnlockBtn.w		// ID of bottom-left object
+0.w			// Padding
+
+MasterKeyFld.w		// ID of object
+0.w			// objectFlags = none
+UnlockBtn.w		// ID of above object
+VeilPasswordCheck.w	// ID of below object
+
+UnlockBtn.w		// ID of object
+0.w			// objectFlags = none
+VeilPasswordCheck.w	// ID of above object
+0.w			// ID of below object
+
+CancelBtn.w		// ID of object
+0.w			// objectFlags = none
+VeilPasswordCheck.w	// ID of above object
+0.w			// ID of below object
+
+VeilPasswordCheck.w	// ID of object
+0.w			// objectFlags = none
+MasterKeyFld.w		// ID of above object
+UnlockBtn.w		// ID of below object
 
 FORM ID BusyEncryptForm AT (20 65 120 30)
 MODAL
@@ -1809,8 +1985,18 @@ BEGIN
 	BITMAP "keyring-32-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 1
 	BITMAP "keyring-64-8.ppm" BPP 8 DENSITY 2
 END
-BITMAP ID LockBitmap "lock.xbm"
-BITMAP ID UnlockBitmap "unlock.xbm"
+
+BITMAPFAMILYEX ID LockBitmap
+BEGIN
+	BITMAP "lock.xbm" BPP 1
+	BITMAP "lock-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 2
+END
+
+BITMAPFAMILYEX ID UnlockBitmap
+BEGIN
+	BITMAP "unlock.xbm" BPP 1
+	BITMAP "unlock-8.ppm" BPP 8 TRANSPARENT 255 255 255 DENSITY 2
+END
 
 STRING ID KeyringFindStr "Keyring"
 
