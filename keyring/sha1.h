@@ -23,12 +23,5 @@
 #define kSHA1HashSize            20
 #define kSHA1BlockSize           64
 
-typedef struct SHAstate_st
-{
-    UInt32 dig[5];
-    UInt32 len,lenHi;
-    UInt32 data[kSHA1BlockSize/sizeof(UInt32)];
-} SHA_CTX;
-
 SHA1_SECTION void 
 SHA1_Block (const UInt32 *digin, UInt32 *buffer, UInt32 *digout);
