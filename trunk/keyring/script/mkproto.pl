@@ -13,6 +13,7 @@ sub parseFuncDefinition($) {
     $_ =~ s/^\s//;
     $_ =~ s/\s$//;
 
+#    print STDERR "parseFunc: $_\n";
     if (/^static|^extern/ || !/^[a-zA-Z_]/) {
 	return;
     }
@@ -101,7 +102,7 @@ while (<>)
 	}
 
 	if ($instring) {
-	    if ($_ =~ s/([^\\\"]|\\.)*//) {
+	    if ($_ =~ s/^([^\\\"]|\\.)*\"//) {
 		$instring = 0;
 	    } else {
 		last;
@@ -109,7 +110,7 @@ while (<>)
 	}
 
 	if ($inchar) {
-	    if ($_ =~ s/([^\\\']|\\.)*//) {
+	    if ($_ =~ s/^([^\\\']|\\.)*\'//) {
 		$inchar = 0;
 	    } else {
 		last;
