@@ -60,13 +60,13 @@ AWK		= awk
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.1pre4
-DEFINES		= -DBETA -DkAppVersion=0x1005
+VERSION         = 1.1
+DEFINES		= -DBETA -DkAppVersion=0x1010
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
 
-OPTIM		= -g #-O3 -finline-functions -g
+OPTIM		= -O3 -finline-functions -g
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 

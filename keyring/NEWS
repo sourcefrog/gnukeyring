@@ -1,4 +1,4 @@
-Keyring for PalmOS 1.1 preview 3
+Keyring for PalmOS 1.1
 (previously GNU Keyring)
 
 Copyright 1999-2002 The GNU Keyring Sourceforge Team
@@ -54,7 +54,7 @@ Changes from 1.0:
  * Login and Passwords are displayed in a special font to distinguish
    I and l.
 
-Preview files may be downloaded from:
+Files may be downloaded from:
 
   https://sourceforge.net/project/showfiles.php?group_id=306
 
