@@ -29,6 +29,7 @@ sub parseVarDefinition($) {
     $_ = $_[0];
     $_ =~ s/\s+/ /g;
     $_ =~ s/^\s//;
+    $_ =~ s/\=.*$//;
     $_ =~ s/\s$//;
 
     # skip static/extern/typedef or nonalphanumeric things
