@@ -1,5 +1,0 @@
-Generer Passord: Lage eit nytt tilfeldig passord etter nokre kriteriar.
-
-Lagre som Memo: Lagre all informasjon fra denne nyklen som eit nytt memo.
-
-Angre alle: Gjere om alle endringar sidan posten blei opna.

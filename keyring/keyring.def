@@ -1,3 +1,0 @@
-application { "KeyringTest" GtkR }
-
-multiple code { "code2" }

@@ -1,5 +1,0 @@
-Genera password: Crea una nuova password casuale corrispondente ai criteri specificati
-
-Esporta in Memo Pad: Salva le informazioni di questo record in un nuovo memo.
-
-Annulla tutto: Annulla tutte le modifiche del record da quando è stato aperto.
