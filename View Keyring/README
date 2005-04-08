@@ -6,17 +6,26 @@ PalmOS project under the BSD license.
 
 Build requirements
 ------------------
-View Keyring uses the OpenSSL crypto shared library supplied by Apple
-to do the required hashing and decryption. Unfortunately Apple only
-started shipping the OpenSSL header files in Mac OS X 10.2 (Jaguar),
-so this makes building View Keyring a bit more difficult if you're
-still on 10.1. The OS X boxes in Sourceforge's "Compile Farm" are
-still running 10.1.
+Nothing unusual should be required, as by default everything uses
+standard stuff that Apple always ship.
+
+However if you change DataAdditions.m so that USING_CDSA is undefined,
+the code will try to use an OpenSSL library shipped by Apple. (CDSA is
+the name of the open source cryptographic library in Apple's Security
+framework, and by default View Keyring will use that.)
+
+Unfortunately Apple only started shipping the OpenSSL header files in
+Mac OS X 10.2 (Jaguar), so this makes building View Keyring a bit more
+difficult if you're still on 10.1. The OS X boxes in Sourceforge's
+"Compile Farm" are still running 10.1.
 
 If you don't have the OpenSSL headers, then just grab a tarball of the
 appropriate OpenSSL version from <http://www.openssl.org/> and extract
 it. Add the path to the OpenSSL headers to the C compiler settings in
 the View Keyring project.
+
+You will also need to add /usr/lib/libcrypto.dylib to the project's
+Frameworks.
 
 That's roughly how to do it anyway, since I haven't had 10.1 for quite
 a while now my memory's a bit rusty on the details!
@@ -39,9 +48,10 @@ mounted disk image, perhaps) as well.
 % hdiutil convert -format UDZO -o /tmp/vk.dmg /tmp/vktmp.dmg
 % hdiutil internet-enable /tmp/vk.dmg
 
-The linker warns about a multiply defined symbol (_crypt) being
-present in the OpenSSL crypto library and the standard library. Ignore
-it, as View Keyring doesn't use that function anyway.
+If you're using OpenSSL (see above) the linker warns about a multiply
+defined symbol (_crypt) being present in the OpenSSL crypto library and
+the standard library. Ignore it, as View Keyring doesn't use that
+function anyway.
 
 Bugs
 ----
@@ -58,6 +68,6 @@ Obviously it would be nice to use View Keyring to make modifications
 to the keyring file.
 
 What would be even better IMO would be to have a real conduit that
-synchronized changes on the Palm to an Apple keychain. Currently it is
-extremely difficult (impossible?) to build conduits on OS X using gcc,
-so sadly that dream will have to wait...
+synchronized changes on the Palm to an Apple keychain. I'm working on
+a conduit for Missing Sync, however it will not work with the old Palm
+Hotsync Manager due to Palm not supporting Mach-O.
