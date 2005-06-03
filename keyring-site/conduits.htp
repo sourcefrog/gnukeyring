@@ -15,9 +15,12 @@
   the respective author.
 
   <ul>
+   <li>Markus Griessnig wrote
+        a <a href="http://www.ict.tuwien.ac.at/keyring">Java Keyring editor</a>.
+	It supports both keyring-1.2.x and keyring-2.0 file format.</li>
    <li>Frank Taylor wrote
 	a <a href="http://www.lieder.dsl.pipex.com/software/JavaKeyring/index.html">portable
-Java Keyring viewer</a>.
+Java Keyring viewer</a>.</li>
 
    <li><a href="http://sourceforge.net/sendmessage.php?touser=160221">Stefan Wundrak</a> wrote a <a href="http://www.wundrak.de/keyring/">viewer for Windows</a>.</li>
 
