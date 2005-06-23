@@ -149,12 +149,21 @@
    operate on PalmOS 2.0.  
 </faqentry>
  --->
+<faqentry title="Keyring 2.0-pre4 doesn't accept the password I just entered.">
+   <p>This is due to a bug in th pre-release.  On the first run it always
+   installs the empty password.  You can change it via the Keyring menu. Choose
+   <code>Set Password</code>, press Unlock <b>without entering a password</b>
+   and set a new password in the dialog.
+</faqentry>
 
 <faqentry title="Keyring doesn't accept my password any more. What can I do?">
-   <p>Simply <pagelink id="download" name="download and install">version
-   1.1 or later.  It should be able to recover all
-   of your data.  If that does not help contact 
-   <sfperson id=18252 login="hoenicke" name="Jochen&nbsp;Hoenicke">.
+   <p>Make sure you have at least Keyring 1.1 or later.  If you have an
+   older version <pagelink id="download" name="upgrade to the latest
+   stable version">.</p>
+
+   <p>If it happens with keyring 1.1 or later please see
+   <buglink id="1180678" bugname="keyring does not accept password">.  Scroll
+   down the comments written by me (hoenicke) for a procedure to recover.</p>
 
    <p>This can have several causes: One is that the
    "<code>SortInfo</code>" field of a PalmOS database is not restored
