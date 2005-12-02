@@ -258,7 +258,7 @@ Err Upgrade_UnpackOldRecord(Char *recPtr,
 
     /* Copy LastChangeTime */
     destPtr = (Char*) (pft + 1);
-    if (size > 2 && (*recPtr != 0 || *(recPtr+1) != 0)) {
+    if (size >= 2 && (*recPtr != 0 || *(recPtr+1) != 0)) {
 	*destPtr++ = *recPtr++;
 	*destPtr++ = *recPtr++;
 	size -= 2;
