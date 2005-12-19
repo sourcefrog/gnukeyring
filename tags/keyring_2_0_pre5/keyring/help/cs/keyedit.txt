@@ -1,0 +1,5 @@
+Generovat heslo: Vytvoøí náhodné heslo, splòující daná kritéria.
+
+Export do Poznámkového bloku: Ulo¾í v¹echny informace o daném záznamu do Poznámkového bloku.
+
+Zpìt v¹e: Zru¹í v¹echny provedené zmìny od otevøení záznamu.

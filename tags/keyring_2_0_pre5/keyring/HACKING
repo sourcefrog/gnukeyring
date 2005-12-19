@@ -1,0 +1,352 @@
+-*- mode: text -*-
+
+$Id$
+
+
+======================================================================
+Requirements
+
+ * Can store personal-confidential information
+
+ * Storage should not be the weakest link
+
+ * Should be not-too-hard to decode on a PC, either using a custom
+   program or writing one from this document.
+
+ * Should use a well known and researched encryption method.
+
+
+======================================================================
+Database format -- Version 5
+
+APPINFO Block:
+==============
+  AppInfoType      categoryInfo  /* needed by PalmOS */
+  SaltHashType     masterHash
+
+#if VERSION > 5
+  /* later versions may add the following information.
+     This is just a suggestion. I will see if it fits, later. */
+  KrCatInfoType    krCatInfo[dmRecNumCategories/*16*/]
+  UInt8            numberOfLables;
+  UInt8            numberOfTemplates;
+  LabelInfoType    labelInfos[numberOfLables];
+  TemplateInfoType templateInfos[numberOfTemplates];
+  ...
+
+KrCatInfoType:
+  UInt8  defaultTemplate
+#endif
+
+SaltHashType:
+  UInt8    salt[8];
+  UInt16   iter;
+  UInt16   cipher;     /* 0: None, 1: DES-EDE3, 2: AES128, 3: AES256 */
+  UInt8    hash[8];
+
+#if VERSION > 5
+LabelInfoType:
+  Char   label[16];    /* User defined label text     */
+  UInt8  fieldType;    /* fieldType 0:Text 1:Password 2:Modified-Date 3:OP*/
+  FontID defaultFont;  /* font to use for value field */
+
+TemplateInfoType:
+  strz   name;
+  UInt8  numFields;
+  LabelID label[numFields];
+#endif
+
+Record format:
+==============
+
+ unencrypted:
+  Field   nameField
+  IVec    ivec
+ encrypted:
+  Field  field1
+  Field  field2
+  ...
+  random padding to multiple of 8 bytes.
+
+where Field is:
+  UInt16  len    /* length of field including header, 0 for last field */
+  LabelID label  /* 0:name,1:account,2:password,3:last-changed,255:notes */
+  UInt8   font   /* Only stdfont(0) allowed */
+  data
+  0/1 byte padding for next even address.
+
+#if VERSION > 5
+LabelID is a 8 bit index into the label table in AppInfo block.
+#endif
+
+Deleted or archived records are always stored at the end of the
+database.
+
+
+
+Crypto information:
+
+For deriving the encryption key from the password, we use the
+algorithm described in the PKCS #5 (RFC 2898) standard.
+
+Snib          = des_odd_parity(PBKDF2(Password, Salt, Iter, keylen))
+EncryptionKey = Snib
+KeyHash       = first64bits(SHA1(Snib ; Salt))
+InitialVector = random 8 bytes (stored in record).
+
+Encryption is done with DES-EDE3-CBC or AES-CBC.  keylen is 16 byte
+for AES, 24 byte for DES and 32 byte for AES-256.  des_odd_parity is
+only called for DES keys (this removes 24 bits).
+
+Reasoning:
+
+The Snib is generated from the password string in standard way (this
+makes it easier to write a conduit). The iteration count (Iter) is
+used to make brute-force attacks difficult.  It is chosen by the user
+to compromise between speed and security as the default value (2500
+for OpenSSL) is much too slow on a m68k based palm.  The Snib is all
+you need to encrypt database and check for correctness.  Because the
+snib also depends on the salt and because it doesn't give away the
+master password, getting the snib doesn't allow to encrypt another
+database with the same password.
+
+The KeyHash is stored in the data base.  Therefore it must be a secure
+hash and should use the salt to prevent dictionary attacks.  While the
+key has 128/168/256 bits, the KeyHash only has 64 bits.  This makes it
+impossible to reconstruct the key by brute-force reversal of the hash,
+at least if the password is stronger than 64 bits.  On the other hand
+64 bits are enough to detect mistyped passwords.
+
+InitialVector contains 8 random bytes to make it unlikely that the same
+IV will ever be used to encrypt a different record.
+
+An attacker can read the KeyHash.  Following attacks are possible:
+ * Brute Forcing the MasterKey.  This is now much more infeasible
+   because of the 1000 SHA-1 hashes that need to be calculated per try.
+ * Brute Forcing the Snib.  Infeasible because the snib contains
+   128 bit of randomness.
+ * Reversing MD5.  This is commonly thought to be infeasible.
+ * Dictionary attacks can't work because of the salt.
+
+=====================================================================
+Database format -- Version 0-4
+
+These  versions differ only in the way they store the masterHash.
+Version 3 and Version 2 were temporary versions and are not supported.
+Version 0:  stored in AppInfo block, didn't support categories.
+Version 1:  stored in SortInfo block (which isn't backed up).
+Version 4:  stored in hidden record at index 0.
+
+Packed format of key records:
+
+strz name of record
+encrypted:
+  strz account name
+  strz password
+  strz notes
+  DateType last change  /* omitted in keyring 1.0 and later */
+  zero padding to multiple of 8 bytes.
+
+It's OK for any of these fields to be empty.
+
+Crypto Information:
+
+KeyHash       = MD5(Salt; MasterKey; padding to 64 bytes)
+Snib          = MD5(MasterKey)
+EncryptionKey = OddParity(Snib)
+
+Encryption is done with DES-EDE2-ECB
+
+In this scheme I can see several disadvantages: Every record is
+encrypted with the same key so one may notice in the encrypted data
+when two fields have the same account name.  Secondly the MD5 hash is
+very fast and may lead to a brute force password attack.  The
+encryption key doesn't depend on a salt.  If someone steals the
+encryption key (from the snib) he can read every database with the
+same master key.  And last but not least one cannot check from the
+snib whether it matches the key database.
+
+====================================================================
+Password timeout:
+
+The encryption key (AKA snib) is stored in a special memory block.
+This block is owned by the operation system so it doesn't get removed
+when the application is closed.  A feature entry points to it.
+
+The expiry is implemented with AlmSetAlarm, which is available for all
+supported operation system versions.  When the keyring application
+receives an alarm it calls Snib_Eradicate, which clears the encryption
+key and frees it.  The eradicate function is also called when the time
+is changed.
+
+All functions that ask for encryption key should clear their copy
+after they are done with it.
+
+
+====================================================================
+Encryption:
+
+Calling the PalmOS functions is a good thing, because it makes the
+code simpler and also probably makes it safe to re-export this code
+from the USA.  This means we can only use DES and have to do a bit of
+work to call it the right way, but that's OK.  Unfortunately the
+PalmOS functions are all undocumented and not supported for all Palms.
+So we now rely on external libraries such as PilotSSLeay to get
+portable crypto functions.
+
+DES-EDE gives 2^168 possible encryption keys although a
+meet-in-the-middle attack needs "only" 2^128 steps.  AES is the newer
+faster algorithm that supports 128, 192 or 256 bit keys.  However,
+since the only secret here is the user's password it's the real
+limiting factor.  Reckon on about 6.6 bits of entropy per character,
+assuming they mix all kinds of writable characters and avoid using
+pronounceable words.  To get more protection than an 128 bit key the
+user would have to enter a 20 character password, which is asking a
+lot.  So 3DES is probably quite sufficient -- it puts the likely
+weakest link under the user's control.
+
+The encryption key is directly determined by the master password using
+PKCS #5 v2 (the PBKDF2 algorithm).  This means that the full database
+has to be reencrypted when password is changed. That's pretty
+reasonable, for changing the password ought to lock out anyone who
+knew the previous key. The encryption key (not the master password) is
+kept in memory when the program is unlocked, and scribbled out when
+it's locked again (see above).  Actually, it lasts even when the app
+exits and restarts, because we stay unlocked if timeout hasn't
+expired.  We made sure the encryption key is not stored anywhere where
+it could be transferred to a PC.
+
+We leave the first part of the record -- the publicly-visible name --
+unencrypted at the start.  This makes it easy to display and sort the
+records even when they're locked.  We use it in the Global Find
+implementation that works only over record names.  Everything after
+that is encrypted.
+
+A verification hash is build from the SHA-1 hash of the encryption
+key.  This allows us to check whether a calculated key is correct,
+instead of trying to decrypt the database with the wrong key.  As the
+SHA-1 algorithm is not reversible and because we only store a small
+part of the hash it is no way to derive the encryption key from the
+hash.
+
+We will prompt for a password when creating a new database.  If the
+user doesn't enter a password the database will be created with an
+empty password, so he can try out the application.  The database is
+even encrypted, though the key can be easily calculated.  It is the
+responsibility of the user to choose a good password when he uses
+keyring for sensitive data.
+
+Most encryption functions work between memory buffers.  This gives us
+the mild inconvenience of needing to use temporary buffers: we have to
+pack/unpack records to give buffers for editing, and have to use
+database manager functions to write out to the database, rather than
+just writing into a buffer.  This is harmless.
+
+
+----------------------------------------------------------------------
+Old notes from Martin Pool (some are outdated now)
+----------------------------------------------------------------------
+Encryption in PalmOS:
+
+Sample code:
+    
+    void KeyDB_StoreSessionKey(Char const *passwd, KeyringInfoPtr ki) {
+        static const Byte src[8] = { 'm', 'a', 'r', 't', 'i', 'n', 0, 0 };
+        static const Byte key[8] = { 0x42, 0, 0, 0, 0, 0, 0, 0 };
+        Err err;
+    
+        err = EncDES((BytePtr) src, (BytePtr) key, ki->sessionKey, true);
+    
+        if (err)
+    	App_ReportSysError("EncDES", err);
+    }
+
+On a PC, you can get the same result by
+
+   openssl enc -des-ede-ecb -K KEYHEX -in foo.bin
+
+where foo.bin contains the 8-byte text and KEYHEX is a hex
+representation of the key, with the first byte first.
+
+This is cool: it gives us some confidence that the algorithm is
+implemented properly.  As far as I can see, if it's returning the same
+results it must be the genuine DES algorithm.
+
+So, it looks like our only option is DES-ECB: we could build something
+stronger, but then Keyring would not be exportable from the US,
+and I'd like to have that if it's at all possible. 
+
+The PalmOS function only encrypts one block at a time, so we need to
+either do block chaining ourselves or just use ECB mode.  Probably the
+first is better if it's not too hard.
+
+Since the records we're encrypting will be relatively small and since
+code simplicity is somewhat important it seems OK to use DES-EDE-ECB
+(as SSLeay and OpenSSL call it).
+
+
+====================================================================
+Versioning
+
+Palm apps are (apparently) allowed to get away with pretty spartan
+support for backward and forward compatibility on the grounds of
+keeping the app small.  The pigeon book suggests that the PC app do
+that, but because our PC side probably won't be allowed to decode the
+records this doesn't help much.  
+
+The version of the database is a single 16-bit value.  The different
+database version numbers are described above.  When keyring finds an
+old database it will upgrade it (unless the user cancels, in which
+case he leaves keyring).  There is no way to downgrade the database to
+an old version again.  Currently, we support upgrading the database
+from any old version (except the temporary and never released database
+versions 2 and 3).  In the future we may drop support for very old
+databases though, to keep the application size small.  In that case
+the user would have to upgrade in two steps.
+
+====================================================================
+Data leakage
+
+It would be good to prevent secret data accumulating in the memory of
+the handheld. 
+
+The best solution is to scribble over buffers that have contained
+secret data when we're done using them before they're returned to the
+memory manager.
+
+We will do OK in this respect by only writing encrypted data into the
+long-lived database memory.  Although unencrypted secret data may
+exist in the data heap it's much quite likely to be overwritten soon by
+other applications, the OS, or by a soft reset than data in the
+database.  This is not a guarantee.
+
+The main exposure that's out of our control is the buffers allocated
+for editing in the form.  
+
+Without the PalmOS source code we can't know whether it will allocate
+new buffers, resize them, make copies or anything else.  However,
+trusting that it will be lazy we can assume:
+
+ * it won't copy the data anywhere else, except when the buffers need
+   to be grown.
+
+ * the buffers won't shrink
+
+We make sure to scribble over the buffers when the form goes away
+rather than just letting the form fields dispose of their own memory.
+However, there is no way to trace the old buffers that were released
+because the field control resized it.
+
+If the user chooses to copy text to the clipboard that's their own
+problem. 
+
+ LocalWords:  KeyringInfo strz ULONG record's KeyRecordType unencrypted NUL ECB
+ LocalWords:  DES Debian unencrypt reencrypt appinfo AlmSetAlarm keyring PalmOS
+ LocalWords:  app apps EncDES SSLeay OpenSSL Versioning handheld AppInfoType
+ LocalWords:  categoryInfo SaltHashType masterHash PKCS AES CBC PBKDF krCatInfo
+ LocalWords:  KrCatInfoType dmRecNumCategories UInt numberOfLables labelInfos
+ LocalWords:  numberOfTemplates LabelInfoType TemplateInfoType templateInfos
+ LocalWords:  defaultTemplate endif iter fieldType FontID defaultFont numFields
+ LocalWords:  LabelID nameField IVec ivec len stdfont AppInfo des EncryptionKey
+ LocalWords:  KeyHash SHA InitialVector keylen MasterKey SortInfo DateType
+ LocalWords:  OddParity reencrypted KeyDB
