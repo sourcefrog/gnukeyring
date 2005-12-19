@@ -28,8 +28,8 @@
 
 APP             = keyring
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 2.0-pre4
-DEFINES		= -DBETA -DkAppVersion=0x1994
+VERSION         = 2.0-pre5
+DEFINES		= -DBETA -DkAppVersion=0x1995
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-384 -Wshadow -Wcast-align
@@ -41,7 +41,8 @@ CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
 RCP             = $(APP).rcp
 RCP_IN          = $(RCP).ja $(RCP).iso2 $(RCP).cp1251 $(RCP).in
-BITMAPS         = keyring-15-1.pbm keyring-22-1.pbm keyring-22-8.ppm    \
+BITMAPS         = keyring-15-1.pbm keyring-15-8.ppm \
+		  keyring-22-1.pbm keyring-22-8.ppm \
 		  keyring-64-8.ppm keyring-22.xcf keyring-64.xcf \
                   lock-1.pbm lock-8.ppm lock-hi-8.ppm \
                   unlock-1.pbm unlock-8.ppm unlock-hi-8.ppm
@@ -96,7 +97,9 @@ SRC_DIST        = $(RCP_IN) Makefile $(RESOURCES) \
 		  $(DOCS) $(SRC) $(ASMGEN) $(HEADERS) $(DEF) \
 		  $(subst .def,-stubs.c,$(GLIBDEF)) \
 		  $(HELP_TXT) $(SCRIPTS) prondata.c \
-		  $(SSLEAY) $(AESLIBS)
+		  $(SSLEAY) $(AESLIBS) \
+		  prototype.h .proto.stamp $(subst .pl,.o,$(ASMGEN)) \
+		  $(WIDEBITMAPS)
 
 TOP_DIST	= COPYING COPYING.AESLib README INSTALL NEWS
 
@@ -165,7 +168,7 @@ tmpdir:=$(shell echo _build.$$$$)
 $(DIST_BALL): $(SRC_DIST) $(TOP_DIST)
 	rm -rf $(tmpdir)
 	mkdir -p $(tmpdir)/$(BASE)
-	cp --parents $(SRC_DIST) $(tmpdir)/$(BASE)
+	cp -p --parents $(SRC_DIST) $(tmpdir)/$(BASE)
 	cp $(TOP_DIST) $(tmpdir)/$(BASE)
 	$(TAR) -C $(tmpdir) -czf $(DIST_BALL) $(BASE)
 	rm -fr $(tmpdir)
