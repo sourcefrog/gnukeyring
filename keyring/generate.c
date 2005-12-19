@@ -183,8 +183,8 @@ static void Generate_HexSelected(FormPtr frm, int selected)
 	}
     }
     for (i = 0; lenMap[i] != -1; i += 2) {
-	StrIToA(lenLabels[i], lenMap[i] * (selected ? 2 : 1));
-	CtlSetLabel(UI_GetObjectByID(frm, lenMap[i+1]), lenLabels[i]);
+	StrIToA(lenLabels[i/2], lenMap[i] * (selected ? 2 : 1));
+	CtlSetLabel(UI_GetObjectByID(frm, lenMap[i+1]), lenLabels[i/2]);
     }
 }
 
@@ -264,7 +264,7 @@ static void Generate_Word(Char * word, Int16 flags, Int16 pwlen)
     /*
      * Get rules and digram pointers.
      */
-    pronHandle = DmGet1Resource('PRON', 1000);
+    pronHandle = DmGetResource('PRON', 1000);
     prondata = MemHandleLock(pronHandle);
 
     MemSet(&state, sizeof(state), 0);
@@ -337,6 +337,7 @@ static void Generate_Word(Char * word, Int16 flags, Int16 pwlen)
 
     word[word_length] = '\0';
     MemHandleUnlock(pronHandle);
+    DmReleaseResource(pronHandle);
 }
 
 static MemHandle Generate_MakePassword(FormPtr frm)
