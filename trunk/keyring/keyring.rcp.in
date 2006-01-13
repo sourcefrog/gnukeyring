@@ -1472,10 +1472,10 @@ BEGIN
 	POPUPTRIGGER "" ID CategoryTrigger AT (RIGHT@149 0 AUTO AUTO) RIGHTANCHOR USABLE
 	LIST "" ID CategoryList AT (RIGHT@159 0 80 AUTO) NONUSABLE VISIBLEITEMS 1
 
-	TABLE ID ID_KeyTable AT (0 15 152 132) COLUMNS 1 ROWS 12
+	TABLE ID KeyTable AT (0 15 152 132) COLUMNS 1 ROWS 12
 		EDITABLE COLUMNWIDTHS 150
 
-	SCROLLBAR ID ID_KeyTableScrollBar 
+	SCROLLBAR ID KeyTableScrollBar 
 		AT (PREVRIGHT+1 PREVTOP 7 PREVHEIGHT)
 		VALUE 0 MIN 0 MAX 0 PAGESIZE 0
 
@@ -1494,8 +1494,8 @@ NAVIGATION ID ListForm
 NAVIGATIONMAP
   ROW CategoryTrigger
       LockBtn
-      ID_KeyTable           SKIP
-      ID_KeyTableScrollBar  SKIP
+      KeyTable           SKIP
+      KeyTableScrollBar  SKIP
   ROW LookUpFld
   ROW NewKeyBtn
 END
@@ -1518,7 +1518,7 @@ BEGIN
 
 	LIST "" ID CategoryList AT (RIGHT@159 1 80 AUTO) NONUSABLE VISIBLEITEMS 1
 
-	FIELD ID ID_KeyNameField AT (47 16 110 AUTO) USABLE  
+	FIELD ID KeyNameField AT (47 16 110 AUTO) USABLE  
 		UNDERLINED AUTOSHIFT MAXCHARS 40
 
 	LABEL "Name:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP) 
@@ -1538,7 +1538,7 @@ BEGIN
 
         LABEL "Changed:" AUTOID AT (RIGHT@PREVLEFT-2 PREVTOP)
 
-	FIELD ID ID_NotesField AT (0 PREVBOTTOM+2 152 77) USABLE
+	FIELD ID NotesField AT (0 PREVBOTTOM+2 152 77) USABLE
 		UNDERLINED AUTOSHIFT MULTIPLELINES MAXCHARS 32760 
 	SCROLLBAR ID NotesScrollbar AT (152 PREVTOP 7 PREVHEIGHT) USABLE 
 	
@@ -1550,21 +1550,22 @@ END
 
 NAVIGATION ID KeyEditForm
   INITIALSTATE kFrmNavHeaderFlagsObjectFocusStartState
-  INITIALOBJECTID    ID_KeyNameField
+  INITIALOBJECTID    KeyNameField
   JUMPOBJECTID       DoneBtn
   BOTTOMLEFTOBJECTID DoneBtn
 NAVIGATIONMAP
   ROW CategoryTrigger
       LockBtn
-  ROW ID_KeyNameField
+  ROW KeyNameField
   ROW AccountField
-  ROW PaswordField
+  ROW PasswordField
   ROW DateTrigger
-  ROW ID_NotesField
+  ROW NotesField
   ROW DoneBtn
+      GenerateBtn
 END
 
-FORM ID ID_PrefsForm AT (2 69 156 89)
+FORM ID PrefsForm AT (2 69 156 89)
 MODAL
 BEGIN
 	TITLE "Preferences"
@@ -1585,7 +1586,7 @@ BEGIN
 	CHECKBOX "Use Keyring fonts" ID KeyringFontsCheck
 		AT (3 PREVBOTTOM+2 AUTO AUTO) FONT 1
 
-/*        CHECKBOX "Lock when switched off" ID ID_PowerOffLock 
+/*        CHECKBOX "Lock when switched off" ID PowerOffLock 
                AT (3 PREVBOTTOM+1 AUTO AUTO) FONT 1
 */
 	
@@ -1667,9 +1668,9 @@ BEGIN
 	PUSHBUTTON "A-Z" id IncludeUpper at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "0-9" id IncludeDigits at (prevright+1 prevtop auto auto) 
 	PUSHBUTTON "!@$" id IncludePunct at (prevright+1 prevtop 20 auto)
-        PUSHBUTTON "@@langSpecificChars" id ID_IncludeHigh at (prevright+1 prevtop 22 auto)
-	PUSHBUTTON "hex" id ID_Hex at (46 prevbottom+1 AUTO AUTO)
-        PUSHBUTTON "@@pronounceable" id ID_Syllables at (prevright+1 prevtop 151-prevright auto)
+        PUSHBUTTON "@@langSpecificChars" id IncludeHigh at (prevright+1 prevtop 22 auto)
+	PUSHBUTTON "hex" id IncludeHex at (46 prevbottom+1 AUTO AUTO)
+        PUSHBUTTON "@@pronounceable" id IncludeSyllables at (prevright+1 prevtop 151-prevright auto)
 
 	BUTTON "Generate" id OkBtn at (3 PREVBOTTOM+7 auto auto)
 	button "Cancel" id CancelBtn at (prevright+5 prevtop auto auto)
@@ -1775,7 +1776,7 @@ BEGIN
 END
 
 
-ALERT ID ID_KeyDatabaseAlert
+ALERT ID KeyDatabaseAlert
 ERROR
 BEGIN
 	TITLE "Error"
@@ -1786,7 +1787,7 @@ BEGIN
 END
 
 
-ALERT ID ID_SnibDatabaseAlert
+ALERT ID SnibDatabaseAlert
 ERROR
 BEGIN
 	TITLE "Error"
@@ -1797,7 +1798,7 @@ BEGIN
 END
 
 
-ALERT ID ID_CreateDBAlert
+ALERT ID CreateDBAlert
 ERROR
 BEGIN
 	TITLE "Error"
@@ -1807,7 +1808,7 @@ BEGIN
 	BUTTONS "OK"
 END
 
-ALERT ID ID_ReencryptAlert
+ALERT ID ReencryptAlert
 ERROR
 BEGIN
 	TITLE "Error"
@@ -1818,7 +1819,7 @@ BEGIN
 END
 
 
-ALERT ID alertID_ReadOnly
+ALERT ID ReadOnlyAlert
 ERROR
 BEGIN
 	TITLE "Keyring"
@@ -1829,7 +1830,7 @@ BEGIN
 END
 
 
-ALERT ID alertID_OfferReadOnly
+ALERT ID OfferReadOnlyAlert
 CONFIRMATION
 BEGIN
 	TITLE "Keyring"
@@ -1840,7 +1841,7 @@ BEGIN
 END
 
 
-ALERT ID alertID_ExportEmpty
+ALERT ID ExportEmptyAlert
 ERROR
 BEGIN
 	TITLE "Export"
@@ -1895,7 +1896,7 @@ BEGIN
 END
 
 
-ALERT ID alertID_PasswordHashMissing
+ALERT ID PasswordHashMissingAlert
 WARNING
 BEGIN
     TITLE "Database Damaged"
@@ -1927,7 +1928,7 @@ BEGIN
 END
 
 
-ALERT ID ID_SortError
+ALERT ID SortErrorAlert
 ERROR
 BEGIN	
 	TITLE "Sort Error"
@@ -1949,7 +1950,7 @@ BEGIN
 END
 
 
-ALERT ID alertID_UpgradeReadOnly
+ALERT ID UpgradeReadOnlyAlert
 ERROR
 BEGIN
 	TITLE "Incompatible Database"
@@ -2011,7 +2012,7 @@ BEGIN
 
 	PULLDOWN "Options"
 	BEGIN
-		MENUITEM "Preferences..." ID ID_PrefsCmd
+		MENUITEM "Preferences..." ID PrefsCmd
 		MENUITEM "About..." ID AboutCmd
 	END
 END
@@ -2024,7 +2025,7 @@ BEGIN
 		MENUITEM "Generate Password..." ID GenerateCmd
 		MENUITEM "Export to Memo" ID ExportMemoCmd
 		MENUITEM SEPARATOR
-		MENUITEM "Undo All" ID ID_UndoAllCmd
+		MENUITEM "Undo All" ID UndoAllCmd
 		MENUITEM "Delete..." id DeleteKeyCmd 
 	END
 
@@ -2042,7 +2043,7 @@ BEGIN
 
 	PULLDOWN "Options"
 	BEGIN
-		MENUITEM "Preferences..." ID ID_PrefsCmd 
+		MENUITEM "Preferences..." ID PrefsCmd 
 		MENUITEM "Tips..."	ID HelpCmd
 		MENUITEM "About..." ID AboutCmd
 	END

@@ -231,8 +231,8 @@ static GUI_SECTION void ListForm_InitTable(void)
 static GUI_SECTION void ListForm_FormOpen(void)
 {
     f_ListForm = FrmGetActiveForm();
-    f_Table = UI_GetObjectByID(f_ListForm, ID_KeyTable);
-    f_ScrollBar = UI_GetObjectByID(f_ListForm, ID_KeyTableScrollBar);
+    f_Table = UI_GetObjectByID(f_ListForm, KeyTable);
+    f_ScrollBar = UI_GetObjectByID(f_ListForm, KeyTableScrollBar);
     f_LookUp = UI_GetObjectByID(f_ListForm, LookUpFld);
     f_SelectedIdx = kNoRecord;
 
@@ -344,7 +344,7 @@ GUI_SECTION Boolean ListForm_HandleEvent(EventPtr event)
 {
     UInt16        tableIndex; 
     f_ListForm = FrmGetActiveForm();
-    tableIndex = FrmGetObjectIndex (f_ListForm, ID_KeyTable);
+    tableIndex = FrmGetObjectIndex (f_ListForm, KeyTable);
     
     switch (event->eType) {
     case ctlSelectEvent:
@@ -386,7 +386,7 @@ GUI_SECTION Boolean ListForm_HandleEvent(EventPtr event)
         break;
 
     case tblSelectEvent:
-	if (event->data.tblSelect.tableID != ID_KeyTable)
+	if (event->data.tblSelect.tableID != KeyTable)
 	    break;
 	f_SelectedIdx = f_FirstIdx + event->data.tblSelect.row;
 	ListForm_UpdateSelection();

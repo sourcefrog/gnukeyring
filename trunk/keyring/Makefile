@@ -148,10 +148,8 @@ $(RESSTAMPS): %.resstamp: $(BITMAPS) resource.h $(RCP) prondata.o $(WIDEBITMAPS)
 	@[ -d res/$* ] || mkdir -p res/$*
 	@-rm -f res/$*/*
 	@-rm -f *.bin
-	$(PILRC) -allowEditID -H auto.h.tmp -q $(PILRCOPTS_$*) -L $* $(RCP) res/$*/ >/dev/null
+	$(PILRC) -allowEditID -q $(PILRCOPTS_$*) -L $* $(RCP) res/$*/ >/dev/null
 	$(OBJCOPY) -Obinary prondata.o res/$*/PRON03e8.bin
-	@if cmp -s auto.h auto.h.tmp; then rm -f auto.h.tmp; \
-	 else mv auto.h.tmp auto.h; fi
 	@touch $@
 
 # Convert keyring icons to 32 pixel width, so it is easier to center them
@@ -218,10 +216,6 @@ $(DIST_ZIP): $(PRCS) $(SSLEAYLIBS) $(AESLIBS)
 	$(LOCALES:<%=$(BASE)-%.prc)
 	$(ZIP) -jq9 $(DIST_ZIP) ovl/* $(SSLEAYLIBS) $(AESLIBS)
 
-# We try to avoid touching auto.h, because that will kick off
-# rebuilding a lot of source and it's often not necessary.
-auto.h: $(DEFAULTLANG).resstamp
-
 %-stubs.c: %.def
 	$(STUBGEN) $<
 
@@ -233,14 +227,14 @@ auto.h: $(DEFAULTLANG).resstamp
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
-$(OBJ): $(HEADERS) auto.h prototype.h
+$(OBJ): $(HEADERS) prototype.h
 %.o: %.c
 	@echo $(CC) $(OPTIM) $< -o $*.o
 	@$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
 	rm -f *.o *.d $(EXE) $(RCP) TAGS *.bin *.grc *.prc *.resstamp \
-	prototype.h *.bin *.d .*.stamp auto.h *~ *.tmp
+	prototype.h *.bin *.d .*.stamp *~ *.tmp
 	rm -rf res
 
 scrub:	clean

@@ -51,6 +51,18 @@
 #define NotEnoughFeaturesAlert          1027
 #define BetaAlert                       1028
 #define CipherNotSupportedAlert         1029
+#define UpgradeReadOnlyAlert            1030
+#define PasswordHashMissingAlert        1031
+#define ExportEmptyAlert                1032
+#define OfferReadOnlyAlert              1033
+#define ReadOnlyAlert                   1034
+#define ReencryptAlert                  1035
+#define CreateDBAlert                   1036
+#define SnibDatabaseAlert               1037
+#define KeyDatabaseAlert                1038
+#define PrefsForm                       1039
+#define SortErrorAlert                  1040
+
 
 #define ListMenuBar			1100
 #define KeyEditMenuBar			1101
@@ -115,10 +127,17 @@
 #define Iter1000Push                    1251
 #define LabelList			1252
 #define CipherNoPush                    1253
-#define CipherDesPush                   1254
+#define CipherDESPush                   1254
 #define CipherAES128Push                1255
 #define CipherAES256Push                1256
 #define KeyringKeepCheck		1257
+#define IncludeHigh                     1258
+#define IncludeSyllables                1259
+#define IncludeHex                      1260
+#define NotesField                      1261
+#define KeyNameField                    1262
+#define KeyTableScrollBar               1263
+#define KeyTable                        1264
 
 #define AboutCmd			1300
 #define ChecksumCmd			1303
@@ -128,6 +147,11 @@
 #define GenerateCmd			1308
 #define ExportMemoCmd			1309
 #define HelpCmd				1310
+#define UndoAllCmd                      1311
+#define PrefsCmd                        1312
+
+#define ChangeDateStr                   1400
+#define KeyringFindStr                  1401
 
 #define GenerateHelp			1502
 #define KeyEditHelp			1504

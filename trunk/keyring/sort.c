@@ -97,6 +97,6 @@ void Keys_Sort(void)
       */
      err = DmInsertionSort(gKeyDB, Keys_Compare, 0);
      if (err) {
-          UI_ReportSysError2(ID_SortError, err, __FUNCTION__);
+          UI_ReportSysError2(SortErrorAlert, err, __FUNCTION__);
      }
 }

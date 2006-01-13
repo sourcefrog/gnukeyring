@@ -92,7 +92,7 @@ static Boolean Keyring_AcceptsReadOnly(void)
      if (((ret == noPreferenceFound)
           || (size != sizeof accepted)
           || !accepted)) {
-	 if (FrmAlert(alertID_OfferReadOnly) == 0)
+	 if (FrmAlert(OfferReadOnlyAlert) == 0)
 	     accepted = true;
      }
      return accepted;
@@ -185,7 +185,7 @@ Err KeyDB_CreateReservedRecords(void)
     return 0;
 
  outErr:
-    UI_ReportSysError2(ID_CreateDBAlert, err, __FUNCTION__);
+    UI_ReportSysError2(CreateDBAlert, err, __FUNCTION__);
     return err;
 }
 
@@ -370,7 +370,7 @@ static Err KeyDB_CreateDB(void) {
     if (gKeyDBID)
 	DmDeleteDatabase(gKeyDBCardNo, gKeyDBID);
 
-    UI_ReportSysError2(ID_CreateDBAlert, err, __FUNCTION__);
+    UI_ReportSysError2(CreateDBAlert, err, __FUNCTION__);
     return err;
 }
 
@@ -413,12 +413,12 @@ Err KeyDB_Init(void)
      /* So, we opened a database OK.  Now, is it old, new, or
 	just right? */
      if ((err = KeyDB_GetVersion(&ver))) {
-	 UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+	 UI_ReportSysError2(KeyDatabaseAlert, err, __FUNCTION__);
 	 goto closeDB;
      }
      if (ver < kDatabaseVersion) {
 	 if (g_ReadOnly) {
-	     FrmAlert(alertID_UpgradeReadOnly);
+	     FrmAlert(UpgradeReadOnlyAlert);
 	     goto closeDB;
 	 }
 
@@ -446,7 +446,7 @@ Err KeyDB_Init(void)
      return 0;
 
  failDB:
-     UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+     UI_ReportSysError2(KeyDatabaseAlert, err, __FUNCTION__);
      return err;
 
  closeDB:
