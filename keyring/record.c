@@ -61,7 +61,7 @@ Err Record_Unpack(MemHandle record, UnpackedKeyType **u, CryptoKey *recordKey)
 
     fieldLen = EVEN(* (UInt16 *) recPtr) + sizeof(FieldHeaderType);
     if ((UInt32)fieldLen + recordKey->blockSize > MemHandleSize(record)) {
-        FrmCustomAlert(ID_KeyDatabaseAlert,
+        FrmCustomAlert(KeyDatabaseAlert,
                        "record underflow", __FUNCTION__, "");
 	MemHandleUnlock(record);
 	return dmErrCorruptDatabase;
@@ -91,7 +91,7 @@ Err Record_Unpack(MemHandle record, UnpackedKeyType **u, CryptoKey *recordKey)
     while (*(UInt16 *) plainPtr != ENDMARKER) {
 	fieldLen = EVEN (*(UInt16 *) plainPtr) + sizeof(FieldHeaderType);
 	if (offset + fieldLen + 2 > size) {
-	    FrmCustomAlert(ID_KeyDatabaseAlert,
+	    FrmCustomAlert(KeyDatabaseAlert,
 			   "record underflow", __FUNCTION__, "");
 	    *(UInt16 *)plainPtr = ENDMARKER;
 	    break;
@@ -170,7 +170,7 @@ void Record_SaveRecord(UnpackedKeyType const *unpacked, UInt16 idx,
 
     recHandle = DmResizeRecord(gKeyDB, idx, size);
     if (!recHandle) {
-	UI_ReportSysError2(ID_KeyDatabaseAlert, DmGetLastErr(),
+	UI_ReportSysError2(KeyDatabaseAlert, DmGetLastErr(),
                            __FUNCTION__);
 	return;
     }
@@ -287,7 +287,7 @@ Err KeyDB_CreateNew(UInt16 *idx)
  findErrOut:
     err = DmGetLastErr();
  errOut:
-    UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+    UI_ReportSysError2(KeyDatabaseAlert, err, __FUNCTION__);
     return err;
 }
 
@@ -306,5 +306,5 @@ void Key_SetCategory(UInt16 idx, UInt16 category)
     return;
     
 fail:
-    UI_ReportSysError2(ID_KeyDatabaseAlert, err, __FUNCTION__);
+    UI_ReportSysError2(KeyDatabaseAlert, err, __FUNCTION__);
 }

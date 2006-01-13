@@ -131,7 +131,7 @@ static FtrSnibPtr Snib_GetSnib(Boolean create)
 	err = MemPtrSetOwner(snib, 0);
 
     if (err) {
-	UI_ReportSysError2(ID_SnibDatabaseAlert, err, __FUNCTION__);
+	UI_ReportSysError2(SnibDatabaseAlert, err, __FUNCTION__);
 	return NULL;
     }
     FtrSet(kKeyringCreatorID, k_SnibFtrId, (UInt32) snib);

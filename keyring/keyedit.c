@@ -585,10 +585,10 @@ static GUI_SECTION void KeyEdit_GetFields(void)
 {
     f_KeyEditForm = FrmGetActiveForm();
 
-    f_AllFields[k_KeyName] = UI_GetObjectByID(f_KeyEditForm, ID_KeyNameField);
+    f_AllFields[k_KeyName] = UI_GetObjectByID(f_KeyEditForm, KeyNameField);
     f_AllFields[k_Acct] = UI_GetObjectByID(f_KeyEditForm, AccountField);
     f_AllFields[k_Passwd] = UI_GetObjectByID(f_KeyEditForm, PasswordField);
-    f_AllFields[k_Notes] = UI_GetObjectByID(f_KeyEditForm, ID_NotesField);
+    f_AllFields[k_Notes] = UI_GetObjectByID(f_KeyEditForm, NotesField);
 
     f_DateTrg = UI_GetObjectByID(f_KeyEditForm, DateTrigger);
     
@@ -660,7 +660,7 @@ static GUI_SECTION void KeyEdit_FormOpen(void)
     KeyEdit_PrepareFields();
     KeyEdit_FillData();
     FrmSetFocus(f_KeyEditForm,
-                FrmGetObjectIndex(f_KeyEditForm, ID_KeyNameField));
+                FrmGetObjectIndex(f_KeyEditForm, KeyNameField));
 }
 
 static GUI_SECTION void KeyEdit_FormClose(void)
@@ -813,7 +813,7 @@ static GUI_SECTION void KeyEdit_Generate(void)
 static GUI_SECTION void KeyEdit_MaybeExport(void)
 {
      if (KeyEdit_IsEmpty()) {
-          FrmAlert(alertID_ExportEmpty);
+          FrmAlert(ExportEmptyAlert);
           return;
      }
      
@@ -842,7 +842,7 @@ static GUI_SECTION Boolean KeyEdit_HandleMenuEvent(EventPtr event)
 	KeyEdit_MaybeExport();
         return true;
 
-    case ID_UndoAllCmd:
+    case UndoAllCmd:
 	if (!App_CheckReadOnly()) {
 	
 	    /*
@@ -923,7 +923,7 @@ static GUI_SECTION void KeyEdit_PageButton(WinDirectionType dir)
 
 
 static const UInt16 idLinks[] = {
-    0, ID_KeyNameField, AccountField, PasswordField, ID_NotesField, -1
+    0, KeyNameField, AccountField, PasswordField, NotesField, -1
 };
 
 static GUI_SECTION Boolean KeyEdit_Arrow(int dir)
@@ -1061,7 +1061,7 @@ GUI_SECTION Boolean KeyEdit_HandleEvent(EventPtr event)
         }
 
     case fldChangedEvent:
-        if (event->data.fldChanged.fieldID == ID_NotesField) {
+        if (event->data.fldChanged.fieldID == NotesField) {
             KeyEdit_UpdateScrollbar();
             return true;
         }

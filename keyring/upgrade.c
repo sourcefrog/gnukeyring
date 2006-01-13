@@ -486,7 +486,7 @@ UPGRADE_SECTION Err UpgradeDB(UInt16 oldVersion)
 	     * restored from a broken backup.
 	     */
 	    
-	    if (FrmAlert(alertID_PasswordHashMissing) != 0)   /* 0 = "OK" */
+	    if (FrmAlert(PasswordHashMissingAlert) != 0)   /* 0 = "OK" */
 		return appCancelled;
 	} else {
 	    return err;

@@ -32,7 +32,6 @@
 #include "AESLib-noinline.h"
 
 #include "resource.h"
-#include "auto.h"
 #include "keyring.h"
 #include "error.h"
 #include "crypto.h"

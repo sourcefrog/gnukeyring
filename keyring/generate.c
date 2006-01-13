@@ -62,9 +62,9 @@ static const Int16 includeMapDefault[] = {
     kUpper, IncludeUpper,
     kDigits, IncludeDigits,
     kPunct, IncludePunct,
-    0, ID_IncludeHigh,
-    kHex, ID_Hex,
-    kPronounceable, ID_Syllables,
+    0, IncludeHigh,
+    kHex, IncludeHex,
+    kPronounceable, IncludeSyllables,
     -1
 };
 
@@ -73,9 +73,9 @@ static const Int16 includeMapPalmLatin[] = {
     kUpper, IncludeUpper,
     kDigits, IncludeDigits,
     kPunct, IncludePunct,
-    kHigh, ID_IncludeHigh,
-    kHex, ID_Hex,
-    kPronounceable, ID_Syllables,
+    kHigh, IncludeHigh,
+    kHex, IncludeHex,
+    kPronounceable, IncludeSyllables,
     -1
 };
 
@@ -383,7 +383,7 @@ static MemHandle Generate_MakePassword(FormPtr frm)
 static Boolean Generate_HandleEvent(EventPtr event)
 {
     if (event->eType == ctlSelectEvent
-	&& event->data.ctlSelect.controlID == ID_Hex) 
+	&& event->data.ctlSelect.controlID == IncludeHex) 
 	Generate_HexSelected(FrmGetActiveForm(), event->data.ctlSelect.on);
 
     return false;

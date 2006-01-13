@@ -37,7 +37,7 @@
 void PrefsForm_Run(void)
 {
     FormPtr 	prevFrm = FrmGetActiveForm();
-    FormPtr	frm = FrmInitForm(ID_PrefsForm);
+    FormPtr	frm = FrmInitForm(PrefsForm);
     ControlPtr  fontsCtl, keepCtl;
     UInt16	btn;
     Int16	chosen;

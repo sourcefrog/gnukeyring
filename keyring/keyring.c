@@ -222,7 +222,7 @@ Boolean Common_HandleMenuEvent(EventPtr event)
 	App_AboutCmd();
 	return true;
 
-    case ID_PrefsCmd:
+    case PrefsCmd:
 	if (Unlock_CheckKey())
 	    PrefsForm_Run();
 	return true;
@@ -361,7 +361,7 @@ UInt32 PilotMain(UInt16 launchCode,
 Boolean App_CheckReadOnly(void)
 {
      if (g_ReadOnly)
-          FrmAlert(alertID_ReadOnly);
+          FrmAlert(ReadOnlyAlert);
      return g_ReadOnly;
 }
 
