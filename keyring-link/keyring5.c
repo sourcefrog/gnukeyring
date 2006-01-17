@@ -258,6 +258,7 @@ void keyring5_unpack(struct pi_file *pif, int idx, CryptoKey *cryptoKey,
     char               *ivec;
 
     rec = malloc(sizeof(*rec));
+    memset(rec, 0, sizeof(*rec));
     *prec = rec;
 
     rec->idx = idx;
