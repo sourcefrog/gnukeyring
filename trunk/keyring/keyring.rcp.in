@@ -52,7 +52,7 @@ BEGIN
   "@@GenerateHelp" = "help/en/generate.txt"
   "@@KeyEditHelp" = "help/en/keyedit.txt"
 
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   "@@accel_Undo" = "U"
   "@@accel_Cut" = "X"
@@ -74,7 +74,7 @@ BEGIN
   "Name:" = "Nom:"
   "Account:" = "Compte:"
   "Password:" = "Clau:"
-  "Confirm:"  = "Acceptar:" 
+  "Confirm:" = "Acceptar:" 
   "Changed:" = "Modificat:"
   "Done" = "Fet"
   "Preferences" = "Preferències"
@@ -311,7 +311,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/it/generate.txt"
   "@@KeyEditHelp" = "help/it/keyedit.txt"
-  "@@SetPasswdHelp" = "La master password protegge tutte le chiavi, e deve essere digitata per accedere al database. In caso venga dimenticata, il database non sarà più accessibile.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "La master password protegge tutte le chiavi, e deve essere digitata per accedere al database. In caso venga dimenticata, il database non sarà più accessibile.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   "There is no data to export." = "Non ci sono dati da esportare."
 
@@ -461,16 +461,17 @@ END
 
 // ======================================================================
 // Spanish translation contributed by Juan Carlos Borrás
+// Revised by Rodolfo García Peñas
 
 TRANSLATION "es"
 BEGIN
   "Look Up:" = "Buscar:"
   "New" = "Nueva"
-  "Key ______ of ______" = "Clave ______ de ______" 
   "Name:" = "Nombre:"
   "Account:" = "Cuenta:"
   "Password:" = "Clave:"
-  "Confirm:"  = "Aceptar:" 
+  "Confirm:" = "Aceptar:" 
+  "Iter:" = "Iter:"
   "Changed:" = "Modificado:"
   "Done" = "Hecho"
   "Preferences" = "Preferencias"
@@ -479,8 +480,13 @@ BEGIN
   "15 sec" = "15 Seg."
   "60 sec" = "1 Min."
   "5 min" = "5 Min."
+  "Only lock when inactive" = "Bloquear sólo si inactivo"
+  "Use Keyring fonts" = "Usar fuentes de Keyring"
+  "Veil password" = "Velar clave"
 
   "Cancel" = "Cancelar"
+
+  "Keyring for PalmOS" = "Keyring para PalmOS"
 
   "Set Keyring Password" =  "Cambiar la Clave del Llavero"
 
@@ -493,6 +499,8 @@ BEGIN
   "Length:" = "Tamaño:"
   "Include:" = "Incluye:"
   "Generate" = "Generar"
+
+  "Change Date" = "Cambiar fecha"
 
   "Unlock" =  "Desbloquear"
 
@@ -508,20 +516,29 @@ BEGIN
 
   "Not here yet" = "Vuelva Vd. mañana"
   "@@NotImplemented" = "Esta característica no está implementada aun."
-  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
-  "@@CipherNotSupported" = "This version of Keyring does not support cipher ^1."
-  "@@UpgradeDatabase" = "This database is from a previous version of Keyring.  You have to convert it to the new format, first.  Please cancel now, unless you have a backup.  Otherwise enter your old password in the following dialog."
-  "@@UpgradeMissingHash" = "This database has been damaged.  Please enter your password to repair it. If you mistype the password your database will be broken beyond repair. PRESS CANCEL IF YOU HAVE NO BACKUP."
-  "@@langSpecificChars" =  "ä¥©"
-  "@@pronounceable" = "pronounceable"
+  "Not Enough Features" = "Systemfehler"
+  "@@NotEnoughFeatures" = "Esta versión de Keyring requiere ^1."
+  "@@CipherNotSupported" = "Esta versión de Keyring no soporta el cifrado ^1."
+  "@@UpgradeDatabase" = "Esta base de datos es de una versión previa de Keyring.  Debe convertirla al nuevo formato primero.  Por favor, si no tiene backup cancele ahora.  Si no introduzca su contraseña en el siguiente dialogo."
+  "@@UpgradeMissingHash" = "La base de datos está dañada.  Introduzca su contraseña para repararla. Si introduce mal su contraseña la base de datos quedará inutilizable despues de repararse. PRESIONE CANCELAR SI NO TIENE BACKUP."
+  "Error" = "Error"
+  "Error upgrading database: ^1" = "Error en la conversion: ^1"
 
-  "@@AlphaVersion" = "This is an alpha test version of Keyring and has bugs! Please don't use it for real data." 
-  "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+  "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronunciable"
 
   "@@CouldntLaunchMemo" =  "El block de notas no puede ejecutarse."
 
   "Delete Key" = "Borrar Clave"
   "Delete current key record?" = "¿Borrar la presente Clave?"
+
+  "@@AlphaVersion" = "Esta es una versión alpha de Keyring y tiene bugs! No la utilice para datos reales." 
+  "@@BetaVersion" = "Esta es una versión de prueba para testers de Keyring.  Puede tener bugs.  Mantenga otra copia de cualquier dato que no pueda recuperar." 
+
+  "This is free software.  No warranty." = "Esto es software libre.  Sin garantía." 
+
+  "Released under the GNU GPL v2." = "Versión bajo GNU GPL v2."
+
   "Save archive copy on PC" = "Guardar copia en el PC"
 
   "Database" = "Base de Datos"
@@ -534,14 +551,19 @@ BEGIN
   "About..." =  "Acerca..."
 
   "Undo" = "Deshacer"
+  "Undo All" = "Deshacer todo"
   "Graffiti Help" = "Ayuda de Grafitti"
   "Paste" = "Pegar"
   "Cut" = "Cortar"
   "Select All" = "Seleccionar Todo"
+  "Key ______ of ______" = "Clave ______ de ______" 
   "Key ^0 of ^1" = "Clave ^0 de ^1"
   "Copy" = "Copiar"
   "Keyboard" = "Teclado"
   "New Key" = "Nueva Clave"
+
+  "Upgrade Database?" = "Convertir la base de datos?"
+  "Database Damaged" = "Base de datos dañada"
 
   "Key" =  "Ficha"
   "Generate Password..." = "Generar Clave..."
@@ -550,7 +572,14 @@ BEGIN
 
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "La clave maestra protege todas tus claves, y debe ser introducida para acceder a la base de datos.  Si la pierda, la base de datos no podrá ser accedida.  La cuenta de iteraciones debe ser seleccionada como una relacion entre seguridad y rapidez: Un mayor valor hace más dificil a un atacante probar claves, porque su comprobación es más lenta."
+
+  "There is no data to export." = "No hay datos para exportar."
+
+  "Unfiled" = "Sin categoría"
+  "Phone" = "Telefono"
+  "Banking" = "Banco"
+  "Convert" = "Conversion"
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
@@ -659,7 +688,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/sv/generate.txt"
   "@@KeyEditHelp" = "help/sv/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   "Unfiled" = "Oarkiverad"
   "Banking" = "Bank"
@@ -776,7 +805,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/nl/generate.txt"
   "@@KeyEditHelp" = "help/nl/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   "@@accel_Undo" = "U"
   "@@accel_Cut" = "X"
@@ -1007,7 +1036,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/fr/generate.txt"
   "@@KeyEditHelp" = "help/fr/keyedit.txt"
-  "@@SetPasswdHelp" = "Le mot de passe principal protège toutes vos clés. Il doit être saisi pour accéder à la base de données. Ne l'oubliez pas ! The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "Le mot de passe principal protège toutes vos clés. Il doit être saisi pour accéder à la base de données. Ne l'oubliez pas ! The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   "@@accel_Undo" = "Z"
   "@@accel_Cut" = "X"
@@ -1113,7 +1142,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/nb/generate.txt"
   "@@KeyEditHelp" = "help/nb/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   "Unfiled" = "Ingen kategori"
   "Banking" = "Bank"
@@ -1221,7 +1250,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/nn/generate.txt"
   "@@KeyEditHelp" = "help/nn/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
@@ -1327,7 +1356,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
@@ -1436,7 +1465,7 @@ BEGIN
 
   "@@GenerateHelp" = "help/sv/generate.txt"
   "@@KeyEditHelp" = "help/sv/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes passsword checking slower."
+  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed.  The iteration count should be selected as a compromise between security and speed: A higher value makes it harder for an attacker to try several passwords because it makes password checking slower."
 
   "Unfiled" = "Ikke kategoriseret"
   "Banking" = "Bank"
