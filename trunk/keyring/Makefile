@@ -28,14 +28,14 @@
 
 APP             = keyring
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 2.0-pre5
-DEFINES		= -DBETA -DkAppVersion=0x1995
+VERSION         = 2.0-pre6
+DEFINES		= -DBETA -DkAppVersion=0x1996
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-384 -Wshadow -Wcast-align
 
 OPTIM		= -O2 -g -mdebug-labels
-INCLUDES        = -IpilotSSLeay/include
+INCLUDES        = -IpilotSSLeay/include -I$(HOME)/palmdev/palmOne
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
@@ -229,7 +229,7 @@ $(DIST_ZIP): $(PRCS) $(SSLEAYLIBS) $(AESLIBS)
 
 $(OBJ): $(HEADERS) prototype.h
 %.o: %.c
-	@echo $(CC) $(OPTIM) $< -o $*.o
+	@echo $(CC) $(OPTIM) -c $< -o $*.o
 	@$(CC) $(CFLAGS) -c $< -o $*.o
 
 clean:
