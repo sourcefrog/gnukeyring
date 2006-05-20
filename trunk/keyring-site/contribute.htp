@@ -9,7 +9,13 @@
   <ul>
     <li> If you speak a language other than English, download the
 	 latest <cvslink file="keyring/keyring.rcp.in" desc="resource file">
-         and translate the resources into another language.</li>
+         and translate the resources into another language.
+         Note that translations with 
+	 <cvslink file="keyring/keyring.rcp.iso2" desc="ISO 8859-2"> and
+         <cvslink file="keyring/keyring.rcp.cp1251" desc="CP 1251"> encoding
+	 reside in different files.  The text of the help dialogs is
+         currently kept in a	    
+         <cvslink file="keyring/help" desc="separate directory">.</li>
     <li> Send email to say thankyou.</li>
     <li> Send a patch to fix a
      <a href="https://sourceforge.net/bugs/?group_id=306">bug</a>

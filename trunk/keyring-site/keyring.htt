@@ -91,7 +91,7 @@
     <sfperson id=521 login="mbp" name="Martin Pool">.<br>
     All products or company names may be trademarks of their respective owner.
     <br>
-    <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gnukeyring/keyring-site/${_htpfile_in}"><tt><use rcsid></tt></a>
-   <br clear="all"></font>
+    <tt><cvslink file="keyring-site/${_htpfile_in}" desc="$rcsid"></tt>
+    <br clear="all"></font>
 </body>
 </html>
