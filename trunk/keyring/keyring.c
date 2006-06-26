@@ -183,7 +183,9 @@ static void App_EventLoop(void)
 		FrmCloseAllForms();
 		FrmGotoForm(ListForm);
 	    }
-	} else if (event.eType != nilEvent) {
+	} else if (event.eType != nilEvent
+		   && (event.eType != keyDownEvent 
+		       || event.data.keyDown.chr != vchrLateWakeup)) {
 	    Snib_Event();
 	    gSleeping = false;
 	}
