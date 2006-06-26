@@ -1,7 +1,7 @@
 Keyring for PalmOS
 
 Copyright 1999-2002 by Martin Pool
-Copyright 2001-2005 by Jochen Hoenicke
+Copyright 2001-2006 by Jochen Hoenicke
 
   http://gnukeyring.sourceforge.net/
 
@@ -9,8 +9,9 @@ PRERELEASE INFORMATION
 
 This is a prerelease of keyring and it may contain bugs that destroy
 the database or even require a hard reset.  So update your backup,
-before installing this.  And keep a backup of the Keys-Gtkr.pdb file
-in a seperate place in case you want to downgrade back to 1.2.2 later.
+before installing this.  Keep a backup of the Keys-Gtkr.pdb file
+in a seperate place in case you want to downgrade back to 1.2.3 later.
+You cannot downgrade a keyring-2.0 database to keyring-1.2.x.
 
 If you choose "No" as Cipher you do not get any encryption.  This
 option is there only for test purposes, it will be removed in the
