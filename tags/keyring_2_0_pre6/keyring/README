@@ -1,0 +1,55 @@
+Keyring for PalmOS
+
+Copyright 1999-2002 by Martin Pool
+Copyright 2001-2006 by Jochen Hoenicke
+
+  http://gnukeyring.sourceforge.net/
+
+PRERELEASE INFORMATION
+
+This is a prerelease of keyring and it may contain bugs that destroy
+the database or even require a hard reset.  So update your backup,
+before installing this.  Keep a backup of the Keys-Gtkr.pdb file
+in a seperate place in case you want to downgrade back to 1.2.3 later.
+You cannot downgrade a keyring-2.0 database to keyring-1.2.x.
+
+If you choose "No" as Cipher you do not get any encryption.  This
+option is there only for test purposes, it will be removed in the
+final release.
+
+GENERAL INFORMATION
+
+Keyring lets you securely store secret keys and confidential
+information on a PalmOS handheld computer.  This information might
+include: computer account passwords, credit card numbers, GnuPG or PGP
+passphrases, SKey one-time-pads, or phone banking keywords.
+
+Keyring is Free Software, so you can inspect it to satisfy
+yourself of its security, modify it to meet your needs, and share it
+with your friends.
+
+Records are encrypted using either triple DES or AES algorithms.  Both
+are cryptographically well investigated algorithm and no major flaws
+are known.  The encryption key is generated from the master password
+in a secure way (PBKDF2).  For your convenience, the keyring can stay
+unlocked for a time after you enter your master password.  You can
+configure this behaviour through the "Preferences" command.  Keyring
+attempts to overwrite memory containing sensitive data after use.
+
+When you need to set a password, Keyring can generate a random
+password of specified length, optionally including letters, numbers or
+symbols.  Alternatively you can set "pronounceable", which will
+generate a vaguely pronounceable lower-case password of the
+appropriate length.  Note that this produces a less secure password
+than the same length password generated from random lower-case
+letters; however it does conform to the FIPS 181 Automated Password
+Generator Standard (see fips181.txt).
+
+For more details, see
+
+  http://gnukeyring.sourceforge.net/
+
+This distribution includes files from AESLib for AES encryption. 
+See COPYING.AESLib for license terms.
+
+$Id$

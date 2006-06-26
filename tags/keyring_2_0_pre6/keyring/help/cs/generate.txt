@@ -1,0 +1,5 @@
+Generování hesla nastaví heslo na tomto záznamu na náhodnou hodnotu.
+
+Délka je poèet znakù v novém hesle.
+
+Urèuje, které znaky jsou platné pro heslo. Musí obsahovat minimálnì jednu tøídu. Je-li za¹krtnuto generování "vyslovitelných" hesel, bude vygenerováno vyslovitelné heslo z malých písmen.

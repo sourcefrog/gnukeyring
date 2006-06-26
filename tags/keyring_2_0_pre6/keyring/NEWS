@@ -1,0 +1,44 @@
+Keyring for PalmOS 2.0 prerelease
+
+Copyright 1999-2002 by Martin Pool
+Copyright 2001-2006 by Jochen Hoenicke
+
+  http://gnukeyring.sourceforge.net/
+
+Keyring for PalmOS lets you securely store secret keys and
+confidential information on a PalmOS handheld computer.  This
+information might include: computer account passwords, credit card
+numbers, GnuPG or PGP passphrases, SKey one-time-pads, or phone
+banking keywords.
+
+Keyring is Free Software, so you can inspect it to satisfy yourself of
+its security, modify it to meet your needs, and share it with your
+friends.
+
+Records are encrypted using the well-trusted DES3-CBC algorithm or the
+new AES-CBC algorithm.  The encryption key is generated from a master
+password.  For your convenience, the keyring can stay unlocked for a
+time after you enter your master password.
+
+When you need to set a password, Keyring can generate a random
+password of specified length, optionally including letters, numbers or
+symbols.
+
+Changes from 1.2:
+
+ * New crypto format.  New algorithms DES3-CBC and AES-CBC.
+ * Use PBKDF2 for key generation.  This is a bit slower, to make brute
+   force attacks more difficult.
+
+ * New record format, allowing to store more than the standard fields
+   later.
+
+ * Make name/account/password fields scrollable to support long passwords.
+
+ * Generate Hex passwords.
+
+
+Files may be downloaded from:
+
+  http://gnukeyring.sourceforge.net/prerelease.html
+
