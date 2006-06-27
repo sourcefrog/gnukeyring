@@ -3,7 +3,7 @@
 
 <file template="keyring.htt">
 <set sfdl="http://prdownloads.sourceforge.net/gnukeyring/">
-<set mydl="http://hoenicke.ath.cx/keyring2-pre/">
+<set mydl="http://gnukeyring.sourceforge.net/keyring2-pre/">
 
 <undef dlentry>
 <def name="dlentry" option="icon server file desc sig">
@@ -18,7 +18,7 @@
   <td><use desc></td></tr>
 </def>
 
-<set cur_ver="2.0-pre4">
+<set cur_ver="2.0-pre5">
 <def name="zipentry"  option="code lang sig">
   <if sig>
     <dlentry icon="compressed.gif" 
