@@ -14,9 +14,7 @@
   <if _htpfile_out="${id}.html">
     <use name>
   <else>
-    <a href="${id}.html"><use name></a>
-  </if>
-</def>
+    <a href="${id}.html"><use name></a></if></def>
 
 <blockdef name=centerquote option="source link">
   <table align="center" width="50%" border="0"><tr><td>

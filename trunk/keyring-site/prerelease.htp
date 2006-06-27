@@ -11,21 +11,21 @@
   <a href="${server}${file}"><img src="myicons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
   </td>
   <td>
-  <if sig>
-    <a href="${server}${file}.sig"><img src="myicons/sig.gif" border="0" alt="&nbsp;" align="middle"><code>GPG signature</code></a>
+  <if sig><if sig=""><set sig="${server}"></if>
+    <a href="${sig}${file}.sig"><img src="myicons/sig.gif" border="0" alt="&nbsp;" align="middle"><code>GPG signature</code></a>
   </if>
   </td>
   <td><use desc></td></tr>
 </def>
 
-<set cur_ver="2.0-pre5">
+<set cur_ver="2.0-pre6">
 <def name="zipentry"  option="code lang sig">
   <if sig>
     <dlentry icon="compressed.gif" 
              server="${sfdl}"
              file="keyring-${cur_ver}-${code}.zip" 
              desc="${lang} PRC binary + libraries"
-	     sig>
+	     sig="${sig}">
   <else>
     <dlentry icon="compressed.gif" 
              server="${sfdl}"
@@ -36,11 +36,11 @@
 
 <section title="pre-release information">
 
-<p>This is a prerelease of keyring and it may contain bugs that
-destroy the database or even require a hard reset.  So <b>make a
-backup</b> before installing this.  And keep a backup of the
-Keys-Gtkr.pdb file in a seperate place in case you want to downgrade
-back to 1.2.2 later.</p>
+<p>This is a prerelease of keyring and it may contain bugs that destroy
+the database or even require a hard reset.  So update your backup,
+before installing this.  Keep a backup of the Keys-Gtkr.pdb file
+in a seperate place in case you want to downgrade back to 1.2.3 later.
+You cannot downgrade a keyring-2.0 database to keyring-1.2.x.</p>
 
 <p>If you choose "No" as Cipher you do not get any encryption.  This
 option is there for test purposes only, it will be removed in the
@@ -59,24 +59,24 @@ final release.</p>
     <dlentry  icon="compressed.gif"
               server="${sfdl}"
 	      file="keyring-${cur_ver}.tar.gz" 
-	      desc="Tar-ball of sources" sig>
+	      desc="Tar-ball of sources" sig="${mydl}">
     <dlentry  icon="compressed.gif"
               server="${sfdl}"
 	      file="keyring-link-2.0-pre1.tar.gz" 
-	      desc="Example code to decrypt data on PC" sig>
+	      desc="Example code to decrypt data on PC" sig="">
     <tr><td colspan="3">The following provides the source code for 
 	third party libraries.  You don't need these to compile keyring.
 	</td></tr>
     <dlentry  icon="compressed.gif"
               server="${mydl}"
               file="AESLib-3.1.tgz" 
-	      desc="AES Library (from Stuart Eichert)" sig>
+	      desc="AES Library (from Stuart Eichert)" sig="">
     <dlentry  icon="compressed.gif" file="SSLeay-0.8.1.tar.gz" 
               server="${mydl}"
-	      desc="crypto library from Eric A. Young" sig>
+	      desc="crypto library from Eric A. Young" sig="">
     <dlentry  icon="compressed.gif" file="pilotSSLeay-2.01.tar.gz" 
               server="${mydl}"
-	      desc="port of SSLeay to PalmOS from Ian Goldberg" sig>
+	      desc="port of SSLeay to PalmOS from Ian Goldberg" sig="">
   </table>
 
    Install keyring-xx.prc as well as the xxxLib.prc binaries you want

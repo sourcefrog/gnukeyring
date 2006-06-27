@@ -1,6 +1,7 @@
 <set chapter="faq">
 <set rcsid="$$Id$$">
 
+<set kr-recover="http://gnukeyring.sourceforge.net/keyring-recover/keyring-recover.jar">
 <file template="keyring.htt">
 
 <set faqctr="1">
@@ -85,6 +86,7 @@
    other malicious program on your handheld, you are fine.
 </faqentry>
 
+<!--- Does no longer apply:  Download-Errors should be catched by zip
 <faqentry title="When I try to install Keyring, my handheld or PC crashes.">
      
    Also see bug <buglink id=119744>. You may have suffered an error
@@ -110,7 +112,7 @@
    send me mail</a> and I will email you a copy of the file.  
 
 </faqentry>
-
+--->
 <faqentry title="How can I ensure that my encrypted data is being backed up on the PC?">
 
    Have a look in the backup directory of your desktop
@@ -119,12 +121,9 @@
    when the file was last backed up.  If you're using Unix,
    you can use the `pilot-file' command to see the encrypted
    records inside it and their individual modification times.
-   Because the keys are encrypted you can't look inside it at
-   the moment, but there may be support for editing on a PC
-   in the future.
-	  
-   Backups didn't work reliably with some Windows client
-   software in 0.7.4 and earlier versions.
+   Because the keys are encrypted you can't look inside it,
+   but there is support for reading on a PC (see <pagelink
+   id="conduits" name="conduits">).
 </faqentry>
 	  
 <faqentry title="How do I open the .tar.gz file on Windows?">
@@ -149,37 +148,51 @@
    operate on PalmOS 2.0.  
 </faqentry>
  --->
+<!--- Bug fixed since pre5
 <faqentry title="Keyring 2.0-pre4 doesn't accept the password I just entered.">
    <p>This is due to a bug in th pre-release.  On the first run it always
    installs the empty password.  You can change it via the Keyring menu. Choose
    <code>Set Password</code>, press Unlock <b>without entering a password</b>
    and set a new password in the dialog.
 </faqentry>
-
+--->
 <faqentry title="Keyring doesn't accept my password any more. What can I do?">
-   <p>Make sure you have at least Keyring 1.1 or later.  If you have an
-   older version <pagelink id="download" name="upgrade to the latest
-   stable version">.</p>
-
-   <p>If it happens with keyring 1.1 or later please see
-   <buglink id="1180678" bugname="keyring does not accept password">.  Scroll
-   down the comments written by me (hoenicke) for a procedure to recover.</p>
-
    <p>This can have several causes: One is that the
    "<code>SortInfo</code>" field of a PalmOS database is not restored
    from backup.  0.11.0 and 0.11.1 are the only versions that uses this
    field.  The other is that the password hash record is moved or 
-   erased by the backup or security program.  
-   There seems to be another problem, where HotSync is merging
-   data bases incorrectly and overwrites the new hash record with the old
-   one. In any case the data is still there, but keyring is unable
-   to check the password. 
+   erased by the backup or security program.  These problems are fixed 
+   with recent releases such as keyring-1.2.3.
+   </p>
+
+   <p>There is another problem, where HotSync is merging
+   data bases incorrectly and overwrites the new hash record with the
+   old one. In this case, the data is still there but keyring is unable to
+   check the password.</p>
+
+   <p>If this happens with keyring 1.1 or later, you can try the following
+   procedure.  Download <a href="${kr-recover}">
+   <code>keyring-recover.jar</code></a> (<a 
+   href="${kr-recover}.sig">GPG signature</a>).
+   Look in your Palm backup directory for a file called <code>Keys-Gtkr.pdb</code>
+   (the backup of the keyring database and invoke the java program like
+   this from the command line (you need to have a recent Java Runtime
+   Environment (JRE) installed and in the PATH): </p>
+   <pre>
+java -jar keyring-recover.jar Keys-Gtkr.pdb Keys-Gtkr-Fixed.pdb
+   </pre>
+   <p>Then, install <code>Keys-Gtkr-Fixed.pdb</code> to your palm.  
+   On the next invokation, Keyring will report that the database was
+   damaged and will give you the chance to repair it.  It will now accept
+   any password, but only with the correct password the records will be
+   readable.  If you entered the wrong password you have to
+   reinstall <code>Keys-Gtkr-Fixed.pdb</code>.  </p>
 </faqentry>
 
+<!---  Does no longer apply 
 <faqentry title="After using editrom/romeo to strip useless apps out of my ROM keyring doesn't work.">
    Keyring up to version 1.1 takes encryption routines from the
    "<code>MS-CHAP Support</code>" database.  Make sure that you don't 
    remove that database.
 </faqentry>
-
-<!--- TODO: Doc bug #216575 --->
+--->
