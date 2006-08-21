@@ -1490,7 +1490,18 @@ END
 VERSION ID 1000 "__VERSION__"
 
 FONT ID StarFont FONTID fntStar "fontstar.txt"
+FONTFAMILY ID StarFont FONTID fntStar
+BEGIN
+   FONT "fontstar.txt" DENSITY 72
+   FONT "fontstar144.txt" DENSITY 144
+END
+
 FONT ID PasswordFont FONTID fntPassword "fontPW.txt"
+FONTFAMILY ID PasswordFont FONTID fntPassword
+BEGIN
+   FONT "fontPW72.txt" DENSITY 72
+   FONT "fontPW144.txt" DENSITY 144
+END
 
 FORM ID ListForm AT (0 0 160 160)
 MENUID ListMenuBar
