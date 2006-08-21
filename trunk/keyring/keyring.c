@@ -76,10 +76,17 @@ static void App_SavePrefs(void)
 
 void App_LoadFonts(void)
 {
+    UInt32 winVersion = 0;
+    UInt32 resID = 'NFNT';
+    
     if (handleFontStar == NULL) {
-	handleFontStar = DmGetResource('NFNT', StarFont);
+	if (FtrGet(sysFtrCreator, sysFtrNumWinVersion, &winVersion) == 0
+	    && winVersion >= 4)
+	    resID = 'nfnt';
+
+	handleFontStar = DmGetResource(resID, StarFont);
 	FntDefineFont(fntStar, (FontPtr)MemHandleLock(handleFontStar));
-	handleFontPW = DmGetResource('NFNT', PasswordFont);
+	handleFontPW = DmGetResource(resID, PasswordFont);
 	FntDefineFont(fntPassword, (FontPtr)MemHandleLock(handleFontPW));
     }
 }
