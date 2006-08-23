@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 	keyring5_dumpfile(pif, argv[2]);
     } else {
 	rs_fatal("database version is %d, but this program can only handle "
-		 "version 4 and 5");
+		 "version 4 and 5", version);
     }
 
 
@@ -110,12 +110,12 @@ int main(int argc, char **argv)
 static int keyring_verify(const unsigned char *rec0, size_t rec_len,
 			  const char *pass)
 {
-    char               digest[MD5_DIGEST_LENGTH];
-    char               msg[MD5_CBLOCK];
+    unsigned char digest[MD5_DIGEST_LENGTH];
+    unsigned char msg[MD5_CBLOCK];
 
     memset(msg, 0, sizeof msg);
     memcpy(msg, rec0, kSaltSize);
-    strncpy(msg + kSaltSize, pass, MD5_CBLOCK - 1 - kSaltSize);
+    strncpy((char*)msg + kSaltSize, pass, MD5_CBLOCK - 1 - kSaltSize);
 
     MD5(msg, sizeof msg, digest);
 
@@ -132,9 +132,7 @@ static unsigned int keyring_dumpheader(struct pi_file *pif)
 {
     struct DBInfo      db_info;
 
-    if (pi_file_get_info(pif, &db_info) == -1) {
-	rs_fatal("error getting DBInfo");
-    }
+    pi_file_get_info(pif, &db_info);
 
     if (db_info.type != kKeyDBType) {
 	rs_fatal("database type is %#lx, but should be %#lx -- perhaps "
@@ -155,7 +153,7 @@ static unsigned int keyring_dumpheader(struct pi_file *pif)
 }
 
 
-static void des_read(char const *from, char *to, size_t len)
+static void des_read(unsigned char const *from, unsigned char *to, size_t len)
 {
     while (len >= kDESBlockSize) {
 	des_ecb2_encrypt((const_des_cblock *) from,
@@ -254,7 +252,7 @@ void keyring_unpack(struct pi_file *pif, int idx, keyring_record_t **prec)
     
     des_read(recp, plain, rec_len);
     
-    readp = plain;
+    readp = (char*) plain;
     len = strlen(readp) + 1;
     rec->acct = strdup(readp);
     
@@ -276,9 +274,7 @@ static void keyring_dumprecords(struct pi_file *pif, char const *pass)
     int                idx;
     unsigned char      snib[MD5_DIGEST_LENGTH];
 
-    if (pi_file_get_entries(pif, &nrecords) == -1) {
-	rs_fatal("error getting number of records");
-    }
+    pi_file_get_entries(pif, &nrecords);
 
     calc_snib(pass, snib);
     des_setup(snib);
@@ -296,12 +292,10 @@ static void keyring_dumprecords(struct pi_file *pif, char const *pass)
 static void keyring_dumpfile(struct pi_file *pif,
 			     const char *pass)
 {
-    int                attr, category;
-    pi_uid_t           uid;
     void               *pdata;
     size_t             data_len;
     
-    if (pi_file_read_record(pif, 0, &pdata, &data_len, &attr, &category, &uid)
+    if (pi_file_read_record(pif, 0, &pdata, &data_len, NULL, NULL, NULL)
 	== -1) {
 	rs_fatal("failed to read first record!");
     }
