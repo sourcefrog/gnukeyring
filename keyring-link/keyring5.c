@@ -84,7 +84,7 @@ static int keyring5_verify(KrAppInfoType *appdata, size_t data_len,
     const int keylens[4] = { 8, 24, 16, 32 };
     int                keylen, i;
     int                cipher, iter;
-    char               digest[SHA_DIGEST_LENGTH];
+    unsigned char      digest[SHA_DIGEST_LENGTH];
     SHA_CTX            shactx;
 
     cipher = ntohs(appdata->keyHash.cipher);
@@ -130,7 +130,8 @@ static int keyring5_verify(KrAppInfoType *appdata, size_t data_len,
 
 
 
-static void crypto_read(char const *from, char *to, size_t len, 
+static void crypto_read(unsigned char const *from, unsigned char *to, 
+			size_t len, 
 			unsigned char *ivec,
 			CryptoKey *cryptKey)
 {
@@ -255,7 +256,7 @@ void keyring5_unpack(struct pi_file *pif, int idx, CryptoKey *cryptoKey,
     unsigned char      *recp;
     size_t             rec_len;
     keyring_record_t   *rec;
-    char               *ivec;
+    unsigned char      *ivec;
 
     rec = malloc(sizeof(*rec));
     memset(rec, 0, sizeof(*rec));
@@ -263,7 +264,7 @@ void keyring5_unpack(struct pi_file *pif, int idx, CryptoKey *cryptoKey,
 
     rec->idx = idx;
 	
-    if (pi_file_read_record(pif, idx, &recp, &rec_len,
+    if (pi_file_read_record(pif, idx, (void**)&recp, &rec_len,
 			    &rec->attr, &rec->category, NULL) == -1) {
 	rs_fatal("error reading record");
     }
@@ -297,9 +298,7 @@ static void keyring5_dumprecords(struct pi_file *pif,
     int                idx;
     CryptoKey          cryptkey;
 
-    if (pi_file_get_entries(pif, &nrecords) == -1) {
-	rs_fatal("error getting number of records");
-    }
+    pi_file_get_entries(pif, &nrecords);
 
     crypto_setup(cipher, dbkey, &cryptkey);
 
@@ -319,7 +318,7 @@ void keyring5_dumpfile(struct pi_file *pif, const char *pass)
     size_t             data_len;
     unsigned char      *dbkey;
     
-    pi_file_get_app_info(pif, &pdata, &data_len);
+    pi_file_get_app_info(pif, (void**)&pdata, &data_len);
 
     if (!keyring5_verify(pdata, data_len, pass, &dbkey)) {
 	rs_log(RS_LOG_ERR, "password is incorrect");
