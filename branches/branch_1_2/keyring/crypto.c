@@ -41,13 +41,13 @@ Err CryptoRead(void * from, void * to, UInt32 len, CryptoKey cryptKey)
 {
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
-    do {
+    while (len >= kDESBlockSize) {
 	des_ecb2_encrypt(from, to, cryptKey[0], cryptKey[1], false);
 
 	to += kDESBlockSize;
 	from += kDESBlockSize;
 	len -= kDESBlockSize;
-    } while (len > 0);
+    } 
 
     return 0;
 }
@@ -59,7 +59,7 @@ Err CryptoWrite(void *recPtr, UInt32 off, char const *from, UInt32 len,
     des_cblock third;
     ErrNonFatalDisplayIf(len & (kDESBlockSize-1),
 			 __FUNCTION__ ": not block padded");
-    do {
+    while (len >= kDESBlockSize) {
 	des_ecb2_encrypt((des_cblock*)from, &third, 
 			 cryptKey[0], cryptKey[1], true);
 
@@ -68,7 +68,7 @@ Err CryptoWrite(void *recPtr, UInt32 off, char const *from, UInt32 len,
         off += kDESBlockSize;
 	from += kDESBlockSize;
 	len -= kDESBlockSize;
-    } while (len > 0);
+    };
 
     return 0;
 }
