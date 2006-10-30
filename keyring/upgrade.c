@@ -199,7 +199,8 @@ Err Upgrade_UnpackOldRecord(Char *recPtr,
     recPtr++;  /* skip NUL */
     size--;
 
-    decryptSize = size;
+    /* make size a multiple of des block size; ignore remaining bytes */
+    size = size & ~7;
     decryptBuf = MemPtrNew(size);
     for (i = 0; i < size; i += 8) {
 	des_ecb2_encrypt((void *) recPtr + i, (void*) decryptBuf + i, 
