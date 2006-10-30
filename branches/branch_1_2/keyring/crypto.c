@@ -68,7 +68,7 @@ Err CryptoWrite(void *recPtr, UInt32 off, char const *from, UInt32 len,
         off += kDESBlockSize;
 	from += kDESBlockSize;
 	len -= kDESBlockSize;
-    };
+    }
 
     return 0;
 }
