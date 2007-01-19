@@ -127,9 +127,9 @@ fingerprint = E3F9 4C70 3C5D 7AD5 DF84  DA25 B131 2FFD C230 BB64
 </pre>
 
  If you belong to the <a
-href="http://www.cs.uu.nl/people/henkp/henkp/pgp/pathfinder/plot/">strong
+href="http://pgp.cs.uu.nl/plot/">strong
 web of trust</a>, you can find a trust path to my key.
- <FORM METHOD="GET" ACTION="http://www.cs.uu.nl/people/henkp/henkp/pgp/pathfinder/mk_path.cgi">
+ <FORM METHOD="GET" ACTION="http://pgp.cs.uu.nl/mk_path.cgi">
   Enter your pgp key id here:
   <INPUT TYPE=TEXT    NAME=FROM   SIZE="10">
   <INPUT TYPE=HIDDEN  NAME=TO     VALUE="C230BB64">
