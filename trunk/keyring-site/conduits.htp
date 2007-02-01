@@ -34,6 +34,7 @@ href="&#109;ai&#108;to&#58;key&#114;ing&#64;zia&#46;com&#46;br">Alexandre
    <li>There is a keyring conduit included in
         <a href="http://www.jpilot.org/">JPilot</a>.  It
         runs under Linux and other Unix-like OSes.</li>
+   <li>Johan Vromans wrote a <a href="http://www.vromans.org/johan/software/sw_palmkeyring.html">Keyring Interface in Perl</a>.</li>
 
    <li>If you want to create your own keyring conduit you can base it on
         the following (official) source code.
