@@ -1593,16 +1593,16 @@ NAVIGATION ID KeyEditForm
   INITIALOBJECTID    KeyNameField
   JUMPOBJECTID       DoneBtn
   BOTTOMLEFTOBJECTID DoneBtn
-NAVIGATIONMAP
-  ROW CategoryTrigger
-      LockBtn
-  ROW KeyNameField
-  ROW AccountField
-  ROW PasswordField
-  ROW DateTrigger
-  ROW NotesField
-  ROW DoneBtn
-      GenerateBtn
+BEGIN
+  ID CategoryTrigger BELOW KeyNameField
+  ID LockBtn BELOW KeyNameField SKIP
+  ID KeyNameField ABOVE CategoryTrigger BELOW AccountField
+  ID DoneBtn ABOVE NotesField
+  ID GenerateBtn ABOVE NotesField
+  ID AccountField ABOVE KeyNameField BELOW PasswordField
+  ID PasswordField ABOVE AccountField BELOW DateTrigger
+  ID DateTrigger ABOVE PasswordField BELOW NotesField
+  ID NotesField ABOVE DateTrigger BELOW DoneBtn
 END
 
 FORM ID PrefsForm AT (2 69 156 89)
@@ -1741,11 +1741,12 @@ NAVIGATION ID UnlockForm
   INITIALOBJECTID    MasterKeyFld
   JUMPOBJECTID       UnlockBtn
   BOTTOMLEFTOBJECTID UnlockBtn
-NAVIGATIONMAP
-  ROW MasterKeyFld
-  ROW VeilPasswordCheck
-  ROW UnlockBtn
-      CancelBtn
+
+BEGIN
+  ID MasterKeyFld BELOW VeilPasswordCheck
+  ID UnlockBtn ABOVE VeilPasswordCheck
+  ID CancelBtn ABOVE VeilPasswordCheck
+  ID VeilPasswordCheck ABOVE MasterKeyFld BELOW UnlockBtn
 END
 
 
