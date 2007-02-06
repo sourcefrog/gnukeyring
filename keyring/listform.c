@@ -503,6 +503,7 @@ GUI_SECTION Boolean ListForm_HandleEvent(EventPtr event)
 		break;
 	    }
 	}
+	break;
     case fldChangedEvent:
 	ListForm_LookUpItem(FldGetTextPtr(f_LookUp));
 	return true;
