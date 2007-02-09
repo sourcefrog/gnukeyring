@@ -34,8 +34,11 @@ href="&#109;ai&#108;to&#58;key&#114;ing&#64;zia&#46;com&#46;br">Alexandre
    <li>There is a keyring conduit included in
         <a href="http://www.jpilot.org/">JPilot</a>.  It
         runs under Linux and other Unix-like OSes.</li>
-   <li>Johan Vromans wrote a <a href="http://www.vromans.org/johan/software/sw_palmkeyring.html">Keyring Interface in Perl</a>.</li>
-
+   <li>The perl package <a
+       href="http://search.cpan.org/dist/Palm-Keyring/">Palm::Keyring</a> by
+       Andrew Fresh provides read and write support for keyring databases.
+       Johan Vromans wrote <a href="http://www.vromans.org/johan/software/sw_palmkeyring.html">WxKeyring</a>,
+       a GUI that uses the library to browse the database.</li>
    <li>If you want to create your own keyring conduit you can base it on
         the following (official) source code.
         To compile this, you will need the <em>OpenSSL</em> and
