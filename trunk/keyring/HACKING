@@ -69,7 +69,7 @@ Record format:
   random padding to multiple of 8 bytes.
 
 where Field is:
-  UInt16  len    /* length of field including header, 0 for last field */
+  UInt16  len    /* length of field excluding header and padding, 0 for last */
   LabelID label  /* 0:name,1:account,2:password,3:last-changed,255:notes */
   UInt8   font   /* Only stdfont(0) allowed */
   data
