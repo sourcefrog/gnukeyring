@@ -1,11 +1,7 @@
 <def name=Product>Keyring for Palm OS</def>
 
-<def name=buglink option="id bugname">
-  <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=$id&amp;group_id=306&amp;atid=100306">#<use id><if bugname> <use bugname></if></a>
-</def>
-<def name=patchlink option="id bugname">
-  <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=$id&amp;group_id=306&amp;atid=350306">#<use id><if bugname> <use bugname></if></a>
-</def>
+<def name=buglink option="id bugname"><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=$id&amp;group_id=306&amp;atid=100306">#<use id><if bugname> <use bugname></if></a></def>
+<def name=patchlink option="id bugname"><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=$id&amp;group_id=306&amp;atid=350306">#<use id><if bugname> <use bugname></if></a></def>
 
 <def name=externallink option="href name"><a href="$href"><use name></a></def>
 

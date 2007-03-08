@@ -49,7 +49,7 @@
    of free software.
 
    <p>The Free Software Foundation has a policy that software bearing the
-   ``GNU'' brand should, amongst other things, run on at least one <a href="http://www.gnu.org/philosophy/why-free.html">free computer
+   &ldquo;GNU&rdquo; brand should, amongst other things, run on at least one <a href="http://www.gnu.org/philosophy/why-free.html">free computer
    system</a>.  PalmOS, though a fine technical achievement, is not free.
 
    <p>As a result, this application has changed its name to <em>Keyring for
@@ -122,6 +122,12 @@
    available from the PGP key servers:
 
 <pre>
+pub  1024D/7BFE5D13 2007-03-06 Jochen Hoenicke, hoenicke at gmail com
+fingerprint = 088F 8EB2 D57A F4D6 4C40  A5EA 90AC 201D 7BFE 5D13
+</pre>
+
+Older packages are signed with my old (now expired) key:
+<pre>
 pub  1024D/C230BB64 2002-02-18 Jochen Hoenicke, hoenicke at informatik uni-oldenburg de
 fingerprint = E3F9 4C70 3C5D 7AD5 DF84  DA25 B131 2FFD C230 BB64
 </pre>
@@ -132,7 +138,7 @@ web of trust</a>, you can find a trust path to my key.
  <FORM METHOD="GET" ACTION="http://pgp.cs.uu.nl/mk_path.cgi">
   Enter your pgp key id here:
   <INPUT TYPE=TEXT    NAME=FROM   SIZE="10">
-  <INPUT TYPE=HIDDEN  NAME=TO     VALUE="C230BB64">
+  <INPUT TYPE=HIDDEN  NAME=TO     VALUE="7BFE5D13">
   <INPUT TYPE=SUBMIT  NAME=PATHS  VALUE="find trust paths to me">
   <INPUT TYPE=RESET   NAME=reset  VALUE="reset">
   </FORM>
