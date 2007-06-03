@@ -5,7 +5,7 @@
 # Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
 # Copyright (C) 2002-2005 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
 #
-# $Header$
+# $Id$
 
 # Note: 
 # Turning on debugger support (-g) costs about 140 bytes

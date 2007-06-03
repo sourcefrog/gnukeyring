@@ -1,6 +1,6 @@
 /* -*- mode: c; c-indentation-style: "java"; c-basic-offset: 4 -*-
  *
- * $Header$
+ * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000 by Martin Pool <mbp@users.sourceforge.net>
