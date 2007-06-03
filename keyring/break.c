@@ -1,5 +1,5 @@
 /* -*- mode: c; c-indentation-style: "java"; c-basic-offset: 4 -*-
- * $Header$
+ * $Id$
  * 
  * break.c -- Crack open encrypted keyrings
  *

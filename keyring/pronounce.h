@@ -1,6 +1,6 @@
 /* -*- c-file-style: "java"; -*-
  *
- * $Header$
+ * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
  * Copyright (C) 2002-2003 Jochen Hoenicke <hoenicke@users.sourceforge.net>
