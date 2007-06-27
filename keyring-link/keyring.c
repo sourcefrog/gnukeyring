@@ -21,6 +21,7 @@
  */
 
 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -79,9 +80,15 @@ int main(int argc, char **argv)
 {
     struct pi_file *pif;
     unsigned int version;
+    char *passwd;
 
-    if (!argv[1] || !argv[2]) {
-	rs_fatal("usage: keyring DATAFILE PASSWORD");
+    if (argc < 2 || argc > 3) {
+	rs_fatal("usage: keyring DATAFILE [PASSWORD]");
+    }
+    if (argc == 2) {
+	passwd = getpass("Password: ");
+    } else {
+        passwd = argv[2];
     }
 
     if (!(pif = pi_file_open(argv[1]))) {
@@ -91,14 +98,13 @@ int main(int argc, char **argv)
     version = keyring_dumpheader(pif);
     
     if (version == 4) {
-	keyring_dumpfile(pif, argv[2]);
+	keyring_dumpfile(pif, passwd);
     } else if (version == 5) {
-	keyring5_dumpfile(pif, argv[2]);
+	keyring5_dumpfile(pif, passwd);
     } else {
 	rs_fatal("database version is %d, but this program can only handle "
 		 "version 4 and 5", version);
     }
-
 
     pi_file_close(pif);
 
