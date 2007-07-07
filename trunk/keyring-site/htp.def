@@ -53,7 +53,7 @@
 
 <def name=cvslink option="file desc">
   <if not desc><set desc="$file"></if>
-  <a href="http://gnukeyring.cvs.sourceforge.net/gnukeyring/${file}"><use desc></a>
+  <a href="http://gnukeyring.svn.sourceforge.net/viewvc/gnukeyring/trunk/${file}"><use desc></a>
 </def>
 
 <def name="dlentry" option="icon file desc">
