@@ -83,6 +83,20 @@ random password of specified length, optionally including letters,
 numbers or symbols.  Use the &quot;Generate&quot; button in the key
 edit form to do this. 
 
+</section>
 
+<section title="restoring backups and moving database"> 
+
+<p>The exact procedure
+to restore the database backup depends on the program you use to synchronise
+your Palm.  The backup directory on your computer should contain a file called
+<code>Keys-Gtkr.pdb</code>.  This is the encrypted database of Keyring.  You
+can install this file on your handheld like any other Palm program.</p>
+
+<p>Sometimes there are problems with databases that cannot be synced anymore.
+In this case it may help to remove Keyring completely from the Palm and then
+install the backup database and the program again.</p>
+
+<p>There is currently no method to merge two keyring databases.</p>
 
 </section>
