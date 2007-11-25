@@ -74,7 +74,7 @@ public class PDBKeyringEntry implements KeyringEntry {
     }
 
     private void createFields() {
-	Cipher c = library.getCipher();
+	Cipher c = library.getCipher(Cipher.DECRYPT_MODE, null);
 	byte[] encrypted;
 	try {
 	    encrypted = c.doFinal(crypted);
@@ -88,8 +88,13 @@ public class PDBKeyringEntry implements KeyringEntry {
 	    int lastindex = index;
 	    while (encrypted[index] != 0)
 		index++;
-	    fields.put(fieldnames.get(i == 2 ? 3 : i), 
-		       new String(encrypted, lastindex, index - lastindex));
+	    try {
+		fields.put(fieldnames.get(i == 2 ? 3 : i), 
+			   new String(encrypted, lastindex, index - lastindex, 
+				      library.charSetName));
+	    } catch (UnsupportedEncodingException ex) {
+		throw new InternalError(ex.toString());
+	    }
 	    index++;
 	}
 	int datetype = 0;
