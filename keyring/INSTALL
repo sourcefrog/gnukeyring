@@ -18,7 +18,7 @@ Under Linux, amongst other programs, you can use the Pilot-Link
 package.  After installing and configuring that package, use a command
 like:
 
-  $ pilot-link -i keyring-2.0-en.prc AESLib.prc DESLib.prc
+  $ pilot-xfer -i keyring-2.0-en.prc AESLib.prc DESLib.prc
 
 to install the applications.
 
