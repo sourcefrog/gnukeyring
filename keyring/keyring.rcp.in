@@ -70,7 +70,7 @@ BEGIN
   "Name:" = "Nom:"
   "Account:" = "Compte:"
   "Password:" = "Clau:"
-  "Confirm:"  = "Acceptar:" 
+  "Confirm:" = "Acceptar:" 
   "Changed:" = "Modificat:"
   "Done" = "Fet"
   "Preferences" = "Preferències"
@@ -434,16 +434,17 @@ END
 
 // ======================================================================
 // Spanish translation contributed by Juan Carlos Borrás
+// Revised by Rodolfo García Peñas
 
 TRANSLATION "es"
 BEGIN
   "Look Up:" = "Buscar:"
   "New" = "Nueva"
-  "Key ______ of ______" = "Clave ______ de ______" 
   "Name:" = "Nombre:"
   "Account:" = "Cuenta:"
   "Password:" = "Clave:"
-  "Confirm:"  = "Aceptar:" 
+  "Confirm:" = "Aceptar:" 
+  "Iter:" = "Iter:"
   "Changed:" = "Modificado:"
   "Done" = "Hecho"
   "Preferences" = "Preferencias"
@@ -452,8 +453,13 @@ BEGIN
   "15 sec" = "15 Seg."
   "60 sec" = "1 Min."
   "5 min" = "5 Min."
+  "Only lock when inactive" = "Bloquear sólo si inactivo"
+  "Use Keyring fonts" = "Usar fuentes de Keyring"
+  "Veil password" = "Velar clave"
 
   "Cancel" = "Cancelar"
+
+  "Keyring for PalmOS" = "Keyring para PalmOS"
 
   "Set Keyring Password" =  "Cambiar la Clave del Llavero"
 
@@ -466,6 +472,8 @@ BEGIN
   "Length:" = "Tamaño:"
   "Include:" = "Incluye:"
   "Generate" = "Generar"
+
+  "Change Date" = "Cambiar fecha"
 
   "Unlock" =  "Desbloquear"
 
@@ -481,16 +489,29 @@ BEGIN
 
   "Not here yet" = "Vuelva Vd. mañana"
   "@@NotImplemented" = "Esta característica no está implementada aun."
-  "@@NotEnoughFeatures" = "This version of Keyring requires ^1."
-  "@@langSpecificChars" =  "ä¥©"
-  "@@pronounceable" = "pronounceable"
+  "Not Enough Features" = "Systemfehler"
+  "@@NotEnoughFeatures" = "Esta versión de Keyring requiere ^1."
+  "@@CipherNotSupported" = "Esta versión de Keyring no soporta el cifrado ^1."
+  "@@UpgradeDatabase" = "Esta base de datos es de una versión previa de Keyring.  Debe convertirla al nuevo formato primero.  Por favor, si no tiene backup cancele ahora.  Si no introduzca su contraseña en el siguiente dialogo."
+  "@@UpgradeMissingHash" = "La base de datos está dañada.  Introduzca su contraseña para repararla. Si introduce mal su contraseña la base de datos quedará inutilizable despues de repararse. PRESIONE CANCELAR SI NO TIENE BACKUP."
+  "Error" = "Error"
+  "Error upgrading database: ^1" = "Error en la conversion: ^1"
 
-  "@@BetaVersion" = "This is a beta test version of Keyring.  It may have bugs.  Please keep another copy of any unrecoverable data." 
+  "@@langSpecificChars" =  "ä¥©"
+  "@@pronounceable" = "pronunciable"
 
   "@@CouldntLaunchMemo" =  "El block de notas no puede ejecutarse."
 
   "Delete Key" = "Borrar Clave"
   "Delete current key record?" = "¿Borrar la presente Clave?"
+
+  "@@AlphaVersion" = "Esta es una versión alpha de Keyring y tiene bugs! No la utilice para datos reales." 
+  "@@BetaVersion" = "Esta es una versión de prueba para testers de Keyring.  Puede tener bugs.  Mantenga otra copia de cualquier dato que no pueda recuperar." 
+
+  "This is free software.  No warranty." = "Esto es software libre.  Sin garantía." 
+
+  "Released under the GNU GPL v2." = "Versión bajo GNU GPL v2."
+
   "Save archive copy on PC" = "Guardar copia en el PC"
 
   "Database" = "Base de Datos"
@@ -503,14 +524,19 @@ BEGIN
   "About..." =  "Acerca..."
 
   "Undo" = "Deshacer"
+  "Undo All" = "Deshacer todo"
   "Graffiti Help" = "Ayuda de Grafitti"
   "Paste" = "Pegar"
   "Cut" = "Cortar"
   "Select All" = "Seleccionar Todo"
+  "Key ______ of ______" = "Clave ______ de ______" 
   "Key ^0 of ^1" = "Clave ^0 de ^1"
   "Copy" = "Copiar"
   "Keyboard" = "Teclado"
   "New Key" = "Nueva Clave"
+
+  "Upgrade Database?" = "Convertir la base de datos?"
+  "Database Damaged" = "Base de datos dañada"
 
   "Key" =  "Ficha"
   "Generate Password..." = "Generar Clave..."
@@ -519,7 +545,14 @@ BEGIN
 
   "@@GenerateHelp" = "help/es/generate.txt"
   "@@KeyEditHelp" = "help/es/keyedit.txt"
-  "@@SetPasswdHelp" = "The master password protects all your keys, and must be entered to access the database.  If it is forgotten, the database cannot be accessed."
+  "@@SetPasswdHelp" = "La clave maestra protege todas tus claves, y debe ser introducida para acceder a la base de datos.  Si la pierda, la base de datos no podrá ser accedida.  La cuenta de iteraciones debe ser seleccionada como una relacion entre seguridad y rapidez: Un mayor valor hace más dificil a un atacante probar claves, porque su comprobación es más lenta."
+
+  "There is no data to export." = "No hay datos para exportar."
+
+  "Unfiled" = "Sin categoría"
+  "Phone" = "Telefono"
+  "Banking" = "Banco"
+  "Convert" = "Conversion"
 
   /* These may not be right for this translation.  If they're wrong, please
    * mail me corrections. */
@@ -1403,7 +1436,18 @@ END
 VERSION ID 1000 "__VERSION__"
 
 FONT ID StarFont FONTID fntStar "fontstar.txt"
+FONTFAMILY ID StarFont FONTID fntStar
+BEGIN
+   FONT "fontstar.txt" DENSITY 72
+   FONT "fontstar144.txt" DENSITY 144
+END
+
 FONT ID PasswordFont FONTID fntPassword "fontPW.txt"
+FONTFAMILY ID PasswordFont FONTID fntPassword
+BEGIN
+   FONT "bitstreamveramono-6x12.txt" DENSITY 72
+   FONT "bitstreamveramono-12x24.txt" DENSITY 144
+END
 
 FORM ID ListForm AT (0 0 160 160)
 MENUID ListMenuBar

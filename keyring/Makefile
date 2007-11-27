@@ -5,7 +5,7 @@
 # Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@users.sourceforge.net>
 # Copyright (C) 2002-2004 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
 #
-# $Header$
+# $Header: /cvsroot/gnukeyring/keyring/Makefile,v 1.114.2.7 2004/08/13 11:34:33 hoenicke Exp $
 
 APP             = keyring
 ICONTEXT        = "Keyring"
@@ -64,14 +64,14 @@ JAVA		= java
 # properly. Foo. 
 
 BUILD_DATE     := $(shell date +'%Y-%m-%d')
-VERSION         = 1.2.3
-DEFINES		= -DkAppVersion=0x1023
+VERSION         = 1.2.3-svn-1
+DEFINES		= -DBETA -DkAppVersion=0x1024
 WARN	        = -Wall -Winline -Wunused -W	\
 		-Wstrict-prototypes -Wmissing-prototypes \
 		-Wlarger-than-260 -Wshadow -Wcast-align
 
 OPTIM		= -O2 #-g -mdebug-labels
-INCLUDES        = -IpilotSSLeay/include
+INCLUDES        = -IpilotSSLeay/include -I$(HOME)/palmdev/palmOne
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
 
