@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 4; c-file-style: java; -*-
  *
- * $Header$
+ * $Header: /cvsroot/gnukeyring/keyring/keyring.c,v 1.58 2003/03/14 11:55:42 hoenicke Exp $
  * 
  * Keyring -- store passwords securely on a handheld
  * Copyright (C) 1999, 2000, 2001 Martin Pool <mbp@users.sourceforge.net>
@@ -76,10 +76,17 @@ static void App_SavePrefs(void)
 
 void App_LoadFonts(void)
 {
+    UInt32 winVersion = 0;
+    UInt32 resID = 'NFNT';
+    
     if (handleFontStar == NULL) {
-	handleFontStar = DmGetResource('NFNT', StarFont);
+	if (FtrGet(sysFtrCreator, sysFtrNumWinVersion, &winVersion) == 0
+	    && winVersion >= 4)
+	    resID = 'nfnt';
+
+	handleFontStar = DmGetResource(resID, StarFont);
 	FntDefineFont(fntStar, (FontPtr)MemHandleLock(handleFontStar));
-	handleFontPW = DmGetResource('NFNT', PasswordFont);
+	handleFontPW = DmGetResource(resID, PasswordFont);
 	FntDefineFont(fntPassword, (FontPtr)MemHandleLock(handleFontPW));
     }
 }
