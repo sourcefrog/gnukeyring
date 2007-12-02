@@ -288,7 +288,7 @@ static Err CheckROMVersion (void)
 
 UInt32 PilotMain(UInt16 launchCode,
 		 void *cmdPBP,
-		 UInt16 UNUSED(launchFlags))
+		 UInt16 launchFlags)
 {
     struct EventType keyev;
     Err err = 0;
@@ -372,6 +372,7 @@ UInt32 PilotMain(UInt16 launchCode,
 	    keyev.data.keyDown.modifiers = commandKeyMask;
 	    EvtAddEventToQueue(&keyev);
 	}
+	((SysAlarmTriggeredParamType*) cmdPBP)->purgeAlarm = true;
 	break;
 
     case sysAppLaunchCmdSaveData:
