@@ -110,9 +110,14 @@ void Snib_Eradicate(void)
 	SysCurAppDatabase(&card, &dbID);
 	DmDatabaseInfo(card, dbID, NULL, NULL, NULL, NULL,
 		       NULL, NULL, NULL, NULL, NULL, NULL, &creator);
-	if (creator == kKeyringCreatorID
-	    && FrmGetActiveFormID() == ListForm)
-	    FrmUpdateForm(ListForm, frmRedrawUpdateCode);
+	if (creator == kKeyringCreatorID) {
+	    /* Clear Alarm if we're still active, otherwise this was
+	     * triggered by an alarm so clearing is not necessary.
+	     */
+	    AlmSetAlarm(card, dbID, 0, 0, true);
+	    if (FrmGetActiveFormID() == ListForm)
+		FrmUpdateForm(ListForm, frmRedrawUpdateCode);
+	}
     }
 }
 
