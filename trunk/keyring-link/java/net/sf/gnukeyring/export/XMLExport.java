@@ -83,10 +83,13 @@ public class XMLExport {
 
 	    writer.write("<pwentry>\n");
 	    writer.write("  <title>"+xmlencode(entry.getName())+"</title>\n");
+	    String category = (String) entry.getCategory();
 	    String account = (String) entry.getField("Account");
 	    String password = (String) entry.getField("Password");
 	    Date   changed = (Date) entry.getField("Changed");
 	    String notes = (String) entry.getField("Notes");
+	    if (category != null)
+		writer.write("  <category>"+xmlencode(category)+"</category>\n");
 	    if (account != null)
 		writer.write("  <username>"+xmlencode(account)+"</username>\n");
 	    if (password != null)

@@ -62,6 +62,23 @@ public class PDBKeyringEntry5 implements KeyringEntry {
 	return sb.toString();
     }
 
+    public String dumpEntry() {
+	int blocksize = library.getBlockSize();
+	byte[] iv = new byte[blocksize];
+	System.arraycopy(crypted, 0, iv, 0, blocksize);
+// 	System.err.println("IV: "+dump(iv));
+	Cipher c = library.getCipher(Cipher.DECRYPT_MODE, iv);
+	byte[] decrypted;
+	try {
+	    decrypted = c.doFinal(crypted, 
+				  blocksize, crypted.length - blocksize);
+// 	    System.err.println("decrypted: "+dump(decrypted));
+	} catch (GeneralSecurityException ex) {
+	    throw new InternalError(ex.toString());
+	}
+	return "Name: "+keyname+"\nIV: "+dump(iv)+"\ndecrypted: "+dump(decrypted)+"\n";
+    }
+
     private void createFields() throws UnsupportedEncodingException {
 	int blocksize = library.getBlockSize();
 	byte[] iv = new byte[blocksize];

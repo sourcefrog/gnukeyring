@@ -68,7 +68,15 @@ public class PDBKeyringLibrary implements KeyringLibrary {
 	int    cipher;
 	
 	public void read(PalmDataInputStream in) throws IOException {
-	    readCategories(in);
+	    if (getDatabase().getVersion() == 0) {
+		salt = new byte[4];
+		mdigest = new byte[16];
+		in.readFully(salt, 0, 4);
+		in.readFully(mdigest, 0, 16);
+	    }
+	    if (getDatabase().getVersion() >= 1) {
+		readCategories(in);
+	    }
 	    if (getDatabase().getVersion() >= 5) {
 		salt = new byte[8];
 		mdigest = new byte[8];
@@ -165,7 +173,7 @@ public class PDBKeyringLibrary implements KeyringLibrary {
 	try {
 	    db.read(new FileInputStream(file), 
 		    KeyAppInfo.class, null, KeyRecord.class);
-	    if (db.getVersion() < 4 || db.getVersion() > 5) {
+	    if (db.getVersion() > 5) {
 		System.err.println("Unsupported database version!");
 		return;
 	    }
@@ -175,15 +183,20 @@ public class PDBKeyringLibrary implements KeyringLibrary {
 	}
 
 	categories = new TreeMap();
-	for (int i = 0; i < 16; i++) {
-	    String cat = db.getAppInfo().getCategories(i);
-	    if (cat.length() > 0)
-		categories.put(cat, new Integer(i));
+	if (db.getVersion() >= 1) {
+	    for (int i = 0; i < 16; i++) {
+		String cat = db.getAppInfo().getCategories(i);
+		if (cat.length() > 0)
+		    categories.put(cat, new Integer(i));
+	    }
 	}
 
 	Record[] rawEntries = db.getEntries();
 	int start = 0;
-	if (db.getVersion() <= 4) {
+	if (db.getVersion() == 0) {
+	    salt = ((KeyAppInfo) db.getAppInfo()).salt;
+	    mdigest = ((KeyAppInfo) db.getAppInfo()).mdigest;
+	} else if (db.getVersion() <= 4) {
 	    salt = ((KeyRecord) rawEntries[0]).salt;
 	    mdigest = ((KeyRecord) rawEntries[0]).mdigest;
 	    start++;
@@ -207,8 +220,11 @@ public class PDBKeyringLibrary implements KeyringLibrary {
 		ex.printStackTrace();
 		return;
 	    }
-
-	    if (db.getVersion() <= 4) {
+	    
+	    if (db.getVersion() == 0) {
+		entries.add(new PDBKeyringEntry(this, name, null,
+						entry.crypted));
+	    } else if (db.getVersion() <= 4) {
 		entries.add(new PDBKeyringEntry(this, name, 
 						db.getAppInfo().getCategories(cat),
 						entry.crypted));
@@ -327,11 +343,13 @@ public class PDBKeyringLibrary implements KeyringLibrary {
     }
 
     private boolean getKey4(byte[] password) {
-	byte[] pw = new byte[64];
-	System.arraycopy(salt, 0, pw, 0, 4);
-	System.arraycopy(password, 0, pw, 4, Math.min(60,password.length));
-	if (!Arrays.equals(md5(pw), mdigest))
-	    return false;
+	if (salt != null && mdigest != null) {
+	    byte[] pw = new byte[64];
+	    System.arraycopy(salt, 0, pw, 0, 4);
+	    System.arraycopy(password, 0, pw, 4, Math.min(60,password.length));
+	    if (!Arrays.equals(md5(pw), mdigest))
+		return false;
+	}
 
 	byte[] digest = md5(password);
 	byte[] rawkey = new byte[24];
