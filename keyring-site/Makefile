@@ -25,7 +25,7 @@ htp_clean:
 
 $(site_files): $(htp_libs)
 
-sites=gnukeyring.sourceforge.net:/home/groups/g/gn/gnukeyring/htdocs
+sites=hoenicke,gnukeyring@web.sourceforge.net:htdocs
 
 all: $(html_pages)
 
