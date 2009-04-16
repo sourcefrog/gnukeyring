@@ -89,7 +89,7 @@
 
    <p>Categories and key names are not encrypted.  This makes it possible
    to browse the key database without entering the password.  You should be
-   careful not to put sensible information in the key name.  You can
+   careful not to put sensitive information in the key name.  You can
    for example leave it empty.
 
    <p>PalmOS does not have memory protection between applications: a
