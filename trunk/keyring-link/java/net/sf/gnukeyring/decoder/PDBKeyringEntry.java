@@ -75,6 +75,14 @@ public class PDBKeyringEntry implements KeyringEntry {
 
     private void createFields() {
 	Cipher c = library.getCipher(Cipher.DECRYPT_MODE, null);
+	int blockSize = c.getBlockSize();
+	if ((crypted.length & (blockSize - 1)) != 0) {
+	    System.err.println("WARNING: Key " + keyname + ": length of crypted block not a multiple of blocksize.");
+	    byte[] blocked = new byte[crypted.length & ~(blockSize - 1)];
+	    System.arraycopy(crypted, 0, blocked,0, blocked.length);
+	    crypted = blocked;
+	}
+
 	byte[] encrypted;
 	try {
 	    encrypted = c.doFinal(crypted);
@@ -86,7 +94,7 @@ public class PDBKeyringEntry implements KeyringEntry {
 	int index = 0;
 	for (int i = 0; i < 3; i++) {
 	    int lastindex = index;
-	    while (encrypted[index] != 0)
+	    while (index < encrypted.length && encrypted[index] != 0)
 		index++;
 	    try {
 		fields.put(fieldnames.get(i == 2 ? 3 : i), 
@@ -95,6 +103,8 @@ public class PDBKeyringEntry implements KeyringEntry {
 	    } catch (UnsupportedEncodingException ex) {
 		throw new InternalError(ex.toString());
 	    }
+	    if (index >= encrypted.length)
+		break;
 	    index++;
 	}
 	int datetype = 0;
