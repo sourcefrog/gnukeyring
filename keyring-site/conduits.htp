@@ -29,7 +29,21 @@ Java Keyring viewer</a>.</li>
 href="&#109;ai&#108;to&#58;key&#114;ing&#64;zia&#46;com&#46;br">Alexandre
        Roberto Zia</a>. </li>
 
-   <li>Chris Ridd wrote a viewer for MacOS X (coming soon)</li>
+   <li>The following tool exports keyring databases to XML format (by me).
+   Its output can be imported in other tools or viewed in a text editor.  
+   Use it as follows:
+<pre>java -jar xmlexport.jar Keys-Gtkr.pdb &lsquo;password&rsquo; output.xml</pre>
+<def name="dlentry2" option="icon file desc">
+  <tr><td>
+  <a href="http://hoenicke.ath.cx/keyring2-pre/${file}"><img src="myicons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
+  </td><td><use desc></td>
+  <td><a href="http://hoenicke.ath.cx/keyring2-pre/${file}.sig"><img src="myicons/sig.gif" border="0" alt="&nbsp;" align="middle">signature</sig></td></tr>
+</def>
+  <table>
+    <dlentry2 icon="binary.gif" file="xmlexport.jar" desc="XML Exporter">
+    <dlentry2 icon="compressed.gif" file="xmlexport-src.jar" desc="Source Code" >
+  </table>
+   </li>
 
    <li>There is a keyring conduit included in
         <a href="http://www.jpilot.org/">JPilot</a>.  It
