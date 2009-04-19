@@ -117,8 +117,13 @@ public class PDBKeyringLibrary implements KeyringLibrary {
 		if (getDatabase().getVersion() <= 4) {
 		    byte[] data = new byte[1024];
 		    int len = 0;
-		    while (len < 1024) {
-			int read = in.read(data, len, 1024 - len);
+		    while (true) {
+			if (len == data.length) {
+			    byte[] ndata = new byte[data.length*2];
+			    System.arraycopy(data, 0, ndata, 0, data.length);
+			    data = ndata;
+			}
+			int read = in.read(data, len, data.length - len);
 			if (read <= 0)
 			    break;
 			len += read;
@@ -146,8 +151,13 @@ public class PDBKeyringLibrary implements KeyringLibrary {
 			in.read(); // padding;
 		    byte[] data = new byte[1024];
 		    int len = 0;
-		    while (len < 1024) {
-			int read = in.read(data, len, 1024 - len);
+		    while (true) {
+			if (len == data.length) {
+			    byte[] ndata = new byte[data.length*2];
+			    System.arraycopy(data, 0, ndata, 0, data.length);
+			    data = ndata;
+			}
+			int read = in.read(data, len, data.length - len);
 			if (read <= 0)
 			    break;
 			len += read;
