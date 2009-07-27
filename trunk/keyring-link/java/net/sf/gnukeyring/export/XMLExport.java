@@ -1,4 +1,5 @@
 package net.sf.gnukeyring.export;
+
 import net.sf.gnukeyring.KeyringEntry;
 import net.sf.gnukeyring.KeyringLibrary;
 import java.io.*;
@@ -15,31 +16,11 @@ import java.text.SimpleDateFormat;
  * @version $Revision: 697 $
  */
 
-public class XMLExport {
-    KeyringLibrary keylib;
-    Writer writer;
-
-    public static void main(String[] param) throws IOException {
-	if (param.length < 2 || param.length > 3) {
-	    System.err.println("USAGE: java net.sf.gnukeyring.export.XMLExport <pdb-file> <password> [<outputfile>]");
-	    return;
-	}
-	new XMLExport(param).export();;
-    }
-
+public class XMLExport extends Export {
     public XMLExport(String[] param) throws IOException {
-	keylib = new net.sf.gnukeyring.decoder.PDBKeyringLibrary();
-	keylib.setFilename(new File(param[0]));
-	keylib.unlock(param[1]);
-	OutputStream os;
-	if (param.length == 2) {
-	    os = System.out;
-	} else {
-	    os = new FileOutputStream(new File(param[2]));
-	}
-	writer = new OutputStreamWriter(os, "UTF-8");
+        super(param);
     }
-
+    
     public void export() throws IOException {
 	writer.write("\uFEFF");
 	writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
