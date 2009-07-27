@@ -1,5 +1,5 @@
 /*
- * $Header$
+ * $Id$
  * 
  * Keyring -- store passwords securely on a handheld
  * Copyright (C) 2004 Jochen Hoenicke <hoenicke@users.sourceforge.net>
