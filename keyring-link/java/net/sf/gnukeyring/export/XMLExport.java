@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
  * The XML export for a keyring database.
  *
  * @author Jochen Hoenicke
- * @version $Revision: 697 $
+ * @version $Revision$
  */
 
 public class XMLExport extends Export {
