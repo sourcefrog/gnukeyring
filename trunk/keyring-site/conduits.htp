@@ -29,10 +29,12 @@ Java Keyring viewer</a>.</li>
 href="&#109;ai&#108;to&#58;key&#114;ing&#64;zia&#46;com&#46;br">Alexandre
        Roberto Zia</a>. </li>
 
-   <li>The following tool exports keyring databases to XML format (by me).
+   <li>The following tool exports keyring databases to XML format (by me)
+   or CSV format (by Gervase Markham).
    Its output can be imported in other tools or viewed in a text editor.  
    Use it as follows:
-<pre>java -jar xmlexport.jar Keys-Gtkr.pdb &lsquo;password&rsquo; output.xml</pre>
+<pre>java -jar export.jar Keys-Gtkr.pdb &lsquo;password&rsquo; output.xml
+java -jar export.jar Keys-Gtkr.pdb &lsquo;password&rsquo; output.csv</pre>
 <def name="dlentry2" option="icon file desc">
   <tr><td>
   <a href="http://hoenicke.ath.cx/keyring2-pre/${file}"><img src="myicons/$icon" border="0" alt="&nbsp;" align="middle"><code><use file></code></a>
@@ -40,8 +42,8 @@ href="&#109;ai&#108;to&#58;key&#114;ing&#64;zia&#46;com&#46;br">Alexandre
   <td><a href="http://hoenicke.ath.cx/keyring2-pre/${file}.sig"><img src="myicons/sig.gif" border="0" alt="&nbsp;" align="middle">signature</sig></td></tr>
 </def>
   <table>
-    <dlentry2 icon="binary.gif" file="xmlexport.jar" desc="XML Exporter">
-    <dlentry2 icon="compressed.gif" file="xmlexport-src.jar" desc="Source Code" >
+    <dlentry2 icon="binary.gif" file="export.jar" desc="XML Exporter">
+    <dlentry2 icon="compressed.gif" file="export-src.jar" desc="Source Code" >
   </table>
    </li>
 
