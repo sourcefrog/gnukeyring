@@ -13,7 +13,7 @@ public class Export {
 	    return;
 	}
         
-        if (param[2].indexOf(".xml") != -1) {
+        if (param.length == 2 || param[2].indexOf(".xml") != -1) {
             new XMLExport(param).export();
         }
         else if (param[2].indexOf(".csv") != -1) {
