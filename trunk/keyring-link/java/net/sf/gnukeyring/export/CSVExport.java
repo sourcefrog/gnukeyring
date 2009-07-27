@@ -1,5 +1,5 @@
 /*
- * $Header$
+ * $Id$
  * 
  * Keyring CSV Exporter
  * Copyright (C) 2009 Gervase Markham <gerv@gerv.net>
@@ -32,7 +32,7 @@ import com.Ostermiller.util.*;
  * The CSV export for a keyring database.
  *
  * @author Gervase Markham <gerv@gerv.net>
- * @version $Revision: $
+ * @version $Revision$
  */
 
 public class CSVExport extends Export {
