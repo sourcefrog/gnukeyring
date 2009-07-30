@@ -17,8 +17,7 @@ import java.text.SimpleDateFormat;
  */
 
 public class XMLExport extends Export {
-    public XMLExport(String[] param) throws IOException {
-        super(param);
+    public XMLExport() {
     }
     
     public void export() throws IOException {

@@ -36,8 +36,7 @@ import com.Ostermiller.util.*;
  */
 
 public class CSVExport extends Export {
-    public CSVExport(String[] param) throws IOException {
-        super(param);
+    public CSVExport() {
     }
     
     public void export() throws IOException {

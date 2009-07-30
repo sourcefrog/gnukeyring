@@ -13,6 +13,6 @@ all: export.jar
 
 
 export.jar: force
-	javac $(LIBJAVA) $(EXPORTJAVA)
+	javac -target jsr14 $(LIBJAVA) $(EXPORTJAVA)
 	jar -cfe export.jar net.sf.gnukeyring.export.Export $(LIBCLASS) $(EXPORTCLASS)
 	jar -cfe export-src.jar $(LIBJAVA) $(EXPORTJAVA)
