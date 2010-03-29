@@ -1,9 +1,10 @@
 /* -*- c-file-style: "java"; -*-
  *
- * $Id$
+ * $Id: keyring.h 783 2007-06-03 15:17:46Z hoenicke $
  * 
  * Keyring -- store passwords securely on a handheld
- * Copyright (C) 2002-2005 by Jochen Hoenicke <hoenicke@users.sourceforge.net>
+ * Copyright (C) 1999, 2000 by Martin Pool <mbp@users.sourceforge.net>
+ * Copyright (C) 2001-2005 Jochen Hoenicke <hoenicke@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,24 +21,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <PalmOS.h>
-#include <palmOne_68K.h>
-#include <TxtGlue.h>
-#include <WinGlue.h>
-#include "sections.h"
-#include "sha1.h"
-#include <md5.h>
+#ifdef __GNUC__
+#  define UNUSED(x) x __attribute__((unused))
+#endif	/* !__GNUC__ */
 
-#include <des.h>
-#include "AESLib-noinline.h"
+#define RESOURCE_NUM_PBKDF_PNO 1
+#define RESOURCE_TYPE_PNO      'armc'
 
-#include "resource.h"
-#include "keyring.h"
-#include "error.h"
-#include "crypto.h"
-#include "pwhash.h"
-#include "record.h"
-#include "snib.h"
-#include "pronounce.h"
-#include "prototype.h"
-#include "pbkdf-arm.h"
+typedef struct {
+    void*  result;
+    Int32  resultLen;
+    const Char *passwd;
+    const Char *salt;
+    Int32  iter;
+} PbkdfPnoDataType;

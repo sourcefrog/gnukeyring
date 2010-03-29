@@ -38,6 +38,9 @@ OPTIM		= -O2 -g -mdebug-labels
 INCLUDES        = -IpilotSSLeay/include -I$(HOME)/palmdev/palmOne
 LIBS            = -lPalmOSGlue
 CFLAGS		= $(OPTIM) $(WARN) $(DEFINES) $(INCLUDES)
+ARMCFLAGS       = -DARM -DPNOLET -march=armv4t -mtune=xscale -O3 $(INCLUDES) \
+		  -Wno-multichar -fshort-enums -fno-strict-aliasing
+ARMLIBS         = -L. -larmboot
 
 RCP             = $(APP).rcp
 RCP_IN          = $(RCP).ja $(RCP).iso2 $(RCP).cp1251 $(RCP).in
@@ -54,25 +57,33 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 		  setpasswd.c pwhash.c snib.c reencrypt.c sort.c	\
 		  secrand.c search.c pronounce.c sha1.c			\
 		  upgrade.c # md5.c
+ARMSRC          = pbkdf-arm.c
 
 ASMGEN          = sha1-m68k.pl # md5-m68k.pl
+#ARMASMGEN       = sha1-arm.pl
 
 GLIBDEF         = ssl-des.def ssl-md.def
 
 HEADERS	        = sections.h sha1.h keyring.h record.h error.h    \
 		  resource.h crypto.h pwhash.h snib.h includes.h  \
-		  pronounce.h AESLib-noinline.h AESLib-inline.h # md5.h
+		  pronounce.h AESLib-noinline.h AESLib-inline.h \
+		  pbkdf-arm.h # md5.h
 
+ARMCOBJ		= $(subst .c,.o,$(ARMSRC))
+ARMPLOBJ	= $(subst .pl,.o,$(ARMASMGEN))
+ARMOBJ		= $(ARMCOBJ) $(ARMPLOBJ)
 OBJ		= $(subst .c,.o,$(SRC)) $(subst .def,-stubs.o,$(GLIBDEF)) \
 		  $(subst .pl,.o,$(ASMGEN)) \
 		  $(APP)-sections.o 
 BIN             = $(APP).bin
 DEF		= $(APP).def $(GLIBDEF)
 EXE		= $(APP)
+ARMLET		= pbkdf-arm.pno
 
 EN_PRC          = $(BASE)-en.prc
 
 CC              = m68k-palmos-gcc
+ARMCC           = arm-palmos-gcc
 STUBGEN         = m68k-palmos-stubgen
 MULTIGEN        = m68k-palmos-multigen
 OBJCOPY         = m68k-palmos-objcopy
@@ -130,7 +141,7 @@ PILRCOPTS_ru = -Fc
 
 PRCS = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).prc)
 DIST_BIN = $(foreach lang, $(LANGUAGES), $(BASE)-$(lang).zip)
-RESSTAMPS = $(foreach lang, $(LANGUAGES), $(lang).resstamp)
+RESSTAMPS = $(foreach lang, $(LANGUAGES), $(lang).ro)
 DIST_BIN_SIG = $(patsubst %,%.sig,$(DIST_BIN) $(PRCS))
 DIST_BALL_SIG = $(patsubst %,%.sig,$(DIST_BALL))
 SSLEAYLIBS_SIG = $(patsubst %,%.sig,$(SSLEAYLIBS))
@@ -141,15 +152,14 @@ default: $(BASE)-$(DEFAULTLANG).prc
 
 all: $(PRCS) 
 
-$(PRCS): $(BASE)-%.prc: $(EXE) %.resstamp
-	cd res/$*; $(BUILDPRC) -o ../../$@ ../../$(APP).def ../../$(EXE) *.bin
+$(PRCS): $(BASE)-%.prc: $(EXE) %.ro $(ARMLET)
+	$(BUILDPRC) -o $@ $(APP).def $^
 
-$(RESSTAMPS): %.resstamp: $(BITMAPS) resource.h $(RCP) prondata.o $(WIDEBITMAPS)
-	@[ -d res/$* ] || mkdir -p res/$*
-	@-rm -f res/$*/*
-	@-rm -f *.bin
-	$(PILRC) -allowEditID -q $(PILRCOPTS_$*) -L $* $(RCP) res/$*/ >/dev/null
-	$(OBJCOPY) -Obinary prondata.o res/$*/PRON03e8.bin
+prondata.bin: prondata.o
+	$(OBJCOPY) -Obinary prondata.o prondata.bin
+
+$(RESSTAMPS): %.ro: $(BITMAPS) resource.h $(RCP) prondata.bin $(WIDEBITMAPS)
+	$(PILRC) -allowEditID -ro -q $(PILRCOPTS_$*) -L $* $(RCP) $@
 	@touch $@
 
 # Convert keyring icons to 32 pixel width, so it is easier to center them
@@ -201,8 +211,11 @@ $(APP)-sections.o $(APP)-sections.ld: $(APP).def
 	$(CC) -c $(APP)-sections.s
 
 $(EXE): $(OBJ) $(APP)-sections.ld ;
-	@echo $(CC) $(OPTIM) $^ $(LIBS) -o $(EXE)
-	@$(CC) $(CFLAGS) $^ $(LIBS) -o $(EXE)
+	@echo $(CC) $(OPTIM) $^ $(LIBS) -o $@
+	@$(CC) $(CFLAGS) $^ $(LIBS) -o $@
+
+$(ARMLET): $(ARMOBJ)
+	$(ARMCC) -nostartfiles $(ARMCFLAGS) $^ $(ARMLIBS) -o $@
 
 # Rules for building overlays
 #
@@ -224,10 +237,18 @@ $(DIST_ZIP): $(PRCS) $(SSLEAYLIBS) $(AESLIBS)
 	$(CC) -c $*.s -o $@
 	@rm $*.s
 
+$(ARMPLOBJ): %.o: %.pl
+	$(PERL) $< > $*.s
+	$(ARMCC) -c $*.s -o $@
+	@rm $*.s
+
 %.s: %.c
 	$(CC) $(CFLAGS) -S $< 
 
 $(OBJ): $(HEADERS) prototype.h
+$(ARMCOBJ): %.o: %.c
+	$(ARMCC) $(ARMCFLAGS) -c $< -o $*.o
+
 %.o: %.c
 	@echo $(CC) $(OPTIM) -c $< -o $*.o
 	@$(CC) $(CFLAGS) -c $< -o $*.o
