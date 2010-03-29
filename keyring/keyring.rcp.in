@@ -2137,6 +2137,8 @@ STRING ID KeyEditHelp FILE "@@KeyEditHelp"
 
 STRING ID SetPasswdHelp "@@SetPasswdHelp"
 
+DATA "PRON" ID 1000 "prondata.bin"
+
 CATEGORIES ID CategoryRsrc "Unfiled" "Banking" "Computer" "Phone" "Web"
 
 /*

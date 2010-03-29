@@ -36,6 +36,7 @@
  */
 
 #include "includes.h"
+#include <PceNativeCall.h>
 
 /*
  * Generate the hash of a password, using specified salt.
@@ -45,10 +46,75 @@
 static void PwHash_CalcSnib(SnibType *snib, UInt16 snibSize,
 			    const Char *passwd, Char *salt, UInt16 iter)
 {
+    UInt32 processorType;
     MemSet(snib, sizeof(SnibType), 0);
-    PwHash_PBKDF2(snib, snibSize, passwd, salt, iter);
+    if (errNone == FtrGet(sysFileCSystem, sysFtrNumProcessorID, &processorType)
+	&& sysFtrNumProcessorIsARM(processorType)) {
+	
+	PbkdfPnoDataType args;
+	MemHandle armH;
+	MemPtr armP;
+	args.result = snib;
+	args.resultLen = snibSize;
+	args.passwd = passwd;
+	args.salt = salt;
+	args.iter = iter;
+	armH = DmGetResource(RESOURCE_TYPE_PNO, RESOURCE_NUM_PBKDF_PNO);
+	armP = MemHandleLock(armH);
+	PceNativeCall((NativeFuncType*)armP, &args);
+	MemHandleUnlock(armH);
+	DmReleaseResource(armH);
+    } else {
+	PwHash_PBKDF2(snib, snibSize, passwd, salt, iter);
+    }
 }
 
+#if 0
+void PwHash_Test(void) {
+    SnibType snib1;
+    SnibType snib2;
+    Err err = 1;
+    Char errmsg[512];
+    
+    PwHash_CalcSnib(&snib1, 8, "", "11111111", 1);
+    PwHash_PBKDF2(&snib2, 8, "", "11111111", 1);
+    StrPrintF(errmsg, "Expected %02x%02x%02x%02x%02x%02x%02x%02x, "
+            "got %02x%02x%02x%02x%02x%02x%02x%02x",
+	    snib2.key.aes[0],snib2.key.aes[1],snib2.key.aes[2],snib2.key.aes[3],
+	    snib2.key.aes[4],snib2.key.aes[5],snib2.key.aes[6],snib2.key.aes[7],
+	    snib1.key.aes[0],snib1.key.aes[1],snib1.key.aes[2],snib1.key.aes[3],
+	    snib1.key.aes[4],snib1.key.aes[5],snib1.key.aes[6],snib1.key.aes[7]);
+    if (MemCmp(&snib1, &snib2, 8) != 0) {
+	UI_ReportSysError2(KeyDatabaseAlert, err, errmsg);
+	return;
+    }
+
+    PwHash_CalcSnib(&snib1, 8, "", "12341234", 1);
+    PwHash_PBKDF2(&snib2, 8, "", "12341234", 1);
+    if (MemCmp(&snib1, &snib2, 8) != 0)
+	UI_ReportSysError2(KeyDatabaseAlert, err, "2");
+
+    PwHash_CalcSnib(&snib1, 8, "aaaa", "12341234", 1);
+    PwHash_PBKDF2(&snib2, 8, "aaaa", "12341234", 1);
+    if (MemCmp(&snib1, &snib2, 8) != 0)
+	UI_ReportSysError2(KeyDatabaseAlert, err, "3");
+
+    PwHash_CalcSnib(&snib1, 8, "abcd", "12341234", 1);
+    PwHash_PBKDF2(&snib2, 8, "abcd", "12341234", 1);
+    if (MemCmp(&snib1, &snib2, 8) != 0)
+	UI_ReportSysError2(KeyDatabaseAlert, err, "4");
+
+    PwHash_CalcSnib(&snib1, 8, "abcd", "12341234", 500);
+    PwHash_PBKDF2(&snib2, 8, "abcd", "12341234", 500);
+    if (MemCmp(&snib1, &snib2, 8) != 0)
+	UI_ReportSysError2(KeyDatabaseAlert, err, "5");
+
+    PwHash_CalcSnib(&snib1, 32, "abcdefghijklmnop", "12345678", 1000);
+    PwHash_PBKDF2(&snib2, 32, "abcdefghijklmnop", "12345678", 1000);
+    if (MemCmp(&snib1, &snib2, 32) != 0)
+	UI_ReportSysError2(KeyDatabaseAlert, err, "6");
+}
+#endif
 
 /*
  * Generate the hash of a password, using specified salt.
