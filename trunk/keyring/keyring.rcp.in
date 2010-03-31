@@ -340,6 +340,7 @@ BEGIN
   "Password:" = "Passwort:"
   "Confirm:"  = "Bestätigen:" 
   "Iter:"  = "Iter:" 
+  "Cipher:"  = "Chiffre:" 
   "Changed:" = "Geändert:"
   "Done" = "Fertig"
   "Preferences" = "Einstellungen"
@@ -1655,15 +1656,15 @@ BEGIN
 	label "Confirm:" autoid at (right@prevleft-2 prevtop) font 1
 
 	label "Iter:" autoid at (right@40 prevbottom+2) font 1
-	pushbutton "50" id Iter50Push at (prevright+2 prevtop auto auto) group 1
-	pushbutton "100" id Iter100Push at (prevright+1 prevtop auto auto) group 1 
-	pushbutton "250" id Iter250Push at (prevright+1 prevtop auto auto) group 1
-	pushbutton "500" id Iter500Push at (prevright+1 prevtop auto auto) group 1
-	pushbutton "1000" id Iter1000Push at (prevright+1 prevtop auto auto) group 1
+	pushbutton "250" id Iter250Push at (prevright+2 prevtop 18 auto) group 1
+	pushbutton "500" id Iter500Push at (prevright+1 prevtop 18 auto) group 1 
+	pushbutton "1000" id Iter1000Push at (prevright+1 prevtop 22 auto) group 1
+	pushbutton "2500" id Iter2500Push at (prevright+1 prevtop 23 auto) group 1
+	pushbutton "5000" id Iter5000Push at (prevright+1 prevtop 23 auto) group 1
 	
 	label "Cipher:" autoid at (right@40 prevbottom+2) font 1
-	pushbutton "No" id CipherNoPush at (prevright+2 prevtop auto auto) group 2
-	pushbutton "3DES" id CipherDESPush at (prevright+1 prevtop auto auto) group 2
+//	pushbutton "No" id CipherNoPush at (prevright+2 prevtop auto auto) group 2
+	pushbutton "3DES" id CipherDESPush at (prevright+2 prevtop auto auto) group 2
 	pushbutton "AES" id CipherAES128Push at (prevright+1 prevtop auto auto) group 2
 	pushbutton "AES-256" id CipherAES256Push at (prevright+1 prevtop auto auto) group 2
 
@@ -1681,6 +1682,8 @@ NAVIGATION ID SetPasswdForm
 NAVIGATIONMAP
   ROW MasterKeyFld
   ROW ConfirmFld
+  ROW Iter250Push Iter500Push Iter1000Push Iter2500Push Iter5000Push
+  ROW CipherDESPush CipherAES128Push CipherAES256Push
   ROW OkBtn
       CancelBtn
 END
