@@ -28,16 +28,16 @@
 #define DEFAULT_CIPHER AES_128_CBC_CIPHER
 
 static const Int16 iterMap[] = {
-    50,   Iter50Push,
-    100,  Iter100Push,
     250,  Iter250Push,
     500,  Iter500Push,
     1000, Iter1000Push,
+    2500, Iter2500Push,
+    5000, Iter5000Push,
     -1
 };
 
 static const Int16 cipherMap[] = {
-    NO_CIPHER, CipherNoPush,
+    //    NO_CIPHER, CipherNoPush,
     DES3_EDE_CBC_CIPHER, CipherDESPush,
     AES_128_CBC_CIPHER, CipherAES128Push,
     AES_256_CBC_CIPHER, CipherAES256Push,

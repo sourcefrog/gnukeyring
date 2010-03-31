@@ -120,13 +120,13 @@
 #define VeilPasswordCheck		1244
 #define LookUpFld			1245
 #define KeyringFontsCheck		1246
-#define Iter50Push                      1247
-#define Iter100Push                     1248
+#define Iter2500Push                    1247
+#define Iter5000Push                    1248
 #define Iter250Push                     1249
 #define Iter500Push                     1250
 #define Iter1000Push                    1251
 #define LabelList			1252
-#define CipherNoPush                    1253
+//#define CipherNoPush                    1253
 #define CipherDESPush                   1254
 #define CipherAES128Push                1255
 #define CipherAES256Push                1256
