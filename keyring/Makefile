@@ -60,7 +60,7 @@ SRC             = keyring.c keyedit.c keydb.c memutil.c listform.c	\
 ARMSRC          = pbkdf-arm.c
 
 ASMGEN          = sha1-m68k.pl # md5-m68k.pl
-#ARMASMGEN       = sha1-arm.pl
+ARMASMGEN       = sha1-arm.pl
 
 GLIBDEF         = ssl-des.def ssl-md.def
 
