@@ -158,7 +158,7 @@ MemMoveSwap (void *dest, const void *src, unsigned int len)
     }
 }
 
-#if 1 /* This is now an assembler function */
+#if 0 /* This is now an assembler function */
 /* The SHA f()-functions */
 
 #define f1(x,y,z)   ( ( x & y ) | ( ~x & z ) )              /* Rounds  0-19 */
@@ -179,8 +179,7 @@ MemMoveSwap (void *dest, const void *src, unsigned int len)
 
 /* Process 64 bytes of BUFFER, accumulating context into CTX. */
 
-SHA1_SECTION void
-SHA1_Block (const UInt32 *digin, UInt32 *buffer, UInt32 *digout)
+void SHA1_Block (const UInt32 *digin, UInt32 *buffer, UInt32 *digout)
 {
     UInt32 W[80];
     UInt32 A = digin[0];

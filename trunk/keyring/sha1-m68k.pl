@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-print <<EOF;
+print <<'EOF';
 #
 # Keyring -- store passwords securely on a handheld
 # Copyright (C) 2003 Jochen Hoenicke <hoenicke@users.sourceforge.net>
