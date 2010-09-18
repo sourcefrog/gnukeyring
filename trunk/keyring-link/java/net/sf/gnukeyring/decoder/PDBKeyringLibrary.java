@@ -133,11 +133,10 @@ public class PDBKeyringLibrary implements KeyringLibrary {
 			if (data[idx] == 0)
 			    break;
 		    }
-		    if (idx > len)
-			throw new IOException("Keyname not null terminated");
 		    keyname = new byte[idx];
 		    System.arraycopy(data, 0, keyname, 0, idx);
-		    idx++;
+		    if (idx < len)
+			idx++; // skip 0 terminator
 		    crypted = new byte[len - idx];
 		    System.arraycopy(data, idx, crypted, 0, len-idx);
 		} else {
