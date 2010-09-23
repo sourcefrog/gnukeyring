@@ -221,6 +221,8 @@ public class PDBKeyringLibrary implements KeyringLibrary {
 	    KeyRecord entry = (KeyRecord) rawEntries[i];
 	    if ((entry.getAttributes() & entry.DMRECATTRDELETE) != 0)
 		continue;
+	    if (entry.keyname == null)
+		continue;
 	    int cat = (entry.getAttributes() & entry.DMRECATTRCATEGORYMASK);
 	    String name;
 	    try {

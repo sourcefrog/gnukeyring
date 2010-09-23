@@ -39,7 +39,7 @@ export-src.jar: $(CLASSES:%.class=%.java)
 	jar cfe ../$@ $(CLASSES:java/%.class=%.java)
 
 $(CLASSES): %.class: %.java
-	javac -d java -cp java $^
+	javac -target 1.5 -source 1.5 -d java -cp java $^
 
 install: keyring-link
 	install keyring-link $(DESTDIR)/usr/bin/
