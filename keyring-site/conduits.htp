@@ -18,6 +18,8 @@
    <li>Markus Griessnig wrote
         a <a href="http://www.ict.tuwien.ac.at/keyring">Java Keyring editor</a>.
 	It supports both keyring-1.2.x and keyring-2.0 file format.</li>
+   <li>Peter Newman ported the 
+   <a href="http://pnewman.com/keyring/">Keyring Editor for Android</a>.</li>
    <li>Frank Taylor wrote
 	a <a href="http://www.lieder.dsl.pipex.com/software/JavaKeyring/index.html">portable
 Java Keyring viewer</a>.</li>

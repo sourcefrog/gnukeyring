@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+
+<style type="text/css">
+    body  {margin-top: 0px; margin-right: 0px; margin-left: 10px; margin-bottom: 0px;
+           font-family: verdana, sans-serif; color: black; background-color: white}
+    table {font-family: verdana, sans-serif; font-size: 9pt}
+    h1    {font-size: 16pt; font-weight: bold; margin-top: 20px; margin-left: 24px}
+    h2    {font-size: 12pt; font-weight: bold; margin-top: 16px}
+    img   {border-width: 0}
+		img.img-right {margin-left: 10px; float: right; margin-bottom: 10px}
+    div.para {font-size: 9pt; margin-top: 10px}
+    div.papers    {font-size: 9pt; margin-top: 14px}
+    div.protocols {font-size: 10pt; margin-top: 24px}
+    div.bookmarks {font-size: 9pt; line-height: 130%; margin-top: 20px}
+    p     {font-size: 9pt}
+    dt    {margin-top: 10px}
+    dd    {margin-top: 2px}
+    A:link {color: blue}
+    A:visited {color: #8888BB}
+    A:hover {background-color: yellow}
+    A.clear:hover {background-color: transparent}
+</style>
+</head>
+
+<body>
+
+<div style="width: 700px">
+<H1>Keyring for Android&mdash;A Simple Password Safe</H1>
+
+<p style="margin-top: 40px"><img src="keyring-screenshot.png" border=0 alt="Keyring for Android Screenshot" class="img-right">
+Keyring for Android will read and write database files produced by the <a href="http://gnukeyring.sourceforge.net/">Keyring for Palm OS</a> application. It lets you securely store secret information on your Android device. Use it to store passwords, online logins, account numbers or anything you want to store securely.</p>
+
+<p>I recently laid my old trusty Palm Pilot to rest and switched to an Android device. I could easily replace all of the old Palm applications except for Memo and Keyring. I replaced Memo with <a href="http://pnewman.com/rdex/">Rdex</a> using <a href="https://www.dropbox.com/">Dropbox</a> for synchronization. For Keyring I ported KeyringEditor by Markus Griessnig, a Java-based implementation, to Android. KeyringEditor is based on Java Keyring v0.6 by Frank Taylor.</p>
+
+<p>Keyring for Android is for anyone who wants to continue to use the Keyring for Palm OS database. Anyone starting a new database file may want to consider <a href="http://keepass.info">KeePass</a>, a more recent password safe application that also has an Android version.</p>
+
+<h2>Downloads</h2>
+
+<p><a href="Keyring.apk">Keyring for Android</a>&mdash;an Android application package. If you are browsing from an Android device it should just download and install. (You may need to use a file browser such as Astro to install it from the Download folder.) However, before downloading you will need to ensure "Unknown Applications" in "Settings/Applications" is enabled because you are not downloading the app from Android Market.</p>
+
+<p><a href="KeyringEditor.zip">KeyringEditor</a> by Markus Griessnig&mdash;a java-based keyring database file editor to run on your PC, Mac or Linux machine. Unzip the contents and run the java archive file KeyringEditor.jar.</p>
+
+<p>An <a href="example_aes128.pdb">example Keyring database file</a>. The initial password is set to "test."</p>
+
+<h2>Opening Files</h2>
+
+<p>First you need to transfer a Keyring database file to the Android's memory card. If you use Keyring for Palm OS the file is named Keys-Gtkr.pdb and will be found in the Palm backup folder on your PC after synchronizing your Palm to your PC. You can transfer it to your Android device via a USB cable or, alternatively, you might want to open it in the Dropbox app which will transfer and sync files automatically. A new database file can also be created using KeyringEditor.</p>
+
+<p>To open a Keyring file, press the menu button and select "Open File." Navigate the folders in the memory card until you find the Keyring file you transferred. (The entry "../" allows you to back up one level in the tree of folders.) Select a file by touching it on the screen. Keyring files can also be opened via a file browser such as "My Files" or Astro or in the Dropbox app.</p>
+
+
+<h2>Brief Instructions</h2>
+
+<p>On opening a Keyring database file the password must first be entered. There are only two main screens. The List screen lists the titles of all entries. Select an entry to display it. A timeout function will lock the database after a configurable time. The Lock button will also lock the database.</p>
+
+<p>To enable modification of the keyring database file, first disable "Read Only Mode" in the Menu/Preferences screen. Then a long touch on the entry screen will offer the New, Edit and Delete menu options.</p>
+
+<p>To start a new database file use KeyringEditor or download the example file above (both start with an initial password "test"). Alternatively, consider using the <a href="http://keepass.info">KeePass</a> application, a more recent password safe application that also has an Android version.</p>
+
+<p>To change the password for the database file or the strength of the encryption use KeyringEditor.</p>
+
+<h2>Source Code</h2>
+
+<p><a href="KeyringSource.zip">Keyring for Android</a></p>
+
+<p><a href="KeyringEditorSource.zip">KeyringEditor</a></p>
+
+<h2>License</h2>
+
+<p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.</p>
+
+<p style="margin-bottom: 20px">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details: <a href="http://www.gnu.org/licenses/">www.gnu.org/licenses</a>.</p>
+
+</div>
+</body>
+</html>
