@@ -16,10 +16,13 @@
 
   <ul>
    <li>Markus Griessnig wrote
-        a <a href="http://www.ict.tuwien.ac.at/keyring">Java Keyring editor</a>.
-	It supports both keyring-1.2.x and keyring-2.0 file format.</li>
-   <li>Peter Newman ported the 
+          <!--- old URL: http://www.ict.tuwien.ac.at/keyring --->
+        a Java Keyring editor.
+	It supports both keyring-1.2.x and keyring-2.0 file format.<br/>
+      Peter Reutemann has updated snapshots for the <a href="http://www.cs.waikato.ac.nz/~fracpete/downloads/#keyringeditor">Keyring Editor</a>. <br/>
+      Peter Newman ported the 
    <a href="http://pnewman.com/keyring/">Keyring Editor for Android</a>.</li>
+<!---  Unfortunately these are gone.
    <li>Frank Taylor wrote
 	a <a href="http://www.lieder.dsl.pipex.com/software/JavaKeyring/index.html">portable
 Java Keyring viewer</a>.</li>
@@ -30,7 +33,7 @@ Java Keyring viewer</a>.</li>
        conduit</a> was written by <a 
 href="&#109;ai&#108;to&#58;key&#114;ing&#64;zia&#46;com&#46;br">Alexandre
        Roberto Zia</a>. </li>
-
+--->
    <li>The following tool exports keyring databases to XML format (by me)
    or CSV format (by Gervase Markham).
    Its output can be imported in other tools or viewed in a text editor.  
